@@ -172,14 +172,16 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Team palette swap: `shaders/palette.gdshader` colours the index art from a 16x4 CRAM texture (`PaletteBank`: rink lines, home and away uniforms; away objects use line 3 for line 2)
 - [x] Animation tables: `SPAList` exported offline (`tools/extract/spalist.py` -> `godot/data/spalist.json`, 66 animations); `updateanim` ported (`Animator`) with the one-loop lag, de-glitch, loop bit and flag clearing; sprite frames are live, so `GetHot` uses the real Hotlist
 - [~] Audio: the 15 DAC samples export to `assets/audio/dac/*.wav`; `SfxBank` plays `sfx_XX` files by retail id when present. The sound effects themselves are FM sequences (`unk_2C648`): which sample and note each id plays is unresolved, so no `sfx_XX` files are generated yet
-- [ ] Faceoff close-up window and the referee graphics: their tiles are compressed (`$A78AE`; decompressor commands `$Cx-$Fx` unresolved). The HUD shows the referee's calls as text
+- [x] Tile decompressor (`sub_1177A`): all 16 commands decoded (`$Cx/$Dx/$Fx` are back references copied backwards, `$E0 00` ends the stream); every compressed blob decodes to exactly its tile count
+- [x] Face-off close-up (`checkfo`): the close-up frames and the `FaceOffMap` window exported; `FaceoffWindow` draws the centres and the referee from `fofdata`
+- [ ] Referee window graphics (`$5CF64` tiles, `RefsMap`): the HUD shows the referee's calls as text
 
 ## Phase 10. Editor tooling
 
 - [x] `nhl94_debug` `EditorPlugin` and `Nhl94DebugDock.tscn`
 - [x] Dock sliders and module toggles bound to `SimSettings`
 - [x] `@tool` `_draw()` overlays: goalie cones, pass lines, interception radii, 9x5 grid (`DebugOverlay`; always in the editor, in game with `show_in_game`)
-- [ ] Live editing while the game runs (remote `SimSettings` sync)
+- [x] Live editing while the game runs: the dock sends changes over the debugger channel (`EditorDebuggerPlugin`) to the `Sim` autoload's `nhl94` capture (not exercised by the headless tests)
 
 ## Phase 11. UI
 

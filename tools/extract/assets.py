@@ -21,6 +21,8 @@ Writes:
   rink/map.json                 per cell [atlas tile, flip/priority flags], raw words, geometry
   rink/logos_idx.png            28 centre-ice logos (48x32 each, 4 per row)
   rink/side_idx.png             the horizontal penalty-screen view (256x224)
+  sprites/faceoff_idx.png       the face-off close-up frames 1-10 (centres, referee)
+  sprites/faceoff_window_idx.png  the close-up window (FaceOffMap, 96x80)
   audio/dac/instr_XX.wav        the Z80 driver's PCM samples (8-bit unsigned)
 """
 import json
@@ -135,6 +137,81 @@ def pstr(rom, a):
     return rom.b[a + 2:a + n].rstrip(b"\x00").decode("latin-1"), a + n
 
 
+# --- compressed tiles -----------------------------------------------------------------------
+
+def decompress(rom, a):
+    """sub_1177A (L44975): the tile count word has bit 15 set; the stream is byte codes
+    over a 256-byte ring, high nibble = command. Returns the tile bytes (count * 32)."""
+    n = rom.u16(a)
+    assert n & 0x8000, "not compressed"
+    n &= 0x7FFF
+    p = a + 2
+    ring = bytearray(256)
+    out = bytearray()
+    w = 0
+
+    def put(b):
+        nonlocal w
+        ring[w] = b
+        out.append(b)
+        w = (w + 1) & 0xFF
+
+    def copy(count, dist, reverse):
+        src = (w - dist) & 0xFF
+        for _ in range(count):
+            put(ring[src])
+            src = (src - 1) & 0xFF if reverse else (src + 1) & 0xFF
+
+    while True:
+        c = rom.b[p]
+        p += 1
+        h = c >> 4
+        if h <= 1:  # literal run
+            for _ in range((c & 0x1F) + 1):
+                put(rom.b[p])
+                p += 1
+        elif h == 2:  # zeros
+            for _ in range((c & 0xF) + 1):
+                put(0)
+        elif h == 3:  # repeated byte
+            v = rom.b[p]
+            p += 1
+            for _ in range((c & 0xF) + 3):
+                put(v)
+        elif h <= 7:  # short back reference
+            copy((c & 7) + 2, ((c >> 3) & 7) + 1, False)
+        elif h == 8:
+            dist = rom.b[p]
+            p += 1
+            copy((c & 0xF) + 3, dist, False)
+        elif h in (9, 0xF):
+            nb = rom.b[p]
+            p += 1
+            copy((((c << 1) | (nb >> 7)) & 0x1F) + 3, (nb & 0x7F) + 1, h == 0xF)
+        elif h == 0xA:
+            nb = rom.b[p]
+            p += 1
+            copy(((((c << 8) | nb) >> 6) & 0x3F) + 3, (nb & 0x3F) + 1, False)
+        elif h == 0xB:
+            nb = rom.b[p]
+            p += 1
+            copy(((((c << 8) | nb) >> 5) & 0x7F) + 3, (nb & 0x1F) + 1, False)
+        elif h <= 0xD:  # short back reference, copied backwards
+            copy((c & 3) + 2, ((c >> 2) & 7) + 1, True)
+        else:  # $Ex: backwards copy, or the end with distance 0
+            dist = rom.b[p]
+            p += 1
+            if dist == 0:
+                break
+            copy((c & 0xF) + 3, dist, True)
+    assert len(out) == n * 32, (hex(a), len(out), n * 32)
+    return bytes(out)
+
+
+class BytesRom(Rom):
+    """A tile source over decompressed bytes, so the Canvas helpers can draw from it."""
+
+
 # --- palettes ---------------------------------------------------------------------------
 
 def jim(rom, base):
@@ -205,6 +282,56 @@ def sprite_frames(rom):
         frames.append({"frame": f, "canvas": c, "origin": [-x0, -y0], "hot": hot,
                        "lines": sorted({p["pal"] for p in pieces}), "pieces": pieces})
     return frames
+
+
+FACEOFF = 0xA78AE        # close-up animation: header, compressed tiles at +8, frames
+FACEOFF_MAP = 0x55BF6    # FaceOffMap: header, compressed tiles at +8, 12x10 map
+
+
+def piece_frames(rom, tiles, ft, first, last):
+    """Frames in the frameSprData piece format, drawn from `tiles` (a Rom over bytes)."""
+    frames = []
+    for f in range(first, last + 1):
+        a0 = ft + rom.u16(ft + 2 * f)
+        a1 = ft + rom.u16(ft + 2 * f + 2)
+        pieces = []
+        for a in range(a0, a1, 8):
+            w6 = rom.u16(a + 6)
+            size = w6 & 0xFF
+            pieces.append({"x": rom.s16(a), "y": rom.s16(a + 2), "tile": rom.u16(a + 4),
+                           "w": ((size >> 2) & 3) + 1, "h": (size & 3) + 1,
+                           "hf": bool(w6 & 0x800), "vf": bool(w6 & 0x1000), "pal": (w6 >> 13) & 3})
+        x0 = min(p["x"] for p in pieces)
+        y0 = min(p["y"] for p in pieces)
+        x1 = max(p["x"] + 8 * p["w"] for p in pieces)
+        y1 = max(p["y"] + 8 * p["h"] for p in pieces)
+        c = Canvas(x1 - x0, y1 - y0)
+        for p in pieces:
+            for col in range(p["w"]):
+                for row in range(p["h"]):
+                    t = p["tile"] + col * p["h"] + row
+                    dc = p["w"] - 1 - col if p["hf"] else col
+                    dr = p["h"] - 1 - row if p["vf"] else row
+                    c.tile(tiles, 32 * t, p["x"] - x0 + 8 * dc, p["y"] - y0 + 8 * dr, p["pal"],
+                           p["hf"], p["vf"], only_empty=True)
+        frames.append({"frame": f, "canvas": c, "origin": [-x0, -y0], "hot": None,
+                       "lines": sorted({p["pal"] for p in pieces}), "pieces": pieces})
+    return frames
+
+
+def faceoff_closeup(rom):
+    tiles = BytesRom(decompress(rom, FACEOFF + 8))
+    ft = FACEOFF + rom.u32(FACEOFF + 4)
+    frames = piece_frames(rom, tiles, ft, 1, 10)
+    mt = BytesRom(decompress(rom, FACEOFF_MAP + 8))
+    m = FACEOFF_MAP + rom.u32(FACEOFF_MAP + 4)
+    w, h = rom.u16(m), rom.u16(m + 2)
+    win = Canvas(w * 8, h * 8)
+    for r in range(h):
+        for col in range(w):
+            v = rom.u16(m + 4 + 2 * (r * w + col))
+            win.tile(mt, 32 * (v & 0x7FF), col * 8, r * 8, (v >> 13) & 3, bool(v & 0x800), bool(v & 0x1000))
+    return frames, win
 
 
 def pack(frames, width=1024):
@@ -359,6 +486,17 @@ def main():
                    "logo_px": [168, 352], "tiles_per_row": 16, "atlas_keys": keys,
                    "tilemap": tcells, "cells": m["cells"]}, f, separators=(",", ":"))
     logos(rom).save(os.path.join(out, "rink/logos_idx.png"))
+    fo_frames, window = faceoff_closeup(rom)
+    fo_atlas = pack(fo_frames, 256)
+    fo_atlas.save(os.path.join(out, "sprites/faceoff_idx.png"))
+    window.save(os.path.join(out, "sprites/faceoff_window_idx.png"))
+    with open(os.path.join(out, "sprites/faceoff.json"), "w") as f:
+        json.dump({"source": "face-off close-up $A78AE (compressed tiles), FaceOffMap $55BF6",
+                   "atlas": [fo_atlas.w, fo_atlas.h],
+                   "frames": {str(fr["frame"]): {"rect": [fr["atlas"][0], fr["atlas"][1], fr["canvas"].w,
+                                                          fr["canvas"].h], "origin": fr["origin"],
+                                                 "hot": None, "lines": fr["lines"]} for fr in fo_frames}},
+                  f, separators=(",", ":"))
     side_view(rom).save(os.path.join(out, "rink/side_idx.png"))
     dac(rom, os.path.join(out, "audio/dac"))
     print("wrote %d sprite frames (atlas %dx%d), rink layers, logos, side view, DAC samples to %s"

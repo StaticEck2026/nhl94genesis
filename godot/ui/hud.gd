@@ -22,6 +22,10 @@ func bind(p_game: HockeyGame) -> void:
 	game.world.rules.intermission.connect(_on_intermission)
 	game.world.rules.game_over.connect(_on_game_over)
 	game.world.rules.period_started.connect(func(_g: int) -> void: _banner.text = "")
+	var fw := FaceoffWindow.new()
+	fw.name = "FaceoffWindow"
+	add_child(fw)
+	fw.setup(game)
 
 func _make_label(at: Vector2, align: HorizontalAlignment) -> Label:
 	var l := Label.new()

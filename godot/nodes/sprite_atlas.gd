@@ -1,42 +1,48 @@
 class_name SpriteAtlas
 extends RefCounted
-## The sprite frames exported by tools/extract/assets.py: one index atlas and, per frame,
-## its rectangle, the origin pixel that sits on the object's projected position, and the
-## stick hot spot. Drawing mirrors the frame about its origin for the attribute flips
-## (addframe2), so a pixel column px maps to -px-1.
+## Sprite frames exported by tools/extract/assets.py: an index atlas and, per frame, its
+## rectangle, the origin pixel that sits on the object's projected position, and the
+## stick hot spot. Sets: "main" (frameSprData, 845 frames) and "faceoff" (the face-off
+## close-up, frames 1-10). Drawing mirrors a frame about its origin for the attribute
+## flips (addframe2), so a pixel column px maps to -px-1.
 
-const ATLAS_PATH := "res://assets/sprites/atlas_idx.png"
-const FRAMES_PATH := "res://assets/sprites/frames.json"
+const SETS := {
+	"main": ["res://assets/sprites/atlas_idx.png", "res://assets/sprites/frames.json"],
+	"faceoff": ["res://assets/sprites/faceoff_idx.png", "res://assets/sprites/faceoff.json"],
+}
 
-static var _texture: Texture2D
-static var _frames: Dictionary = {}
+## set name -> [Texture2D, frames Dictionary]
+static var _sets: Dictionary = {}
 
-static func available() -> bool:
-	_load()
-	return _texture != null and not _frames.is_empty()
+static func _get_set(name: String) -> Array:
+	if _sets.has(name):
+		return _sets[name]
+	var out: Array = [null, {}]
+	var paths: Array = SETS.get(name, ["", ""])
+	if FileAccess.file_exists(paths[1]) and ResourceLoader.exists(paths[0]):
+		out[0] = load(paths[0])
+		var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(paths[1]))
+		if d is Dictionary and d.has("frames"):
+			out[1] = d["frames"]
+	_sets[name] = out
+	return out
 
-static func _load() -> void:
-	if _texture != null or not FileAccess.file_exists(FRAMES_PATH):
-		return
-	if not ResourceLoader.exists(ATLAS_PATH):
-		return
-	_texture = load(ATLAS_PATH)
-	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(FRAMES_PATH))
-	if d is Dictionary and d.has("frames"):
-		_frames = d["frames"]
+static func available(set_name: String = "main") -> bool:
+	var s := _get_set(set_name)
+	return s[0] != null and not (s[1] as Dictionary).is_empty()
 
-static func has_frame(f: int) -> bool:
-	_load()
-	return _frames.has(str(f & 0x7FF))
+static func has_frame(f: int, set_name: String = "main") -> bool:
+	return (_get_set(set_name)[1] as Dictionary).has(str(f & 0x7FF))
 
-## Draws frame f on `ci` with its origin at `at`. flip_h / flip_v are the attribute's
-## bits 11 and 12 (the frame word's own flag bits XOR in as addframe2 does).
-static func draw_frame(ci: CanvasItem, f: int, at: Vector2, attribute: int) -> void:
-	_load()
+## Draws frame f on `ci` with its origin at `at`. The attribute's bits 11 and 12 flip it
+## (the frame word's own flag bits XOR in, as addframe2 does).
+static func draw_frame(ci: CanvasItem, f: int, at: Vector2, attribute: int, set_name: String = "main") -> void:
+	var s := _get_set(set_name)
+	var frames: Dictionary = s[1]
 	var key := str(f & 0x7FF)
-	if not _frames.has(key):
+	if s[0] == null or not frames.has(key):
 		return
-	var e: Dictionary = _frames[key]
+	var e: Dictionary = frames[key]
 	var r: Array = e["rect"]
 	var o: Array = e["origin"]
 	var attr := attribute ^ (f & 0xF800)
@@ -52,4 +58,4 @@ static func draw_frame(ci: CanvasItem, f: int, at: Vector2, attribute: int) -> v
 	# A negative size flips the texture inside the same rectangle (the renderer makes the
 	# size positive and sets its flip flag).
 	var size := Vector2(-w if fh else w, -h if fv else h)
-	ci.draw_texture_rect_region(_texture, Rect2(at + pos, size), Rect2(r[0], r[1], r[2], r[3]))
+	ci.draw_texture_rect_region(s[0], Rect2(at + pos, size), Rect2(r[0], r[1], r[2], r[3]))
