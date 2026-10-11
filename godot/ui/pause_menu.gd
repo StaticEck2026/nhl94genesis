@@ -16,6 +16,10 @@ func _ready() -> void:
 		quit_requested.emit())
 
 func _unhandled_input(event: InputEvent) -> void:
+	# During an intermission Start belongs to the game (it resumes play).
+	var game := get_parent() as HockeyGame
+	if game and game.hold and not _panel.visible:
+		return
 	if event.is_action_pressed("p1_start") or event.is_action_pressed("p2_start"):
 		toggle()
 		get_viewport().set_input_as_handled()

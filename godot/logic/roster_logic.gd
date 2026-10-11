@@ -32,6 +32,9 @@ func setup_teams(home: TeamData, away: TeamData) -> void:
 			continue
 		for p in data.players:
 			st.rom.append(p.rom_bytes())
+		# $26 tmgoalie: cleared RAM gives slot 0; the Change Goalie menu edits it.
+		st.goalie_pnum = 0 if data.goalie_count > 0 else -1
+		st.goalie_pulled = false
 		copy_lines(team)
 
 ## sub_171BE: RAM lines from the data lines. Line changes on: data lines 1-7. Off: data

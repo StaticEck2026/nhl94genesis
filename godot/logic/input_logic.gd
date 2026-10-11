@@ -54,7 +54,7 @@ func doinput(a3: SimObject, pad: PadState, k: int, d7: int) -> void:
 		faceoffinput(a3, d0, d1)
 		return
 	if a3.flags2 & SimObject.PF2_LCMENU:
-		w.lineinput(a3, d1, k)
+		w.lines.lineinput(a3, d0, d1, d2, d7)
 		return
 	if not a3.joypad():
 		return
@@ -209,7 +209,7 @@ func _offense(a3: SimObject, d0: int, d1: int, d2: int, d3: int, k: int, d7: int
 		if w.a_timer[k] == 0:
 			w.f_c2f6 |= HockeyWorld.C2F6_FLIP
 			w.shooting.setpassmode(a3)
-			w.set_lc_mode(a3)
+			w.lines.set_lc_mode(a3)
 			return
 	elif d2 & PadState.A:
 		w.f_c2f6 |= HockeyWorld.C2F6_FLIP

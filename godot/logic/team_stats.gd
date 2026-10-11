@@ -59,10 +59,16 @@ var on_ice: int = 6
 ## $026 goalie pnum on ice (-1 none); goalie_pulled is the high byte $FF.
 var goalie_pnum: int = -1
 var goalie_pulled: bool = false
-## $030 flags: bit 3 possession lost (restart the assist chain), bit 4 team offside.
+## $030 flags: bit 0 redraw the line menu, bit 1 line menu used this stoppage, bit 2
+## contain (assnearest; never set in play), bit 3 possession lost (restart the assist
+## chain), bit 4 team offside.
 var flags30: int = 0
+const F30_LINE_REDRAW := 1 << 0
+const F30_LINE_MENU := 1 << 1
 const F30_CHAIN_RESET := 1 << 3
 const F30_OFFSIDE := 1 << 4
+## $02E: the line-menu row picked last (A / B / C = 0-2).
+var menu_row: int = 0
 ## $02A (long) squared distance of the team's nearest available skater to the
 ## lead-adjusted puck (assnearest); 0 when the team has the puck or none qualifies.
 var nearest_sq: int = 0
@@ -112,6 +118,49 @@ func _init() -> void:
 	player_status = _filled(0)
 	hotcold = PackedInt32Array()
 	hotcold.resize(ROSTER * 16)
+
+## clearTeamStats (L53690): zero the struct for a new game. The record, the form
+## table and the goalie word survive; the box list empties.
+func clear_game() -> void:
+	shots = 0
+	pp_goals = 0
+	power_plays = 0
+	penalties = 0
+	penalty_minutes = 0
+	attack_time = 0
+	goals = 0
+	faceoffs_won = 0
+	checks = 0
+	pass_attempts = 0
+	passes = 0
+	line = 0
+	toucher = -1
+	assist1 = -1
+	assist2 = -1
+	on_ice = 6
+	flags30 = 0
+	nearest_sq = 0
+	menu_row = 0
+	energy = _filled(0)
+	tmpdst = _filled(0)
+	box = PackedInt32Array()
+	player_goals = _filled(0)
+	player_assists = _filled(0)
+	player_shots = _filled(0)
+	player_pim = _filled(0)
+	player_checks = _filled(0)
+	player_status = _filled(0)
+	period_goals = PackedInt32Array([0, 0, 0, 0])
+	period_shots = PackedInt32Array([0, 0, 0, 0])
+	pp_time = 0
+	pp_shots = 0
+	shorthanded_goals = 0
+	breakaway_attempts = 0
+	breakaway_goals = 0
+	onetimer_attempts = 0
+	onetimer_goals = 0
+	ps_attempts = 0
+	penalty_shot_goals = 0
 
 static func _filled(v: int) -> PackedInt32Array:
 	var a := PackedInt32Array()

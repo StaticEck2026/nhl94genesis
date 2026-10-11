@@ -79,6 +79,16 @@ func _initialize() -> void:
 		"test_setplayer_vectors",
 		"test_setplayer_bonuses_and_form",
 		"test_energy_drain_and_recovery",
+		"test_clock_tick",
+		"test_whistle_to_faceoff",
+		"test_faceoff_spots",
+		"test_delayed_penalty",
+		"test_box_time_and_pp",
+		"test_pp_goal_releases",
+		"test_set_personel_lines",
+		"test_comp_line",
+		"test_endfaceoff_draw",
+		"test_full_game",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -87,6 +97,12 @@ func _initialize() -> void:
 			print("FAIL: %s did not finish" % test)
 	print("%d checks, %d failures" % [_checks, _failures])
 	quit(1 if _failures > 0 else 0)
+
+## A world with the rules off: no whistles or faceoffs interrupt a subsystem test.
+static func _sandbox(seed: int = 0x00500000) -> HockeyWorld:
+	var s := SimSettings.new()
+	s.enable_rules = false
+	return HockeyWorld.new(s, seed)
 
 func check(cond: bool, what: String) -> void:
 	_checks += 1
@@ -399,7 +415,7 @@ func test_bounce_puck() -> bool:
 ## Whole world: a skater pushes up the ice from rest, reaches top speed, hits the end
 ## boards and stays in; then skates back down.
 func test_world_skater_in_rink() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var o := w.place(4, Vector2i(0, -100), SimObject.POS_C, false, true)
 	o.weight = 6
 	o.legstr = 15
@@ -1022,7 +1038,7 @@ func test_assdefd_target() -> bool:
 	return true
 
 func test_centerd_moves_to_spot() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var c := w.place(3, Vector2i(-50, -150), SimObject.POS_C, false, true)
 	_rate(c)
 	w.assreplace(c, HockeyAI.ASS_CENTERD)
@@ -1037,7 +1053,7 @@ func test_centerd_moves_to_spot() -> bool:
 	return true
 
 func test_assnearest_hands_off() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var far := w.place(3, Vector2i(0, -150), SimObject.POS_C, false, true)
 	var near := w.place(2, Vector2i(10, 0), SimObject.POS_LW, false, true)
 	_rate(far)
@@ -1054,7 +1070,7 @@ func test_assnearest_hands_off() -> bool:
 	return true
 
 func test_cpu_carrier_shoots() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var c := w.place(3, Vector2i(0, 170), SimObject.POS_C, false, true)
 	_rate(c)
 	w.setplass(c)
@@ -1071,7 +1087,7 @@ func test_cpu_carrier_shoots() -> bool:
 	return true
 
 func test_goalie_skates_back() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var g := w.place(11, Vector2i(60, 100), SimObject.POS_GOALIE, true, false)
 	_rate(g)
 	w.setplass(g)
@@ -1087,7 +1103,7 @@ func test_goalie_skates_back() -> bool:
 	return true
 
 func test_goalie_angles_to_puck() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var g := w.place(11, Vector2i(0, 240), SimObject.POS_GOALIE, true, false)
 	_rate(g)
 	w.setplass(g)
@@ -1141,7 +1157,7 @@ func test_goaliesave_choice() -> bool:
 	return true
 
 func test_goalie_saves_low_shot() -> bool:
-	var w := HockeyWorld.new(SimSettings.new())
+	var w := _sandbox()
 	var g := w.place(11, Vector2i(0, 246), SimObject.POS_GOALIE, true, false)
 	_rate(g)
 	w.setplass(g)
@@ -1323,5 +1339,233 @@ func test_energy_drain_and_recovery() -> bool:
 	w.opt_line_on = false
 	w.playeracc(o, 0, 1)
 	eq(w.energy_raw(o), 0xC00 - 33, "no drain with line changes off")
+	w.dispose()
+	return true
+
+# --- rules ---------------------------------------------------------------------------------
+
+func test_clock_tick() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.gameclock = 300
+	w.clock_frac = 0xFFFF
+	w.gmode = 0
+	for i in 24:
+		w.rules.vblank_tick()
+	eq(w.gameclock, 300, "24 vblanks of $AAA do not borrow from $FFFF")
+	w.rules.vblank_tick()
+	eq(w.gameclock, 299, "the 25th does: one game second")
+	w.gmode |= HockeyWorld.GM_CLOCK
+	for i in 100:
+		w.rules.vblank_tick()
+	eq(w.gameclock, 299, "stopped clock")
+	w.dispose()
+	return true
+
+## A whistle (puck out of play), the referee, then the full faceoff back to play.
+func test_whistle_to_faceoff() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var hc := w.place(3, Vector2i(0, 100), SimObject.POS_C, false, true)
+	var ac := w.place(9, Vector2i(0, -100), SimObject.POS_C, true, false)
+	_rate(hc)
+	_rate(ac)
+	w.drop_puck(Vector2i(50, 180))
+	w.ltx = 100
+	w.lty = 180
+	# Last touched by the away centre, who attacks the bottom: limitfo leaves the top
+	# end-zone dot alone.
+	w.ltplayer = ac.index
+	var dropped := [false]
+	w.faceoff.faceoff_dropped.connect(func(_h: bool) -> void: dropped[0] = true)
+	w.rules.add_penalty2(GameRules.PEN_OOP, w.objects[w.ltplayer])
+	w.step()
+	check(w.gmode & HockeyWorld.GM_CLOCK != 0, "whistle stops play")
+	eq(Vector2i(w.fox, w.foy), Vector2i(70, 206), "deep stop: the end-zone dot on the puck's side")
+	var lined_up := false
+	for i in 900:
+		w.step()
+		if w.sflags2 & HockeyWorld.SF2_FACEOFF and not lined_up:
+			lined_up = true
+			eq(hc.pos(), Vector2i(0 + 70, -15 + 206), "home centre 15 px below the dot")
+			eq(ac.pos(), Vector2i(70, 15 + 206), "away centre 15 px above it")
+		if dropped[0]:
+			break
+	check(lined_up, "the teams lined up")
+	check(dropped[0], "the puck was dropped")
+	check(w.gmode & HockeyWorld.GM_CLOCK == 0, "play resumed")
+	w.dispose()
+	return true
+
+func test_faceoff_spots() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var home := w.place(3, Vector2i(0, 0), SimObject.POS_C, false, true)
+	# Icing by the home team (attacks the top): its own end-zone dot, puck side.
+	w.drop_puck(Vector2i(-30, -100))
+	w.rules.pen_buf[0] = (GameRules.PEN_ICING << 8) | home.index
+	w.rules.stop4pen(0)
+	eq(Vector2i(w.fox, w.foy), Vector2i(-70, -206), "icing: (-70, -206)")
+	# Offside by the same team deep in its attacking zone: limitfo takes it out to the
+	# neutral dot.
+	w.gmode = 0
+	w.rules.clr_pen_buf()
+	w.drop_puck(Vector2i(20, 150))
+	w.rules.pen_buf[0] = (GameRules.PEN_OFFSIDE << 8) | home.index
+	w.rules.stop4pen(0)
+	eq(Vector2i(w.fox, w.foy), Vector2i(70, 65), "offside: (70, 65)")
+	# A second whistle with play stopped keeps the first spot.
+	w.drop_puck(Vector2i(0, -200))
+	w.rules.stop4pen(0)
+	eq(Vector2i(w.fox, w.foy), Vector2i(70, 65), "first whistle wins")
+	w.dispose()
+	return true
+
+func test_delayed_penalty() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var hooker := w.place(2, Vector2i(0, 0), SimObject.POS_LW, false, true)
+	hooker.pnum = 7
+	var carrier := w.place(9, Vector2i(30, 30), SimObject.POS_C, true, false)
+	w.drop_puck(Vector2i(30, 30))
+	w.puckc = carrier.index
+	w.rules.add_penalty(0x1E, hooker)
+	w.rules.checkfornewpen()
+	check(w.gmode & HockeyWorld.GM_PENDEL != 0, "the other team has the puck: delayed")
+	check(w.gmode & HockeyWorld.GM_CLOCK == 0, "play goes on")
+	check(hooker.flags2 & SimObject.PF2_PEN != 0, "player marked")
+	w.rules.add_penalty(0x20, hooker)
+	eq(w.rules.pen_buf[1], 0, "one pending penalty per player")
+	w.puckc = hooker.index
+	w.rules.checkfornewpen()
+	check(w.gmode & HockeyWorld.GM_CLOCK != 0, "his team touches it: whistle")
+	eq(w.rules.pencntdwn, 4 * 32, "Hooking's delay is 4 x 32 vblanks")
+	w.dispose()
+	return true
+
+func test_box_time_and_pp() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var st := w.stats[0]
+	st.tmpdst[7] = 3
+	st.box = PackedInt32Array([7])
+	st.on_ice = 5
+	w.gmode = 0
+	w.rules.updatepwrplay()
+	check(w.sflags2 & HockeyWorld.SF2_PWRPLAY != 0, "power play on")
+	check(w.sflags2 & HockeyWorld.SF2_PWRTM != 0, "away on the power play")
+	eq(w.stats[1].power_plays, 1, "a power play counted")
+	var sounds := []
+	w.sound.connect(func(id: int) -> void: sounds.append(id))
+	w.place(5, Vector2i(0, -240), SimObject.POS_GOALIE, false, true)
+	for i in 24 * 3 + 1:
+		w.rules.updatepentime(1)
+	eq(st.tmpdst[7], TeamStats.TMPDST_ON_ICE, "served: back on the ice")
+	eq(st.box.size(), 0, "box list empty")
+	eq(st.on_ice, 6, "full strength")
+	check(1 in sounds and 2 in sounds, "beeps in the last seconds, then the door")
+	check(w.stats[1].pp_time > 0, "PP time counted")
+	w.dispose()
+	return true
+
+func test_pp_goal_releases() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var home := w.stats[0]
+	home.on_ice = 5
+	home.box = PackedInt32Array([4, 7])
+	home.tmpdst[4] = 0x4000 | 300
+	home.tmpdst[7] = 90
+	w.rules.pen_buf[0] = 0x1E07
+	w.rules.pp_goal(1)
+	eq(home.tmpdst[7], 0, "the first non-coincidental penalty ends")
+	eq(home.box, PackedInt32Array([4]), "the coincidental major stays")
+	eq(home.on_ice, 6, "back to full strength")
+	eq(w.stats[1].pp_goals, 1, "PP goal")
+	check(w.rules.pen_buf[0] != 0, "queued entries survive a goal against a short team")
+	w.rules.pp_goal(1)
+	eq(w.rules.pen_buf[0], 0, "a goal against a full team wipes the queue (Q9)")
+	w.dispose()
+	return true
+
+func test_set_personel_lines() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	w.lines.set_personel(0)
+	w.forcepldata(0)
+	var by_pos := {}
+	for i in 6:
+		var o := w.objects[i]
+		by_pos[o.position] = o.pnum
+	eq(by_pos, {0: 0, 1: 18, 2: 17, 3: 7, 4: 2, 5: 11}, "Sc1: Moog; Sweeney, Bourque; Juneau, Oates, Neely")
+	var oates := 0
+	for i in 6:
+		if w.objects[i].pnum == 2:
+			oates = i
+	eq(w.objects[oates].legspd, 20, "setplayer loaded Oates")
+	# Oates hurt for the game: the C sublist finds the next line's centre.
+	w.stats[0].tmpdst[2] = TeamStats.TMPDST_INJURED_GAME
+	w.lines.set_personel(0)
+	var subs := []
+	for i in 6:
+		subs.append(w.objects[i].newpnum)
+	check(4 in subs and not (2 in subs), "Oates replaced by the Sc2 centre (slot 4): %s" % [subs])
+	w.dispose()
+	return true
+
+func test_comp_line() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	w.stats[0].on_ice = 6
+	w.stats[1].on_ice = 5
+	w.lines.comp_line(0)
+	check(w.stats[0].line == 3 or w.stats[0].line == 4, "power play line")
+	w.lines.comp_line(1)
+	check(w.stats[1].line == 5 or w.stats[1].line == 6, "penalty kill line")
+	w.stats[1].on_ice = 6
+	w.stats[1].line = 1
+	w.lines.comp_line(0)
+	eq(w.stats[0].line, 1, "home matches the away Sc2 with its Sc2 when rested")
+	w.dispose()
+	return true
+
+func test_endfaceoff_draw() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var p := w.puck()
+	var wins := 0
+	for i in 20:
+		# Home centre at frame 3 (bonus 16), away at frame 4 (bonus 0): 16 - 16 + 0 = 0.
+		w.faceoff.fof_frame = PackedInt32Array([3, 4, 7])
+		w.faceoff.fof_attr = PackedInt32Array([0x8800, 0xA000, 0x8000])
+		var won := [false]
+		var cb := func(h: bool) -> void: won[0] = h
+		w.faceoff.faceoff_dropped.connect(cb)
+		w.faceoff.endfaceoff(p)
+		w.faceoff.faceoff_dropped.disconnect(cb)
+		if won[0]:
+			wins += 1
+		# The top-attacking winner (H flip) pulls back toward his own (bottom) end.
+		check(p.vel.y < 0x1300 + 1, "pull biased toward the winner's end: %d" % p.vel.y)
+	eq(wins, 20, "home wins every draw with the timing edge")
+	w.dispose()
+	return true
+
+## Boston against Montreal, CPU against CPU, 30-second periods: the rules run the whole
+## game to the final horn.
+func test_full_game() -> bool:
+	var w := HockeyWorld.new(SimSettings.new(), 0x1234)
+	w.opt_perlen = 3
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	var periods := []
+	var drops := [0]
+	var over := [false]
+	w.rules.period_started.connect(func(g: int) -> void: periods.append(g))
+	w.faceoff.faceoff_dropped.connect(func(_h: bool) -> void: drops[0] += 1)
+	w.rules.game_over.connect(func() -> void: over[0] = true)
+	w.rules.start_game()
+	var frames := 0
+	while not over[0] and frames < 60000:
+		w.step()
+		frames += 1
+	check(over[0], "the game ended (%d frames)" % frames)
+	eq(w.gsp, 4, "game over state")
+	check(periods.slice(0, 3) == [0, 1, 2], "three periods: %s" % [periods])
+	check(drops[0] >= 3, "a faceoff at least every period: %d" % drops[0])
+	check(w.stats[0].shots + w.stats[1].shots > 0, "shots were taken")
+	check(w.gmode & HockeyWorld.GM_EOG != 0, "game-over flag")
 	w.dispose()
 	return true

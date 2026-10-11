@@ -134,14 +134,14 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] `Checking`: `newcheck`, `checkint`/`checkint_ci` (goalie contact, interference), `CCStart`/`CheckingCalc` (body checks), `checkagr`, `holdcheck`, `Bcheck`, `holdplayer`/`Acheck`
 - [x] `FallDown`, `FallList`, board pins (`sub_FEB54`), injuries (`setInjuryType`), `wallcollduringcheck`
 - [x] `burst` (body-check charge); `check4check` (CPU) in `HockeyAI`
-- [ ] `checkfight` L49544, `fightinput` L36560
+- [x] `checkfight` L49544, `fightinput` L36560: no-ops in '94 (see Phase 8)
 
 ## Phase 6. AI
 
 - [x] Assignment dispatch `asstab` L56671, `assinsert`/`assreplace`/`assexit` L43192-43210, `Setplass`, `forcepldata` L51446 (`setplayer` stubbed until Phase 1)
 - [x] Offense: `assdefo` L38375, `asswingo` L38682, `asscentero` L38856, `asspuckc` L39901, `chk4shot` L40183, `chk4pass` L40337, `compshoot`, `EvadePC` L40442, the carrier's evade (`loc_E12C`), the tired-line dump (`sub_E1F4`), `checkob` (delayed offside ref)
 - [x] Defense: `assdefd` L38447, `asswingd` L38591, `asscenterd` L38800, `check4check` L40878, `assnearest` L40574 (hand-off, chase / contain, slot pressure)
-- [ ] Faceoffs: `assfaceoff` L38206, `puckfaceoff` L41627, `puckfaceoff2` L42031, `updatefaceoff` L42414
+- [x] Faceoffs (`FaceoffLogic`): `assfaceoff` L38206, `assfaceoffpl` L38218, `puckfaceoff` L41627, `puckfaceoff2` L42031 (line-up tables, drop countdown), `Endfaceoff` (the draw formula), `updatefaceoff` L42414, `setchgplayer`, `resetplstuff`
 - [~] Breakaway, shootout and penalty shot: `breakaway` L39775, `BreakawayOffsidesFlagSet`, `chkpuckc`, `assbreakaway` done; the PS/SO script (`sub_FE8EC`, `sub_FE864`), `puckshootout` L41046 and `puckpenshot` L41276 come with Phase 8
 - [x] Slot bit (`setSlotBit` L963062), celebrations (`assscore`, `assstanley`), `check4bench`. The "9x5 grid" is an overlay only: retail AI uses the zone thresholds in the spec, not a grid
 - [x] `HockeyAI` RefCounted; `SimSettings.enable_skater_ai` idles the CPU skater assignments
@@ -155,12 +155,14 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 8. Rules and game flow
 
-- [ ] Clock and periods: `ResetClock` L29817, `ClockLength` L29839, `StartPer` L29853, `clockcont`, `PeriodOver` L53805, `GameOver` L53851
-- [ ] Offsides and icing: `ChkOffsides` L42598, `a2offsides` L42687, `a2touchpuck` L42716
-- [ ] Penalties: `AddPenalty` L45939, `PenaltyManager` L46005, `PenaltyList` L56708, power play `updatepwrplay` L46991
-- [ ] Line changes: `changeplayer` L37216, `SetLCmode` L36566, `lineinput` L36756, `assbench` L37886
-- [ ] Crowd excitement: `UpdateCwdExcite` L30009, `updatecrowdf` L30028
-- [ ] Stats: `ChkShotStat` L47451, `AddChktoPlayerStats` L49211, `InitScores` L47726
+- [x] Clock and periods (`GameRules`): the VBlank clock tick ($AAA fraction), `ResetClock` L29817, `ClockLength`, `StartGame`, `StartPer` L29853, `clockcont`, end of period / OT winner (`loc_7B5C`), `PeriodOver` L53805, intermission bookkeeping, game over. `setupice` resets the objects and swaps ends each period
+- [x] Offsides and icing whistles: `ChkOffsides`, `a2offsides`, `a2touchpuck`, `puckIChk` (Phase 3) now stop play through the queue
+- [x] Penalties: `AddPenalty` L45939, `PenaltyList` L56708 (all 30 records), `checkfornewpen` (delayed penalties), `Stop4Pen` + `limitfo` (faceoff spots), `chkprogress`, `InProgress` (assessment, coincidental majors, PenSum), `updatepentime` (box time, beeps, return to ice), `sub_123DE`, the referee script (`SetPA`, `UpdatePA`), power play `updatepwrplay` L46991, PP goals `sub_1284A`
+- [x] Line changes (`LineLogic`): `SetPersonel` L51236, `SetPlList` L51300 (sublist substitutes), `findAvailablePlayer`, `ResetBench`, `CompLine` + `getlinee`, `SetLCmode` L36566, `getlchoice`, `lineinput` L36756, `lcfound`; `assbench` L37886, `assben`, `asspenalty`, `assdopen`, `assepen`; `restorep1` in `set_c_player`
+- [x] Crowd: `UpdateCwdExcite` L30009, `updatecrowdf` L30028
+- [x] Stats: `ChkShotStat` L47451 (Phase 3), team and player stats in `TeamStats`, PenSum. `InitScores` / `UpdateScores` (other games' ticker) not ported: cosmetic, and it needs the season/playoff mode
+- [ ] Penalty shot and shootout: `PenShotChk` returns the foul unchanged until `puckpenshot` L41276, `puckshootout` L41046 and the PS script are ported
+- [ ] Fights: none in '94 (`fightinput`, `assfight`, `assfwatch` are `rts`; no caller raises the fighting penalties)
 
 ## Phase 9. Scenes and presentation
 
@@ -180,9 +182,9 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 11. UI
 
-- [ ] Setup screen: Team 1 / Team 2 `OptionButton`, line `ItemList`, reads `TeamData`
-- [ ] HUD: clock, score, period, power play
-- [ ] Pause menu
+- [x] Setup screen: Team 1 / Team 2 `OptionButton`, line `ItemList` (the real Sc1-PK2 lines), reads `TeamData`
+- [x] HUD: clock, score, period, power play, referee calls, penalties, intermission and final banners
+- [x] Pause menu (Start; during an intermission Start resumes play instead)
 
 ## Log
 
@@ -196,3 +198,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Shooting, passing, one-timers, bursts and pad input ported (`Shooting`, `InputLogic`, `PadState`); exact `sroot`. A shot taken through the pad scores on an empty net end to end. 226 checks pass.
 - 2026-10-11: AI and goalies ported (`HockeyAI`, `GoalieLogic`): the six positional routines, `assnearest`, the CPU carrier (shoot / pass / evade / breakaway), `check4check`, celebrations, the CPU and pad goalie, saves, pulling the goalie, `checkwindow` camera, `forcepldata`. `DoGameFrame` order in `step()`. Twelve CPU players play a minute (shots, passes, checks, goalie whistles). 260 checks pass.
 - 2026-10-11: Data layer: 28 teams and 684 players extracted from the ROM to `.tres`; `setplayer`, `AttributeCalc`, form, bonuses and the energy drain ported. The spec's seven test vectors (Bourque, Oates, Lemieux, Neely, Dollas, Moog, Roy) match byte for byte. 330 checks pass.
+- 2026-10-11: Rules and game flow (`GameRules`, `FaceoffLogic`, `LineLogic`): clock, periods, OT, whistles, faceoff spots and the full faceoff, penalties with delayed calls and the box, power play, line changes and the line menu. The match scene now plays a whole game from `StartGame`; the sandbox runs without rules (`HockeyGame.run_rules`, `SimSettings.enable_rules`). A CPU Boston-Montreal game runs to the final horn in the tests. 396 checks pass.

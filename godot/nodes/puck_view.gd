@@ -18,6 +18,9 @@ func _draw() -> void:
 	if game == null:
 		return
 	var p := game.world.puck()
+	# A negative height hides the puck (the faceoff setup's st puckz).
+	if p.z() < 0:
+		return
 	var at := Nhl94Units.rink_to_godot(p.posf())
 	var h := float(p.z())
 	draw_circle(at, 2.0, Color(0, 0, 0, 0.25))

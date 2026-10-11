@@ -222,6 +222,17 @@ func set_spa(id: int) -> void:
 	spa_cnt = -1
 	spa_restarted = true
 
+## Copies every field of another object (setupice's struct reset keeps the identity).
+func copy_from(o: SimObject) -> void:
+	for prop in get_property_list():
+		if prop["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE == 0:
+			continue
+		var n: String = prop["name"]
+		var v: Variant = o.get(n)
+		if v is PackedByteArray or v is PackedInt32Array:
+			v = v.duplicate()
+		set(n, v)
+
 ## Mid-range setplayer bytes (every rating nibble 3, 188 lb) for an object with no
 ## roster data (sandbox, tests).
 func default_ratings() -> void:

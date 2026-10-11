@@ -23,12 +23,14 @@ func _ready() -> void:
 	if game == null:
 		push_error("Skater2D needs a HockeyGame ancestor")
 		return
-	var at := Nhl94Units.rink_to_godot(position)
-	obj = game.world.place(index, Vector2i(roundi(at.x), roundi(at.y)), role, index >= 6, attacking_top)
-	if player:
-		obj.load_player(player)
-	else:
-		obj.default_ratings()
+	obj = game.world.objects[index]
+	if game.auto_place:
+		var at := Nhl94Units.rink_to_godot(position)
+		game.world.place(index, Vector2i(roundi(at.x), roundi(at.y)), role, index >= 6, attacking_top)
+		if player:
+			obj.load_player(player)
+		else:
+			obj.default_ratings()
 	game.stepped.connect(_sync)
 
 func _find_game() -> HockeyGame:
@@ -38,12 +40,16 @@ func _find_game() -> HockeyGame:
 	return n as HockeyGame
 
 func _sync() -> void:
+	# Sprite frame 0 draws nothing (off the ice, in the box, parked).
+	visible = obj.frame != 0
+	attacking_top = obj.attacking_top()
 	position = Nhl94Units.rink_to_godot(obj.posf())
 	velocity = Nhl94Units.rink_to_godot(Vector2(obj.vel)) * Nhl94Units.VEL_STEP * Nhl94Units.RETAIL_HZ / Nhl94Units.FIXED_ONE
 	queue_redraw()
 
 func _draw() -> void:
-	var color := Color(0.85, 0.2, 0.2) if attacking_top else Color(0.2, 0.35, 0.9)
+	var away := obj.away() if obj else index >= 6
+	var color := Color(0.2, 0.35, 0.9) if away else Color(0.85, 0.2, 0.2)
 	draw_circle(Vector2.ZERO, 5.0, color)
 	var angle := obj.facing_angle() if obj else (0.0 if attacking_top else PI)
 	draw_line(Vector2.ZERO, Vector2.UP.rotated(angle) * 10.0, Color(0.1, 0.1, 0.15), 1.0)

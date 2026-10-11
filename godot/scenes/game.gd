@@ -1,58 +1,93 @@
 extends HockeyGame
-## The match scene. Builds the views from Sim.match: 12 skaters (goalie + 5 per side),
-## the puck, the rink, the camera, the HUD and the pause menu.
+## The match scene. One view per sort object; the rules run the game from the opening
+## faceoff (StartGame) to the final horn. Options come from Sim.match; run directly it
+## plays the first two teams with the setup screen's default controls.
 
 const SKATER_SCENE := preload("res://scenes/skater.tscn")
 const SETUP_SCENE := "res://ui/setup_screen.tscn"
-
-## Temporary center-ice lineup (role, x, y for a team attacking up) until puckfaceoff2's
-## tables are ported. Retail roles: 0 G, 1 LD, 2 RD, 3 LW, 4 C, 5 RW.
-const TEMP_LINEUP := [
-	[SimObject.POS_GOALIE, 0, -250], [SimObject.POS_LD, -40, -70], [SimObject.POS_RD, 40, -70],
-	[SimObject.POS_LW, -50, -20], [SimObject.POS_C, 0, -12], [SimObject.POS_RW, 50, -20],
-]
+## OptPerlen by period length in minutes (ClockLength _timetab: 5, 10, 20 minutes).
+const PERLEN := {5: 0, 10: 1, 20: 2}
+## A CPU-only intermission waits this long (Intermission's waitxsr(480)).
+const CPU_INTERMISSION_FRAMES := 480
 
 var skaters: Array[Skater2D] = []
+var _hold_frames := 0
+var _over := false
+
+func _enter_tree() -> void:
+	auto_place = false
+	super._enter_tree()
 
 func _ready() -> void:
 	var m: MatchConfig = Sim.match
-	var ports := {}
-	for team in 2:
-		var data: TeamData = m.home_team if team == 0 else m.away_team
-		var attack_top := team == 0
-		var driver: MatchConfig.Driver = m.home_control if team == 0 else m.away_control
-		for slot in 6:
-			var row: Array = TEMP_LINEUP[slot]
-			var sk: Skater2D = SKATER_SCENE.instantiate()
-			sk.index = team * 6 + slot
-			sk.role = row[0]
-			sk.attacking_top = attack_top
-			var y: int = row[2] if attack_top else -row[2]
-			var x: int = row[1] if attack_top else -row[1]
-			sk.position = Nhl94Units.rink_to_godot(Vector2(x, y))
-			sk.player = _player_for(data, row[0])
-			add_child(sk)
-			skaters.append(sk)
-			# The pad drives the center until player switching is ported.
-			if driver != MatchConfig.Driver.CPU and row[0] == SimObject.POS_C:
-				ports[sk.index] = 1 if driver == MatchConfig.Driver.PAD1 else 2
-	pad_ports = ports
-	# Start both lines the way a faceoff does (forcepldata): positions, assignments and
-	# the centre chasing the puck. CPU players then run on the AI.
-	for sk in skaters:
-		sk.obj.newpos = sk.role
-		sk.obj.newpnum = sk.index % 6
-	world.forcepldata(0)
-	world.forcepldata(1)
-	world.drop_puck(Vector2i.ZERO)
+	if m.home_team == null or m.away_team == null:
+		var teams := MatchConfig.available_teams()
+		if teams.size() >= 2:
+			m.home_team = teams[0]
+			m.away_team = teams[1]
+	for i in 12:
+		var sk: Skater2D = SKATER_SCENE.instantiate()
+		sk.index = i
+		add_child(sk)
+		skaters.append(sk)
+	world.opt_perlen = PERLEN.get(m.period_minutes, 0)
+	world.opt_pen = m.penalties
+	world.opt_offsides = m.offsides
+	world.opt_line_on = m.line_changes
+	world.cont_team[0] = 0
+	world.cont_team[1] = 0
+	_take_pad(m.home_control, 1)
+	_take_pad(m.away_control, 2)
+	world.roster.setup_teams(m.home_team, m.away_team)
+	world.rules.intermission.connect(_on_intermission)
+	world.rules.game_over.connect(_on_game_over)
 	($Hud as Node).call("bind", self)
-	($PauseMenu as Node).connect("quit_requested", func() -> void: get_tree().change_scene_to_file(SETUP_SCENE))
+	($PauseMenu as Node).connect("quit_requested", _quit)
+	world.rules.start_game()
+	world.stats[0].line = clampi(m.home_line, 0, 6)
+	world.stats[1].line = clampi(m.away_line, 0, 6)
 
-func _player_for(data: TeamData, role: int) -> PlayerData:
-	if data == null:
-		return null
-	for p in data.players:
-		var want := PlayerData.Position.GOALIE if role == SimObject.POS_GOALIE else -1
-		if want >= 0 and p.position == want:
-			return p
-	return null
+func _take_pad(driver: MatchConfig.Driver, team: int) -> void:
+	match driver:
+		MatchConfig.Driver.PAD1:
+			world.cont_team[0] = team
+		MatchConfig.Driver.PAD2:
+			world.cont_team[1] = team
+
+func _human() -> bool:
+	return world.cont_team[0] != 0 or world.cont_team[1] != 0
+
+## Intermission: the sim holds until Start (or a while, with no human playing).
+func _on_intermission(gsp: int) -> void:
+	if gsp == 0:
+		return
+	hold = true
+	_hold_frames = CPU_INTERMISSION_FRAMES
+
+func _on_game_over() -> void:
+	_over = true
+	hold = true
+	_hold_frames = CPU_INTERMISSION_FRAMES
+
+func _physics_process(delta: float) -> void:
+	if hold and not _human():
+		_hold_frames -= 1
+		if _hold_frames <= 0:
+			_release()
+	super._physics_process(delta)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not hold:
+		return
+	if event.is_action_pressed("p1_start") or event.is_action_pressed("p2_start"):
+		get_viewport().set_input_as_handled()
+		_release()
+
+func _release() -> void:
+	if _over:
+		_quit()
+		return
+	hold = false
+
+func _quit() -> void:
+	get_tree().change_scene_to_file(SETUP_SCENE)

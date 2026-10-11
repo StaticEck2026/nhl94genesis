@@ -26,6 +26,9 @@ static func shared(from: Node) -> SimSettings:
 ## skaters glide to a stop.
 @export var enable_skater_ai: bool = true:
 	set(v): enable_skater_ai = v; emit_changed()
+## Whistles, penalties, faceoffs and the game clock. Off: play never stops (sandbox).
+@export var enable_rules: bool = true:
+	set(v): enable_rules = v; emit_changed()
 ## CPU goalie AI (assgoaliecpu, assgoalietopuck). Off: goalies glide to a stop.
 @export var enable_goalie_tracking: bool = true:
 	set(v): enable_goalie_tracking = v; emit_changed()

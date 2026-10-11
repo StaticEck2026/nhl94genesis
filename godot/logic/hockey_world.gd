@@ -34,6 +34,7 @@ const SF2_OFFSIG := 1 << 7   ## delayed-offside ref up (checkob)
 ## sflags3 bits.
 const SF3_FACEOFF_WIN := 1 << 4
 const SF3_PENSEC := 1 << 6
+const SF3_MUSIC_CUE := 1 << 7  ## mid-period music cue armed (periods 1-2)
 ## word_FFC2F6.
 const C2F6_BREAKAWAY_RAN := 1 << 2 ## this loop's asspuckc/assnearest came through breakaway()
 const C2F6_FLIP := 1 << 3     ## flip-pass request (A with the puck)
@@ -88,6 +89,9 @@ const DEFAULT_OBJECTS := [
 ]
 
 var settings: SimSettings
+## The game layer's switch for the rules (the skating sandbox runs without them);
+## SimSettings.enable_rules is the debug dock's.
+var rules_active: bool = true
 var rng: RetailRng
 ## Stand-in for reads of the VDP H/V counter, which retail uses as a cheap random number.
 ## Kept apart from `rng` so the seeded sequence matches retail call for call.
@@ -102,6 +106,9 @@ var input: InputLogic
 var ai: HockeyAI
 var goalie: GoalieLogic
 var roster: RosterLogic
+var rules: GameRules
+var faceoff: FaceoffLogic
+var lines: LineLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
 ## updateanim with the SPAList data. When the data file is missing (no extraction run),
@@ -148,8 +155,9 @@ var crowd_boost: bool = true
 var no_fatigue: bool = false
 ## OptLine == 0: line changes on (burst drains energy only then).
 var opt_line_on: bool = true
-## OptPen: penalties on.
+## OptPen: penalties on; with OptPen 1 offsides are called too.
 var opt_pen: bool = true
+var opt_offsides: bool = true
 ## OptPerlen: period length 0-3 (5, 10, 20 minutes, 30 seconds; ClockLength).
 var opt_perlen: int = 0
 ## Which team each pad controls (cont1team, cont2team: 0 none, 1 home, 2 away) and the
@@ -247,7 +255,8 @@ var deltay: int = 0
 ## look-ahead in the carrier's attacking direction.
 var camera: Vector2i = Vector2i.ZERO
 var yleader: int = 0
-## foy: the faceoff dot Y.
+## fox / foy: the next faceoff spot.
+var fox: int = 0
 var foy: int = 0
 ## lldisp: periodiceevents countdown for the once-a-second checks.
 var lldisp: int = 0
@@ -275,6 +284,8 @@ signal onetimer_shot(index: int)
 signal pause_requested(k: int)
 ## PushRef: the referee graphic (6 delayed offside up, $40 clear).
 signal ref_signal(id: int)
+## loc_1871C: the injury message is due.
+signal injury_message
 
 func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	settings = p_settings if p_settings != null else SimSettings.new()
@@ -306,8 +317,13 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	ai = HockeyAI.new(self)
 	goalie = GoalieLogic.new(self)
 	roster = RosterLogic.new(self)
+	rules = GameRules.new(self)
+	faceoff = FaceoffLogic.new(self)
+	lines = LineLogic.new(self)
 	ai.register(asstab)
 	goalie.register(asstab)
+	faceoff.register(asstab)
+	lines.register(asstab)
 	asstab[Shooting.ASS_SHOOT] = func(o: SimObject, d7: int) -> void: shooting.assshoot(o, d7)
 	asstab[Shooting.ASS_PASSREC] = func(o: SimObject, d7: int) -> void: shooting.asspassrec(o, d7)
 	asstab[Shooting.ASS_ONETIMER] = func(o: SimObject, d7: int) -> void: shooting.assonetimer(o, d7)
@@ -330,7 +346,7 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines]:
 		if m:
 			m.w = null
 	collisions = null
@@ -341,6 +357,9 @@ func dispose() -> void:
 	ai = null
 	goalie = null
 	roster = null
+	rules = null
+	faceoff = null
+	lines = null
 	asstab.clear()
 	for c in onetimer_shot.get_connections():
 		onetimer_shot.disconnect(c["callable"])
@@ -390,18 +409,23 @@ func drop_puck(at: Vector2i) -> void:
 
 # --- the loop ------------------------------------------------------------------------
 
-## One DoGameFrame with d7 vblanks elapsed: periodiceevents, updateplayers,
-## setSlotBit, checkwindow.
+## One DoGameFrame with d7 vblanks elapsed: the VBlank clock ticks, then
+## periodiceevents, updateplayers, setSlotBit, checkwindow.
 func step(d7: int = 1) -> void:
-	vcount += d7
+	for i in d7:
+		rules.vblank_tick()
+		vcount += 1
 	periodic_events(d7)
 	update_players(d7)
 	ai.set_slot_bit()
 	checkwindow(d7)
 
-## periodiceevents (L29961). The rules port fills in the penalty manager, crowd,
-## clock and power play; the once-a-second block runs ChkGoalies here.
+## periodiceevents (L29940): the penalty manager, crowd and clock every frame; the
+## once-a-second jobs every 24 vblanks (not on the sideways penalty screen).
 func periodic_events(d7: int) -> void:
+	rules.penalty_manager(d7)
+	rules.updatecrowdf(d7)
+	rules.clockcont()
 	if sflags & SF_HOR:
 		return
 	lldisp -= d7
@@ -409,7 +433,44 @@ func periodic_events(d7: int) -> void:
 		return
 	lldisp += 0x18
 	goalie.chk_goalies()
+	rules.update_cwd_excite()
+	rules.third_period_music()
 	_bench_recovery()
+	_injury_countdown()
+	rules.updatepwrplay()
+
+## loc_79EA: the injury message countdown.
+func _injury_countdown() -> void:
+	inj_countdown -= 1
+	if inj_countdown == 0:
+		injury_message.emit()
+
+## freezewindow: hold the camera where it is.
+func freezewindow() -> void:
+	scroll_lock = camera
+	sflags |= SF_SLOCK
+
+## setupice (L53024) for the simulation: defaultsprites2 resets all 16 objects, then the
+## teams swap ends when gmdir is set. Objects wait off the ice until forcepldata.
+func setupice() -> void:
+	for i in SORT_OBJS:
+		var o := objects[i]
+		var row: Array = DEFAULT_OBJECTS[i]
+		var fresh := SimObject.new(i)
+		fresh.set_pos(Vector2i(row[0], row[1]))
+		fresh.z_fx = row[2] << 16
+		fresh.frame = row[3]
+		fresh.attribute = row[4]
+		fresh.radius = Vector2i(row[6], row[7])
+		fresh.asslist[0] = row[8]
+		fresh.flags = row[9]
+		fresh.position = SimObject.POS_OFF_ICE if i < 12 else 0
+		if i < 12 and gmode & GM_DIR:
+			fresh.flags ^= SimObject.PF_GOAL
+		o.copy_from(fresh)
+	puckc = -1
+	camera = Vector2i.ZERO
+	collisions.sort_all()
 
 ## periodiceevents loc_79F8: with line changes on, every benched slot gains 9 energy a
 ## second, up to $1000.
@@ -636,14 +697,7 @@ func set_energy(o: SimObject, e: int) -> void:
 	if o.index <= 11 and TeamStats.valid_pnum(o.pnum):
 		stats[o.team()].energy[o.pnum] = maxi(e, 0)
 
-## Hooks filled by later ports: the line-change menu (SetLCmode, lineinput), the
-## offside signal check (checkob) and the goalie save (goaliesave).
-func set_lc_mode(_o: SimObject) -> void:
-	pass
-
-func lineinput(_o: SimObject, _d1: int, _k: int) -> void:
-	pass
-
+## The offside signal check (checkob) and the goalie save (goaliesave) hooks.
 func checkob(o: SimObject) -> void:
 	ai.checkob(o)
 
@@ -658,13 +712,14 @@ func goalie_save(o: SimObject) -> void:
 func goalie_pulled(team: int) -> bool:
 	return goalie.goalie_pulled(team)
 
-## SetPersonel (L51236): rebuild a team's on-ice list. Line-change port.
-func set_personel(_team: int) -> void:
-	pass
+## SetPersonel (L51236): which roster players the line wants on.
+func set_personel(team: int) -> void:
+	lines.set_personel(team)
 
-## The CPU line change the tired carrier calls before dumping the puck. Line-change port.
-func cpu_line_change(_team: int) -> void:
-	pass
+## sub_E1F4's line change before the dump-in: CompLine, SetPersonel.
+func cpu_line_change(team: int) -> void:
+	lines.comp_line(team)
+	lines.set_personel(team)
 
 ## sub_12EF6: mean stored energy of the team's objects with position > 0; 0 if none.
 func average_energy(team: int) -> int:
@@ -925,55 +980,42 @@ func hand_control(a2: SimObject) -> void:
 	elif cont_team[0] == team:
 		set_c_player(0, a2)
 
-## setc1player / setc2player: pad k now drives object o. The input port adds the
-## switching details (pflags3 bit 6 B-release guard and the like).
+## setc1player / setc2player with restorep1 (L37335): pad k now drives object o. The
+## old player goes back to the CPU (restarting his assignment unless one-timing), but
+## not while his line menu is open. In a penalty shot or shootout an Auto Goalie team
+## hands the pad its first object instead of the goalie.
 func set_c_player(k: int, o: SimObject) -> void:
-	var old := c_player[k]
-	if old >= 0 and old < 12:
-		objects[old].flags &= ~SimObject.PF_JOYCON
-	c_player[k] = o.index
-	o.flags |= SimObject.PF_JOYCON
+	var d0 := o.index
+	if d0 == c_player[k]:
+		return
+	var d1 := c_player[k]
+	if d1 >= 0 and d1 < 12:
+		var old := objects[d1]
+		if old.flags2 & SimObject.PF2_LCMENU:
+			return
+		old.flags &= ~SimObject.PF_JOYCON
+		if old.flags3 & SimObject.PF3_ONETIMER == 0:
+			old.flags |= SimObject.PF_NA
+	if d0 >= 0 and d0 < 12:
+		if (ba_ps_flags & BA_LIVE or f_c2fa & C2FA_SHOOTOUT) and o.position == SimObject.POS_GOALIE \
+				and auto_goalie[o.team()]:
+			c_player[k] = 6 if o.away() else 0
+			return
+		o.flags |= SimObject.PF_JOYCON
+	c_player[k] = d0
 
-## AddPenalty (L45939): the gated call.
+## AddPenalty / AddPenalty2 / PenShotChk / sub_1284A (GameRules).
 func add_penalty(id: int, offender: SimObject) -> void:
-	if gmode & GM_CLOCK:
-		return
-	if id == 0xC:
-		add_penalty2(id, offender)
-		return
-	if not opt_pen:
-		return
-	if offender.flags2 & SimObject.PF2_UNAV:
-		return
-	if gmode & GM_OFFS == 0 and id == 0x10:
-		return
-	add_penalty2(id, offender)
+	rules.add_penalty(id, offender)
 
-## AddPenalty2 (L45954): the forced call. Crowd reaction and the penalty flags here;
-## the penalty queue and delayed-penalty play come with the rules port.
 func add_penalty2(id: int, offender: SimObject) -> void:
-	if sflags & SF_HOR:
-		return
-	if id >= 0xE and offender.index < 12:
-		crowd_level += 0xC8
-		if offender.away():
-			crowd_excite += 0x14
-			song.emit(0xB)
-		else:
-			song.emit(0xC)
-	if id >= 0x12 and offender.index < 12:
-		delayed_pen |= 4 if offender.away() else 2
-		offender.flags2 |= SimObject.PF2_PEN
-	penalty_called.emit(id, offender.index)
+	rules.add_penalty2(id, offender)
 
-## PenShotChk (L46100): may turn a foul on a breakaway into a penalty shot. Identity
-## until the rules port.
-func pen_shot_chk(id: int, _victim: SimObject) -> int:
-	return id
+func pen_shot_chk(id: int, victim: SimObject) -> int:
+	return rules.pen_shot_chk(id, victim)
 
-## sub_1284A: a power-play goal releases a penalized player. Rules port.
-func pp_goal(_scoring_team: int) -> void:
-	pass
+func pp_goal(scoring_team: int) -> void:
+	rules.pp_goal(scoring_team)
 
 ## sub_F2F4: penalty shot / shootout attempt-over check. Rules port.
 func ps_attempt_check() -> void:

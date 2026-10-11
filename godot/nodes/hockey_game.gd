@@ -4,19 +4,27 @@ extends Node2D
 ## world's stick inputs and keeps one view node per sort object in sync.
 ## Child views find the world through `game.world`.
 
-## Pad port per object index (0 = none). Set by the setup screen or the scene.
+## Sandbox: pad port per object index (0 = none). A match uses `cont_team` instead and
+## the rules hand each pad its player at every faceoff.
 @export var pad_ports: Dictionary = {}
 ## RNG seed. Retail seeds from the VDP counter; a fixed seed makes games replayable.
 @export var seed: int = 0x00500000
+## Views place their objects themselves (sandbox). A match lets the rules do it.
+@export var auto_place: bool = true
+## Whistles, faceoffs, penalties and the clock. The skating sandbox turns them off.
+@export var run_rules: bool = true
 
 var world: HockeyWorld
 var sfx: SfxBank
 var _frame_accum := 0.0
+## While set the simulation does not step (intermissions, the end of the game).
+var hold: bool = false
 
 signal stepped
 
 func _enter_tree() -> void:
 	world = HockeyWorld.new(SimSettings.shared(self), seed)
+	world.rules_active = run_rules
 	sfx = SfxBank.new()
 	sfx.name = "Sfx"
 	add_child(sfx)
@@ -27,6 +35,10 @@ func _exit_tree() -> void:
 		world.dispose()
 
 func _physics_process(delta: float) -> void:
+	if hold:
+		_frame_accum = 0.0
+		stepped.emit()
+		return
 	_frame_accum += Nhl94Units.frames(delta * world.settings.game_speed)
 	while _frame_accum >= 1.0:
 		_frame_accum -= 1.0
@@ -48,4 +60,6 @@ func _read_pads() -> void:
 			continue
 		if world.cont_team[k] == 0:
 			assign_pad(k, i)
-		world.pads[k].held = PadInput.held_bits(port)
+	for k in 2:
+		if world.cont_team[k] != 0:
+			world.pads[k].held = PadInput.held_bits(k + 1)
