@@ -1,0 +1,43 @@
+; Engine configuration file.
+; NHL 94 native Godot 4 rebuild. See ../GODOT_TODO.md.
+
+config_version=5
+
+[application]
+
+config/name="NHL 94 Native"
+config/description="Native Godot 4 rebuild of NHL 94 (Genesis). No emulation."
+config/features=PackedStringArray("4.4", "GL Compatibility")
+
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
+
+[autoload]
+
+Sim="*res://core/sim.gd"
+
+[display]
+
+window/size/viewport_width=320
+window/size/viewport_height=224
+window/size/window_width_override=960
+window/size/window_height_override=672
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/nhl94_debug/plugin.cfg")
+
+[physics]
+
+common/physics_ticks_per_second=60
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

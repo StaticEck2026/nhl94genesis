@@ -24,3 +24,7 @@ Segment builds use `buildseg.bat` and `npm run seg:<name>` once a segment has a 
 `npm run extractassets` runs `extractAssets94.js` against `lst/nhl94.bin`. That is for the graphics and sound data pass, not for the code segments.
 
 The full `npm run build:retail` path is not ready. It still points at `src/hockey94.asm`, which is the queue.
+
+## Godot rebuild
+
+`godot/` is a separate native Godot 4 rebuild that uses the listing as a behavior reference. It does not emulate the Genesis and does not read the ROM. Progress is tracked in `GODOT_TODO.md`.
