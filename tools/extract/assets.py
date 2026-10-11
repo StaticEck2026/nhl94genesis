@@ -23,6 +23,8 @@ Writes:
   rink/side_idx.png             the horizontal penalty-screen view (256x224)
   sprites/faceoff_idx.png       the face-off close-up frames 1-10 (centres, referee)
   sprites/faceoff_window_idx.png  the close-up window (FaceOffMap, 96x80)
+  sprites/ref_idx.png           the referee window frames (PushRef), 56x64 each, in a row
+  sprites/ref_side_idx.png      the same on the penalty screen
   audio/dac/instr_XX.wav        the Z80 driver's PCM samples (8-bit unsigned)
 """
 import json
@@ -334,6 +336,27 @@ def faceoff_closeup(rom):
     return frames, win
 
 
+REFS = 0x5C408           # RefsMap: header, compressed tiles at +8 (ExtraChars), 7x56 map
+REFS_SIDE = 0x5CF64      # the penalty-screen referee: header, compressed tiles, 7x136 map
+
+
+def ref_frames(rom, base):
+    """PushRef: each referee frame is 56 cells, 7 wide and 8 tall. Returns a strip of
+    frames side by side (56x64 px each); index 0 stays transparent (plane A over the rink)."""
+    tiles = BytesRom(decompress(rom, base + 8))
+    m = base + rom.u32(base + 4)
+    w, h = rom.u16(m), rom.u16(m + 2)
+    count = h // 8
+    strip = Canvas(count * w * 8, 64)
+    for f in range(count):
+        for r in range(8):
+            for col in range(w):
+                v = rom.u16(m + 4 + 2 * ((f * 8 + r) * w + col))
+                strip.tile(tiles, 32 * (v & 0x7FF), f * w * 8 + col * 8, r * 8, (v >> 13) & 3,
+                           bool(v & 0x800), bool(v & 0x1000))
+    return strip, count
+
+
 def pack(frames, width=1024):
     """Shelf packing, tallest first, 1 px gutters."""
     order = sorted(frames, key=lambda f: (-f["canvas"].h, -f["canvas"].w))
@@ -486,6 +509,9 @@ def main():
                    "logo_px": [168, 352], "tiles_per_row": 16, "atlas_keys": keys,
                    "tilemap": tcells, "cells": m["cells"]}, f, separators=(",", ":"))
     logos(rom).save(os.path.join(out, "rink/logos_idx.png"))
+    for name, base in (("ref", REFS), ("ref_side", REFS_SIDE)):
+        strip, count = ref_frames(rom, base)
+        strip.save(os.path.join(out, "sprites/%s_idx.png" % name))
     fo_frames, window = faceoff_closeup(rom)
     fo_atlas = pack(fo_frames, 256)
     fo_atlas.save(os.path.join(out, "sprites/faceoff_idx.png"))

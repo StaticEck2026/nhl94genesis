@@ -174,7 +174,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [~] Audio: the 15 DAC samples export to `assets/audio/dac/*.wav`; `SfxBank` plays `sfx_XX` files by retail id when present. The sound effects themselves are FM sequences (`unk_2C648`): which sample and note each id plays is unresolved, so no `sfx_XX` files are generated yet
 - [x] Tile decompressor (`sub_1177A`): all 16 commands decoded (`$Cx/$Dx/$Fx` are back references copied backwards, `$E0 00` ends the stream); every compressed blob decodes to exactly its tile count
 - [x] Face-off close-up (`checkfo`): the close-up frames and the `FaceOffMap` window exported; `FaceoffWindow` draws the centres and the referee from `fofdata`
-- [ ] Referee window graphics (`$5CF64` tiles, `RefsMap`): the HUD shows the referee's calls as text
+- [x] Referee window (`PushRef`, `showref`): `RefsMap` (7 frames on the rink) and the penalty screen's 17 frames exported; `RefWindow` follows `ref_signal`. The calls' text shows in the HUD
 
 ## Phase 10. Editor tooling
 
