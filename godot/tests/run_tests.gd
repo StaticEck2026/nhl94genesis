@@ -106,6 +106,7 @@ func _initialize() -> void:
 		"test_title_screen",
 		"test_markers",
 		"test_pause_menu_actions",
+		"test_edit_lines",
 		"test_crowd_frames",
 		"test_arena_anim_scripts",
 		"test_arena_anim_hooks",
@@ -2394,5 +2395,31 @@ func test_intermission_zamboni() -> bool:
 	w.end_intermission()
 	eq(w.zamx, -1, "gone after the intermission")
 	check(not w.side_view(), "back to the rink")
+	w.dispose()
+	return true
+
+func test_edit_lines() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	w.roster.copy_lines(0)
+	eq(w.lines.line_name(0), "Sc1", "line changes on: RAM line 0 is Sc1")
+	var rl := w.stats[0].ram_lines
+	var c := rl[4]
+	var rw := rl[5]
+	# The right wing moves to centre: the old centre takes the wing.
+	w.lines.edit_line(0, 0, 4, rw - 1)
+	eq(w.stats[0].ram_lines[4], rw, "the new centre")
+	eq(w.stats[0].ram_lines[5], c, "the old centre trades places")
+	# A bench player simply takes the slot.
+	w.lines.edit_line(0, 0, 3, 20)
+	eq(w.stats[0].ram_lines[3], 21, "roster slot 20 on left wing")
+	w.lines.set_personel(0)
+	var outs := []
+	for i in 6:
+		outs.append(w.objects[i].newpnum)
+	check(20 in outs, "SetPersonel sends him out: %s" % [outs])
+	w.opt_line_on = false
+	eq(w.lines.line_name(0), "Off", "line changes off: RAM line 0 is the Off line")
+	eq(w.lines.line_name(1), "Sc2", "then Sc2")
 	w.dispose()
 	return true

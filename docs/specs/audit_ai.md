@@ -150,9 +150,9 @@ These port additions differ from retail only when changed from their defaults: `
 
 ## 4. Port comments flagged by the grep
 
-- rink_boards.gd:9 "checkgoal ... is not ported yet": stale. `checkgoal` is ported (puck_logic.gd:562, called at hockey_world.gd:886).
-- skater_steering.gd:7 "goalieacc ... not ported yet": stale. It is ported at goalie_logic.gd:434.
-- checking.gd:354 `sub_FE510(7)` background animation "not ported": emitted as a signal; cosmetic (collisions_checking.md U4).
+- rink_boards.gd:9 "checkgoal ... is not ported yet": stale. `checkgoal` is ported (puck_logic.gd:562, called at hockey_world.gd:886). Fixed.
+- skater_steering.gd:7 "goalieacc ... not ported yet": stale. It is ported at goalie_logic.gd:434. Fixed.
+- checking.gd:354 `sub_FE510(7)` background animation: now started through `background_anim` → `ArenaAnim.start` (arena_animations.md).
 - checking.gd:402, puck_logic.gd:109 and puck_logic.gd:224 refer to spec U3 / U1 / U3: deliberate, documented choices.
 - puck_logic.gd:512: the save-rating tables are dropped because retail computes and discards them. Matches retail.
 - checking.gd:60-66 and hockey_world.gd:96: H/V counter stand-ins (M11).
@@ -178,4 +178,29 @@ These port additions differ from retail only when changed from their defaults: `
   - data_attributes U1: energy-drain rate from VDP timing.
   - The meaning of `bosgames == 7` (G5).
   - Retail default values of the menu options: the `defmenuoptions` labels at L54847-54856 may be offset and were not checked against the menu text.
-- **Spec correction:** faceoffs_offsides.md section 5, step 18 (`sub_FF7E2` does not change `sflags2`; see M8).
+- **Spec correction:** faceoffs_offsides.md section 5, step 18 (`sub_FF7E2` does not change `sflags2`; see M8). The port now follows the listing.
+
+## 6. Port status (this round)
+
+| Item | Status | Where |
+|---|---|---|
+| G1 updateplayers preamble | done | `HockeyWorld._preamble` |
+| G2 Timeout | done | pause menu (ui/pause_menu.gd), `HockeyWorld.timeout`, `TeamStats.F30_TIMEOUT`; the row is gone once used and in a shootout (unk_1988C / unk_19664) |
+| G3 Change Goalie | done | pause menu, `GoalieLogic.change_goalie` / `goalie_row` (row 0 pulls him for good, a CPU pull ignores it) |
+| G4 crowd meter and record | done | `GameRules.crowd_noise`, `print_scores1`, `HockeyWorld.crowd_record` |
+| G5 assstanley | not applicable | no playoff mode in the port; `gamelevel` never reaches 3 |
+| G6a Auto line changes | done | setup screen "Line changes: Auto" → `MatchConfig.auto_lines` → `HockeyWorld.no_fatigue` |
+| G6b Goalie control | done | setup screen "Goalie: Manual/Auto Control" → `auto_goalie`; pause toggle `HockeyWorld.toggle_goalie_control` (the pausing pad's word, both when the pads share a team) |
+| G6c Edit Lines | done (port layout) | pause menu → `LineLogic.edit_line`: line, slot, roster player; a player already on the line trades places. Retail's screen layout was not decoded. |
+| G7 multitap | not applicable | two pads only |
+| G8 replay, demo | not applicable | no replay buffer or attract mode; CPU against CPU is playable from the setup screen |
+| M1 assbench stay-on path | done | `LineLogic._nobench2` (no setplayer) |
+| M2 injured slide | done | `_integrate` skips SPA `$145C` / `$1AF4` |
+| M3 passdir | done | written before the lane check |
+| M4 PAL one-timer divisor | done | `0x16 if alt_step else 17` |
+| M5 checkob PushRef | done | only while `refcnt < 0` |
+| M6 puckshadow horizontal | done | +1 to X |
+| M7 slot halving | done | a carrier number of 5 or less (none included) counts as home |
+| M8 sub_FF7E2 | done | `FaceoffLogic._pp_song`: picks the power-play tune and sets `byte_FFC2FE` bit 6, leaves PWRPLAY/PWRTM to updatepwrplay; the mid-period and power-play tunes play at the end of the setup (L42316-42328) |
+| M9 sub_C656 | done | `HockeyWorld.marks` (the puck-carrier and pad nibbles) |
+| M10, M11 | accepted | as described above |

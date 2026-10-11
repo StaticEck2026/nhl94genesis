@@ -6,7 +6,7 @@ extends RefCounted
 ##
 ## Retail keeps no position correction for boards. It reflects velocity and stores the
 ## normal (wallcos/wallsin), and playeracc then refuses to accelerate into it.
-## Net and goal-mouth collision (checkgoal L49633) is not ported yet.
+## Net and goal-mouth collision (checkgoal L49633) is PuckLogic.checkgoal.
 
 ## Sideline X ($88).
 const SIDELINE := 136

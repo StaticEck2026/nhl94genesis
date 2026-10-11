@@ -506,7 +506,8 @@ func assnearest(o: SimObject, d7: int) -> void:
 		return
 	# Re-evaluation on the reaction timer.
 	if _timer(o, d7, o.aioff, true):
-		if w.f_c2f8 & HockeyWorld.C2F8_SLOT and _other_team_carrier(o):
+		# L40642: a carrier number of 5 or less (no carrier, -1, included) counts as home.
+		if w.f_c2f8 & HockeyWorld.C2F8_SLOT and (w.puckc > 5) != o.away():
 			var t := _hi(o.temp[0]) >> 1
 			if t == 0:
 				t = 1
@@ -961,6 +962,9 @@ func chk4pass(o: SimObject) -> bool:
 	var dx := r.x() - p.x()
 	var dy := r.y() - p.y()
 	var dir := SkaterSteering.vtoa(Vector2i(dx, dy))
+	# L40403: passdir is written before the lane check, so a pass turned down still
+	# leaves it pointing at the receiver.
+	w.passdir = dir
 	var rd2 := (dx * dx + dy * dy) & 0xFFFFFFFF
 	var first := _opponents(o)
 	for i in 6:
@@ -971,7 +975,6 @@ func chk4pass(o: SimObject) -> bool:
 			continue
 		if SkaterSteering.vtoa(Vector2i(ox, oy)) == dir:
 			return false
-	w.passdir = dir
 	w.shooting.dopass(o)
 	if o.position == SimObject.POS_GOALIE:
 		return false
@@ -992,10 +995,13 @@ func checkob(o: SimObject) -> void:
 			if a.position >= 0 and past_line.call(a.y()):
 				set_it = true
 				break
+	# PushRef only while no referee script runs (RefCnt < 0, L40536).
 	if set_it:
 		if w.sflags2 & HockeyWorld.SF2_OFFSIG == 0:
 			w.sflags2 |= HockeyWorld.SF2_OFFSIG
-			w.ref_signal.emit(6)
+			if w.rules.refcnt < 0:
+				w.ref_signal.emit(6)
 	elif w.sflags2 & HockeyWorld.SF2_OFFSIG:
 		w.sflags2 &= ~HockeyWorld.SF2_OFFSIG
-		w.ref_signal.emit(0x40)
+		if w.rules.refcnt < 0:
+			w.ref_signal.emit(0x40)

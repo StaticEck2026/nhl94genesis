@@ -34,6 +34,8 @@ var fodrop: Vector2i = Vector2i(0x36, 0x5C)
 ## word_FFD6BE: the background animation (ArenaAnim) picked for this faceoff, -1 none;
 ## overlay_shown is word_FFD6B4 (ArenaAnim.id) as the drop time reads it.
 var overlay_request: int = -1
+## SongNum: the organ tune ChooseSong picked last (the port plays it by SongIndex).
+var song_num: int = -1
 var overlay_shown: int = -1
 
 ## The line-up is done and the drop countdown runs.
@@ -108,8 +110,9 @@ func _first_call(p: SimObject) -> bool:
 			and w.sflags3 & HockeyWorld.SF3_MUSIC_CUE:
 		w.sflags3 &= ~HockeyWorld.SF3_MUSIC_CUE
 		if w.gmode & HockeyWorld.GM_CLOCK and w.f_c2fe & (1 << 6) == 0:
+			# ChooseSong(2); the tune plays at the end of puckfaceoff2's setup.
 			w.f_c2fe |= 1 << 4
-			w.song.emit(2)
+			song_num = 2
 	w.goalie.return_goalies()
 	p.temp[0] = -0x100
 	p.temp[1] = -0x100
@@ -247,15 +250,31 @@ func _setup(p: SimObject) -> void:
 		fof_attr[1] ^= 0x800
 	w.fodir[0] = -1
 	w.fodir[1] = -1
-	# sub_FF7E2: the power-play flags from the two strengths.
-	var d := w.stats[0].on_ice - w.stats[1].on_ice
-	if d != 0:
-		w.sflags2 |= HockeyWorld.SF2_PWRPLAY
-		if d < 0:
-			w.sflags2 |= HockeyWorld.SF2_PWRTM
-		else:
-			w.sflags2 &= ~HockeyWorld.SF2_PWRTM
+	_pp_song()
+	# L42316-42328: a tune picked by the mid-period cue or the power play plays now.
+	var picked := w.f_c2fe & ((1 << 6) | (1 << 4)) != 0
+	w.f_c2fe &= ~((1 << 6) | (1 << 4))
+	if picked:
+		w.song.emit(song_num)
 	faceoff_set.emit()
+
+## sub_FF7E2 (L976500): a power play that sflags2 does not show yet picks the power-play
+## tune (SongIndex 1 home, 4 away) and sets byte_FFC2FE bit 6. It saves and restores
+## sflags2, so PWRPLAY and PWRTM are left for updatepwrplay (which counts the chance).
+func _pp_song() -> void:
+	if w.f_c2fa & (1 << 1):
+		return
+	var d := w.stats[0].on_ice - w.stats[1].on_ice
+	if d == 0:
+		return
+	var pp := w.sflags2 & HockeyWorld.SF2_PWRPLAY != 0
+	var tm_away := w.sflags2 & HockeyWorld.SF2_PWRTM != 0
+	if (d < 0) != tm_away:
+		pp = false
+	if pp:
+		return
+	song_num = 1 if d > 0 else 4
+	w.f_c2fe |= 1 << 6
 
 ## The line-up loop over objects 0-11.
 func _line_up() -> void:

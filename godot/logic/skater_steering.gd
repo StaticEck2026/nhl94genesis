@@ -4,7 +4,7 @@ extends RefCounted
 ## facedir ($54), pfrev ($62 bit 4), pf2aip ($63 bit 1), SPA ($58) and the sprite x flip.
 ##
 ## Port of doplayeracc (L43331), noturn0 / noturn (L43644-43704), vtoa (L43222) and the
-## animation choice in dostop (L43876). Goalies go to goalieacc (L43477), not ported yet.
+## animation choice in dostop (L43876). Goalies go to goalieacc (L43477, GoalieLogic).
 ##
 ## Facing is the retail facedir long ($54): 16.16 fixed point over 8 directions, so
 ## 1 << 16 is 45 degrees. A skater turns facing toward the stick a little each loop and

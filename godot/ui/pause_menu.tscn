@@ -11,6 +11,12 @@ unique_name_in_owner = true
 offset_right = 100.0
 offset_bottom = 52.0
 
-[node name="Rows" type="VBoxContainer" parent="Panel"]
+[node name="Scroll" type="ScrollContainer" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="Rows" type="VBoxContainer" parent="Panel/Scroll"]
 unique_name_in_owner = true
 layout_mode = 2

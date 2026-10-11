@@ -81,6 +81,27 @@ func _line(team: int, line: int) -> PackedInt32Array:
 		return PackedInt32Array([0, 0, 0, 0, 0, 0, 0, 0])
 	return rl.slice(line * 8, line * 8 + 8)
 
+## The name of RAM line k: line changes on, data lines 1-7; off, data line 0, then 2-7.
+func line_name(k: int) -> String:
+	var d := 0 if not w.opt_line_on and k == 0 else k + 1
+	return TeamData.LINE_NAMES[clampi(d, 0, TeamData.LINE_NAMES.size() - 1)]
+
+## The pause menu's Edit Lines: roster slot `pnum` (0-based) takes `slot` (0 G .. 6 X) of
+## RAM line `line`; a player already elsewhere on that line trades places with him. The
+## change shows at the next SetPersonel (line change or faceoff).
+func edit_line(team: int, line: int, slot: int, pnum: int) -> void:
+	var rl := w.stats[team].ram_lines
+	var base := line * 8
+	if base + 7 > rl.size() or slot < 0 or slot > 6:
+		return
+	var v := pnum + 1
+	var old := rl[base + slot]
+	for i in 7:
+		if i != slot and rl[base + i] == v:
+			rl[base + i] = old
+	rl[base + slot] = v
+	w.stats[team].ram_lines = rl
+
 func _status(team: int, v: int) -> int:
 	# v is one-based; 0 reads the word before the status table (the last energy word).
 	if v == 0:
@@ -336,8 +357,9 @@ func assbench(o: SimObject, d7: int) -> void:
 		o.temp[2] = -0x88 - 8
 		o.temp[0] = 0
 	if (o.newpnum & 0xFF) == (o.pnum & 0xFF):
+		# _nobench: he stays on; no setplayer, so his ratings are not reloaded.
 		o.flags2 &= ~SimObject.PF2_UNAV
-		_bench_place(o)
+		_nobench2(o)
 		return
 	o.temp[0] = HockeyWorld.s16(o.temp[0] - d7)
 	if o.temp[0] < 0:
@@ -373,14 +395,18 @@ func _bench_done(o: SimObject) -> void:
 		w.stats[o.team()].tmpdst[o.pnum] = TeamStats.TMPDST_BENCH
 	_bench_place(o)
 
-## _nobench2: position from newpos, Setplass, then setplayer for the incoming slot.
+## _done: _nobench2, then setplayer for the incoming slot.
 func _bench_place(o: SimObject) -> void:
 	var d3 := o.newpnum & 0xFF
+	_nobench2(o)
+	w.setplayer(o, d3)
+
+## _nobench2: position from newpos, Setplass, newpnum and newpos cleared.
+func _nobench2(o: SimObject) -> void:
 	o.position = o.newpos if o.newpos >= 0 else SimObject.POS_OFF_ICE
 	w.setplass(o)
 	o.newpnum = -1
 	o.newpos = -1
-	w.setplayer(o, d3)
 
 ## assben ($09, L37993): hop over the boards from the bench.
 func assben(o: SimObject, _d7: int) -> void:
