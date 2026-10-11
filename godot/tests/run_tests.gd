@@ -31,7 +31,9 @@ func _initialize() -> void:
 		"test_board_normals",
 		"test_bounce_skater",
 		"test_bounce_puck",
-		"test_skater_node_in_rink",
+		"test_world_skater_in_rink",
+		"test_rng",
+		"test_z_bounce",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -203,104 +205,112 @@ func test_vtoa() -> bool:
 func steering() -> SkaterSteering:
 	return SkaterSteering.new(SimSettings.new())
 
-func ctx_at(vel: Vector2i, y: int = 0, to_puck: Vector2i = Vector2i.ZERO) -> SkaterSteering.Context:
+## A skater object at y with velocity vel, attacking the top goal.
+func skater_at(vel: Vector2i, y: int = 0) -> SimObject:
+	var o := SimObject.new(4)
+	o.position = SimObject.POS_C
+	o.vel = vel
+	o.set_pos(Vector2i(0, y))
+	o.set_flag(SimObject.PF_GOAL, true)
+	return o
+
+func ctx_with(to_puck: Vector2i = Vector2i.ZERO, has_puck: bool = false) -> SkaterSteering.Context:
 	var c := SkaterSteering.Context.new()
-	c.vel = vel
-	c.y = y
 	c.to_puck = to_puck
+	c.has_puck = has_puck
 	return c
 
 func test_steer_turn_in_place() -> bool:
-	var st := SkaterSteering.State.new()
-	var r := steering().steer(st, 2, ctx_at(Vector2i.ZERO))
-	eq(st.facing_fx, 0x300 * 16, "standing turn rate $300 * 16")
+	var o := skater_at(Vector2i.ZERO)
+	var r := steering().steer(o, 2, ctx_with())
+	eq(o.facing_fx, 0x300 * 16, "standing turn rate $300 * 16")
 	eq(r.action, SkaterSteering.Action.NONE, "turning in place does not push")
-	eq(st.anim, SkaterSteering.Anim.GLIDE, "slow turn keeps glide")
-	st = SkaterSteering.State.new()
-	steering().steer(st, 6, ctx_at(Vector2i.ZERO))
-	eq(st.facing_fx, SkaterSteering.FACING_WRAP - 0x3000, "left turn wraps below 0")
+	eq(o.spa, Spa.GLIDE, "slow turn keeps glide")
+	o = skater_at(Vector2i.ZERO)
+	steering().steer(o, 6, ctx_with())
+	eq(o.facing_fx, SkaterSteering.FACING_WRAP - 0x3000, "left turn wraps below 0")
 	return true
 
 func test_steer_aligned() -> bool:
-	var st := SkaterSteering.State.new()
-	var r := steering().steer(st, 0, ctx_at(Vector2i.ZERO))
+	var o := skater_at(Vector2i.ZERO)
+	var r := steering().steer(o, 0, ctx_with())
 	eq(r.action, SkaterSteering.Action.ACCEL, "aligned pushes")
 	eq(r.accel_dir, 0, "along facing")
-	eq(st.anim, SkaterSteering.Anim.SKATE, "skate anim")
-	var c := ctx_at(Vector2i.ZERO)
-	c.has_puck = true
-	steering().steer(st, 0, c)
-	eq(st.anim, SkaterSteering.Anim.SKATE_PUCK, "skate with puck anim")
+	eq(o.spa, Spa.SKATE, "skate anim")
+	steering().steer(o, 0, ctx_with(Vector2i.ZERO, true))
+	eq(o.spa, Spa.SKATE_PUCK, "skate with puck anim")
+	o = skater_at(Vector2i.ZERO)
+	o.flags2 |= SimObject.PF2_PEN
+	steering().steer(o, 0, ctx_with())
+	eq(o.spa, Spa.SKATE_INJURED, "hurt in a fight")
 	return true
 
 func test_steer_fast_turn() -> bool:
-	var st := SkaterSteering.State.new()
-	var r := steering().steer(st, 1, ctx_at(Vector2i(0, 9000)))
-	eq(st.facing_fx, 0x180 * 16, "fast turn floors at $180")
-	eq(st.anim, SkaterSteering.Anim.TURN_RIGHT, "turn right anim")
-	check(st.anim_busy, "turn anim is one-shot")
+	var o := skater_at(Vector2i(0, 9000))
+	var r := steering().steer(o, 1, ctx_with())
+	eq(o.facing_fx, 0x180 * 16, "fast turn floors at $180")
+	eq(o.spa, Spa.TURN_RIGHT, "turn right anim")
+	check(o.anim_busy(), "turn anim is one-shot")
 	eq(r.accel_dir, 0, "still pushing along old facing")
-	st = SkaterSteering.State.new()
-	st.x_flip = true
-	steering().steer(st, 1, ctx_at(Vector2i(0, 9000)))
-	eq(st.anim, SkaterSteering.Anim.TURN_LEFT, "mirrored sprite swaps the turn anim")
+	o = skater_at(Vector2i(0, 9000))
+	o.attribute |= 0x8
+	steering().steer(o, 1, ctx_with())
+	eq(o.spa, Spa.TURN_LEFT, "mirrored sprite swaps the turn anim")
 	return true
 
 func test_steer_hockey_stop() -> bool:
-	var st := SkaterSteering.State.new()
-	var r := steering().steer(st, 4, ctx_at(Vector2i(0, 5000)))
+	var o := skater_at(Vector2i(0, 5000))
+	var r := steering().steer(o, 4, ctx_with())
 	check(r.stopping(), "stick opposite while moving forward stops")
-	eq(st.anim, SkaterSteering.Anim.STOP, "stop anim above $1000")
-	st = SkaterSteering.State.new()
-	steering().steer(st, 4, ctx_at(Vector2i(0, 0x800)))
-	eq(st.anim, SkaterSteering.Anim.GLIDE, "slow stop keeps glide")
-	st = SkaterSteering.State.new()
-	r = steering().steer(st, SkaterSteering.JOY_BRAKE, ctx_at(Vector2i(100, 0)))
+	eq(o.spa, Spa.STOP, "stop anim above $1000")
+	o = skater_at(Vector2i(0, 0x800))
+	steering().steer(o, 4, ctx_with())
+	eq(o.spa, Spa.GLIDE, "slow stop keeps glide")
+	o = skater_at(Vector2i(100, 0))
+	r = steering().steer(o, SkaterSteering.JOY_BRAKE, ctx_with())
 	check(r.stopping(), "joy 9 stops a moving skater")
 	return true
 
 func test_steer_snap() -> bool:
-	var st := SkaterSteering.State.new()
-	var r := steering().steer(st, 4, ctx_at(Vector2i.ZERO))
-	eq(st.facing_fx, 1 << 16, "stick opposite while still snaps 45 degrees")
+	var o := skater_at(Vector2i.ZERO)
+	var r := steering().steer(o, 4, ctx_with())
+	eq(o.facing_fx, 1 << 16, "stick opposite while still snaps 45 degrees")
 	eq(r.action, SkaterSteering.Action.NONE, "snap does not push")
-	st = SkaterSteering.State.new()
-	st.x_flip = true
-	steering().steer(st, 4, ctx_at(Vector2i.ZERO))
-	eq(st.facing_fx, 7 << 16, "mirrored snap goes the other way")
+	o = skater_at(Vector2i.ZERO)
+	o.attribute |= 0x8
+	steering().steer(o, 4, ctx_with())
+	eq(o.facing_fx, 7 << 16, "mirrored snap goes the other way")
 	return true
 
 func test_steer_reverse() -> bool:
-	var st := SkaterSteering.State.new()
-	var r := steering().steer(st, 4, ctx_at(Vector2i.ZERO, -100, Vector2i(0, 200)))
-	check(st.reverse, "own half, stick back, puck ahead: skate backwards")
+	var o := skater_at(Vector2i.ZERO, -100)
+	var r := steering().steer(o, 4, ctx_with(Vector2i(0, 200)))
+	check(o.reverse(), "own half, stick back, puck ahead: skate backwards")
 	eq(r.accel_dir, 4, "push backwards")
-	eq(st.anim, SkaterSteering.Anim.SKATE_BACK, "skate back anim")
-	r = steering().steer(st, 3, ctx_at(Vector2i(0, -2000), -100, Vector2i(0, 200)))
-	check(st.reverse, "stays backwards within 45 degrees of straight back")
-	steering().steer(st, 0, ctx_at(Vector2i(0, -2000), -100, Vector2i(0, 200)))
-	check(not st.reverse, "stick forward ends backwards skating")
-	st = SkaterSteering.State.new()
-	steering().steer(st, 4, ctx_at(Vector2i.ZERO, 100, Vector2i(0, 200)))
-	check(not st.reverse, "not in the attacking half")
-	st = SkaterSteering.State.new()
-	var c := ctx_at(Vector2i.ZERO, -100, Vector2i(0, 200))
-	c.has_puck = true
-	steering().steer(st, 4, c)
-	check(not st.reverse, "not with the puck")
-	st = SkaterSteering.State.new()
-	c = ctx_at(Vector2i.ZERO, 100, Vector2i(0, -200))
-	c.attacking_top = false
-	steering().steer(st, 0, c)
-	check(st.reverse, "mirrored for the team attacking down")
+	eq(o.spa, Spa.SKATE_BACK, "skate back anim")
+	o.vel = Vector2i(0, -2000)
+	steering().steer(o, 3, ctx_with(Vector2i(0, 200)))
+	check(o.reverse(), "stays backwards within 45 degrees of straight back")
+	steering().steer(o, 0, ctx_with(Vector2i(0, 200)))
+	check(not o.reverse(), "stick forward ends backwards skating")
+	o = skater_at(Vector2i.ZERO, 100)
+	steering().steer(o, 4, ctx_with(Vector2i(0, 200)))
+	check(not o.reverse(), "not in the attacking half")
+	o = skater_at(Vector2i.ZERO, -100)
+	steering().steer(o, 4, ctx_with(Vector2i(0, 200), true))
+	check(not o.reverse(), "not with the puck")
+	o = skater_at(Vector2i.ZERO, 100)
+	o.set_flag(SimObject.PF_GOAL, false)
+	steering().steer(o, 0, ctx_with(Vector2i(0, -200)))
+	check(o.reverse(), "mirrored for the team attacking down")
 	return true
 
 func test_steer_no_momentum() -> bool:
 	var s := SimSettings.new()
 	s.enable_momentum = false
-	var st := SkaterSteering.State.new()
-	var r := SkaterSteering.new(s).steer(st, 3, ctx_at(Vector2i(0, 9000)))
-	eq(st.facing(), 3, "facing snaps to the stick")
+	var o := skater_at(Vector2i(0, 9000))
+	var r := SkaterSteering.new(s).steer(o, 3, ctx_with())
+	eq(o.facing(), 3, "facing snaps to the stick")
 	eq(r.accel_dir, 3, "push along the stick")
 	return true
 
@@ -336,34 +346,66 @@ func test_bounce_puck() -> bool:
 	eq(RinkBoards.bounce_puck(Vector2i(6400, 4000), top).vel, Vector2i(6250, -1000), "tangent loses 3/128")
 	check(RinkBoards.bounce_puck(Vector2i(0, 8000), top).puck_pop, "hard hit pops the puck")
 	eq(RinkBoards.bounce_puck(Vector2i(0, -100), top).vel, Vector2i(0, -100), "moving away: no bounce")
-
-## Whole skater: push up the ice from rest, reach top speed, hit the end boards, stay in.
 	return true
-func test_skater_node_in_rink() -> bool:
-	var sk: Skater2D = load("res://nodes/skater.gd").new()
-	sk.position = Vector2(0, 100)
-	root.add_child(sk)
-	sk.ai_joy = 0
+
+## Whole world: a skater pushes up the ice from rest, reaches top speed, hits the end
+## boards and stays in; then skates back down.
+func test_world_skater_in_rink() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var o := w.place(4, Vector2i(0, -100), SimObject.POS_C, false, true)
+	o.weight = 6
+	o.legstr = 15
+	o.legspd = 15
+	w.joy[4] = 0
 	var top_speed := 0.0
 	var min_y := 0
 	var max_y := -1000
 	for i in 600:
-		sk.retail_loop()
-		top_speed = maxf(top_speed, Vector2(sk.vel).length())
-		max_y = maxi(max_y, sk.retail_pos().y)
-	# Default sandbox skater: speed 15, so index 7 with a half step to 8 (odd speed).
+		w.step()
+		top_speed = maxf(top_speed, Vector2(o.vel).length())
+		max_y = maxi(max_y, o.y())
+	# Speed 15: index 7 with a half step to 8 (odd speed).
 	var m := SkaterMotion.new()
 	var cap := sqrt(float(m.max_speed_sq_entry(7) + ((m.max_speed_sq_entry(8) - m.max_speed_sq_entry(7)) >> 1)))
 	check(top_speed <= cap + 1.0, "speed caps at MaxSpeed 7.5: %f > %f" % [top_speed, cap])
 	check(top_speed >= cap * 0.95, "reaches top speed: %f of %f" % [top_speed, cap])
 	check(max_y >= RinkBoards.END_BOARD - 8, "reaches the top boards: %d" % max_y)
 	check(max_y <= RinkBoards.END_BOARD, "never past the end boards: %d" % max_y)
-	check(sk.wall_normal != Vector2i.ZERO or sk.vel.y <= 0, "pinned against or bouncing off the top board")
-	sk.ai_joy = 4
+	w.joy[4] = 4
 	for i in 600:
-		sk.retail_loop()
-		min_y = mini(min_y, sk.retail_pos().y)
+		w.step()
+		min_y = mini(min_y, o.y())
 	check(min_y <= -(RinkBoards.END_BOARD - 8), "reaches the bottom boards: %d" % min_y)
 	check(min_y >= -RinkBoards.END_BOARD, "never past the bottom boards: %d" % min_y)
-	sk.queue_free()
+	check(w.objects[0].pos() == Vector2i(384, 192), "off-ice objects stay put")
+	return true
+
+func test_rng() -> bool:
+	var r := RetailRng.new(0)
+	eq(r.range_(0x10000), 0, "seed 0 -> 1, bits 8-23 are 0")
+	eq(r.seed, 1, "LCG +1")
+	r.range_(100)
+	eq(r.seed, (0xBB40E62D + 1) & 0xFFFFFFFF, "seed * $BB40E62D + 1")
+	var lo := 1000
+	var hi := -1000
+	for i in 2000:
+		var v := r.signed(50)
+		lo = mini(lo, v)
+		hi = maxi(hi, v)
+	check(lo >= -50 and hi < 50, "randomd0s range [-50, 50): %d..%d" % [lo, hi])
+	return true
+
+func test_z_bounce() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var p := w.puck()
+	p.zvel = 0x400
+	var peak := 0
+	var landed := [false]
+	w.landed.connect(func(_i: int, _zv: int) -> void: landed[0] = true)
+	for i in 120:
+		w.step()
+		peak = maxi(peak, p.z())
+	check(landed[0], "puck came down")
+	check(peak > 0, "puck rose: %d" % peak)
+	check(p.z() >= 0, "never under the ice")
 	return true

@@ -47,7 +47,9 @@ These come from the listing. Add a fact here before code depends on it.
 | Stop, no anim | `vel -= 150` (`$96`) toward 0 per call | `stop_decel` | `stopna` L43908 |
 | Stop with anim | stop anim when `|vel| > $1000` on either axis, glide anim when skating backwards | FSM `STOPPING` | `dostop` L43876 |
 | Puck stick bungee | puck moves 1/4 of the gap to the carrier hot spot per loop, copies carrier velocity | `PuckPhysics.follow_carrier()` | `pucknorm` L42526 |
-| Z gravity | `Zvel -= 6 * 17 * d7`, `Zpos += Zvel * 17 * d7 / 4` | `gravity` property | `updateplayers` L35531-35545 |
+| Z gravity | only while the Z word or Zvel is non-zero: `Zvel -= 102 * d7` (6 x step), `Zpos += Zvel * 17 * d7`. Landing: `Zpos = 0`, `Zvel = -Zvel / 2`, puck-on-ice sound `$2C + (5 - Zvel low byte)` when 0-3. Drag is skipped while the Z word is non-zero. | `HockeyWorld._integrate()` | `updateplayers` L35517-35555 |
+| RNG | `seed = seed * $BB40E62D + 1`; `randomd0(n) = ((seed >> 8) & $FFFF) * n >> 16`; `randomd0s(n) = randomd0(2n) - n`. Seeded from the VDP counter. | `RetailRng` | `randomd0` L44190 |
+| Struct | 16 sort objects of 128 bytes; field names and flag bits from the 93 equates in `src/ram94.asm` | `SimObject` | `ram94.asm` |
 
 ## Open questions
 
@@ -169,3 +171,4 @@ These come from the listing. Add a fact here before code depends on it.
 
 - 2026-10-11: Tracker written. Godot scaffold, data resources, `SkaterMotion`, `PuckPhysics` carrier follow, debug dock. 55 headless checks pass on Godot 4.4.1, including all 16 `MaxSpeed` entries against the ROM table.
 - 2026-10-11: Phase 2 turning. `$34` resolved (0 = goalie), which moves the extra agility and carrier cuts to goalies only. `SkaterSteering` (facing, turning, hockey stop, backwards skating), `RinkBoards` (boards, corners, bounce), rink constants, input map, skater scene and sandbox. 130 checks pass. Sandbox checked in screenshots under Xvfb.
+- 2026-10-11: World refactor. `HockeyWorld` owns the 16 retail objects and globals and steps `updateplayers`; `SimObject` mirrors the struct; nodes are views (`HockeyGame`, `Skater2D`). Retail RNG ported. Z gravity fact corrected. Research specs for every remaining subsystem are being written to `docs/specs/`.
