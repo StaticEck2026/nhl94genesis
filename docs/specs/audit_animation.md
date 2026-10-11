@@ -212,8 +212,8 @@ Deviations:
 | Item | Retail | Port | Status |
 |---|---|---|---|
 | Flips | per piece `x = -8w - p.x`, `y = -8h - p.y`, flags = piece ^ attribute (bits 15-11), frame-word flag bits XOR into the attribute | whole frame mirrored about the origin (px → -px-1), `attr ^ (f & $F800)` (sprite_atlas.gd:56-68) | ✓ equivalent |
-| Away palette | attribute b0 and piece line 2/3 → line 3 | shader line 2 → 3 when `away` (shaders/palette.gdshader) | ✓ (source of `away` in G17) |
-| Priority b15 | sprite drawn over priority plane cells | ignored; RinkFront always on top | **G3** |
+| Away palette | attribute b0 and piece line 2/3 → line 3 | shader line 2 → 3 when attribute b0 is set, read every sync (skater.gd) | ✓ (G17 fixed) |
+| Priority b15 | sprite drawn over priority plane cells | `SortObjectView.z_for` puts it above `Rink2D.Z_PRIORITY` | ✓ (G3 fixed) |
 | Height | `dy += z + (z asr 1)`, z = Zpos high word | `lift = z + z>>1`, z ≥ 0 (sort_object_view.gd:42) | ✓ |
 | Horizontal mode | `(dx,dy) = (-y, x-$C5)`, no scroll | `project_ground` + camera at 0 (rink_camera.gd:45) | ✓ |
 | Shadow | separate object `$18A` at puck (x, y+1), Z 0 | SortObjectView 15 | ✓ (G13 in horizontal mode) |
@@ -222,7 +222,7 @@ Deviations:
 | Hidden: frame | `addframe2` skips frame ≤ 0 (signed) and ≥ 847 | `frame != 0`. A missing atlas key draws nothing | ✓ in effect |
 | Off-screen | find3d drops an origin more than $90 px from centre (sprite can be cut at the edges) | viewport culling only, 320-px wide view | design difference, low |
 | VDP limits | 80 sprites, 20 per line; SetSframe/crowd capped at link 64 | none | not emulated, low |
-| Draw layers (setvideo L51875) | checkfo, checksso, sort objects, ffo pads, zamboni, background anims, crowd/box | faceoff window (UI), sort objects, gloves | missing layers G1, G2, G5-G8 |
+| Draw layers (setvideo L51875) | checkfo, checksso, sort objects, ffo pads, zamboni, background anims, crowd/box | faceoff window (UI), IndicatorsView arrows, sort objects, IndicatorsView stars, gloves, ArenaView (zamboni, background animation, box, flash, crowd) | ✓ |
 
 ## 6. Per-frame animation outside updateanim
 
@@ -231,23 +231,43 @@ Deviations:
 | Skate / glide / back / puck / injured / turn / stop | doplayeracc L43331, noturn0 L43644, dostop L43876 | skater_steering.gd ✓ | Skater2D ✓ |
 | Goalie stance, skate, saves, dive, goal-against | goalieacc L43477, assgoaliecpu, goaliesave | goalie_logic.gd ✓ | ✓ |
 | Celebrations | assscore, assstanley | ✓, cup branch missing (G9) | ✓ |
-| Falls, board pins, injuries | FallDown, updateplayers L35375-35452, sub_FEB54 | checking.gd ✓ (`pin_to_boards` :449). Injured slide (G4) | ✓ |
+| Falls, board pins, injuries | FallDown, updateplayers L35375-35452, sub_FEB54 | checking.gd ✓ (`pin_to_boards` :449). Injured slide fixed (G4) | ✓ |
 | Checks, holds, sweep, hit by puck | CCStart, holdcheck, Acheck, Sweepcheck, puckbody | ✓ | ✓ |
-| Faceoff stance and close-up | assfaceoffpl, faceoffinput, checkfo, updatefaceoff | ✓ | FaceoffWindow ✓ (G15) |
-| Bench / box hops, box sitting | assben/assbench/asspenalty/assepen; box drawn by showcrowd | hops ✓ | box occupants missing (G6) |
+| Faceoff stance and close-up | assfaceoffpl, faceoffinput, checkfo, updatefaceoff | ✓ | FaceoffWindow ✓ (G15: exact) |
+| Bench / box hops, box sitting | assben/assbench/asspenalty/assepen; box drawn by showcrowd | hops ✓ | ArenaView box figures ✓ (G6) |
 | Puck spin | `$46A` via puckflip/puckunflip | ✓ | ✓ |
-| Puck shadow, goal light, glass shatter | puckshadow, `$102E`, `$1078` | ✓ (G10, G13). Port names `$1078` "goal light"; its frames `$28D-$291` are the glass shatter | ✓, but the bottom goal light and the puck over the bottom glass are hidden (G3) |
+| Puck shadow, goal light, glass shatter | puckshadow, `$102E`, `$1078` | ✓ (G10, G13 fixed; `$1078` renamed `SPA_GLASS_SHATTER`) | ✓ (G3 fixed: the puck and the bottom goal light draw over the near glass) |
 | Nets | no animation; CheckBump only moves the net | ✓ (`_check_bump`) | ✓ |
-| Crowd | updatecrowdf / showcrowd | partial (G5) | missing |
-| Arena / bench background animations | sub_FE510 / FE2C8 / FD78A | ids only | missing (G7) |
+| Crowd | updatecrowdf / showcrowd | ✓ (`_cd0` frames, flash) | ArenaView ✓ (G5) |
+| Arena / bench background animations | sub_FE510 / FE2C8 / FD78A | ArenaAnim ✓ | ArenaView ✓ (G7) |
 | Referee | no on-ice referee; window via showref; close-up ref in fofdata | ✓ | RefWindow, FaceoffWindow ✓ |
-| Zamboni | Intermission / showzam | missing | missing (G8) |
+| Zamboni | Intermission / showzam | `zamx`, `intermission_vblank` ✓ | ArenaView on the side view ✓ (G8) |
 | Clock | showclock (window tiles) | ✓ | approximation (G16) |
-| Pad stars + numbers, off-screen arrows | setffo/uppads, checksso | missing | missing (G1, G2) |
+| Pad stars + numbers, off-screen arrows | setffo/uppads, checksso | `HockeyWorld.marks` ✓ | IndicatorsView ✓ (G1, G2) |
 
 ## 7. Unresolved
 
 1. Whether `$F6E`/`$FAC` ever run with direction 7 (junk list), and whether facedir 8 (D3) ever reaches `updateanim` visibly.
-2. What each background animation id 1-6 shows (arena scenes); this needs a render of `$EAB10`, `$EB816`, `$EC284`, `$ED1B0`. Id 0 is inferred to be the hat-trick animation from its trigger.
-3. Whether the face-off close-up art uses palette lines 0/1, which would make the full XOR in G15 matter.
+2. ~~What each background animation id 1-6 shows~~ Resolved by renders: see arena_animations.md §4.1.
+3. ~~Whether the face-off close-up art uses palette lines 0/1~~ Resolved: the centres (frames 1-6) use line 2 only and the referee (lines 0/1) is drawn with `$8000`, so the 2→3 swap is exact (G15).
 4. The meaning of `word_FFBE78` nibble value `$E` in uppads (special marker case, L52697), and the exact `jdtab`/`unk_165BC` arrow offsets. Both are needed only when G1/G2 are implemented.
+
+## 8. Port status (this round)
+
+| Gap | Status | Where |
+|---|---|---|
+| G1 pad stars + numbers | done | `HockeyWorld.marks`, nodes/indicators_view.gd |
+| G2 off-screen arrows | done | nodes/indicators_view.gd (`_draw_arrows`) |
+| G3 sprite priority | done | `SortObjectView.z_for`, `Rink2D.Z_PRIORITY`, zero-transparent RinkFront |
+| G4 injured slide | done | `HockeyWorld._integrate` skips SPA `$145C` / `$1AF4` |
+| G5 crowd | done | `GameRules.updatecrowdf` (`CD0`, `crowd_flash`), nodes/arena_view.gd |
+| G6 penalty-box figures | done | nodes/arena_view.gd (`_box`) |
+| G7 background animations | done | logic/arena_anim.gd (start/step/stop, faceoff ids, hat trick, id 7), nodes/arena_view.gd |
+| G8 zamboni + intermission | done | `HockeyWorld.begin_intermission` / `intermission_vblank` / `side_view`, nodes/arena_view.gd (`_zamboni`) |
+| G9 Stanley Cup | not applicable | the port has no playoff mode (gamelevel 3 never happens) |
+| G10-G14 | done | see the P2 list |
+| G15 faceoff XOR | exact as is | resolved: only line-2 pieces carry the XOR |
+| G16 clock tiles | approximation kept | HUD Label |
+| G17 away palette source | done | skater.gd reads attribute bit 0 every sync; `place()` keeps bit 0 in step with the team |
+
+Remaining design differences: the 64-link sprite budget is not emulated (the port shows a little more crowd in busy scenes), and the side view's crowd and zamboni are clipped to the 256-pixel art inside the port's 320-pixel view.

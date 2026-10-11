@@ -57,6 +57,7 @@ func _ready() -> void:
 	game.stepped.connect(_sync)
 
 func _sync() -> void:
+	visible = not game.world.intermission
 	queue_redraw()
 	arrows.queue_redraw()
 

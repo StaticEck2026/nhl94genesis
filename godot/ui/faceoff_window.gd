@@ -29,7 +29,7 @@ func setup(p_game: HockeyGame) -> void:
 
 func _sync() -> void:
 	var fo := game.world.faceoff
-	visible = fo.window_open and SpriteAtlas.available("faceoff")
+	visible = fo.window_open and SpriteAtlas.available("faceoff") and not game.world.intermission
 	if not visible:
 		return
 	queue_redraw()

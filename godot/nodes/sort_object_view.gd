@@ -18,7 +18,7 @@ func _ready() -> void:
 	game.stepped.connect(_sync)
 
 func _sync() -> void:
-	var on := obj.z() >= 0 and obj.frame != 0 and SpriteAtlas.available()
+	var on := obj.z() >= 0 and obj.frame != 0 and SpriteAtlas.available() and not game.world.intermission
 	visible = on
 	if not on:
 		return

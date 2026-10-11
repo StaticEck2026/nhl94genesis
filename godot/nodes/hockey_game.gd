@@ -39,7 +39,14 @@ func _exit_tree() -> void:
 
 func _physics_process(delta: float) -> void:
 	if hold:
-		_frame_accum = 0.0
+		# The intermission's waitxsr steps the zamboni and the crowd every vblank.
+		if world.intermission:
+			_frame_accum += Nhl94Units.frames(delta * world.settings.game_speed)
+			while _frame_accum >= 1.0:
+				_frame_accum -= 1.0
+				world.intermission_vblank()
+		else:
+			_frame_accum = 0.0
 		stepped.emit()
 		return
 	_frame_accum += Nhl94Units.frames(delta * world.settings.game_speed)
@@ -105,13 +112,18 @@ func refresh_palette() -> void:
 	_palette_side = null
 
 ## Views for the nets, the puck shadow and the puck (in that order, so the puck draws
-## over its shadow when they share a screen row), and the fight patch's gloves.
+## over its shadow when they share a screen row), the arena's crowd, box, background
+## animation and zamboni, the fight patch's gloves (over the arena at the same z) and
+## the indicators.
 func add_object_views() -> void:
 	for i in [HockeyWorld.NET_TOP, HockeyWorld.NET_BOTTOM, HockeyWorld.SHADOW, HockeyWorld.PUCK]:
 		var v := SortObjectView.new()
 		v.name = "Object%d" % i
 		v.index = i
 		add_child(v)
+	var av := ArenaView.new()
+	av.name = "Arena"
+	add_child(av)
 	var gv := GlovesView.new()
 	gv.name = "Gloves"
 	add_child(gv)

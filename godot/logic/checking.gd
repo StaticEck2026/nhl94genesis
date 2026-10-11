@@ -351,7 +351,7 @@ func _board_check(a2: SimObject, a3: SimObject) -> int:
 	w.fall_y = a2.y()
 	w.fall_x = a2.x()
 	if d1 == SPA_BOARDS_LEFT and a2.y() >= -0x59 and a2.y() <= 0x59:
-		# sub_FE510(7) starts background animation 7 (bench area); not ported.
+		# sub_FE510(7): the benches stand up (ArenaAnim).
 		w.background_anim.emit(7)
 		d1 = SPA_OVER_RIGHT if a2.x_flip() else SPA_OVER_LEFT
 	elif d1 == SPA_BOARDS_RIGHT and a2.y() >= -0x38 and a2.y() <= 0x38:

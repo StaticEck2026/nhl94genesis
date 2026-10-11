@@ -31,7 +31,8 @@ var fof_attr: PackedInt32Array = PackedInt32Array([0x8000, 0xA800, 0x8000])
 ## The close-up window is up (disflags bit 4), and its screen origin (fodropx/fodropy).
 var window_open: bool = false
 var fodrop: Vector2i = Vector2i(0x36, 0x5C)
-## word_FFD6BE (overlay asked for, -1 none) and word_FFD6B4 (overlay showing).
+## word_FFD6BE: the background animation (ArenaAnim) picked for this faceoff, -1 none;
+## overlay_shown is word_FFD6B4 (ArenaAnim.id) as the drop time reads it.
 var overlay_request: int = -1
 var overlay_shown: int = -1
 
@@ -72,7 +73,6 @@ func puckfaceoff(p: SimObject, d7: int) -> void:
 	if not _neg(p.temp[0]) or not _neg(p.temp[1]):
 		return
 	_cpu_line(0)
-	overlay_request = -1
 	w.assreplace(p, ASS_PUCKFACEOFF2)
 
 ## The first call. True when it left for the end of a period or the delayed whistle.
@@ -83,13 +83,15 @@ func _first_call(p: SimObject) -> bool:
 		w.foy = 0
 	# loc_F420: the marker text shows positions again (byte_FFC2FC bit 7).
 	w.shootout.display = false
-	# Stats overlay for this faceoff (sub_FECAA). Cosmetic, but it sets the drop minimum.
+	# The background animation for this faceoff (sub_FECAA, a pending one is reused);
+	# sub_FE53C lets puckfaceoff2 start it. It also sets the drop minimum.
 	var id := overlay_request
 	if id < 0:
 		id = OVERLAYS[w.rng.range_(100) & 7]
 		if w.fox <= -64 and w.foy <= 192:
 			id = 6
 	overlay_request = id
+	w.arena.pending_ok = true
 	w.f_c2f8 &= ~(1 << 1)
 	w.f_c2fa &= ~(1 << 1)
 	if w.gameclock == 0 or w.gmode & HockeyWorld.GM_EOG:
@@ -176,6 +178,7 @@ func puckfaceoff2(p: SimObject) -> void:
 		updatefaceoff(p)
 		return
 	overlay_shown = -1
+	w.arena.stop()
 	endfaceoff(p)
 
 func _setup(p: SimObject) -> void:
@@ -227,10 +230,11 @@ func _setup(p: SimObject) -> void:
 	_line_up()
 	w.collisions.sort_all()
 	setchgplayer()
-	overlay_shown = -1
-	if overlay_request >= 0:
-		overlay_shown = overlay_request
-		overlay_request = -1
+	# L42209: whatever runs (id 7, the hat trick) is cut off; the picked one starts.
+	w.arena.id = -1
+	if w.arena.pending_ok and overlay_request >= 0:
+		w.arena.start(overlay_request)
+	overlay_shown = w.arena.id
 	fodrop = Vector2i(0x36 if w.fox >= 0 else 0xBE, 0x5C)
 	var t := w.rng.range_(120) + 180
 	if overlay_shown in [0, 1, 5, 4, 2]:

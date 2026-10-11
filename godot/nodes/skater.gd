@@ -14,6 +14,8 @@ extends CharacterBody2D
 
 var game: HockeyGame
 var obj: SimObject
+## The palette the material was built for (attribute bit 0).
+var _away := false
 
 func _ready() -> void:
 	add_to_group(&"skaters")
@@ -38,11 +40,15 @@ func _find_game() -> HockeyGame:
 
 func _sync() -> void:
 	# Sprite frame 0 draws nothing (off the ice, in the box, parked).
-	visible = obj.frame != 0
+	# At the intermission Xpos is cleared: everyone is off the side view.
+	visible = obj.frame != 0 and not game.world.intermission
 	attacking_top = obj.attacking_top()
 	if SpriteAtlas.available():
-		if material == null:
-			material = game.palette_material(obj.away())
+		# addframe2 reads attribute bit 0 on every draw (away team: line 2 -> 3).
+		var away := obj.attribute & SimObject.ATTR_AWAY != 0
+		if material == null or away != _away:
+			_away = away
+			material = game.palette_material(away)
 		position = SortObjectView.project_ground(game.world, obj)
 		z_index = SortObjectView.z_for(obj, position)
 	else:

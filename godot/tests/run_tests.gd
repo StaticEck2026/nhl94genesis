@@ -106,6 +106,10 @@ func _initialize() -> void:
 		"test_title_screen",
 		"test_markers",
 		"test_pause_menu_actions",
+		"test_crowd_frames",
+		"test_arena_anim_scripts",
+		"test_arena_anim_hooks",
+		"test_intermission_zamboni",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -2262,5 +2266,133 @@ func test_pause_menu_actions() -> bool:
 	w.cont_team[1] = 2
 	w.toggle_goalie_control(1)
 	eq(w.auto_goalie, [true, false], "same team: both flip")
+	w.dispose()
+	return true
+
+func test_crowd_frames() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	# Quiet: row 0 frames, no flash.
+	var seen := {}
+	for i in 400:
+		w.crowd_level = 0
+		w.rules.updatecrowdf(1)
+		seen[w.rules.crowd_frame] = true
+		check(w.rules.crowd_flash == 0, "no flash while quiet")
+	var keys := seen.keys()
+	keys.sort()
+	eq(keys, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "the quiet row's frames (_cd0 row 0)")
+	# Loud: rows 2-3 (frames 11-18) and the odd camera flash, $13-$19, one loop each.
+	seen.clear()
+	var flashes := {}
+	for i in 2000:
+		w.crowd_level = 0x200
+		w.rules.updatecrowdf(1)
+		seen[w.rules.crowd_frame] = true
+		if w.rules.crowd_flash != 0:
+			flashes[w.rules.crowd_flash] = true
+	keys = seen.keys()
+	keys.sort()
+	eq(keys, [11, 12, 13, 14, 15, 16, 17, 18], "the loud rows' frames")
+	check(flashes.size() > 0, "flashes while the crowd is loud")
+	for f in flashes:
+		check(f >= 0x13 and f <= 0x19, "flash frame %d in $13-$19" % f)
+	w.dispose()
+	return true
+
+func test_arena_anim_scripts() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var a := w.arena
+	check(not ArenaAnim.script_of(1).is_empty(), "the scripts are exported")
+	# A one-shot: shown from its first step, removed in the loop its script ends.
+	a.start(1)
+	eq(a.shown_frame(), 0, "nothing until the first step loads it")
+	var n := 0
+	while a.id >= 0 and n < 1000:
+		a.step(1)
+		if n == 0:
+			eq(a.shown_frame(), 1, "the first frame")
+		n += 1
+	eq(n, 229, "id 1 shows for 228 vblanks; the 229th step ends it")
+	eq(a.shown_frame(), 0, "and is gone")
+	# A loop keeps going.
+	a.start(3)
+	for i in 500:
+		a.step(1)
+	eq(a.id, 3, "id 3 loops")
+	check(a.shown_frame() >= 1 and a.shown_frame() <= 8, "on one of its 8 frames")
+	# A start consumes the faceoff's pending id; a check over the bench boards starts 7.
+	w.faceoff.overlay_request = 5
+	w.background_anim.emit(7)
+	eq(a.id, 7, "background_anim(7) starts the bench ripple")
+	eq(w.faceoff.overlay_request, -1, "and consumes the pending id")
+	a.stop()
+	check(a.id == -1 and not a.pending_ok, "stopped")
+	w.dispose()
+	return true
+
+func test_arena_anim_hooks() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	# puckfaceoff2's setup starts the picked id; the one-shots hold the drop to $10E.
+	var p := w.puck()
+	w.fox = -0xB4
+	w.foy = 0x5C
+	w.faceoff.overlay_request = 1
+	w.arena.pending_ok = true
+	w.arena.start(7)
+	w.faceoff.overlay_request = 1
+	p.flags |= SimObject.PF_NA
+	w.faceoff.puckfaceoff2(p)
+	eq(w.arena.id, 1, "the faceoff's animation replaced the running one")
+	eq(w.faceoff.overlay_shown, 1, "overlay_shown is the running id")
+	check(p.temp[0] >= 0x10E, "a one-shot holds the drop: %d" % p.temp[0])
+	# Without pending_ok (a lost start) nothing starts and the id waits for next time.
+	w.arena.stop()
+	w.faceoff.overlay_request = 2
+	p.flags |= SimObject.PF_NA
+	w.faceoff.puckfaceoff2(p)
+	eq(w.arena.id, -1, "no start without byte_FFC2FC bit 0")
+	eq(w.faceoff.overlay_request, 2, "the picked id is kept")
+	# The drop stops it.
+	w.arena.start(3)
+	p.temp[0] = 0
+	w.faceoff.puckfaceoff2(p)
+	eq(w.arena.id, -1, "the drop stops the animation")
+	# Hat trick: a home skater's third goal; not an away one, not a second.
+	w.stats[0].player_goals[7] = 3
+	w.score_summary.append({"away": false, "scorer": 7})
+	w.arena.hat_trick_check()
+	eq(w.arena.id, ArenaAnim.HAT_TRICK, "home hat trick throws the hats")
+	w.arena.stop()
+	w.stats[1].player_goals[7] = 3
+	w.score_summary.append({"away": true, "scorer": 7})
+	w.arena.hat_trick_check()
+	eq(w.arena.id, -1, "no hats for the visitors")
+	w.stats[0].player_goals[8] = 2
+	w.score_summary.append({"away": false, "scorer": 8})
+	w.arena.hat_trick_check()
+	eq(w.arena.id, -1, "two goals is not a hat trick")
+	w.stats[0].player_goals[0] = 3
+	w.score_summary.append({"away": false, "scorer": 0})
+	w.arena.hat_trick_check()
+	eq(w.arena.id, -1, "a goalie slot does not count")
+	w.dispose()
+	return true
+
+func test_intermission_zamboni() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	eq(w.zamx, -1, "no zamboni in play")
+	check(not w.side_view(), "the rink view in play")
+	w.begin_intermission()
+	eq(w.zamx, 0x140, "Intermission: zamx = $140")
+	check(w.side_view(), "the side view at the intermission")
+	w.arena.start(3)
+	for i in 2000:
+		w.intermission_vblank()
+	eq(w.zamx, 0x709, "waitxsr stops it at $709")
+	eq(w.arena.id, 3, "the animation steps on out of sight")
+	w.end_intermission()
+	eq(w.zamx, -1, "gone after the intermission")
+	check(not w.side_view(), "back to the rink")
 	w.dispose()
 	return true

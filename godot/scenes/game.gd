@@ -73,11 +73,14 @@ func _on_intermission(gsp: int) -> void:
 		return
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
+	world.begin_intermission()
 
 func _on_game_over() -> void:
 	_over = true
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
+	if not world.intermission:
+		world.begin_intermission()
 
 func _physics_process(delta: float) -> void:
 	if hold and not _human():
@@ -97,6 +100,7 @@ func _release() -> void:
 	if _over:
 		_quit()
 		return
+	world.end_intermission()
 	hold = false
 
 func _quit() -> void:

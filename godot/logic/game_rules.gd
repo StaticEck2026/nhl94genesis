@@ -88,6 +88,10 @@ var pen_sum: Array = []
 var crowd_cnt: int = 0
 var crowd_step: int = 0
 var crowd_frame: int = 0
+var crowd_flash: int = 0
+## The flash's VDP counter read. Retail's counter reads do not disturb one another, so the
+## (purely visual) flash draws from its own stream instead of HockeyWorld.hv_rng.
+var flash_rng := RandomNumberGenerator.new()
 var max_excite: int = 0
 var sum_excite: int = 0
 var num_excite: int = 0
@@ -107,6 +111,7 @@ func _init(world: HockeyWorld) -> void:
 	w = world
 	pen_buf = PackedInt32Array()
 	pen_buf.resize(33)
+	flash_rng.seed = w.hv_rng.seed ^ 0x5A5A
 
 ## The rules run (the game layer's switch and the debug dock's).
 func on() -> bool:
@@ -511,6 +516,8 @@ func recount(team: int) -> void:
 ## SetPA (L46552): start the referee script and message for an id.
 func set_pa(id: int) -> void:
 	refpen = id
+	if id == PEN_GOAL:
+		w.arena.hat_trick_check()
 	if id >= 0x2E:
 		return
 	refstep = 0
@@ -686,6 +693,7 @@ func start_game() -> void:
 	w.roster.new_game_form()
 	w.score_summary.clear()
 	pen_sum.clear()
+	w.arena.stop()
 	w.gsp = 0
 	w.chk_cnt = 0
 	for st in w.stats:
@@ -736,6 +744,7 @@ func intermission_bookkeeping() -> void:
 
 ## StartPer (L29853).
 func start_per() -> void:
+	w.faceoff.overlay_request = -1
 	w.setupice()
 	reset_clock()
 	cur_crowd_meter = 0
@@ -814,7 +823,17 @@ func print_scores1() -> void:
 		crowd_loud = false
 		crowd_hold = 0x78
 
-## updatecrowdf (L30028): crowd noise decays every frame; the crowd animates.
+## _cd0 (L56543): the crowd frame by crowdlevel row (< $40, < $80, < $C0, more) and
+## column; the rows' delay masks are $C, 7, 7 and 3.
+const CD0: Array[int] = [
+	1, 2, 3, 4, 5, 10, 9, 8, 6, 7, 8, 9, 10, 5, 4, 3,
+	1, 2, 3, 4, 5, 11, 12, 13, 6, 7, 8, 9, 10, 11, 12, 13,
+	14, 15, 16, 17, 18, 11, 12, 13, 18, 17, 16, 15, 14, 13, 12, 11,
+	14, 15, 16, 17, 18, 11, 12, 13, 18, 17, 16, 15, 14, 13, 12, 11]
+
+## updatecrowdf (L30028): crowd noise decays every frame; the crowd animates. The low
+## byte of crowdframe is the fans' frame (1-$12), the high byte a camera flash ($13-$19)
+## for this one loop while the crowd is loud.
 func updatecrowdf(d7: int) -> void:
 	if w.crowd_level >= 0x15E:
 		w.crowd_level -= 3
@@ -824,8 +843,13 @@ func updatecrowdf(d7: int) -> void:
 		var d0 := mini(w.crowd_level >> 1, 0x7F) & 0x60
 		crowd_step = (crowd_step + 2) & 0x1E
 		var mask := 0x0C if d0 == 0 else (0x07 if d0 < 0x60 else 0x03)
-		crowd_frame = d0 + crowd_step
+		crowd_frame = CD0[(d0 + crowd_step) >> 1]
 		crowd_cnt = mask + (w.hv_rng.randi() & mask)
+	crowd_flash = 0
+	if w.crowd_level > 0x118:
+		var r := flash_rng.randi() & 0x7F
+		if r >= 0x13 and r <= 0x19:
+			crowd_flash = r
 
 ## asv: the crowd noise level updatesound (L52982) eases toward the crowd meter.
 var asv: int = 0

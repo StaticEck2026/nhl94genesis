@@ -18,7 +18,7 @@ func _ready() -> void:
 
 func _sync() -> void:
 	var p: Variant = game.world.fight.gloves_pos()
-	visible = p != null and SpriteAtlas.has_frame(FightLogic.SPF_GLOVES)
+	visible = p != null and SpriteAtlas.has_frame(FightLogic.SPF_GLOVES) and not game.world.intermission
 	if not visible:
 		return
 	var g: Vector2i = p

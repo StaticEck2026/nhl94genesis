@@ -11,6 +11,8 @@ const CALL_FRAMES := 150
 var game: HockeyGame
 var _call: Label
 var _banner: Label
+## The banner is the intermission's (cleared when the intermission ends).
+var _inter_banner := false
 var _call_frames := 0
 var _intro: PanelContainer
 var _intro_text: Label
@@ -29,7 +31,11 @@ func bind(p_game: HockeyGame) -> void:
 	game.world.rules.penalty_assessed.connect(_on_penalty)
 	game.world.rules.intermission.connect(_on_intermission)
 	game.world.rules.game_over.connect(_on_game_over)
-	game.world.rules.period_started.connect(func(_g: int) -> void: _banner.text = "")
+	# The port starts the next period before the intermission is over: its banner stays
+	# until the intermission ends.
+	game.world.rules.period_started.connect(func(_g: int) -> void:
+		if not game.world.intermission:
+			_banner.text = "")
 	game.world.shootout.intro.connect(_on_intro)
 	_make_intro()
 	var fb := _make_box("FightBanner")
@@ -156,6 +162,9 @@ func _team_abbr(team: int) -> String:
 
 func _refresh() -> void:
 	var w := game.world
+	if _inter_banner and not w.intermission:
+		_inter_banner = false
+		_banner.text = ""
 	var secs := w.clock_seconds()
 	var period := "OT" if w.gsp >= 3 else "P%d" % (w.gsp + 1)
 	if w.f_c2fa & ShootoutLogic.C2FA_ATTEMPT_CLOCK:
@@ -193,6 +202,7 @@ func _on_intermission(gsp: int) -> void:
 		return
 	var names := ["", "End of the 1st", "End of the 2nd", "End of regulation"]
 	_banner.text = "%s  -  Start to continue" % names[mini(gsp, 3)]
+	_inter_banner = true
 
 func _on_game_over() -> void:
 	var w := game.world

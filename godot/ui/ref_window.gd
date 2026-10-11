@@ -28,7 +28,7 @@ func _on_ref(frame: int) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if _frame < 0:
+	if _frame < 0 or game.world.intermission:
 		return
 	var hor := game.world.sflags & HockeyWorld.SF_HOR != 0
 	var tex := _tex[1 if hor else 0]

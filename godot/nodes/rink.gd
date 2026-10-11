@@ -147,11 +147,11 @@ func _layer(n: String, ts: TileSet, z: int, mat: Material) -> TileMapLayer:
 	add_child(l)
 	return l
 
-## SetHor / ClrHor: the sideways penalty screen replaces the rink.
+## SetHor / ClrHor: the sideways penalty screen (and the intermission) replaces the rink.
 func _sync() -> void:
 	if not _tiled:
 		return
-	var hor := game.world.sflags & HockeyWorld.SF_HOR != 0
+	var hor := game.world.side_view()
 	if side:
 		side.visible = hor
 	base_layer.visible = not hor

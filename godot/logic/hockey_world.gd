@@ -108,6 +108,8 @@ var goalie: GoalieLogic
 var roster: RosterLogic
 var rules: GameRules
 var faceoff: FaceoffLogic
+## The arena and bench background animations (sub_FE510 / sub_FE2C8).
+var arena: ArenaAnim
 var lines: LineLogic
 var shootout: ShootoutLogic
 var fight: FightLogic
@@ -162,6 +164,10 @@ var opt_line_on: bool = true
 ## 2's star, 3 the replay cursor, 4-5 pads 3-4. A value is the marked object's index, $E
 ## the object's own position, $F hidden. Drawn by IndicatorsView.
 const MARK_HIDDEN := 0xF
+## zamx: the zamboni's x (<< 2), negative while it is off (showzam L52076).
+var zamx: int = -1
+## The intermission screen is up (begin_intermission).
+var intermission: bool = false
 var marks: PackedInt32Array = PackedInt32Array([0xF, 0xF, 0xF, 0xF, 0xF, 0xF])
 ## OptFight (the fight patch's menu option, $FFDF00): 0 off (retail), 1 on, 2 on, Arcade.
 var opt_fight: int = 0
@@ -281,7 +287,8 @@ signal landed(index: int, zvel: int)
 signal sound(id: int)
 ## song (L44297): crowd cheer $B, crowd boo $C, and the music ids.
 signal song(id: int)
-## sub_FE510: a background tile animation (7 = bench area after a check over the boards).
+## sub_FE510: start a background animation (ArenaAnim; 7 = the benches after a check over
+## the boards).
 signal background_anim(id: int)
 ## A PenaltyList id (AddPenalty2). The rules port turns this into the penalty queue.
 signal penalty_called(id: int, offender: int)
@@ -336,6 +343,8 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	lines = LineLogic.new(self)
 	shootout = ShootoutLogic.new(self)
 	fight = FightLogic.new(self)
+	arena = ArenaAnim.new(self)
+	background_anim.connect(arena.start)
 	ai.register(asstab)
 	goalie.register(asstab)
 	faceoff.register(asstab)
@@ -372,7 +381,7 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout, fight]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout, fight, arena]:
 		if m:
 			m.w = null
 	collisions = null
@@ -414,6 +423,11 @@ func place(index: int, at: Vector2i, role: int, team_away: bool, attack_top: boo
 	o.position = role
 	o.set_flag(SimObject.PF_TEAM, team_away)
 	o.set_flag(SimObject.PF_GOAL, attack_top)
+	# The object table gives away slots attribute bit 0 (their palette); keep it in step.
+	if team_away:
+		o.attribute |= SimObject.ATTR_AWAY
+	else:
+		o.attribute &= ~SimObject.ATTR_AWAY
 	o.facing_fx = (0 if attack_top else 4) << 16
 	if role == SimObject.POS_GOALIE and stats[o.team()].goalie_pnum < 0:
 		# Retail rosters list goalies first, so slot 0 stands in when none is loaded.
@@ -459,6 +473,7 @@ func step(d7: int = 1) -> void:
 func periodic_events(d7: int) -> void:
 	rules.penalty_manager(d7)
 	rules.updatecrowdf(d7)
+	arena.step(d7)
 	rules.updatesound()
 	rules.clockcont()
 	if sflags & SF_HOR:
@@ -1068,6 +1083,31 @@ func set_c_player(k: int, o: SimObject) -> void:
 			return
 		o.flags |= SimObject.PF_JOYCON
 	c_player[k] = d0
+
+# --- the intermission ---------------------------------------------------------------
+
+## Intermission (L47613): the side view (SetHor) with only the crowd, the penalty-box
+## figures and the zamboni. The port's rules start the next period before the hold, so
+## this flag (not sflags) says the intermission screen is up.
+func begin_intermission() -> void:
+	intermission = true
+	zamx = 0x140
+
+func end_intermission() -> void:
+	intermission = false
+	zamx = -1
+
+## waitxsr (L44352), once a vblank while the intermission waits: the zamboni crosses,
+## the crowd and the background animation keep going.
+func intermission_vblank() -> void:
+	if zamx >= 0 and zamx <= 0x708:
+		zamx += 1
+	rules.updatecrowdf(1)
+	arena.step(1)
+
+## The screen shows the side view: the penalty screen (sflags bit 7) or the intermission.
+func side_view() -> bool:
+	return intermission or sflags & SF_HOR != 0
 
 # --- the pause menu -------------------------------------------------------------------
 
