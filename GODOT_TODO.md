@@ -56,6 +56,10 @@ These come from the listing. Add a fact here before code depends on it.
 | Crowd boost | `set_bit1_C2FE` always sets `byte_FFC2FE` bit 1 (the clear path is dead), so `playeracc` always adds +2 agility and +2 speed (cap 30) | `HockeyWorld.crowd_boost = true` | L975179 |
 | 94 struct changes | `$74` fight byte, `$75` checking (new in 94), `$76` handedness; `pflags2` bit 2 unavailable, 3 line-change menu, 4 penalized, 5 no collision, 6 hurt in a fight | `SimObject` | collisions, data, input specs |
 | Momentum exchange | masses `weight + $8C`, `evalue` is always 0 (perfectly plastic along the normal), outputs scaled by `|D|^2/256`, one exchange per `checkcoll` call | `Collisions.exchange()` | `checkcx` L48617 |
+| Puck pickup | stick tip within 14 px (7 px while a pass is in flight); glued if speed <= Stk * 350 + 13000 rvu (13000 for a shot in flight), else deflected and the skater locked out 8 frames | `PuckLogic.puckstick()` | L50534 |
+| Steals | carried puck within 6 px of an opposing stick (8 in the slot): steal when `randomd0(c - k + 36) <= 2` (4 in the slot), c and k the energy-scaled Stk/2; goalies always win, nobody steals from a goalie; the puck is knocked loose, not taken | `puckstick()` | L50566 |
+| Goal | puck within 21 x 7 px of the net centre, below the crossbar (Z 13), entering through the mouth at |x| <= 20; x = 21 is the post | `PuckLogic.checkgoal()` | L49633 |
+| Glass | Z above 18 leaves the rink everywhere except the top end, whose glass is 29 high | `over_glass()` | L50092 |
 | Struct | 16 sort objects of 128 bytes; field names and flag bits from the 93 equates in `src/ram94.asm` | `SimObject` | `ram94.asm` |
 
 ## Open questions
@@ -96,7 +100,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [ ] Goalie skating: `goalieacc` L43477, `stopna2` L959753
 - [ ] `burst` L36830, `holdplayer` L36863
 - [ ] `skateto` L42953, `skatetopuck` L43138, `avdgoal` L43026
-- [~] Wall collision: `RinkBoards` has the boards and corners (`checkwallcoll2`, `wallcoll`). Still to do: nets (`checkgoal` L49633), stick-end board check (`checkcoll` second call with the `GetHot` point), puck over the glass (`wallcollb2` L50092), `CheckBump` L50048
+- [x] Wall collision: boards, corners, nets (`checkgoal`/`checkgoalp`), the stick-tip board check, the puck over the glass, `CheckBump`
 - [x] Player-player collision: `Collisions` (`checkplcoll`, `checkcx`, exact momentum exchange, Y-sort walk order, position restore)
 - [ ] Energy and fatigue (`getpde`/`setpde`, endurance `$72`)
 - [x] `scenes/skater.tscn`: `CharacterBody2D`, capsule, runs `SkaterMotion` + `SkaterSteering` + `RinkBoards` in retail loop order
@@ -104,12 +108,13 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 3. Puck
 
-- [~] `PuckPhysics` carrier bungee (`pucknorm` L42526)
-- [ ] Loose puck: drag `>> 9`, `puckIChk` L42796, `puckshadow` L42862, `puckflip`/`puckunflip`
-- [ ] Puck vs boards and posts: `checkpuckcoll` L50247, `checkgoal` L49633, `checkgoalp` L50000, `deflect` L51170
-- [ ] Stick pickup and steals: `puckstick` L50534, `CheckStkForContactWithSkater` L50566
-- [ ] Puck vs body and goalie: `puckbody` L50765, `puckgoalie` L50818
-- [ ] `Puck.tscn` with continuous bounce math
+- [x] `PuckLogic`: `pucknorm` (carrier bungee, stall whistle), `findpc` (crossing prediction), Z stall counter, `puckflip`/`puckunflip`/`puckshadow`
+- [x] Pickup and steals: `puckstick`, `CheckStkForContactWithSkater`, `_glue` (faceoff and pass credit, human control hand-off)
+- [x] Puck vs bodies and goalies: `puckbody`, `puckgoalie` (body box by agility, cover threshold), `deflect`
+- [x] Nets and goals: `checkwallcoll2` routing, `checkgoal` (box, posts, crossbar, back of the net, goal with stats and ScoreSum), `checkgoalp` + `CheckBump` for players, `setass`
+- [x] Over the glass and the goal-light easter egg (`wallcollb2`); `ChkShotStat`; icing (`a2touchpuck`, `puckIChk`); offside flags (`ChkOffsides`, `a2offsides`)
+- [x] Hotlist exported offline (`tools/extract/hotlist.py` -> `godot/data/hotlist.json`); `GetHot` uses facing until sprite frames are live
+- [x] `PuckView` draws puck and shadow from the world
 
 ## Phase 4. Shooting and passing
 
@@ -180,3 +185,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Phase 2 turning. `$34` resolved (0 = goalie), which moves the extra agility and carrier cuts to goalies only. `SkaterSteering` (facing, turning, hockey stop, backwards skating), `RinkBoards` (boards, corners, bounce), rink constants, input map, skater scene and sandbox. 130 checks pass. Sandbox checked in screenshots under Xvfb.
 - 2026-10-11: World refactor. `HockeyWorld` owns the 16 retail objects and globals and steps `updateplayers`; `SimObject` mirrors the struct; nodes are views (`HockeyGame`, `Skater2D`). Retail RNG ported. Z gravity fact corrected. Research specs for every remaining subsystem are being written to `docs/specs/`.
 - 2026-10-11: Player collision and checking ported (`Collisions`, `Checking`): momentum exchange, Y-sort walk, goalie contact and interference, body checks, holds, sweeps, falls, board pins, injuries. Crowd boost found to be always on. 165 checks pass.
+\n- 2026-10-11: Puck ported (`PuckLogic`): pickup, steals, ricochets, goalie body box, nets, posts, goals with stats, offside and icing hooks, over the glass. Hotlist exported offline. All ten research specs landed. 191 checks pass.\n

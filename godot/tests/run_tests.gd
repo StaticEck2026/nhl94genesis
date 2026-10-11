@@ -43,6 +43,16 @@ func _initialize() -> void:
 		"test_checkagr_max_aggression",
 		"test_board_pin",
 		"test_world_collision",
+		"test_puck_pickup",
+		"test_puck_too_fast",
+		"test_goalie_steals",
+		"test_goal",
+		"test_post",
+		"test_over_glass",
+		"test_goalie_covers",
+		"test_findpc",
+		"test_icing",
+		"test_offside",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -173,13 +183,16 @@ func test_dir8() -> bool:
 	return true
 
 func test_puck_follow() -> bool:
-	var p := PuckPhysics.new(SimSettings.new())
-	var r := p.follow_carrier(Vector2(0, 0), Vector2(8, -4), Vector2(3, 0))
-	eq(r[0], Vector2(2, -1), "closes 1/4 of the gap")
-	eq(r[1], Vector2(3, 0), "takes carrier velocity")
-	var s := SimSettings.new()
-	s.enable_puck_friction = false
-	eq(PuckPhysics.new(s).loose_drag(Vector2i(1000, 0)), Vector2i(1000, 0), "friction toggle")
+	var w := HockeyWorld.new(SimSettings.new())
+	var c := w.place(4, Vector2i(0, 0), SimObject.POS_C, false, true)
+	w.drop_puck(Vector2i(0, -40))
+	w.puckc = 4
+	c.vel = Vector2i(300, 0)
+	w.puck_logic.pucknorm(w.puck(), 1)
+	var hot := w.get_hot(c)
+	eq(w.puck().pos(), Vector2i(0, -40) + (hot - Vector2i(0, -40)) / 4, "closes 1/4 of the gap to the stick")
+	eq(w.puck().vel, Vector2i(300, 0), "takes carrier velocity")
+	w.dispose()
 	return true
 
 func test_fsm() -> bool:
@@ -378,13 +391,19 @@ func test_world_skater_in_rink() -> bool:
 	var cap := sqrt(float(m.max_speed_sq_entry(8) + ((m.max_speed_sq_entry(9) - m.max_speed_sq_entry(8)) >> 1)))
 	check(top_speed <= cap + 1.0, "speed caps at MaxSpeed 8.5: %f > %f" % [top_speed, cap])
 	check(top_speed >= cap * 0.95, "reaches top speed: %f of %f" % [top_speed, cap])
-	check(max_y >= RinkBoards.END_BOARD - 8, "reaches the top boards: %d" % max_y)
+	# checkcoll also tests the stick tip (GetHot, radius 1), so the stick meets the
+	# boards about 20 px before the body would.
+	var stick_reach := max_y + w.get_hot(o).y
+	check(stick_reach >= RinkBoards.END_BOARD - 3, "stick tip reaches the top boards: %d" % stick_reach)
 	check(max_y <= RinkBoards.END_BOARD, "never past the end boards: %d" % max_y)
 	w.joy[4] = 4
 	for i in 600:
 		w.step()
 		min_y = mini(min_y, o.y())
-	check(min_y <= -(RinkBoards.END_BOARD - 8), "reaches the bottom boards: %d" % min_y)
+	# Coming back down he is in his own half with the puck ahead, so he skates backwards
+	# (stick up the ice) and his body meets the boards: 298 - radius 4.
+	check(o.reverse(), "skates backwards in his own half")
+	check(min_y <= -(RinkBoards.END_BOARD - 4), "body reaches the bottom boards: %d" % min_y)
 	check(min_y >= -RinkBoards.END_BOARD, "never past the bottom boards: %d" % min_y)
 	check(w.objects[0].pos() == Vector2i(384, 192), "off-ice objects stay put")
 	w.dispose()
@@ -565,5 +584,157 @@ func test_world_collision() -> bool:
 			crossed = true
 	check(touched, "they collided")
 	check(not crossed, "and did not pass through each other")
+	w.dispose()
+	return true
+
+## A world with one home skater at `at` facing up, and the puck on his stick.
+func puck_world(at: Vector2i) -> Array:
+	var w := HockeyWorld.new(SimSettings.new())
+	var o := w.place(4, at, SimObject.POS_C, false, true)
+	o.stickhand = 15
+	w.drop_puck(at + w.get_hot(o))
+	return [w, o]
+
+func test_puck_pickup() -> bool:
+	var t := puck_world(Vector2i(0, 0))
+	var w: HockeyWorld = t[0]
+	w.step()
+	eq(w.puckc, 4, "a still puck on the stick is picked up")
+	w.dispose()
+	return true
+
+func test_puck_too_fast() -> bool:
+	var t := puck_world(Vector2i(0, 0))
+	var w: HockeyWorld = t[0]
+	var o: SimObject = t[1]
+	# Speed 20000 > 15 * 350 + 13000 = 18250: too fast to control.
+	w.puck().vel = Vector2i(0, -20000)
+	w.puck_logic.checkpuckcoll(w.puck())
+	eq(w.puckc, -1, "not controlled")
+	eq(o.nopuck_hi, 8, "and the skater is locked out for 8 frames")
+	w.dispose()
+	return true
+
+func test_goalie_steals() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var c := w.place(4, Vector2i(0, 200), SimObject.POS_C, false, true)
+	var g := w.place(6, Vector2i(0, 230), SimObject.POS_GOALIE, true, false)
+	w.drop_puck(Vector2i(0, 215))
+	w.puckc = 4
+	w.puck_logic.puckstick(g, w.puck(), 0)
+	eq(w.puckc, -1, "the goalie knocks the puck loose")
+	check(c.nopuck_hi >= 0x14 and g.nopuck_hi >= 0x14, "both locked out for Stk/2 + 20")
+	eq(w.lastplayer, 4, "lastplayer is the carrier")
+	w.dispose()
+	return true
+
+func test_goal() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var shooter := w.place(4, Vector2i(30, 200), SimObject.POS_C, false, true)
+	shooter.pnum = 3
+	w.stats[0].toucher = 3
+	w.drop_puck(Vector2i(0, 240))
+	w.puck().vel = Vector2i(0, 6000)
+	var scored := [-1]
+	w.goal_scored.connect(func(team: int, _rec: Dictionary) -> void: scored[0] = team)
+	for i in 30:
+		w.step()
+	eq(scored[0], 0, "home scores in the top net")
+	eq(w.score(0), 1, "score")
+	eq(w.stats[0].player_goals[3], 1, "scorer credited")
+	eq(w.puck().pos(), Vector2i(6, 0x110), "puck sits in the back of the net")
+	check(w.puck().flags & SimObject.PF_NC != 0, "puck stops colliding")
+	w.dispose()
+	return true
+
+func test_post() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var sounds := []
+	w.sound.connect(func(id: int) -> void: sounds.append(id))
+	# Crossing the mouth at x = 21: the post.
+	w.drop_puck(Vector2i(21, 250))
+	w.puck().vel = Vector2i(0, 6000)
+	for i in 30:
+		w.step()
+	eq(w.score(0), 0, "no goal off the post")
+	check(8 in sounds, "post sound (8 while play runs)")
+	check(w.puck().vel.y < 0, "deflected away from the net")
+	w.dispose()
+	return true
+
+func test_over_glass() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var calls := []
+	w.penalty_called.connect(func(id: int, _o: int) -> void: calls.append(id))
+	w.drop_puck(Vector2i(120, 0))
+	w.puck().vel = Vector2i(9000, 0)
+	w.puck().z_fx = 25 << 16
+	w.puck().zvel = 1000
+	for i in 10:
+		w.step()
+	check(w.puck().flags & SimObject.PF_NC != 0, "puck left the rink")
+	check(PuckLogic.PEN_STALLED in calls, "puck out of play whistle (id 6)")
+	w.dispose()
+	return true
+
+func test_goalie_covers() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var g := w.place(6, Vector2i(0, 250), SimObject.POS_GOALIE, true, false)
+	g.legstr = 20
+	# Away from the goalie's stick (at -4, 230) so the body box decides.
+	w.drop_puck(Vector2i(8, 244))
+	w.puck().vel = Vector2i(0, 200)
+	for i in 10:
+		w.step()
+	eq(w.puckc, 6, "a slow puck into the goalie's body is covered")
+	w.dispose()
+	return true
+
+func test_findpc() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.drop_puck(Vector2i(10, 0))
+	w.puck().vel = Vector2i(1024, 4096)
+	w.puck_logic.findpc()
+	eq(w.puckcross[1], 264, "loops to the top line: 264 * 4096 / 4096")
+	eq(w.puckcross[0], 10 + 66, "x there: 264 * 1024 / 4096 + 10")
+	w.puck().vel = Vector2i(2048, 4096)
+	w.puck_logic.findpc()
+	eq(w.puckcross[0], 408 - 142, "past the sideboards the x mirrors as 408 - x (retail quirk)")
+	eq(w.puckcross[3], -1, "moving away from the bottom line")
+	w.dispose()
+	return true
+
+func test_icing() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var h := w.place(1, Vector2i(0, -100), SimObject.POS_LD, false, true)
+	var a := w.place(7, Vector2i(100, 280), SimObject.POS_LD, true, false)
+	var calls := []
+	w.penalty_called.connect(func(id: int, _o: int) -> void: calls.append(id))
+	w.drop_puck(Vector2i(0, -100))
+	w.puck_logic.a2touchpuck(h)
+	check(w.iflags & HockeyWorld.IF_OK != 0, "armed from the own half at even strength")
+	w.drop_puck(Vector2i(100, 270))
+	w.puck_logic.puck_i_chk()
+	check(w.iflags & HockeyWorld.IF_CGL != 0, "crossed the far goal line wide of the crease")
+	w.puck_logic.a2touchpuck(a)
+	check(PuckLogic.PEN_ICING in calls, "icing called when the other team touches it")
+	w.dispose()
+	return true
+
+func test_offside() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.gmode |= HockeyWorld.GM_OFFS
+	var h := w.place(3, Vector2i(-40, 120), SimObject.POS_LW, false, true)
+	var calls := []
+	w.penalty_called.connect(func(id: int, _o: int) -> void: calls.append(id))
+	var p := w.puck()
+	w.drop_puck(Vector2i(0, 80))
+	p.old_pos_fx = p.pos_fx
+	p.set_pos(Vector2i(0, 90))
+	w.puck_logic.chk_offsides(p)
+	check(w.stats[0].flags30 & TeamStats.F30_OFFSIDE != 0, "home flagged: a skater was past the line when the puck crossed")
+	w.drop_puck(Vector2i(0, 110))
+	w.puck_logic.a2touchpuck(h)
+	check(PuckLogic.PEN_OFFSIDE in calls, "offside called when he touches it in the zone")
 	w.dispose()
 	return true

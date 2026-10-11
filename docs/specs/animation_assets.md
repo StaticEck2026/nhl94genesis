@@ -23,7 +23,7 @@ How the pieces fit together, per game loop (`DoGameFrame` L29914):
 | (anim palette block) | `$9E6A4` | 128 bytes. No code reads it (see §2.1) |
 | `frameSprData` | `$9E724` (L602163) | Frame offset table (847 words) followed by 8-byte sprite pieces |
 | `Hotlist` | `$A44C8` (L626116) | 2 signed bytes (x, y) per frame, frames 0..837 |
-| `sizetab` | `$16???` (L57705) | 16 bytes: tile count per VDP sprite size |
+| `sizetab` | `$1920C` (L57705) | 16 bytes: tile count per VDP sprite size |
 | `revframetbl` | `$F600E` (L957106) | 846 words: frame → reverse-angle frame |
 | `TeamList` | `$30E` (absolute) | 28 longs: team data pointers (team index = `HomeTeam`/`VisTeam`) |
 | `unk_FEA74` | `$FEA74` (L974614) | 28 longs: center-ice logo tile blobs, by home team index |
@@ -47,7 +47,7 @@ Struct fields (SCstruct, `a3`): `$04` attribute (bit 11 = byte-4 bit 3 = x-flip,
 
 ### SetSPA (L43319)
 
-- Purpose: start animation `d1` on object `a3`. Called from all over the game logic. Main callers: `doplayeracc` (glide `$50C`, glide back `$A60`, turns `$662`/`$694`), skate selection at `$10B76` (L43674-43693), `dostop` (stop `$6C6`), passing (`$718`/`$78A`), shooting (`SetShotMode` `$7FC`/`$92E`), checks, goalie code, injuries and falls.
+- Purpose: start animation `d1` on object `a3`. Called from all over the game logic. Main callers: `doplayeracc` (glide `$50C`, glide back `$A60`, turns `$662`/`$694`), skate selection at `$10B76` (L43676-43693), `dostop` (stop `$6C6`), passing (`$718`/`$78A`), shooting (`SetShotMode` `$7FC`/`$92E`), checks, goalie code, injuries and falls.
 - Inputs: `d1.w` = SPA id (byte offset into `SPAList`), `a3`.
 - Outputs: `$58` SPA, `$5A` SPAnum, the high byte of `$5C`.
 
@@ -110,7 +110,7 @@ CFRAME:
 Behaviour that must be kept exactly:
 
 - **One-loop lag.** `d2` is read from the index *before* the advance. On the loop where a frame's timer runs out, the old frame is still written. The new frame appears on the next loop. At the end of a one-shot, the last frame stays in `$06` after `SPA` is cleared (a later `SetSPA` replaces it).
-- **Frame duration** with `d7 = 1`: the first frame (index 0) is shown for `|T0| + 2` loops, counting the `SetSPA` loop. Every later frame k is shown for `|Tk| + 1` loops. In general a frame advances on the first loop where the running sum of `d7` exceeds `T`.
+- **Frame duration** with `d7 = 1`: `SetSPA` is normally called by the assignment code, which runs *after* `updateanim` in the same loop. The next `updateanim` is the "load loop": it loads `|T0|` and already shows frame 0. Frame 0 is then shown for `|T0| + 2` loops (the load loop plus `|T0| + 1`). Every other frame, including frame 0 when a looping list wraps, is shown for `|Tk| + 1` loops. In general a frame advances on the first loop where the running sum of `d7` since its load exceeds `|T|`.
 - **Time sign.** A negative time marks the **last** frame of the list. Its absolute value is the duration. The loop/one-shot choice is bit 0 of the entry's attribute word, not the sign.
 - **pf2aip/pfalock/falling** are cleared when any list reaches its end, **including looping animations** (after one pass), and whenever `SPA == 0`.
 - **De-glitch.** After a frame change, `glitch = 4`. With `d7 = 1` the next change is allowed 5 loops later (4,3,2,1,0 block, -1 allows). With `d7 = 2` it is allowed 3 loops later. Timers keep running while a change is blocked, so short frames can be skipped visually.
@@ -131,9 +131,9 @@ entry at SPAList+id  (id is even, >= 2):
 
 - Direction selection is described above: `facedir` 0..7 (0 = +Y up the ice, clockwise), mirrored when the object is x-flipped.
 - Frame words in `SPAList` never use the flag bits `$F800`. All values are 1..837 (`$345`). The sprite flag bits that `addframe2` accepts in `$06` are therefore not used by the animation table.
-- Every direction has its own frames. The table never mirrors with flip bits. Mirroring comes only from the object's attribute bit 11, which is set for one handedness (see "x-flip" below).
+- No entry mirrors through flip bits. Where directions share art, their offsets point at the same list (for example `$250`, `$F6E`, `$1776`). Mirroring comes only from the object's attribute bit 11, which is set for one handedness (see "x-flip" below).
 - Times are in vblanks (1/60 s), counted with `d7`.
-- Two entries have a direction offset that points past their own data. `$F6E` and `$FAC` have dir 7 = `$3E`, which lands on the next entry's header. Running dir 7 would read header words as `{frame,time}` pairs: frame `$12` / time `$1E`, frame `$1E` / time `$2E`, and so on. Port as-is (these are goalie-only animations and probably never run with facing 7), or treat as UNRESOLVED.
+- Two entries have a direction offset that points past their own data. `$F6E` and `$FAC` have dir 7 = `$3E`, which lands on the next entry's header. Running dir 7 would read header words as `{frame,time}` pairs: frame `$12` / time `$1E`, frame `$1E` / time `$2E`, and so on. Port as data. Both entries use goalie frames `$179..$17F`. Whether they ever run with facing 7 is UNRESOLVED.
 - Entry `$46A` (`SPApflip`, the puck flipping in the air) has times of -4096 for dirs 4-7.
 
 #### Entries requested in full
@@ -163,7 +163,7 @@ entry at SPAList+id  (id is even, >= 2):
 
 **`$A60` SPAglideback** (abs `$657C`, attr 0): dir 0..7 frames `$A1 $A4 $A7 $AA $AD $B0 $B3 $B6`, each time -8.
 
-**`$A92` skate backwards** (abs `$65AE`, attr 0; chosen at L43674 when `pfrev`):
+**`$A92` skate backwards** (abs `$65AE`, attr 0; chosen at L43676 when `pfrev`):
 
 | dir | list |
 |---|---|
@@ -176,7 +176,7 @@ entry at SPAList+id  (id is even, >= 2):
 | 6 | `$B3/10 $B4/10 $B3/10 $B5/-10` |
 | 7 | `$B6/10 $B7/10 $B6/10 $B8/-10` |
 
-**`$53E` skate with puck** (abs `$605A`, attr 0; chosen when the object is the puck carrier, L43688-43693):
+**`$53E` skate with puck** (abs `$605A`, attr 0; chosen when the object is the puck carrier, L43685-43688):
 
 | dir | list |
 |---|---|
@@ -189,7 +189,7 @@ entry at SPAList+id  (id is even, >= 2):
 | 6 | `$20/10 $21/10 $22/10 $23/-10` |
 | 7 | `$25/10 $26/10 $27/10 $28/-10` |
 
-**`$11E6` skate while `$63` bit 6 is set** (injured in a fight; abs `$6D02`, attr 0; L43686-43690. The puck-carrier choice `$53E` overrides it):
+**`$11E6` skate while `$63` bit 6 is set** (injured in a fight; abs `$6D02`, attr 0; L43681-43683. The puck-carrier choice `$53E` overrides it):
 
 | dir | list |
 |---|---|
@@ -202,7 +202,7 @@ entry at SPAList+id  (id is even, >= 2):
 | 6 | `$273/6 $274/6 $275/8 $274/6 $273/-6` |
 | 7 | `$276/6 $277/6 $278/8 $277/6 $276/-6` |
 
-Skate selection (L43674-43695, for reference): `d1 = $A92` if `pfrev`. Otherwise `$5D0`, then `$11E6` if `$63` bit 6, then `$53E` if puck carrier. `SetSPA(d1)` only if `pf2aip` is clear. The full table of all 66 entries is in **Appendix A**.
+Skate selection (L43676-43693, for reference): `d1 = $A92` if `pfrev`. Otherwise `$5D0`, then `$11E6` if `$63` bit 6, then `$53E` if puck carrier. `SetSPA(d1)` only if `pf2aip` is clear. The full table of all 66 entries is in **Appendix A**.
 
 #### SPA ids with names in the listing
 
@@ -217,7 +217,7 @@ Skate selection (L43674-43695, for reference): `d1 = $A92` if `pfrev`. Otherwise
 #### revframetbl (L957106, ROM `$F600E`)
 
 - Purpose: used by `SetRCords` (replay playback) when `word_FFC2F4` bit 4 (reverse angle) is set. Maps each frame number to the frame that shows the same pose seen from the other end of the rink. Example: frame 1 (glide dir 0) → `$15` (glide dir 4).
-- Format: 846 words indexed by frame (`move.w (a6,d2.w),d2` with `d2 = frame*2`, frame masked `& $3FF`). Entry 0 = `$018F` (unused). An entry of 0 (72 frames) or outside `1..$34D` means "keep the original frame" (L35130-35136: `cmp #1` / `cmp #$34E`, then fall back to the recorded frame). The table is not a perfect involution (17 frames map to a frame that does not map back).
+- Format: 846 words indexed by frame (`move.w (a6,d2.w),d2` with `d2 = frame*2`, frame masked `& $3FF`). Entry 0 = `$018F` (unused). An entry of 0 (72 frames) or outside `1..$34D` means "keep the original frame" (L35087-35093: `cmp #1` / `cmp #$34E`, then `loc_A730` falls back to the recorded frame). The table is not a perfect involution (17 frames map to a frame that does not map back).
 - Puck shadow: in reverse angle, if the object is SCnum 15 and the mapped frame ≠ `$18A`, its Ypos is set to `$FC00`. Glass-shatter frames `$28D..$291` in reverse angle get Ypos `$190`.
 - The port should export it as JSON (§6). The replay feature is out of scope here.
 
@@ -240,7 +240,7 @@ $A44C8  Hotlist           (2 bytes before the end of the last frame's pieces; se
 $A4B54  end               (CrowdFrameList, the crowd anim file, starts here)
 ```
 
-Tile format (all tile sets in this ROM): 8x8 pixels, 4 bits per pixel, 32 bytes per tile. 4 bytes per row, top row first. In each byte the **high nibble is the left pixel**. Pixel value 0 is transparent for sprites. For plane tiles, value 0 shows the backdrop colour.
+Tile format (every tile set covered here): 8x8 pixels, 4 bits per pixel, 32 bytes per tile. 4 bytes per row, top row first. In each byte the **high nibble is the left pixel**. Pixel value 0 is transparent for sprites. For plane tiles, value 0 shows the backdrop colour.
 
 ### 2.2 frameSprData (L602163, ROM `$9E724`)
 
@@ -256,7 +256,7 @@ piece:  +0 s16 x   offset of the piece's top-left pixel from the frame origin, s
 ```
 
 - Piece size: width `w = ((size >> 2) & 3) + 1` tiles, height `h = (size & 3) + 1` tiles. The tiles of one piece are `tile, tile+1, …`, stored **column-major** (VDP order): tile `tile + col*h + row`. Confirmed by rendering.
-- Palette line use in the data: line 2 (team) in 2623 pieces, line 0 in 128, line 1 in 40. Line 0/1 pieces use the rink palette colours (puck, nets, joypad stars/arrows, parts of some frames).
+- Palette line use in the data: line 2 (team) in 2617 pieces, line 0 in 128, line 1 in 40. Line 0/1 pieces use the rink palette colours (puck, nets, joypad stars/arrows, parts of some frames).
 - Totals: 845 frames, 2785 pieces, at most 8 pieces per frame. All 8257 tiles are used. The largest frame bounding box is 70x72 px. The extent of all frames relative to the origin is x -47..44, y -64..39.
 - Named frames: `$161` SPFgloves · `$186`/`$187`/`$188`/`$189` joypad 1 star / joypad 2 star / puck-possession star / replay cursor · `$34C`/`$34D` joypad 3/4 star · `$18A` (puck; the comment at L42099 says `#SPFpuck`) · `$18B`..`$194` puck in flight (used by `$46A`) · `$195`/`$196` goal nets top/bottom (`defaultsprites2` L53446) · `$197` SPFgoalie (first goalie frame, L50856) · frames 838..845 are off-screen pointer arrows/stars (no hot spot).
 
@@ -345,7 +345,7 @@ The port's equivalent: draw the frame image with its origin at the projected poi
 
 **Draw order:** `SprSort` (L53612) bubble-sorts the 16 objects by `Ypos` ascending (by Xpos in horizontal mode; equal keys keep their order). `setsortcords` adds them in that order. The first sprite in the VDP link list is drawn on top, so **smaller rink Y (lower on screen) is in front**. Face-off sprites (`checkfo`) and `sso` objects are added before the players (in front). Pads/stars (`setffo`), clock, zamboni, crowd and ref come after (behind).
 
-**Priority vs. rink:** no sprite piece has the priority bit. Objects get it only through their attribute: `$8000` is set at L42884 and L50124 (`wallcollb2`), and `$8000` on the replay-cursor pad. Plane-B rink cells with the priority bit (§3.3) therefore cover every normal sprite.
+**Priority vs. rink:** no sprite piece has the priority bit. Objects get it only through their attribute: `$8000` is set at L42884 and L50124 (`wallcollb2`), and `$8000` on the replay-cursor pad. Plane-B rink cells with the priority bit (§3.1, §3.2) therefore cover every normal sprite.
 
 ### 2.7 sublist (L57723) and priolist (L57829): not sprite tables
 
@@ -366,7 +366,7 @@ sub_1721C(a0, d1):
   copy 8 longs (16 colours) to palfadenew + $40 + d1   ; $FFBD68 (line 2) or $FFBD88 (line 3)
 ```
 
-- Callers: `sub_9CDC` (end, L34319), `setupice` (L53113), `sub_16BAC`, the playoff screen.
+- Callers: `sub_9CDC` (end, `jmp` at L34280), `setupice` (L53091), `sub_16BAC` (L53150), and L48333 (code just before the `$79` song at L48340).
 - CRAM in game (targets in `palfadenew` `$FFBD28`; `cramfade` L44101 fades CRAM toward them):
   - line 0 = rink palette 0, line 1 = rink palette 1 (`sub_16C96` copies the first **16 longs = 2 lines** of the rink file's palette block). The rink file has 4 lines, but lines 2-3 of it are never loaded.
   - line 2 = home team "home" palette. Line 3 = away team "visitor" palette.
@@ -395,7 +395,7 @@ map: word W (= 48), word H (= 113), then W*H words row-major, top row first
 
 `Rinktiles` is the `+8` word, which is what the tile loader (`sub_11738`/`sub_1173C` L44942) receives. The loader puts raw tiles in VRAM starting at tile `d4`, here `rinkvrcset = 0`, and advances `d4` by the count.
 
-Map cell word = VDP name-table entry: bits 0-10 tile index (+ `rinkvrcset` = 0), bit 11 h-flip, bit 12 v-flip, bits 13-14 palette line, bit 15 priority (drawn over low-priority sprites). Counts in the normal rink: 3662 plain, 539 h-flip, 161 v-flip, 213 both, 571 line-1 cells, 50 line-2 cells, 26 line-3 cells, 201 priority cells.
+Map cell word = VDP name-table entry: bits 0-10 tile index (+ `rinkvrcset` = 0), bit 11 h-flip, bit 12 v-flip, bits 13-14 palette line, bit 15 priority (drawn over low-priority sprites). Counts in the normal rink (5424 cells, by top-5-bit value `prio,pal,vf,hf`): `$00` 3662, `$01` 539, `$02` 161, `$03` 213, `$04` 300, `$05` 271, `$08` 50, `$0C` 26, `$10` 151, `$11` 49, `$14` 1, `$15` 1. That is 573 line-1 cells, 50 line-2, 26 line-3 and 202 priority cells.
 
 ### 3.2 Rink geometry and the rink↔map pixel mapping
 
@@ -413,7 +413,7 @@ map_px_y = 368 - rink_y          ; rink y = 0 (red line) at px 368; goal lines +
 - Team-palette cells (normal rink):
   - Line 2 (home colours), 50 cells: the center-ice logo (rows 44-47, cols 21-26, tiles 430..453 in row-major order), the home bench (rows 47-58, cols 4-5) and the right penalty box (rows 49-51, col 43).
   - Line 3 (away colours), 26 cells: the away bench (rows 30-41, cols 4-5) and the right penalty box (rows 38-40, col 43).
-- Priority cells: the near (bottom) end boards and glass (map rows 78-84) and four bench/penalty-door cells (rows 52-53, 59-60). Sprites go behind them.
+- Priority cells: the near (bottom) end boards and glass (map rows 78-84, 190 cells) and 12 bench/penalty-door cells (3 each in rows 52, 53, 59, 60). Sprites go behind them.
 
 ### 3.3 Center-ice logo (`sub_FEA52` L974600)
 
@@ -426,7 +426,7 @@ sub_FEA52 (called right after the rink tiles are loaded, d4 = rinkvrcset + tilec
 
 - `unk_FEA74` (ROM `$FEA74`), 28 pointers: `$EDE8A $F2A84 $EE194 $EE49E $EE7A8 $EEAB2 $EEDBC $EF0C6 $EF3D0 $EF6DA $EF9E4 $EFCEE $EFFF8 $F0302 $F060C $F0916 $F0C20 $F0F2A $F1234 $F153E $F1848 $F1B52 $F1E5C $F2166 $F2470 $F277A $F2D8E $F2D8E` (both All-Star teams share one).
 - Normal rink: the logo tiles become tiles 430..453. They sit at rows 44-47 × cols 21-26 in row-major order with palette line 2: a 48x32 px image whose top-left is map px (168, 352), i.e. rink x -24..23, y 16..-15.
-- Reverse rink (452 tiles): tiles 428..451 at the same cells, in reverse order (451 at top-left). Use the cell words, which carry the flip bits.
+- Reverse rink (452 tiles): tiles 428..451 at the same cells, in reverse order (451 at top-left), with h-flip and v-flip both set (cell `$59C3` at row 44 col 21). That is the same logo rotated 180°.
 - The logo is always drawn in the **home** team's palette.
 
 ### 3.4 RevRinkTiles (L694925, file `RevRinkTilelist` `$B5180`)
@@ -490,7 +490,7 @@ checkwindow:
   ; vertical, dead zone +-10
   d = ty - Vpos
   if d < -10:      t = max(ty + 10, -200)          ; $FF38; "bgt" keeps t if t > -200
-  elif d > 10:     t = min(ty - 10, 255)           ; "blt #$100" keeps t if t < 256, else t = 256  (max is 256)
+  elif d > 10:     t = min(ty - 10, 256)           ; $100 ("blt" keeps t if t < 256, else t = 256)
   else: skip vertical
   s = t - Vpos ; if s != 0: s = s asr 4 ; if s == 0: s = 1 ; Vpos += s
   ; horizontal, dead zone +-40
@@ -533,10 +533,12 @@ sfx:   save d0-d7/a0-a6 ; d0 = stack word (at $40(sp)) ; if d0 < 0 (signed): ski
 song:  same, but does not write lastsfx
 p_initfx (L61549):
        if d0 > $7A (unsigned): return
-       if d0 >= $30: sub_1A304 (stop current music)       ; ids $30..$7A are music
-       pick the free / oldest of 8 sequence slots (unk_FFD3D4, 6 bytes each)
-       slot.ptr = long unk_2C648[d0] ; slot.time = 0 ; slot.pri = first byte of the sequence
-       reset 8 channel records (unk_FFD1A4 + slot*8, stride $40): volume $7F
+       if d0 >= $30: sub_1A304 (L61602: frees the first slot whose pointer is >= $2CEF2, i.e. music, and
+                     silences its channels)       ; ids $30..$7A are music
+       of the 8 sequence slots (unk_FFD3D4, 6 bytes each) take the one with the smallest signed
+       pointer long; if its pointer is not negative (no free slot) the request is DROPPED
+       slot.ptr = long unk_2C648[d0] ; slot word 4 = 0 ; slot byte 5 = first byte of the sequence
+       clear 8 channel records (unk_FFD1A4 + slot*8, stride $40) and set their word 4 = $7F
 ```
 
 - Many callers push the id and then overwrite it with `move.w #x,(sp)` before the call (the id actually played is the last value written).
@@ -599,7 +601,7 @@ PSG <- $F0 | ((asv >> 8) ^ $F)                     ; noise channel attenuation =
 - The Z80 driver (`unk_1AD90`, `$295` bytes, copied to Z80 RAM by `Z80_LoadROM` L63070) runs a sample loop. The 68000 also builds 29 volume tables in Z80 RAM `$1300..$1FFF` (table k: `out = (i - $80)*8/(8+k) + $80`, entry 0 forced to 0; `$1F00` is unity).
 - The playback loop (Z80 `$007D..$0095`, decoded by hand): write YM2612 reg `$2A`; `a = voltab[(hl)]`; if `a == 0` jump to the "next pointer" (Z80 RAM `$26..$28`; 0 → parks on ROM byte 0 = silence); write `a` to `$4001`; `c += step` (operand at Z80 `$8E`); `hl += carry` (and `de = 0`); loop. It costs 117 Z80 T-states per iteration. Output rate is therefore `3,579,545 / 117 × step / 256 ≈ 119.5 × step` Hz, minus 68000-bus wait states.
 - Sample data: **unsigned 8-bit mono PCM, ended by a `$00` byte.** The tables built by the 68000 map input 0 to 0, which is the stop test.
-- Start: when a channel's instrument byte is ≥ `$60` (`sub_1A6xx`, L61985-62010), the 68000 writes the 24-bit address from `unk_1B01C[(instr-$60)*8]` to Z80 `$23..$25`, the second long (always 0) to `$26..$28`, and `$29,$00` to `$96..$97` (jump vector, which restarts the driver at `$0029`). Pitch: `sub_1A7D8` (L62057) writes `step = freq[note % 12] >> (8 - note/12)` (low byte) to Z80 `$8E`. `freq` = `unk_1A890` = `$146 $159 $16E $184 $19B $1B3 $1CD $1E8 $205 $224 $245 $268`. Volume selects the table: Z80 `$83` = `max(vol >> 2, 3)` (`sub_1ABAA` L62918).
+- Start: when a channel's instrument byte is ≥ `$60` (`loc_1A74E`/`loc_1A760`, L62019-62053), the 68000 writes the 24-bit address from `unk_1B01C[(instr-$60)*8]` to Z80 `$23..$25`, the second long (always 0) to `$26..$28`, and `$29,$00` to `$96..$97` (jump vector, which restarts the driver at `$0029`). Pitch: `sub_1A7D8` (L62057) writes `step = freq[note % 12] >> (8 - note/12)` (low byte) to Z80 `$8E`. `freq` = `unk_1A890` = `$146 $159 $16E $184 $19B $1B3 $1CD $1E8 $205 $224 $245 $268`. Volume selects the table: Z80 `$83` = `max(vol >> 2, 3)` (`sub_1ABAA` L62918).
 
 Sample table `unk_1B01C` (ROM `$1B01C`, 15 entries x {long address, long 0}):
 
@@ -627,20 +629,20 @@ All samples lie in `$1B094..$2C247`. Music and SFX sequence data is at `$2C248..
 
 ## 6. Extraction plan (offline Node script, never used at runtime)
 
-A new script, for example `tools/extract_godot_assets.js`. It uses plain Node 18+ with only `fs`, `path`, `zlib`, and needs no npm packages. Invoke it as `node tools/extract_godot_assets.js lst/nhl94.bin godot/assets`. Every step reads only the addresses below. Steps 1-7 were prototyped in the scratch probe, and their renders matched the game.
+A new script, for example `tools/extract_godot_assets.js`. It uses plain Node 18+ with only `fs`, `path`, `zlib`, and needs no npm packages. Invoke it as `node tools/extract_godot_assets.js lst/nhl94.bin godot/assets`. Every step reads only the addresses below. The decoding in steps 1-5 was prototyped in the scratch probe and its renders matched the game. Steps 6-7 are plain byte copies and table output and were not run.
 
 **Step 0. Load and verify.** Read the ROM (1,048,576 bytes). Check that CRC32 = `0x9438F5DD` (write the CRC with the zlib polynomial `0xEDB88320`). Helpers: `u8, s8, u16be, s16be, u32be`. `color(w) → [((w>>1)&7)*255/7, ((w>>5)&7)*255/7, ((w>>9)&7)*255/7]`. `tile(addr)` → 64 indexes (row-major, high nibble = left pixel). PNG writer: RGBA, colour type 6, filter 0 per row, `zlib.deflateSync`. Add an 8-bit grayscale writer (colour type 0) for index textures.
 
 **Step 1. Palettes → `palettes.json`.**
 - `rink`: 4 lines from `$59924` (raw words + `#RRGGBB`). Only lines 0-1 are used in game.
 - `rink_reverse`: from `$B8A0A`.
-- `teams[28]`: for i in 0..27: `p = u32($30E + 4i)`, `pd = p + u16(p+2)`, `home = 16 words at pd`, `away = 16 words at pd+32`. Name: Pascal-ish strings at `p + u16(p+4)` (as found: city, abbreviation, nickname, arena).
+- `teams[28]`: for i in 0..27: `p = u32($30E + 4i)`, `pd = p + u16(p+2)`, `home = 16 words at pd`, `away = 16 words at pd+32`. Names at `p + u16(p+4)`: 4 strings (city, abbreviation, nickname, arena). Each is a word holding its total length in bytes (counting the word itself and a 0 pad byte that makes the length even), then the text. Example: `00 08 'Boston'`, `00 06 'BOS' 00`.
 - Also write `cram_layout`: line 0 = rink 0, line 1 = rink 1, line 2 = home team `home`, line 3 = away team `away`. Index 0 of each line is transparent for sprites.
 
 **Step 2. Sprite frames.**
 - `A = $5DE7A`, `FS = A + u32(A+4)` (= `$9E724`), `T = A + 10` (= `$5DE84`), `N = u16(A+8)` (= 8257).
 - For f in 1..845: read pieces `FS + u16(FS+2f) .. FS + u16(FS+2f+2)`, 8 bytes each (§2.2). Compute the bbox: x0 = min(p.x), y0 = min(p.y), x1 = max(p.x + 8w), y1 = max(p.y + 8h). Allocate a (x1-x0)×(y1-y0) image.
-- For each piece, for col 0..w-1 and row 0..h-1: tile = `p.tile + col*h + row`. The destination cell is `dc = hf ? w-1-col : col`, `dr = vf ? h-1-row : row`. Draw at `(p.x - x0 + 8dc, p.y - y0 + 8dr)`, mirroring the tile's pixels when hf/vf. Skip pixel value 0. Draw pieces in table order: later pieces overwrite earlier ones. Because hardware sprites earlier in the link list are in front, draw **in reverse piece order** (or only fill pixels that are still empty) to match the VDP. The probe drew in forward order and showed no visible difference.
+- For each piece, for col 0..w-1 and row 0..h-1: tile = `p.tile + col*h + row`. The destination cell is `dc = hf ? w-1-col : col`, `dr = vf ? h-1-row : row`. Draw at `(p.x - x0 + 8dc, p.y - y0 + 8dr)`, mirroring the tile's pixels when hf/vf. Skip pixel value 0. **Piece order matters.** `addframe2` gives piece 0 the lowest link number, and on the VDP an earlier sprite in the link list is drawn in front. So piece 0 must end up on top: draw pieces in reverse table order, or only fill pixels that are still empty. 167 frames have opaque pixels where pieces overlap (2042 px in total), so a forward-order render is wrong in those spots.
 - Write two images per frame:
   - (a) **index texture** `sprites/idx/f%04d.png`: R = colour index × 17, G = palette line × 85, A = 255 where the pixel is not 0. Use it with a palette-lookup shader that does the team swap: line 2 → 3 for away.
   - (b) **preview RGBA** `sprites/rgba/f%04d.png`: lines 0/1 from the rink palettes, line 2 from a chosen team's home palette.
@@ -700,3 +702,106 @@ Columns: id (= offset from `SPAList` `$5B1C`), absolute ROM address, attr (1 = l
 
 | id | abs | attr | lists |
 |---|---|---|---|
+| $2 | $5B1E | 1 | dir0: $197/180 $21B/10 $197/10 $21C/10 $197/240 $21D/10 $197/10 $21B/-10; dir d = dir0 frames + d*$3 |
+| $114 | $5C30 | 0 | dir0: $197/-30; dir d = dir0 frames + d*$3 |
+| $146 | $5C62 | 0 | dir0: $198/-32; dir d = dir0 frames + d*$3 |
+| $178 | $5C94 | 0 | dir0: $199/-32; dir d = dir0 frames + d*$3 |
+| $1AA | $5CC6 | 0 | d0: $217/4 $218/8 $217/-4<br>d1: $19C/-32<br>d2: $19F/-32<br>d3: $1A2/-32<br>d4: $219/4 $21A/8 $219/-4<br>d5: $1A8/-32<br>d6: $1AB/-32<br>d7: $1AE/-32 |
+| $1EC | $5D08 | 0 | dir0: $1D7/-32; dir d = dir0 frames + d*$2 |
+| $21E | $5D3A | 0 | dir0: $1D8/-32; dir d = dir0 frames + d*$2 |
+| $250 | $5D6C | 0 | d0: $1BF/8 $1C0/-32<br>d1: $1C1/8 $1C2/-32<br>d2: $1C1/8 $1C2/-32<br>d3: $1C3/8 $1C4/-32<br>d4: $1C5/8 $1C6/-32<br>d5: $1C7/8 $1C8/-32<br>d6: $1C7/8 $1C8/-32<br>d7: $1C9/8 $1CA/-32 |
+| $2A2 | $5DBE | 0 | d0: $1CB/8 $1CC/-32<br>d1: $1CD/8 $1CE/-32<br>d2: $1CD/8 $1CE/-32<br>d3: $1CF/8 $1D0/-32<br>d4: $1D1/8 $1D2/-32<br>d5: $1D3/8 $1D4/-32<br>d6: $1D3/8 $1D4/-32<br>d7: $1D5/8 $1D6/-32 |
+| $2F4 | $5E10 | 0 | dir0: $207/8 $208/48 $207/-8; dir d = dir0 frames + d*$2 |
+| $366 | $5E82 | 0 | dir0: $1AF/5 $1B0/8 $1AF/-16; dir d = dir0 frames + d*$2 |
+| $3D8 | $5EF4 | 0 | dir0: $1E7/10 $1E8/10 $1E9/10 $1EA/-15; dir d = dir0 frames + d*$4 |
+| $46A | $5F86 | 1 | d0: $18C/4 $18D/4 $18E/4 $18F/4 $190/4 $18D/4 $191/4 $18B/-4<br>d1: $193/2 $18B/2 $192/2 $18F/2 $194/2 $18F/2 $192/2 $18B/-2<br>d2: $18E/2 $18D/2 $18C/2 $18B/2 $191/2 $18D/2 $190/2 $18F/-2<br>d3: $192/4 $18B/4 $193/4 $18B/4 $192/4 $18F/4 $194/4 $18F/-4<br>d4: $18B/-4096<br>d5: $18B/-4096<br>d6: $18F/-4096<br>d7: $18F/-4096 |
+| $50C | $6028 | 0 | dir0: $1/-8; dir d = dir0 frames + d*$5 |
+| $53E | $605A | 0 | dir0: $2/10 $3/10 $4/10 $5/-10; dir d = dir0 frames + d*$5 |
+| $5D0 | $60EC | 0 | dir0: $2A/10 $2B/10 $2C/10 $2D/-10; dir d = dir0 frames + d*$5 |
+| $662 | $617E | 0 | dir0: $51/-8; dir d = dir0 frames + d*$1 |
+| $694 | $61B0 | 0 | dir0: $59/-8; dir d = dir0 frames + d*$1 |
+| $6C6 | $61E2 | 1 | dir0: $91/4 $92/-4; dir d = dir0 frames + d*$2 |
+| $718 | $6234 | 0 | dir0: $64/4 $65/4 $66/-20; dir d = dir0 frames + d*$6 |
+| $78A | $62A6 | 0 | dir0: $64/4 $63/4 $62/-20; dir d = dir0 frames + d*$6 |
+| $7FC | $6318 | 0 | dir0: $64/4 $63/4 $62/4 $61/4 $62/4 $63/4 $64/4 $65/4 $66/-20; dir d = dir0 frames + d*$6 |
+| $92E | $644A | 0 | dir0: $64/4 $65/4 $66/4 $66/4 $66/4 $65/4 $64/4 $63/4 $62/-20; dir d = dir0 frames + d*$6 |
+| $A60 | $657C | 0 | dir0: $A1/-8; dir d = dir0 frames + d*$3 |
+| $A92 | $65AE | 0 | dir0: $A1/10 $A2/10 $A1/10 $A3/-10; dir d = dir0 frames + d*$3 |
+| $B24 | $6640 | 0 | dir0: $101/4 $102/8 $101/-4; dir d = dir0 frames + d*$2 |
+| $B96 | $66B2 | 0 | dir0: $F1/-24; dir d = dir0 frames + d*$1 |
+| $BC8 | $66E4 | 0 | dir0: $F9/-24; dir d = dir0 frames + d*$1 |
+| $BFA | $6716 | 0 | dir0: $E1/-24; dir d = dir0 frames + d*$1 |
+| $C2C | $6748 | 0 | dir0: $E9/-24; dir d = dir0 frames + d*$1 |
+| $C5E | $677A | 0 | dir0: $29/-24; dir d = dir0 frames + d*$5 |
+| $C90 | $67AC | 0 | dir0: $159/-30; dir d = dir0 frames + d*$1 |
+| $CC2 | $67DE | 0 | dir0: $159/-40; dir d = dir0 frames + d*$1 |
+| $CF4 | $6810 | 0 | dir0: $29/-40; dir d = dir0 frames + d*$5 |
+| $D26 | $6842 | 0 | d0: $131/6 $132/6 $133/100 $134/8 $151/-8<br>d1: $135/6 $136/6 $137/100 $138/8 $152/-8<br>d2: $139/6 $13A/6 $13B/100 $13C/8 $153/-8<br>d3: $13D/6 $13E/6 $13F/100 $140/8 $154/-8<br>d4: $141/6 $142/6 $143/100 $144/8 $155/-8<br>d5: $145/6 $146/6 $147/100 $148/8 $156/-8<br>d6: $149/6 $14A/6 $14B/100 $14C/8 $157/-8<br>d7: $14D/6 $14E/6 $14F/100 $150/8 $158/-8 |
+| $DD8 | $68F4 | 0 | d0: $111/6 $112/6 $113/100 $114/8 $151/-8<br>d1: $115/6 $116/6 $117/100 $118/8 $152/-8<br>d2: $119/6 $11A/6 $11B/100 $11C/8 $153/-8<br>d3: $11D/6 $11E/6 $11F/100 $120/8 $154/-8<br>d4: $121/6 $122/6 $123/100 $124/8 $155/-8<br>d5: $125/6 $126/6 $127/100 $128/8 $156/-8<br>d6: $129/6 $12A/6 $12B/100 $12C/8 $157/-8<br>d7: $12D/6 $12E/6 $12F/100 $130/8 $158/-8 |
+| $E8A | $69A6 | 0 | dir0: $B9/12 $BA/40 $B9/-5; dir d = dir0 frames + d*$2 |
+| $EFC | $6A18 | 0 | dir0: $C9/8 $CA/8 $C9/-8; dir d = dir0 frames + d*$2 |
+| $F6E | $6A8A | 0 | d0: $17D/8 $17E/8 $17F/-8<br>d1: $179/8 $17A/8 $17B/8 $17C/-8<br>d2(=d1): $179/8 $17A/8 $17B/8 $17C/-8<br>d3: $17C/8 $17B/8 $17A/8 $179/-8<br>d4(=d3): $17C/8 $17B/8 $17A/8 $179/-8<br>d5(=d4): $17C/8 $17B/8 $17A/8 $179/-8<br>d6(=d5): $17C/8 $17B/8 $17A/8 $179/-8<br>d7: OUT OF ENTRY ($3E) |
+| $FAC | $6AC8 | 0 | d0: $17F/8 $17E/8 $17D/-8<br>d1: $17C/8 $17B/8 $17A/8 $179/-8<br>d2(=d1): $17C/8 $17B/8 $17A/8 $179/-8<br>d3: $179/8 $17A/8 $17B/8 $17C/-8<br>d4(=d3): $179/8 $17A/8 $17B/8 $17C/-8<br>d5(=d4): $179/8 $17A/8 $17B/8 $17C/-8<br>d6(=d5): $179/8 $17A/8 $17B/8 $17C/-8<br>d7: OUT OF ENTRY ($3E) |
+| $FEA | $6B06 | 0 | d0: $1/2 $102/10 $101/-6<br>d1: $15/2 $10A/10 $109/-6<br>d2(=d1): $15/2 $10A/10 $109/-6<br>d3(=d2): $15/2 $10A/10 $109/-6<br>d4(=d3): $15/2 $10A/10 $109/-6<br>d5(=d4): $15/2 $10A/10 $109/-6<br>d6(=d5): $15/2 $10A/10 $109/-6<br>d7(=d6): $15/2 $10A/10 $109/-6 |
+| $1014 | $6B30 | 0 | d0: $1/-5<br>d1: $15/-5<br>d2(=d1): $15/-5<br>d3(=d2): $15/-5<br>d4(=d3): $15/-5<br>d5(=d4): $15/-5<br>d6(=d5): $15/-5<br>d7(=d6): $15/-5 |
+| $102E | $6B4A | 1 | dir0: $233/3 $234/3 $235/3 $236/3 $237/3 $238/3 $239/3 $23A/3 $23B/3 $23C/3 $23D/3 $23E/3 $23F/3 $240/-3; dir d = dir0 frames + d*$0 |
+| $1078 | $6B94 | 0 | dir0: $28D/8 $28E/8 $28F/8 $290/8 $291/-1000; dir d = dir0 frames + d*$0 |
+| $109E | $6BBA | 1 | dir0: $D9/-30; dir d = dir0 frames + d*$1 |
+| $10D0 | $6BEC | 0 | dir0: $241/6 $242/-6; dir d = dir0 frames + d*$2 |
+| $1122 | $6C3E | 0 | dir0: $251/-30; dir d = dir0 frames + d*$2 |
+| $1154 | $6C70 | 0 | dir0: $251/9 $252/9 $251/9 $252/-9; dir d = dir0 frames + d*$2 |
+| $11E6 | $6D02 | 0 | dir0: $261/6 $262/6 $263/8 $262/6 $261/-6; dir d = dir0 frames + d*$3 |
+| $1298 | $6DB4 | 0 | d0: $51/4 $58/4 $10D/20 $60/4 $59/4 $5A/-4<br>d1: $52/4 $51/4 $10F/20 $59/4 $5A/4 $5B/-4<br>d2: $53/4 $52/4 $101/20 $5A/4 $5B/4 $5C/-4<br>d3: $54/4 $53/4 $103/20 $5B/4 $5C/4 $5D/-4<br>d4: $55/4 $54/4 $105/20 $5C/4 $5D/4 $5E/-4<br>d5: $56/4 $55/4 $107/20 $5D/4 $5E/4 $5F/-4<br>d6: $57/4 $56/4 $109/20 $5E/4 $5F/4 $60/-4<br>d7: $58/4 $57/4 $10B/20 $5F/4 $60/4 $59/-4 |
+| $136A | $6E86 | 0 | d0: $279/6 $27A/6 $27B/6 $27C/6 $113/100 $114/8 $151/-8<br>d1: $279/6 $27A/6 $27B/6 $27C/6 $117/100 $118/8 $152/-8<br>d2: $279/6 $27A/6 $27B/6 $27C/6 $11B/100 $11C/8 $153/-8<br>d3: $27D/6 $27E/6 $27F/6 $280/6 $11F/100 $120/8 $154/-8<br>d4: $27D/6 $27E/6 $27F/6 $280/6 $123/100 $124/8 $155/-8<br>d5: $27D/6 $27E/6 $27F/6 $280/6 $127/100 $128/8 $156/-8<br>d6: $27D/6 $27E/6 $27F/6 $280/6 $12B/100 $12C/8 $157/-8<br>d7: $279/6 $27A/6 $27B/6 $27C/6 $12F/100 $130/8 $158/-8 |
+| $145C | $6F78 | 0 | d0: $111/6 $112/6 $113/30 $113/-1024<br>d1(=d0): $111/6 $112/6 $113/30 $113/-1024<br>d2(=d1): $111/6 $112/6 $113/30 $113/-1024<br>d3: $121/6 $122/6 $123/30 $123/-1024<br>d4(=d3): $121/6 $122/6 $123/30 $123/-1024<br>d5(=d4): $121/6 $122/6 $123/30 $123/-1024<br>d6(=d5): $121/6 $122/6 $123/30 $123/-1024<br>d7: $111/6 $112/6 $113/30 $113/-1024 |
+| $148E | $6FAA | 0 | dir0: $292/-32; dir d = dir0 frames + d*$2 |
+| $14C0 | $6FDC | 0 | dir0: $293/-32; dir d = dir0 frames + d*$2 |
+| $14F2 | $700E | 0 | dir0: $2A2/4 $2A3/-32; dir d = dir0 frames + d*$4 |
+| $1544 | $7060 | 0 | dir0: $2A4/4 $2A5/-32; dir d = dir0 frames + d*$4 |
+| $1596 | $70B2 | 0 | d0: $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d1: $19A/8 $197/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d2: $19D/8 $19A/8 $19A/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d3: $1A0/8 $19D/8 $19D/8 $19D/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d4: $1A3/8 $1A0/8 $1A0/8 $1A0/8 $1A0/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d5: $1A6/8 $1A9/8 $1A9/8 $1A9/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d6: $1A9/8 $1AC/8 $1AC/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5<br>d7: $1AC/8 $1AF/8 $2C2/5 $2C3/5 $2C4/10 $2C5/-5 |
+| $1684 | $71A0 | 0 | d0: $197/8 $19A/8 $19A/8 $19A/8 $19A/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d1: $19A/8 $19D/8 $19D/8 $19D/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d2: $19D/8 $1A0/8 $1A0/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d3: $1A0/8 $1A3/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d4: $1A3/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d5: $1A6/8 $1A3/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d6: $1A9/8 $1A6/8 $1A6/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5<br>d7: $1AC/8 $1A9/8 $1A9/8 $1A9/8 $2C6/5 $2C7/5 $2C8/10 $2C9/-5 |
+| $1776 | $7292 | 0 | d0: $2E2/6 $2E3/6 $2E4/6 $2E5/60 $114/8 $151/-8<br>d1(=d0): $2E2/6 $2E3/6 $2E4/6 $2E5/60 $114/8 $151/-8<br>d2: $2E6/6 $2E7/6 $2E8/6 $2E9/60 $13C/8 $153/-8<br>d3(=d2): $2E6/6 $2E7/6 $2E8/6 $2E9/60 $13C/8 $153/-8<br>d4: $2EA/6 $2EB/6 $2EC/6 $2ED/60 $144/8 $155/-8<br>d5(=d4): $2EA/6 $2EB/6 $2EC/6 $2ED/60 $144/8 $155/-8<br>d6: $2EE/6 $2EF/6 $2F0/6 $2F1/60 $14C/8 $157/-8<br>d7(=d6): $2EE/6 $2EF/6 $2F0/6 $2F1/60 $14C/8 $157/-8 |
+| $17E8 | $7304 | 0 | d0: $2F2/6 $2F3/6 $2F4/6 $2F5/60 $134/8 $151/-8<br>d1(=d0): $2F2/6 $2F3/6 $2F4/6 $2F5/60 $134/8 $151/-8<br>d2: $2F6/6 $2F7/6 $2F8/6 $2F9/60 $11C/8 $153/-8<br>d3(=d2): $2F6/6 $2F7/6 $2F8/6 $2F9/60 $11C/8 $153/-8<br>d4: $2FA/6 $2FB/6 $2FC/6 $2FD/60 $144/8 $155/-8<br>d5(=d4): $2FA/6 $2FB/6 $2FC/6 $2FD/60 $144/8 $155/-8<br>d6: $2FE/6 $2FF/6 $300/6 $301/60 $12C/8 $157/-8<br>d7(=d6): $2FE/6 $2FF/6 $300/6 $301/60 $12C/8 $157/-8 |
+| $185A | $7376 | 0 | d0: $302/6 $303/6 $304/6 $305/60 $134/8 $151/-8<br>d1(=d0): $302/6 $303/6 $304/6 $305/60 $134/8 $151/-8<br>d2: $306/6 $307/6 $308/6 $309/60 $13C/8 $153/-8<br>d3(=d2): $306/6 $307/6 $308/6 $309/60 $13C/8 $153/-8<br>d4: $30A/6 $30B/6 $30C/6 $30D/60 $124/8 $155/-8<br>d5(=d4): $30A/6 $30B/6 $30C/6 $30D/60 $124/8 $155/-8<br>d6: $30E/6 $30F/6 $310/6 $311/60 $14C/8 $157/-8<br>d7(=d6): $30E/6 $30F/6 $310/6 $311/60 $14C/8 $157/-8 |
+| $18CC | $73E8 | 0 | d0: $312/6 $313/6 $314/6 $315/60 $134/8 $151/-8<br>d1(=d0): $312/6 $313/6 $314/6 $315/60 $134/8 $151/-8<br>d2: $316/6 $317/6 $318/6 $319/60 $11C/8 $153/-8<br>d3(=d2): $316/6 $317/6 $318/6 $319/60 $11C/8 $153/-8<br>d4: $31A/6 $31B/6 $31C/6 $31D/60 $144/8 $155/-8<br>d5(=d4): $31A/6 $31B/6 $31C/6 $31D/60 $144/8 $155/-8<br>d6: $31E/6 $31F/6 $320/6 $321/60 $12C/8 $157/-8<br>d7(=d6): $31E/6 $31F/6 $320/6 $321/60 $12C/8 $157/-8 |
+| $193E | $745A | 0 | d0: $322/6 $323/6 $324/6 $325/6 $326/6 $327/6 $328/6 $320/6 $301/6 $12C/80 $157/-8<br>d1: $316/6 $329/6 $32A/6 $32B/6 $32C/6 $32D/6 $329/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d2(=d1): $316/6 $329/6 $32A/6 $32B/6 $32C/6 $32D/6 $329/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d3(=d2): $316/6 $329/6 $32A/6 $32B/6 $32C/6 $32D/6 $329/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d4: $32E/6 $32F/6 $324/6 $325/6 $326/6 $327/6 $328/6 $320/6 $301/6 $12C/80 $157/-8<br>d5: $31E/6 $32F/6 $324/6 $325/6 $326/6 $327/6 $328/6 $320/6 $301/6 $12C/80 $157/-8<br>d6(=d5): $31E/6 $32F/6 $324/6 $325/6 $326/6 $327/6 $328/6 $320/6 $301/6 $12C/80 $157/-8<br>d7(=d6): $31E/6 $32F/6 $324/6 $325/6 $326/6 $327/6 $328/6 $320/6 $301/6 $12C/80 $157/-8 |
+| $1A00 | $751C | 0 | d0: $330/6 $331/6 $332/6 $333/6 $334/6 $335/6 $336/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d1: $2F6/6 $337/6 $332/6 $333/6 $334/6 $335/6 $336/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d2(=d1): $2F6/6 $337/6 $332/6 $333/6 $334/6 $335/6 $336/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d3(=d2): $2F6/6 $337/6 $332/6 $333/6 $334/6 $335/6 $336/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d4: $338/6 $337/6 $332/6 $333/6 $334/6 $335/6 $336/6 $318/6 $2F9/6 $11C/80 $153/-8<br>d5: $2FE/6 $339/6 $33A/6 $33B/6 $33C/6 $33D/6 $339/6 $320/6 $301/6 $12C/80 $157/-8<br>d6(=d5): $2FE/6 $339/6 $33A/6 $33B/6 $33C/6 $33D/6 $339/6 $320/6 $301/6 $12C/80 $157/-8<br>d7(=d6): $2FE/6 $339/6 $33A/6 $33B/6 $33C/6 $33D/6 $339/6 $320/6 $301/6 $12C/80 $157/-8 |
+| $1AC2 | $75DE | 0 | dir0: $33E/-24; dir d = dir0 frames + d*$1 |
+| $1AF4 | $7610 | 0 | d0: $111/6 $112/6 $113/30 $281/10 $282/10 $283/10 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/-900<br>d1(=d0): $111/6 $112/6 $113/30 $281/10 $282/10 $283/10 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/-900<br>d2(=d1): $111/6 $112/6 $113/30 $281/10 $282/10 $283/10 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/-900<br>d3: $121/6 $122/6 $123/30 $287/10 $288/10 $289/10 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/-900<br>d4(=d3): $121/6 $122/6 $123/30 $287/10 $288/10 $289/10 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/-900<br>d5(=d4): $121/6 $122/6 $123/30 $287/10 $288/10 $289/10 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/-900<br>d6(=d5): $121/6 $122/6 $123/30 $287/10 $288/10 $289/10 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/8 $28A/8 $28B/8 $28C/-900<br>d7: $111/6 $112/6 $113/30 $281/10 $282/10 $283/10 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/8 $284/8 $285/8 $286/-900 |
+
+Callers of ids with no name in the listing: `$114`/`$146`/`$178`/`$1EC`/`$21E` goalie poses picked by table or arithmetic in the goalie code (L39690-39710 compares `$178`); `$3D8` `goalieacc` L43638; `$B24` L37299; `$D26` L49414; `$E8A`/`$EFC` L38352-38356; `$F6E`/`$FAC` L37945-38156 (goalie, they set Xpos `$86`/`$88`); `$1014` L36556/L38251; `$102E` L49955 and `$1078` L50111 (set on the NEXT struct, `a3+$80`); `$109E` L38298; `$10D0` L50806; `$1154` L49078; `$136A` L49425; `$1596`/`$1684` L39108-39111; `$1AC2` L49311 (with crowd excitement); `$1298`, `$148E`, `$14C0`, `$14F2`, `$1544` not found as immediates (computed or in tables, for example the check table at L48957).
+
+## Appendix B: team palettes (`TeamList` `$30E`)
+
+Columns: team index, name, team block address, palette address, the 16 "home" colours (used as CRAM line 2 when this team is home), the 16 "visitor" colours (line 3 when away). Colour word format `0BGR` (3 bits each, low bit always 0).
+
+| # | team | block | palettes | home (line 2) | visitor (line 3) |
+|---|---|---|---|---|---|
+| 0 | Anaheim ANH | $5330 | $533C | EE8 222 000 000 222 222 88C 66A 040 260 240 AAA EEE 444 48C A84 | EE8 222 000 000 222 222 88C 66A 2A6 ACA 040 000 222 222 48C A84 |
+| 1 | Boston BOS | $966 | $972 | EE8 222 000 000 202 224 88C 66A 08C 08E CCC AAA CCC 888 48C A84 | EE8 222 000 000 202 224 88C 66A 08C 08E CCC 202 224 000 48C A84 |
+| 2 | Buffalo BUF | $C4C | $C58 | EE8 222 000 420 820 842 88C 66A 06C 08E 820 AAA CCC 888 48C A84 | EE8 222 000 420 820 842 88C 66A 06C 08E 820 820 842 420 48C A84 |
+| 3 | Calgary CGY | $F3A | $F46 | EE8 222 000 006 008 00A 88C 66A 08C 0AE 00A CCC EEE AAA 48C A84 | EE8 222 000 006 008 00A 88C 66A 08C EEE 008 008 00A 006 48C A84 |
+| 4 | Chicago CHI | $1234 | $1240 | EE8 222 000 000 200 222 88C 66A 000 222 008 CCC EEE AAA 48C A84 | EE8 222 000 000 200 222 88C 66A CCC CCC 000 008 22A 004 48C A84 |
+| 5 | Dallas DAL | $214E | $215A | EE8 222 000 000 222 444 88C 66A 020 ACA 060 888 CCC 666 48C A84 | EE8 222 000 000 222 444 88C 66A 020 ACA 060 000 222 000 48C A84 |
+| 6 | Detroit DET | $152E | $153A | EE8 222 000 006 008 00A 88C 66A 00A 00C CCC CCC EEE AAA 48C A84 | EE8 222 000 006 008 00A 88C 66A AAA CCC 00A 008 00A 006 48C A84 |
+| 7 | Edmonton EDM | $1848 | $1854 | EE8 222 000 200 600 622 88C 66A 02A 02C 600 CCC EEE 888 48C A84 | EE8 222 000 200 600 622 88C 66A 888 CCC 02C 600 622 200 48C A84 |
+| 8 | Florida FLA | $50E6 | $50F2 | EE8 222 000 200 400 600 88C 66A 02A 04C 008 888 CCC 666 48C A84 | EE8 222 000 200 400 600 88C 66A 04A 06C 400 004 008 002 48C A84 |
+| 9 | Hartford HFD | $1B44 | $1B50 | EE8 222 000 600 620 820 88C 66A 600 042 A00 CCC EEE AAA 48C A84 | EE8 222 000 600 620 820 88C 66A 040 284 C20 800 C20 600 48C A84 |
+| 10 | Los Angeles LA | $1E52 | $1E5E | EE8 222 000 200 202 222 88C 66A 202 000 CCC CCC EEE AAA 48C A84 | EE8 222 000 000 200 202 88C 66A AAA CCC 202 200 202 000 48C A84 |
+| 11 | Montreal MTL | $243E | $244A | EE8 222 000 422 622 842 88C 66A 622 842 008 CCC EEE 888 48C A84 | EE8 222 000 422 622 842 88C 66A 888 CCC 622 008 20A 004 48C A84 |
+| 12 | New Jersey NJ | $2740 | $274C | EE8 222 000 000 200 222 88C 66A 222 444 008 CCC EEE AAA 48C A84 | EE8 222 000 004 006 008 88C 66A 888 CCC 02C 000 222 200 48C A84 |
+| 13 | New York NYI | $2A58 | $2A64 | EE8 222 000 200 600 622 88C 66A 600 622 20C CCC EEE 888 48C A84 | EE8 222 000 200 600 622 88C 66A 888 CCC 20C 600 622 200 48C A84 |
+| 14 | New York NYR | $2D5C | $2D68 | EE8 222 000 006 008 00A 88C 66A 208 20A 600 CCC EEE 888 48C A84 | EE8 222 000 006 008 00A 88C 66A 888 CCC 20A 600 622 200 48C A84 |
+| 15 | Ottawa OTW | $3054 | $3060 | EE8 222 000 000 200 400 88C 66A 02A 02C 02E CCC EEE AAA 48C A84 | EE8 222 000 000 002 004 88C 66A 028 02C 002 222 444 002 48C A84 |
+| 16 | Philadelphia PHI | $3348 | $3354 | EE8 222 000 000 200 400 88C 66A 02A 02C 02E CCC EEE AAA 48C A84 | EE8 222 000 000 200 400 88C 66A AAA CCC EEE 02A 02C 028 48C A84 |
+| 17 | Pittsburgh PIT | $3646 | $3652 | EE8 222 000 000 222 222 88C 66A 04C 0AE EEE CCC EEE AAA 48C A84 | EE8 222 000 000 222 222 88C 66A AAA CCC 0AE 000 222 000 48C A84 |
+| 18 | Quebec QUE | $393C | $3948 | EE8 222 000 600 820 842 88C 66A 820 842 CCC CCC EEE AAA 48C A84 | EE8 222 000 600 820 842 88C 66A AAA CCC 820 820 842 600 48C A84 |
+| 19 | San Jose SJ | $3C42 | $3C4E | EE8 222 000 000 200 202 88C 66A 222 000 882 AAA CCC 888 48C A84 | EE8 222 000 000 200 202 88C 66A 888 CCC 882 660 882 440 48C A84 |
+| 20 | St. Louis STL | $3F30 | $3F3C | EE8 222 000 200 A00 600 88C 66A 02C 06E CCC CCC EEE AAA 48C A84 | EE8 222 000 200 400 422 88C 66A AAA CCC 02C 400 422 200 48C A84 |
+| 21 | Tampa Bay TB | $4216 | $4222 | EE8 222 000 200 400 420 88C 66A 200 C00 A22 CCC EEE AAA 48C A84 | EE8 222 000 000 200 222 88C 66A CA6 ECC EEC 200 200 000 48C A84 |
+| 22 | Toronto TOR | $4518 | $4524 | EE8 222 000 600 622 844 88C 66A 200 600 622 CCC EEE AAA 48C A84 | EE8 222 000 600 622 844 88C 66A 888 AAA CCC 600 622 200 48C A84 |
+| 23 | Vancouver VAN | $481C | $4828 | EE8 222 000 000 200 400 88C 66A 04E 0AE 000 CCC EEE AAA 48C A84 | EE8 222 000 000 200 400 88C 66A 00A 00C 08C 200 400 000 48C A84 |
+| 24 | Washington WSH | $4DFC | $4E08 | EE8 222 000 600 622 844 88C 66A 008 00A 22C CCC EEE AAA 48C A84 | EE8 222 000 600 622 844 88C 66A 888 AAA CCC 00A 22A 008 48C A84 |
+| 25 | Winnipeg WPG | $4B0A | $4B16 | EE8 222 000 006 008 00A 88C 66A 40C 42C A20 CCC EEE AAA 48C A84 | EE8 222 000 006 008 00A 88C 66A 40C 42C CCC 820 842 400 48C A84 |
+| 26 | All Stars East ASE | $37E | $38A | EE8 222 000 000 222 420 88C 66A 02A 24C 420 CCC EEE AAA 48C A84 | EE8 222 000 000 222 420 88C 66A 02A 24C CCC 222 420 000 48C A84 |
+| 27 | All Stars West ASW | $674 | $680 | EE8 222 000 000 222 420 88C 66A 02A 24C 420 CCC EEE AAA 48C A84 | EE8 222 000 000 222 420 88C 66A 02A 24C CCC 222 420 000 48C A84 |

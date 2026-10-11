@@ -109,8 +109,8 @@ Shootout mode (`OptPlayMode == 4`, `word_FFC2FA` bit 0) and in-game penalty shot
 | PenBuf | $FFC3A4 (confirmed) | 33 words | penalty/stoppage queue, 32 usable + terminator |
 | Pencntdwn | $FFC3E6 (confirmed) | word | vblanks until presentation; negative = presentation running |
 | Penaltytimer | $FFC3E8 (confirmed) | word | 24-vblank countdown for box time |
-| PBnum | $FFC3EA | byte (high byte of word) | $HV: H = home players in box, V = away (written by ResetBench) |
-| RefCnt / RefStep / RefPen | $FFC3F0 (confirmed) / $FFC3F2 / $FFC3F4 | word | ref animation countdown (vblanks), script index (byte offset; negative = last step running/done), current PenaltyList id |
+| PBnum | $FFC3EA (inferred from '93 order) | byte (high byte of word) | $HV: H = home players in box, V = away (written by ResetBench) |
+| RefCnt / RefStep / RefPen | $FFC3F0 (confirmed) / $FFC3F2, $FFC3F4 (inferred) | word | ref animation countdown (vblanks), script index (byte offset; negative = last step running/done), current PenaltyList id |
 | word_FFC3EE | ? | word | ref-message blink countdown (display) |
 | RefRamMap | $FFC3F6 (confirmed) | 56 words | ref window tiles |
 | DelayedPen | ? | byte | bit0 = PP goal released a player (display), bit1 = home has a penalty pending, bit2 = away has a penalty pending. Cleared at puckfaceoff2. |
@@ -125,7 +125,7 @@ Shootout mode (`OptPlayMode == 4`, `word_FFC2FA` bit 0) and in-game penalty shot
 | InjCntDown | ? | word | per-second countdown to the injury message |
 | gsstruct | $FFCE66 (confirmed) | 8 x 16 bytes | other games / playoff series |
 | HmShots / AwShots | $FFC6CE / $FFCA32 (confirmed) | $364 bytes each | team structs (below) |
-| HmGoals / AwGoals | $FFC6DA / $FFCA3E | word | = team struct +$C |
+| HmGoals / AwGoals | $FFC6DA / $FFCA3E (= team struct +$C, from `tmscore` uses at $C(a1)/$C(a2)) | word | score |
 
 ### 0.6 Team struct (94 layout, size $364; a2/a1/a3 = team pointers)
 
@@ -336,7 +336,7 @@ Clears 228 ($E4) words starting at unk_FFD092.
 - Callers: StartGame, sub_1354C.
 
 ### ResetClock (L29817)
-- Purpose: set the period length and stop the clock. Callers: StartPer (`bsr.s`), PeriodOver.loc_17278, ROM $788A.
+- Purpose: set the period length and stop the clock. Callers: StartPer (`bsr.s`, ROM $788A), PeriodOver.loc_17278 (also the StartGame path).
 - Steps:
   1. `d0 = ClockLength()`.
   2. If `gsp >= 3` (signed `blt` skips) and `OptPlayMode == 0`: `d0 = $258`.
