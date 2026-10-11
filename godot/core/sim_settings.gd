@@ -99,3 +99,22 @@ static func shared(from: Node) -> SimSettings:
 ## Goalie reaction delay in retail frames (1 frame = 16.7 ms).
 @export_range(0.0, 30.0, 1.0) var goalie_reaction_frames: float = 0.0:
 	set(v): goalie_reaction_frames = v; emit_changed()
+
+@export_group("Overlay")
+## Tactical grid (columns across, rows up the ice).
+@export var show_grid: bool = true:
+	set(v): show_grid = v; emit_changed()
+@export_range(1, 16, 1) var grid_columns: int = 5:
+	set(v): grid_columns = v; emit_changed()
+@export_range(1, 16, 1) var grid_rows: int = 9:
+	set(v): grid_rows = v; emit_changed()
+## Lines from the puck to both posts of each net, and the goalie's angle.
+@export var show_goalie_cones: bool = true:
+	set(v): show_goalie_cones = v; emit_changed()
+## Lanes from the puck carrier to teammates, with interception radii on opponents.
+@export var show_pass_lanes: bool = true:
+	set(v): show_pass_lanes = v; emit_changed()
+## Interception radius drawn around opponents, px.
+@export_range(4.0, 64.0, 1.0) var interception_radius: float = 16.0:
+	set(v): interception_radius = v; emit_changed()
+

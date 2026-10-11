@@ -16,6 +16,7 @@ var game: HockeyGame
 var obj: SimObject
 
 func _ready() -> void:
+	add_to_group(&"skaters")
 	if Engine.is_editor_hint():
 		return
 	game = _find_game()

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/skate_sandbox.gd" id="1"]
 [ext_resource type="Script" path="res://nodes/rink.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/skater.tscn" id="3"]
 [ext_resource type="Script" path="res://nodes/rink_camera.gd" id="4"]
+[ext_resource type="Script" path="res://nodes/debug_overlay.gd" id="overlay"]
 
 [node name="SkateSandbox" type="Node2D"]
 script = ExtResource("1")
@@ -19,6 +20,9 @@ index = 4
 position = Vector2(0, -120)
 index = 10
 attacking_top = false
+
+[node name="Overlay" type="Node2D" parent="."]
+script = ExtResource("overlay")
 
 [node name="Camera" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("4")

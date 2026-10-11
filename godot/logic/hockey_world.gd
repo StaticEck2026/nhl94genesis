@@ -62,6 +62,15 @@ var vcount: int = 0
 var crowd_boost: bool = false
 ## byte_FFC2FC bit 4: line changes off (energy ignored).
 var line_changes_off: bool = false
+## Score per team (0 home, 1 away), period (1-3, 4 overtime) and the game clock in
+## retail jiffies (24 per second, jps). Rules (Phase 8) drive these.
+var score: PackedInt32Array = PackedInt32Array([0, 0])
+var period: int = 1
+var clock_jiffies: int = 5 * 60 * 24
+
+func clock_seconds() -> int:
+	return clock_jiffies / 24
+
 ## Stick input per object for this loop: 0-7, SkaterSteering.JOY_NONE or JOY_BRAKE.
 ## The game layer fills it for pad players; AI fills it for the rest.
 var joy: PackedInt32Array = PackedInt32Array()
