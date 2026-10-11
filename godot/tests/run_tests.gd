@@ -53,6 +53,8 @@ func _initialize() -> void:
 		"test_findpc",
 		"test_icing",
 		"test_offside",
+		"test_anim_timing",
+		"test_anim_loop_and_flags",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -275,7 +277,7 @@ func test_steer_fast_turn() -> bool:
 	check(o.anim_busy(), "turn anim is one-shot")
 	eq(r.accel_dir, 0, "still pushing along old facing")
 	o = skater_at(Vector2i(0, 9000))
-	o.attribute |= 0x8
+	o.attribute |= SimObject.ATTR_XFLIP
 	steering().steer(o, 1, ctx_with())
 	eq(o.spa, Spa.TURN_LEFT, "mirrored sprite swaps the turn anim")
 	return true
@@ -299,7 +301,7 @@ func test_steer_snap() -> bool:
 	eq(o.facing_fx, 1 << 16, "stick opposite while still snaps 45 degrees")
 	eq(r.action, SkaterSteering.Action.NONE, "snap does not push")
 	o = skater_at(Vector2i.ZERO)
-	o.attribute |= 0x8
+	o.attribute |= SimObject.ATTR_XFLIP
 	steering().steer(o, 4, ctx_with())
 	eq(o.facing_fx, 7 << 16, "mirrored snap goes the other way")
 	return true
@@ -681,8 +683,9 @@ func test_goalie_covers() -> bool:
 	var w := HockeyWorld.new(SimSettings.new())
 	var g := w.place(6, Vector2i(0, 250), SimObject.POS_GOALIE, true, false)
 	g.legstr = 20
-	# Away from the goalie's stick (at -4, 230) so the body box decides.
-	w.drop_puck(Vector2i(8, 244))
+	# Clear of the goalie's stick (Hotlist frame $15: (2, -16) -> (2, 234)) so the body
+	# box decides.
+	w.drop_puck(Vector2i(-10, 246))
 	w.puck().vel = Vector2i(0, 200)
 	for i in 10:
 		w.step()
@@ -736,5 +739,51 @@ func test_offside() -> bool:
 	w.drop_puck(Vector2i(0, 110))
 	w.puck_logic.a2touchpuck(h)
 	check(PuckLogic.PEN_OFFSIDE in calls, "offside called when he touches it in the zone")
+	w.dispose()
+	return true
+
+## SPAskate ($5D0) dir 0: $2A/10 $2B/10 $2C/10 $2D/-10, one-shot. Frame 0 shows |T0| + 2
+## loops (the load loop plus 11), later frames |T| + 1: 12 + 11 + 11 + 11, so the id
+## clears on loop 45, the last frame's advance loop.
+func test_anim_timing() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	check(w.animator.loaded(), "spalist.json loaded")
+	var o := SimObject.new(4)
+	o.position = SimObject.POS_C
+	o.set_spa(0x5D0)
+	var frames := []
+	var cleared_at := -1
+	for i in range(1, 50):
+		w.animator.update(o, 1, false)
+		frames.append(o.frame)
+		if o.spa == 0 and cleared_at < 0:
+			cleared_at = i
+	eq(frames[0], 0x2A, "first frame")
+	eq(frames[11], 0x2A, "still frame 0 on loop 12")
+	eq(frames[12], 0x2B, "frame 1 from loop 13")
+	eq(frames[23], 0x2C, "frame 2 from loop 24")
+	eq(cleared_at, 45, "one-shot clears SPA on loop 45")
+	w.dispose()
+	return true
+
+func test_anim_loop_and_flags() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var o := SimObject.new(4)
+	o.position = SimObject.POS_C
+	# SPAstop ($6C6) loops: $91/4 $92/-4. pf2aip clears after one pass even though it loops.
+	o.flags2 |= SimObject.PF2_AIP
+	o.set_spa(0x6C6)
+	for i in 12:
+		w.animator.update(o, 1, false)
+	eq(o.spa, 0x6C6, "looping animation keeps its id")
+	check(not o.anim_busy(), "pf2aip cleared at the end of the first pass")
+	# x-flip mirrors the direction: facing 2 uses the dir-6 frames.
+	var f := SimObject.new(5)
+	f.position = SimObject.POS_C
+	f.facing_fx = 2 << 16
+	f.attribute |= SimObject.ATTR_XFLIP
+	f.set_spa(0x50C)
+	w.animator.update(f, 1, false)
+	eq(f.frame, 0x1F, "glide dir 6 frame when x-flipped facing 2")
 	w.dispose()
 	return true

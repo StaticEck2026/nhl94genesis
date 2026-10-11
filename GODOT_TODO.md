@@ -70,7 +70,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [ ] Energy (`getpde`/`setpde`, L51186-51229). Confirm full energy is `$1000` and map recovery to a fatigue curve.
 - [ ] Rating scale. Player bytes `$67` wgt, `$68` agl, `$69` spd, `$72` endurance. Confirm raw ranges (spd caps at `$1E`) and the 0-100 mapping in `PlayerData`.
 - [x] Rink size in px and the origin. See the Rink row above.
-- [ ] One-shot animation lengths. `Skater2D.ONE_SHOT_FRAMES` (12) stands in until `SetSPA` / `updateanim` and the SPA tables are ported. It decides how long a stop or turn animation blocks the skate animation.
+- [x] One-shot animation lengths: real SPAList timings now (the stand-in only runs when the data file is missing).
 - [x] Where stick value 9 (brake) comes from: never the pad (`jdtab` gives 0-8). `skateto` sends 9 when its target is within 12 px on both axes (L42978).
 - [ ] `sroot` (L44215) is Newton iteration. `RinkBoards.sroot` uses floor of the real root; check they agree on corner distances (64-100).
 
@@ -163,7 +163,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [~] `Camera2D` with smoothing, limits and lead: `RinkCamera` with tuning defaults. Retail scroll (`updatescroll` L51912) not ported.
 - [ ] Sprite sheets from `Spritetiles` L337811 / `frameSprData` L602163 exported offline to PNG
 - [ ] Team palette swap `.gdshader` (`SetTeamColors` L53781)
-- [ ] Animation tables: `SetSPA` L43319, `updateanim` L35703
+- [x] Animation tables: `SPAList` exported offline (`tools/extract/spalist.py` -> `godot/data/spalist.json`, 66 animations); `updateanim` ported (`Animator`) with the one-loop lag, de-glitch, loop bit and flag clearing; sprite frames are live, so `GetHot` uses the real Hotlist
 - [ ] Audio: sfx ids from `ram94.asm` comments, buses wired
 
 ## Phase 10. Editor tooling
@@ -187,3 +187,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Player collision and checking ported (`Collisions`, `Checking`): momentum exchange, Y-sort walk, goalie contact and interference, body checks, holds, sweeps, falls, board pins, injuries. Crowd boost found to be always on. 165 checks pass.
 
 - 2026-10-11: Puck ported (`PuckLogic`): pickup, steals, ricochets, goalie body box, nets, posts, goals with stats, offside and icing hooks, over the glass. Hotlist exported offline. All ten research specs landed. 191 checks pass.
+- 2026-10-11: Animation system ported (`Animator`, SPAList export). Sprite frames are live and `GetHot` reads the real Hotlist. Attribute word bits fixed (x flip is bit 11). 200 checks pass.

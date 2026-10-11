@@ -51,7 +51,8 @@ var old_z_fx: int = 0
 ## $28, $2A, $2C: rvu.
 var vel: Vector2i = Vector2i.ZERO
 var zvel: int = 0
-## $04 sprite attribute (bit 3 x flip, bit 4 y flip, bit 15 priority), $06 frame.
+## $04 sprite attribute word: bit 0 away-team palette swap, bit 11 x flip (byte 4 bit 3,
+## set for one handedness), bit 12 y flip, bits 13-14 palette, bit 15 priority. $06 frame.
 var attribute: int = 0
 var frame: int = 0
 ## $2E, $30, $32.
@@ -190,8 +191,13 @@ func set_flag2(bit: int, on: bool) -> void:
 func set_flag3(bit: int, on: bool) -> void:
 	flags3 = (flags3 | bit) if on else (flags3 & ~bit)
 
+const ATTR_AWAY := 0x0001
+const ATTR_XFLIP := 0x0800
+const ATTR_YFLIP := 0x1000
+const ATTR_PRIORITY := 0x8000
+
 func x_flip() -> bool:
-	return attribute & 0x8 != 0
+	return attribute & ATTR_XFLIP != 0
 
 func facing() -> int:
 	return facing_fx >> 16
@@ -206,6 +212,7 @@ func set_spa(id: int) -> void:
 		return
 	spa = id
 	spa_num = 0
+	# st $5C(a3): only the high byte, so the word is negative ("load the first frame").
 	spa_cnt = -1
 	spa_restarted = true
 

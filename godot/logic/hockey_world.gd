@@ -88,7 +88,9 @@ var checking: Checking
 var puck_logic: PuckLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
-## True once the animation port drives sprite frames; until then GetHot uses facing.
+## updateanim with the SPAList data. When the data file is missing (no extraction run),
+## frames stay put and GetHot falls back to a facing-based stick position.
+var animator: Animator
 var frames_live: bool = false
 
 var objects: Array[SimObject] = []
@@ -188,13 +190,6 @@ var ylist: PackedInt32Array = PackedInt32Array()
 ## word_FFD06E: retail uses step 22 instead of 17 when set. Mode not named yet.
 var alt_step: bool = false
 
-## Placeholder animation lengths in retail frames, until the SPA tables (SetSPA,
-## updateanim) are ported. One-shot (pf2aip), locked (pfalock), down, injured.
-const ONE_SHOT_FRAMES := 12
-const LOCK_FRAMES := 30
-const DOWN_FRAMES := 60
-const INJURY_FRAMES := 150
-
 signal board_hit(index: int, normal: Vector2i, hard: bool)
 ## The object came down onto the ice. zvel is the bounce speed after landing.
 signal landed(index: int, zvel: int)
@@ -242,6 +237,8 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	asstab[PuckLogic.ASS_PUCKSHADOW] = func(o: SimObject, _d7: int) -> void: puck_logic.puckshadow(o)
 	asstab[PuckLogic.ASS_PUCKUNFLIP] = func(o: SimObject, _d7: int) -> void: puck_logic.puckunflip(o)
 	_load_hotlist()
+	animator = Animator.new()
+	frames_live = animator.loaded() and not hotlist.is_empty()
 	collisions.sort_all()
 
 func _load_hotlist() -> void:
@@ -332,37 +329,27 @@ func update_players(d7: int) -> void:
 			_check_collisions(o)
 		_impact_decay(o, d7)
 
-## updateanim stand-in until the SPA tables are ported (Phase 9). At the end of a one-shot
-## or locked animation updateanim clears pf2aip, pfalock and the falling bit (L35745).
-## SPAnum stays 0 for the first frame.
+## updateanim (L35703). Without SPAList data, a fixed-length stand-in keeps the
+## pf2aip / pfalock / falling flags from sticking.
+const FALLBACK_ANIM_FRAMES := 20
+
 func _update_anim(o: SimObject, d7: int) -> void:
+	if animator.loaded():
+		animator.update(o, d7, sflags & SF_HOR != 0)
+		return
 	var busy := o.anim_busy() or o.locked() or o.flags3 & SimObject.PF3_FALLING
 	if not busy:
-		o.spa_cnt = 0
 		return
-	if o.spa_restarted or o.spa_cnt <= 0:
-		o.spa_cnt = _anim_frames(o)
-		o.spa_num = 0
+	if o.spa_cnt < 0:
+		o.spa_cnt = FALLBACK_ANIM_FRAMES
 		return
 	o.spa_num = 4
 	o.spa_cnt -= d7
-	if o.spa_cnt <= 0:
+	if o.spa_cnt < 0:
 		o.flags2 &= ~SimObject.PF2_AIP
-		var clear := SimObject.PF_ALOCK
-		if o.flags3 & SimObject.PF3_FALLING:
-			clear |= SimObject.PF_DOFF
-		o.flags &= ~clear
+		o.flags &= ~SimObject.PF_ALOCK
 		o.flags3 &= ~SimObject.PF3_FALLING
-		o.set_spa(Spa.GLIDE)
-
-func _anim_frames(o: SimObject) -> int:
-	if o.spa == Checking.SPA_INJURED_GAME or o.spa == Checking.SPA_INJURED_PERIOD:
-		return INJURY_FRAMES
-	if o.flags3 & SimObject.PF3_FALLING or o.spa in Checking.ALREADY_DOWN:
-		return DOWN_FRAMES
-	if o.locked():
-		return LOCK_FRAMES
-	return ONE_SHOT_FRAMES
+		o.spa = 0
 
 func _tick_timers(o: SimObject, d7: int) -> void:
 	if o.index < 12 and o.index != puckc:
@@ -553,9 +540,9 @@ func get_hot(o: SimObject) -> Vector2i:
 		var e: Array = hotlist[o.frame]
 		var x: int = e[0]
 		var y: int = e[1]
-		if o.attribute & 0x8:
+		if o.attribute & SimObject.ATTR_XFLIP:
 			x = -x
-		if o.attribute & 0x10 == 0:
+		if o.attribute & SimObject.ATTR_YFLIP == 0:
 			y = -y
 		return Vector2i(x, y)
 	if o.index > 11:
