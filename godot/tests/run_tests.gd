@@ -103,6 +103,7 @@ func _initialize() -> void:
 		"test_chk_fight_value",
 		"test_fightinput",
 		"test_fight_to_penalties",
+		"test_title_screen",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -2144,4 +2145,45 @@ func test_fight_to_penalties() -> bool:
 			short[e[0]] += 1
 	eq(w.stats[0].on_ice - w.stats[1].on_ice, short[1] - short[0], "strength (instigators %s)" % [short])
 	w.dispose()
+	return true
+
+## newTitleScreen for both editions: the palette fades in during frames 8-32, the logos have
+## slid in by frame 115, and with no Start press the credits end the routine on the
+## frame the ROM does (4211 retail, 21 blocks and 4412 with the fight patch's credits).
+func test_title_screen() -> bool:
+	var sim: Node = root.get_node("Sim")
+	var keep: MatchConfig = sim.match
+	for pair in [[MatchConfig.Edition.RETAIL, 4211, 20], [MatchConfig.Edition.FIGHT, 4412, 21]]:
+		var m := MatchConfig.new()
+		m.edition = pair[0]
+		sim.match = m
+		var t: Control = load("res://ui/title_screen.tscn").instantiate()
+		t.set_physics_process(false)
+		root.add_child(t)
+		# The runner works before the root enters the tree, so _ready has not run yet.
+		if not t.is_node_ready():
+			t._ready()
+		eq(t._blocks.size(), pair[2], "credit blocks")
+		var faded := -1
+		var slid := -1
+		var f := 0
+		while t._phase != 4 and f < 6000:
+			t._physics_process(0.0)
+			f += 1
+			if faded < 0 and _same_cram(t._cram, t._target):
+				faded = f
+			if slid < 0 and f > 90 and Array(t._hs).all(func(v: int) -> bool: return v == 0):
+				slid = f
+		check(faded > 8 and faded <= 32, "faded in during frames 8-32 (cramfade): %d" % faded)
+		check(slid > 90 and slid <= 115, "logos in place by frame 115: %d" % slid)
+		eq(f, pair[1], "the credits end the title")
+		t.free()
+	sim.match = keep
+	return true
+
+static func _same_cram(a: Array, b: Array) -> bool:
+	for k in 4:
+		for i in 16:
+			if int(a[k][i]) != int(b[k][i]):
+				return false
 	return true

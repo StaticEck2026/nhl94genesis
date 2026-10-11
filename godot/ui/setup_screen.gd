@@ -30,7 +30,7 @@ var _teams: Array[TeamData] = []
 func _ready() -> void:
 	_edition.add_item("Retail '94")
 	_edition.add_item("'94-Fight patch")
-	_edition.select(MatchConfig.Edition.FIGHT)
+	_edition.select(Sim.match.edition if Sim.match else MatchConfig.Edition.FIGHT)
 	for f in ["Fighting: Off", "Fighting: On", "Fighting: On - Arcade Mode"]:
 		_fighting.add_item(f)
 	_fighting.select(MatchConfig.Fighting.ON)
