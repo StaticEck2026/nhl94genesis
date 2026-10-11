@@ -89,6 +89,7 @@ func _initialize() -> void:
 		"test_comp_line",
 		"test_endfaceoff_draw",
 		"test_full_game",
+		"test_pad_mash_game",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -1567,5 +1568,36 @@ func test_full_game() -> bool:
 	check(drops[0] >= 3, "a faceoff at least every period: %d" % drops[0])
 	check(w.stats[0].shots + w.stats[1].shots > 0, "shots were taken")
 	check(w.gmode & HockeyWorld.GM_EOG != 0, "game-over flag")
+	w.dispose()
+	return true
+
+## Both pads mash random buttons through a short game: input, switching, line menus,
+## faceoffs and penalties must survive anything a player can press.
+func test_pad_mash_game() -> bool:
+	var w := HockeyWorld.new(SimSettings.new(), 0x77)
+	w.opt_perlen = 3
+	w.roster.setup_teams(_team("PIT"), _team("CHI"))
+	w.cont_team[0] = 1
+	w.cont_team[1] = 2
+	var over := [false]
+	w.rules.game_over.connect(func() -> void: over[0] = true)
+	w.rules.start_game()
+	var r := RandomNumberGenerator.new()
+	r.seed = 1
+	var held := [0, 0]
+	var frames := 0
+	while not over[0] and frames < 60000:
+		for k in 2:
+			if r.randi() % 6 == 0:
+				held[k] = r.randi() & 0x7F
+			w.pads[k].held = held[k]
+		w.step()
+		frames += 1
+	check(over[0], "the game ended under random input (%d frames)" % frames)
+	var on_ice := 0
+	for i in 12:
+		if w.objects[i].position >= 0:
+			on_ice += 1
+	check(on_ice >= 8, "players still on the ice: %d" % on_ice)
 	w.dispose()
 	return true
