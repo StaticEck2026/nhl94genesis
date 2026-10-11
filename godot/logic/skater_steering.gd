@@ -114,7 +114,7 @@ func _no_turn(o: SimObject, diff: int, ctx: Context) -> Result:
 	if not back:
 		var anim := Spa.SKATE_BACK
 		if not o.reverse():
-			anim = Spa.SKATE_INJURED if o.flags2 & SimObject.PF2_PEN else Spa.SKATE
+			anim = Spa.SKATE_INJURED if o.flags2 & SimObject.PF2_FIGHT_HURT else Spa.SKATE
 			if ctx.has_puck:
 				anim = Spa.SKATE_PUCK
 		if not o.anim_busy():

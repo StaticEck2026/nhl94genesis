@@ -284,7 +284,7 @@ rts
 .nf: btst d0,#$1E      ; Z = bit rel of $1E clear
 rts
 ```
-**As decoded, these two masks pair the opposite way from the IDA layout.** The listing puts `.nf` (the beq target) right after the beq, but the bytes show the beq at $C1A8 jumps to $C1B2. So the code at $C1AC (`btst d0,#$F0`) runs when x-flip is SET, and $C1B2 (`btst d0,#$1E`) when x-flip is CLEAR. The corrected table:
+The listing shows garbage after the `beq`. The bytes show that the beq at $C1A8 (taken when x-flip is CLEAR) jumps to $C1B2 (`btst d0,#$1E`), and the fall-through at $C1AC (`btst d0,#$F0`) runs when x-flip is SET (`btst d0,#imm` tests bit `rel` of the immediate byte). The resulting table:
 - x-flip clear (bit 11 = 0): backhand (NE) for rel ∈ {1,2,3,4}, forehand (EQ) for rel ∈ {0,5,6,7}.
 - x-flip set: backhand for rel ∈ {4,5,6,7}, forehand for rel ∈ {0,1,2,3}.
 
@@ -583,7 +583,7 @@ See §1.3 (9 entries × (x, z) words, indexed by passdir 0..8).
   1. `d1 = $7FC`. `dir = vtoa(−X, (pfgoal ? $108 : −$108) − Y)` (direction to the goal center).
   2. `noidea(dir)`: `rel = (facedir.hi + ((8 − dir) & 7)) & 7`. If `rel <= 4` (signed): `Z = ((~attr) & $800) == 0`, i.e. Z set iff x-flip is set. Else: `Z = (attr & $800) == 0`, i.e. Z set iff x-flip is clear. noidea restores d0/d1, but **the Z flag from its last `andi.w` survives** `movem` and `rts`. The listing comment ("doesn't do anything") is wrong.
   3. setonetimeranim: `movem.w (sp)+,d0-d1` (d1 = $7FC; flags unchanged). If Z → keep $7FC (forehand), else `d1 = $92E` (backhand).
-- Table: x-flip clear → rel 0..4 = backhand, 5..7 = forehand. x-flip set → rel 0..4 = forehand, 5..7 = backhand. (This differs from Findhittype's split; port as is.)
+- Table: x-flip clear → rel 0..4 = backhand, 5..7 = forehand. x-flip set → rel 0..4 = forehand, 5..7 = backhand. This is Findhittype's split except at one relative direction each: x-flip clear, rel 0 (Findhittype gives forehand, noidea backhand); x-flip set, rel 4 (Findhittype backhand, noidea forehand). The direction here is to the goal center, not the launch direction. Port as is.
 
 ### sub_F6C44 (L959336)
 - Purpose: one-timer gate. Is the puck in the player's attacking half?
@@ -683,7 +683,7 @@ puckvz = min($1800, (z'*ps*68)/dist + dist*2867/ps)    (z'=0 -> unchanged; top-s
 6. doshot: dist is not renormalized after the random error; the Y error is halved only when dy < 0; z == 0 leaves puckvz stale.
 7. ReadGoaliePulled tests the shooter's own team (own goalie pulled → perfect shots).
 8. CPU ShotMode writes passdir = assnum & 7 during the windup (affects only prepshot's top-shelf test).
-9. Findhittype's listing is mis-disassembled, and its two masks are swapped relative to IDA's layout; use the decoded byte behaviour.
+9. Findhittype's listing is mis-disassembled; use the decoded byte behaviour (x-flip clear → mask $1E, x-flip set → mask $F0).
 10. noidea/setonetimeranim and sub_F6C44 return results in the Z flag only; their listing comments are misleading.
 11. `st` on word variables (puckc, passplayer, onetimerplayer) writes only the high byte.
 12. puckvzadj measures distance to the goal line nearer by |pucky|, not necessarily the target goal.

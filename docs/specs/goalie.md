@@ -24,7 +24,7 @@ How the pieces fit together:
 | `puckx/pucky/puckz` | `$FFB74A/$FFB75E/$FFB762` | puck position words |
 | `puckvx/puckvy/puckvz` | `$FFB772/$FFB774/$FFB776` | puck velocity words |
 | `puckc` | `$FFB7AA` | puck carrier SCnum, negative = none |
-| `puckcross` | `$FFBEE6` | 4 words: `+0` x at top goal line (y=+$108), `+2` time to top line, `+4` x at bottom line (y=-$108), `+6` time to bottom line. See section 5. |
+| `puckcross` | `$FFBEE6` | 4 words: `+0` x at top goal line (y=+$108), `+2` time to top line, `+4` x at bottom line (y=-$108), `+6` time to bottom line. See section 4. |
 | `puckcross2`, `puckcross6` | `$FFBEE8`, `$FFBEEC` | the **high bytes** of the two time words. `st` (byte) on them at faceoffs/goals = "no goalie moves". |
 | `TmpPuckX` | `$FFDEB6` | goalie's working puck X (written by each CPU goalie every call) |
 | `threat` | word | set to 1 by the goalie before `chk4pass` (skips chk4pass's random gate) |
@@ -46,11 +46,11 @@ How the pieces fit together:
 | `cont1team`, `cont2team` | words | team on controller 1/2 (0 none, 1 home, 2 away) |
 | Team struct (`HmShots $FFC6CE`, `AwShots = +$364 = $FFCA32`) | | `$0C` score (word), `$22` SortCords address of team's first object (word), `$26` goalie word (high byte `$FF` = pulled; `$FFFF` = no goalie), `$2A` (long) = squared distance of that team's nearest available skater to the (lead-adjusted) puck, written by `assnearest` L40663/L40713; 0 when that team has the puck or no skater qualifies |
 
-Tables dumped in this file: `_saveanim` (4.6), the `sub_DB68` facing masks (4.2), `asstab` ids (above), `Setplass _alist` (4.5 note), `puckgoalie _list` rating offsets (1.2), `PenaltyList` entry used (`+8 = $94 PenFO`).
+Tables dumped in this file: `_saveanim` (under goaliesave), the `sub_DB68` facing masks, `asstab` ids (above), `Setplass _alist` (7.4), `puckgoalie _list` rating offsets (1.2), `PenaltyList` entry used (`+8 = $94 PenFO`), SPA list (8.1).
 
 ### 1.2 Goalie rating bytes in '94 (correction)
 
-The task names (`GGSright $6D, GSSleft $70, GGSleft $71, GSSright $72`) are the '93 equates in `src/ram94.asm` L205-213. '94 `setplayer` (L51620-51750) loads the struct differently, and the '94 save code reads different offsets. `puckgoalie` (L50818, out of scope; it decides whether a shot is stopped) uses this table at `$15630` (L50952):
+The task names (`GGSright $6D, GSSleft $70, GGSleft $71, GSSright $72`) are the '93 equates in `src/ram94.asm` L205-213. '94 `setplayer` (L51620-51750) fills `$6D` (roster byte 5 low nibble), `$6E` (byte 7 high), `$70` (byte 6 low), `$71` (byte 5 high), `$72` (byte 6 high), `$73` (byte 7 low, masked to 0-15) and `$76` (hand). The '94 save code reads `$73/$6E/$70/$72`, not `$6D/$71`. `puckgoalie` (L50818, out of scope; it decides whether a shot is stopped) uses this table at `$15630` (L50959):
 
 | index (`d2`) | offset | listing name |
 |---|---|---|
@@ -69,7 +69,7 @@ Ratings read by the routines **in this spec**:
 - `$70`: only in `chk4pass`'s random gate, which the goalie skips (`threat = 1`). So not used by the goalie.
 - `$68` agility / `$69` speed / `$67` weight: through `playeracc` (already ported; goalie gets agility twice + `$10`).
 
-Note: '94 uses `$63` (pflags2) **bit 2** as "unavailable" (`check4bench` L37859 sets it), not bit 4 as in the '93 equates.
+Note: '94 uses `$63` (pflags2) **bit 2** as "unavailable" (`check4bench` L37861 sets it), not bit 4 as in the '93 equates.
 
 ---
 
@@ -83,7 +83,7 @@ Note: '94 uses `$63` (pflags2) **bit 2** as "unavailable" (`check4bench` L37859 
 Temps used (word unless noted):
 - `$40` (byte) temp1 = decision countdown.
 - `$42` (byte) = skateto countdown, `$43` (byte) = current direction (0-7 move, 8 stop, 9 arrived).
-- `$46` temp4 = "rebound dive window" counter (normally negative; `puckgoalie` sets it to 4 when the puck bounces off the goalie, L50857).
+- `$46` temp4 = "rebound dive window" counter (normally negative; `puckgoalie` sets it to 4 when the puck bounces off the goalie, L50897).
 - `$48` temp5 = hold-puck countdown (`_glue` L50702 sets `$8C` (140), or 5 if the goalie got the puck during the dive SPA `$2F4`).
 
 Note on `st`: `st $46(a3)` and `st $48(a3)` are byte stores to the **high byte** of the word (verified: `50 EB 00 46`). The word becomes `$FFxx`, i.e. negative. Port as "set high byte to $FF".
@@ -96,7 +96,7 @@ Exact logic:
 **B. `_checkanim`: goal-against reaction** (L39076-39114)
 2. `TmpPuckX = puckx` (every call).
 3. If `word_FFC2F4` bit0 (goal scored) is 0 → step 5.
-4. If `pf2aip` (`$63` bit1) set → step 5.
+4. If `pf2aip` (`$63` bit1) set → step 5. Otherwise:
    - If `word_FFC2F4` bit1 set: if bit3 clear **and** `frame($06) == $2C4` **and** `frame == $2C8` → set bit3, `sfx($1C)`. The two `bne` tests make this unreachable (verified bytes `0C6B 02C4 0006 6600` / `0C6B 02C8 0006 6600`). Port as dead code. → step 5.
    - Else (bit1 clear): if `sign(pucky) == sign(Y)` (`eor.w`, result >= 0) and `-20 < X <= 20` (`cmpi #$14 bgt` skip, `cmpi #$FFEC ble` skip): set `word_FFC2F4` bit1, clear bit3, `SetSPA($1596)` if pfgoal (bit7 of `$62`) = 0, else `SetSPA($1684)`; set `pf2aip`.
 
@@ -107,7 +107,7 @@ Exact logic:
 
 **D. Crease box test** (L39125-39137)
 8. In box iff `-52 <= X <= 52` (`$34`/`$FFCC`), `-270 <= Y <= 270` (`$10E`/`$FEF2`), and (`Y > 210` (`$D2`) or `Y < -210` (`$FF2E`)). The test does not check which end.
-9. If not in box (`_nna2`): `a0 = rtss2` (no extra avoidance), `tx = 4` if `X >= 0` else `-4`, `ty = $E4` (228) if pfgoal = 0 else `-$E4`; `goto skateto(tx, ty)` (see 6.1). Note: runs even during `pf2aip` and with the clock stopped; `goalieacc` then calls `SetSPA($3D8)` and can overwrite a running animation.
+9. If not in box (`_nna2`): `a0 = rtss2` (no extra avoidance), `tx = 4` if `X >= 0` else `-4`, `ty = $E4` (228) if pfgoal = 0 else `-$E4`; `goto skateto(tx, ty)` (see 7.1). Note: runs even during `pf2aip` and with the clock stopped; `goalieacc` then calls `SetSPA($3D8)` and can overwrite a running animation.
 
 **E. `_noskate`: in the box** (L39152-39172)
 10. If `pf2aip` → return.
@@ -121,7 +121,7 @@ Exact logic:
     If `puckc != SCnum`: byte `$48 = $FF`.
 
 **G. Decision timer** (`_nofo`, L39195-39213)
-16. `temp1.b ($40) -= d7`. If result >= 0 (signed byte, `bpl`) → **`_nodec`** (step 40).
+16. `temp1.b ($40) -= d7`. If result >= 0 (signed byte, `bpl`) → **`_nodec`** (step 39).
 17. `d0 = aidef ($6B)`; if `d0 != 0` and `byte_FFC2FC` bit6 → `d0 -= 1`. `temp1.b = d0 >> 2` (`lsr.b`).
 18. If pfjoycon set and `$64` bit2 clear → `assinsert($1D)` and return. Unreachable in practice (pfjoycon here implies entry from `assgoaliectrl`, which requires `$64` bit2 set). Port as-is.
 
@@ -136,7 +136,7 @@ Exact logic:
     - If `temp5 > $5A` (signed) → `_de1`. (Right after pickup temp5 = 140, so no pass until it has counted down to 90.)
     - If `HVcounter & 3 != 0` → `_de1` (pass look happens 1 time in 4).
     - Opponent scan: `a0 = SortCords + $300` (SCnum 6..11) if the goalie is home (`$62` bit6 = 0), else `SortCords` (0..5). For 6 objects: skip if `$63` bit2 (unavailable); `ddy = pucky - oY`; skip unless `-28 <= ddy <= 28` (`$1C`); `ddx = puckx - oX`; skip if `ddx > 25` (`$19`); if `ddx > -25` (`$FFE7`) → opponent is close → `_de1` (no pass). (Opponent goalie included.)
-    - No close opponent: `threat = 1`; `chk4pass` (6.3); → `_de1`.
+    - No close opponent: `threat = 1`; `chk4pass` (7.3); → `_de1`.
 22. Else (`_notpuckc`), **rebound dive / cover**. All must hold, otherwise → `_de1`:
     - `temp4 == 0` (only on the 4th decision after `puckgoalie` set temp4 = 4);
     - `puckc < 0`;
@@ -151,14 +151,14 @@ Exact logic:
 24. If `Y > 260` or `Y <= -260` (`cmpi #$104 bgt`; `cmpi #$FEFC bgt` = normal): goalie is at or behind the goal line (`loc_D8AA`):
     `ty = 0`; `tx = 0` if `X > 44` or `X < -44` (`$2C`/`$FFD4`); else `tx = $88` (136) if `X >= 0`, `-136` if `X < 0` → `_de5`.
 25. Normal (`loc_D8CE`): if `puckc >= 0` and `puckc != SCnum`: `TmpPuckX = cX + asr(puckx - cX, 1)` with `cX` = carrier X (floor halving).
-26. `(vx, vy) = sub_DB3E(TmpPuckX, pucky)` (2.2), the vector from the net point `(0, d3)` to the puck. `dir = vtoa(vx, vy)`; `sub_DB68(dir)` (2.3): turn one step toward the puck.
+26. `(vx, vy) = sub_DB3E(TmpPuckX, pucky)` (below), the vector from the net point `(0, d3)` to the puck. `dir = vtoa(vx, vy)`; `sub_DB68(dir)` (below): turn one step toward the puck.
 27. Lookahead factor `f = (gameclock & 7) * 16 + $A0` (160..272). If `pucky > $DB` (219) or `pucky <= -219` (`$FF25`, `bgt` = keep) → `f -= $40`.
 28. `px = hi16(f * puckvx) + TmpPuckX`, `py = hi16(f * puckvy) + pucky` (`muls.w` then `swap`: the high word of the signed 32-bit product, i.e. floor division by 65536).
 29. `(Vx, Vy) = sub_DB3E(px, py)`.
 30. `D = Vx*Vx + Vy*Vy` (32-bit). If `D <= $384` (900, unsigned) → offset = `(Vx, Vy)`. Else: `s = sroot(D)`; `n = 1 + s`; `ry = $12` (18), or `$1A` (26) if `sflags` bit3 (shot in flight); `rx = ry + 8` (26 or 34); `Vy' = (Vy * ry) / n`, `Vx' = (Vx * rx) / n` (`divs.w`, truncation toward zero).
 31. `ty = Vy' + d3`; `tx = Vx'`. (Keep `ty` in `d2`; `d3` and `a0` stay live.)
 
-**K. Save / reaction decision** (L39410-39465)
+**K. Save / reaction decision** (L39413-39465)
 32. Early-shot test: if shootout (`word_FFC2FA` bit0) or PS (`BA_PS_flags` bit2) or no shot in flight (`sflags` bit3 = 0) → step 33. Else if `pucky > $D0` (208) or `pucky < -208` (`$FF30`): if `-20 <= X <= 20` (`$14`/`$FFEC`) and `(gameclock & 2) == 0` (bit1 of the low byte) → **step 34 directly**, skipping all `puckcross` checks; otherwise step 33. Else (`|pucky| <= 208`) → step 33.
 33. `puckcross` checks (`loc_D9EE`; `t = (a0+2)`, `cx = (a0)`):
     - `t > $22` (34) **unsigned** → `_de5` (just position; negative/"no crossing" times are huge unsigned).
@@ -180,7 +180,7 @@ Exact logic:
 38. `$43 = vtoa(dx, dy)` (8 when zero).
 
 **M. `_nodec`: apply** (L39494-39500)
-40. `d2 = sext($43)`; if `d2 <= 7` → `playeracc(d2)` (accelerate in that absolute direction; facing unchanged); else `stopna` (each axis moves `$96` toward 0).
+39. `d2 = sext($43)`; if `d2 <= 7` → `playeracc(d2)` (accelerate in that absolute direction; facing unchanged); else `stopna` (each axis moves `$96` toward 0).
 
 Quirks:
 - The `$2C4 && $2C8` frame test is unreachable; `sfx $1C` is never played from here.
@@ -255,7 +255,7 @@ Xvel = asr(Xvel, 2); Yvel = asr(Yvel, 2)          ; two asr.w #1 each (floor)
 - Pad stack leaves `Xvel = ±$1000 >> 2 = ±$400` toward center.
 - No sound, no random.
 
-`_saveanim` (L39720, ROM `$DD1A`, 10 words; an unused duplicate sits in `doinput` at `$B602`):
+`_saveanim` (L39717, ROM `$DD1A`, 10 words; an unused duplicate sits in `doinput` at `$B602`):
 
 | i | SPA | listing comment |
 |---|---|---|
@@ -280,7 +280,7 @@ Xvel = asr(Xvel, 2); Yvel = asr(Yvel, 2)          ; two asr.w #1 each (floor)
 4. `temp1.b -= d7`; if >= 0 → step 7.
 5. Reload `temp1.b = aidef' >> 2` (same as assgoaliecpu step 17).
 6. Re-validate (any failure → `assexit`): `puckc < 0`; puck moving toward own end (pfgoal 0: `puckvy >= 0`; pfgoal 1: `puckvy < 0`; same `eori #8,ccr` trick); own team `$2A >= $E10` (3600 = 60²); opponent `$2A >= $640` (1600 = 40²) (signed long compares; `a1/a2` re-derived from `HmShots/AwShots` and `$62` bit6).
-7. `goto skatetopuck` (6.2).
+7. `goto skatetopuck` (7.2).
 - There is no distance-from-net limit. The chase ends only through step 6 on a decision frame, or when the goalie gets the puck (`puckc >= 0` → `assexit`).
 
 ---
@@ -292,7 +292,7 @@ Xvel = asr(Xvel, 2); Yvel = asr(Yvel, 2)          ; two asr.w #1 each (floor)
 - In: `a3`, `d7`, `Hpos`, `Vpos`, `gmode`, `puckc`, `BA_PS_flags`, `$6B`. Out: `$64` bit2, temps, `AddPenalty2` calls.
 1. If pfjoycon clear → `assexit`.
 2. If pfna set → step 5.
-3. Range whistle: if `-$AA <= Y <= $AA` (-170..170) and clock running → `AddPenalty2(d0=8)` (L38980, "clock stoppage due to goalie out of range").
+3. Range whistle: if `-$AA <= Y <= $AA` (-170..170) and clock running → `AddPenalty2(d0=8)` (L38983, "clock stoppage due to goalie out of range").
 4. Off-camera test: `dx = X - Hpos`, `dy = Y - Vpos`. Clear `$64` bit2, then set it if `dx >= $74` (116) or `dx <= -116` or `dy >= $64` (100) or `dy <= -100`. If set → `goto assgoaliecpu._checkanim` (CPU logic drives the goalie this loop).
 5. `_na`: if pfalock → return. `check4bench` (returns at once for joystick players). If `bclr pfna` was set: `temp1 word = 0`, `temp2 word = 8`, byte `$46 = $FF`.
 6. If `pf2aip` → return. If clock stopped → return.
@@ -423,7 +423,7 @@ How the goalie reads it: entry `puckcross+0` (top line, +264) for a pfgoal = 0 g
 ## 6. Misc routines in scope
 
 ### chkgoalie (L37366-37390, inside restorep1 L37335)
-- Context: `setc1player`/`setc2player` (L37303/L37318) call `restorep1` with `d1` = old SCnum and `d0` = new SCnum, then store the **returned `d0`** as `c1playernum`/`c2playernum`. `restorep1` first returns the old player to CPU (clears its pfjoycon and sets pfna unless `$64` bit3; if the old player has `$63` bit3 (pf2np) it returns `d0 = old` and keeps control). Then for new `d0` in 0..11 (`d1 = d0*128`): if `BA_PS_flags` bit2 → `chkgoalie`; else if `word_FFC2FA` bit0 (shootout) → `chkgoalie`; else set pfjoycon on the new player. So chkgoalie only runs in penalty shot/shootout.
+- Context: `setc1player`/`setc2player` (L37305/L37320) call `restorep1` with `d1` = old SCnum and `d0` = new SCnum, then store the **returned `d0`** as `c1playernum`/`c2playernum`. `restorep1` first returns the old player to CPU (clears its pfjoycon and sets pfna unless `$64` bit3; if the old player has `$63` bit3 (pf2np) it returns `d0 = old` and keeps control). Then for new `d0` in 0..11 (`d1 = d0*128`): if `BA_PS_flags` bit2 → `chkgoalie`; else if `word_FFC2FA` bit0 (shootout) → `chkgoalie`; else set pfjoycon on the new player. So chkgoalie only runs in penalty shot/shootout.
 - chkgoalie:
   1. If the new player's position `$34 != 0` (not a goalie) → set pfjoycon on it, return.
   2. Auto-goalie flag: away (`$62` bit6) → `word_FFD05C`, else `word_FFD05A`. If 0 (manual) → set pfjoycon, return.
@@ -462,7 +462,7 @@ Target = `puck + (vel.hi asr 1)` per axis (`move.b` high byte, `asr.b #1`). `$42
 9. `dopass`; the goalie returns normally (`beq rtss2`) to `assgoaliecpu`, which continues at `_de1`.
 
 ### 7.4 check4bench (L37838-37876)
-Returns at once if PS active, pfjoycon, `$63` bit4, or (`$60 < 0` and `$61 < 0`). If `$61 != $66` (another roster player should take this slot) and the current assignment is not assbench and the player is not the puck carrier: pop the caller's return, set `$63` bit2, `temp1 = 0`, `assreplace($0B assbench)`. If `$61 == $66`: pop the caller, clear `$63` bit2 and `$62` bit2, `$60 = $61 = $FF`, set position from `$60` if >= 0, then `Setplass` (`_alist`: `$0E,$02,$02,$03,$05,$03,$05,$FF` by position 0..6).
+Returns at once if PS active, pfjoycon, `$63` bit4, or (`$60 < 0` and `$61 < 0`). If `$61 != $66` (another roster player should take this slot) and the current assignment is not assbench and the player is not the puck carrier: pop the caller's return, set `$63` bit2, `temp1 = 0`, `assreplace($0B assbench)`. If `$61 == $66`: pop the caller, clear `$63` bit2 and `$62` bit2, `$60 = $61 = $FF`, then `Setplass`. The "position = `$60` if `$60` >= 0" branch that follows is dead, because `$60` was just set to `$FF`. `Setplass` table (`_alist`: `$0E,$02,$02,$03,$05,$03,$05,$FF` by position 0..6).
 
 ### 7.5 Others
 `SetSPA` (L43319: if `d1 != SPA` → `SPA = d1`, `SPAnum = 0`, `SPAcnt.b = $FF`), `playeracc` L43705, `stopna` L43908 (`$96` per axis per call), `vtoa` L43222, `sroot` L44215 (integer sqrt: exact floor for `D <= $640`, Newton/binary search above), `randomd0` L44190, `AddPenalty2` L45954, `SetPersonel` L51236, `dopass`, `avdgoal` L43026, `GetHot` L43282, `assinsert` L43202 (`assnum = (assnum-1)&7; asslist[assnum] = d0; set pfna`), `assexit` L43192 (`assnum = (assnum+1)&7; set pfna`), `puckgoalie` L50818 (save success and the `temp4 = 4` rebound window), `_glue` L50665 (goalie pickup: `temp5 = $8C`, or 5 after a dive).

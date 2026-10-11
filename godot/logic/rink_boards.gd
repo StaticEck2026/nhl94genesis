@@ -38,20 +38,31 @@ class Hit:
 ## checkwallcoll2 without the goal check. pos is the object position, radius is the wall
 ## collision radius ($4A, $4C). Returns the outward normal in 8.8, or zero.
 static func board_normal(pos: Vector2i, radius: Vector2i) -> Vector2i:
+	var n := corner_normal(pos, radius)
+	if n != Vector2i.ZERO:
+		return n
+	return straight_normal(pos, radius)
+
+## Corner arc test. Outside the arc of a corner zone is a hit. Inside it, retail falls
+## through to the straight boards, which only matter on the arc's outer edge.
+static func corner_normal(pos: Vector2i, radius: Vector2i) -> Vector2i:
+	var cx := SIDELINE - radius.x - CORNER_RADIUS
+	var cy := END_BOARD - radius.y - CORNER_RADIUS
+	if absi(pos.y) < cy or absi(pos.x) <= cx:
+		return Vector2i.ZERO
+	var center := Vector2i(cx * signi(pos.x), cy * signi(pos.y))
+	var d := pos - center
+	var dist_sq := d.x * d.x + d.y * d.y
+	if dist_sq <= CORNER_RADIUS * CORNER_RADIUS:
+		return Vector2i.ZERO
+	var r := sroot(dist_sq)
+	# cos = dy / r, sin = -dx / r, 8.8. divs truncates toward zero.
+	return Vector2i(_div_trunc(d.x << 8, r), _div_trunc(d.y << 8, r))
+
+## The straight boards, in retail order: top, bottom, right, left.
+static func straight_normal(pos: Vector2i, radius: Vector2i) -> Vector2i:
 	var inner_x := SIDELINE - radius.x
 	var inner_y := END_BOARD - radius.y
-	var cx := inner_x - CORNER_RADIUS
-	var cy := inner_y - CORNER_RADIUS
-	if absi(pos.y) >= cy and absi(pos.x) > cx:
-		# Corner zone. Outside the arc is a corner hit. Inside it, retail falls through to
-		# the straight boards below, which only matter on the arc's outer edge.
-		var center := Vector2i(cx * signi(pos.x), cy * signi(pos.y))
-		var d := pos - center
-		var dist_sq := d.x * d.x + d.y * d.y
-		if dist_sq > CORNER_RADIUS * CORNER_RADIUS:
-			var r := sroot(dist_sq)
-			# cos = dy / r, sin = -dx / r, 8.8. divs truncates toward zero.
-			return Vector2i(_div_trunc(d.x << 8, r), _div_trunc(d.y << 8, r))
 	if pos.y >= inner_y:
 		return Vector2i(0, ONE)
 	if pos.y <= -inner_y:

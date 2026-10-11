@@ -34,6 +34,15 @@ func _initialize() -> void:
 		"test_world_skater_in_rink",
 		"test_rng",
 		"test_z_bounce",
+		"test_exchange_head_on",
+		"test_opponent_impact",
+		"test_moving_apart",
+		"test_body_check_floors",
+		"test_fall_dedupe",
+		"test_holdcheck",
+		"test_checkagr_max_aggression",
+		"test_board_pin",
+		"test_world_collision",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -240,7 +249,7 @@ func test_steer_aligned() -> bool:
 	steering().steer(o, 0, ctx_with(Vector2i.ZERO, true))
 	eq(o.spa, Spa.SKATE_PUCK, "skate with puck anim")
 	o = skater_at(Vector2i.ZERO)
-	o.flags2 |= SimObject.PF2_PEN
+	o.flags2 |= SimObject.PF2_FIGHT_HURT
 	steering().steer(o, 0, ctx_with())
 	eq(o.spa, Spa.SKATE_INJURED, "hurt in a fight")
 	return true
@@ -364,10 +373,10 @@ func test_world_skater_in_rink() -> bool:
 		w.step()
 		top_speed = maxf(top_speed, Vector2(o.vel).length())
 		max_y = maxi(max_y, o.y())
-	# Speed 15: index 7 with a half step to 8 (odd speed).
+	# Speed 15 + 2 (the always-on crowd boost) = 17: index 8 with a half step to 9.
 	var m := SkaterMotion.new()
-	var cap := sqrt(float(m.max_speed_sq_entry(7) + ((m.max_speed_sq_entry(8) - m.max_speed_sq_entry(7)) >> 1)))
-	check(top_speed <= cap + 1.0, "speed caps at MaxSpeed 7.5: %f > %f" % [top_speed, cap])
+	var cap := sqrt(float(m.max_speed_sq_entry(8) + ((m.max_speed_sq_entry(9) - m.max_speed_sq_entry(8)) >> 1)))
+	check(top_speed <= cap + 1.0, "speed caps at MaxSpeed 8.5: %f > %f" % [top_speed, cap])
 	check(top_speed >= cap * 0.95, "reaches top speed: %f of %f" % [top_speed, cap])
 	check(max_y >= RinkBoards.END_BOARD - 8, "reaches the top boards: %d" % max_y)
 	check(max_y <= RinkBoards.END_BOARD, "never past the end boards: %d" % max_y)
@@ -378,6 +387,7 @@ func test_world_skater_in_rink() -> bool:
 	check(min_y <= -(RinkBoards.END_BOARD - 8), "reaches the bottom boards: %d" % min_y)
 	check(min_y >= -RinkBoards.END_BOARD, "never past the bottom boards: %d" % min_y)
 	check(w.objects[0].pos() == Vector2i(384, 192), "off-ice objects stay put")
+	w.dispose()
 	return true
 
 func test_rng() -> bool:
@@ -408,4 +418,152 @@ func test_z_bounce() -> bool:
 	check(landed[0], "puck came down")
 	check(peak > 0, "puck rose: %d" % peak)
 	check(p.z() >= 0, "never under the ice")
+	w.dispose()
+	return true
+
+## Two skaters at (0,0) and (dx,0) in a fresh world; a3 is index 1, a2 is index 2 (or 7).
+func pair(dx: int, opponents: bool) -> Array:
+	var w := HockeyWorld.new(SimSettings.new())
+	var a3 := w.place(1, Vector2i(0, 0), SimObject.POS_LD, false, true)
+	var a2 := w.place(7 if opponents else 2, Vector2i(dx, 0), SimObject.POS_LD, opponents, not opponents)
+	return [w, a3, a2]
+
+func test_exchange_head_on() -> bool:
+	var t := pair(10, false)
+	var w: HockeyWorld = t[0]
+	var a3: SimObject = t[1]
+	var a2: SimObject = t[2]
+	a3.vel = Vector2i(1000, 0)
+	w.collflag = 0
+	w.collisions.checkcx(a3, a2, a3.x(), 0)
+	# V1n = 10000 >> 4 = 625; V1n' = 625 * 140 / 280 = 312; out = 312 * 10 >> 4 = 195.
+	eq(a3.vel, Vector2i(195, 0), "a3 keeps m1/(m1+m2), scaled by |D|^2/256")
+	eq(a2.vel, Vector2i(195, 0), "a2 gains the same normal speed")
+	eq(w.collflag, -1, "collflag set")
+	eq(a3.impact, 0, "teammates add no impact")
+	w.dispose()
+	return true
+
+func test_opponent_impact() -> bool:
+	var t := pair(10, true)
+	var w: HockeyWorld = t[0]
+	var a3: SimObject = t[1]
+	var a2: SimObject = t[2]
+	a3.vel = Vector2i(1000, 0)
+	w.collisions.checkcx(a3, a2, a3.x(), 0)
+	eq(a3.impact, 5, "minimum impact 5")
+	eq(a2.impact, 5, "both sides")
+	eq(a3.impactp, a2.index, "impactp names the other player")
+	w.dispose()
+	return true
+
+func test_moving_apart() -> bool:
+	var t := pair(10, true)
+	var w: HockeyWorld = t[0]
+	var a3: SimObject = t[1]
+	var a2: SimObject = t[2]
+	a3.vel = Vector2i(-1000, 0)
+	w.collisions.checkcx(a3, a2, a3.x(), 0)
+	eq(a3.vel, Vector2i(-1000, 0), "no exchange when separating")
+	eq(w.collflag, 0, "collflag untouched")
+	w.dispose()
+	return true
+
+func test_body_check_floors() -> bool:
+	var t := pair(10, true)
+	var w: HockeyWorld = t[0]
+	var a3: SimObject = t[1]
+	var a2: SimObject = t[2]
+	a3.checking = 30
+	a3.set_spa(Checking.SPA_BURST)
+	a3.vel = Vector2i(9000, 0)
+	a2.impact = 100
+	w.collisions.checkcx(a3, a2, a3.x(), 0)
+	eq(a3.spa, 0xC2C, "target to the right of a facing-up checker: hip check right")
+	check(a3.locked(), "checker locked")
+	eq(a2.spa, Checking.SPA_BIG_HIT, "hit from behind while facing straight up, Chk >= $14: big hit")
+	check(a2.locked(), "faller locked")
+	eq(w.stats[0].checks, 1, "team check counted")
+	eq(a2.nopuck_hi, 0x78, "faller cannot touch the puck for 120 frames")
+	w.dispose()
+	return true
+
+func test_fall_dedupe() -> bool:
+	var t := pair(10, true)
+	var w: HockeyWorld = t[0]
+	var a3: SimObject = t[1]
+	var a2: SimObject = t[2]
+	w.checking.fall_down(a2, a3)
+	a2.flags &= ~SimObject.PF_ALOCK
+	a2.set_spa(Spa.GLIDE)
+	eq(w.checking.fall_down(a2, a3), Collisions.D1_UNCHANGED, "same pair cannot fall twice in a row")
+	w.dispose()
+	return true
+
+func test_holdcheck() -> bool:
+	var t := pair(10, true)
+	var w: HockeyWorld = t[0]
+	var holder: SimObject = t[1]
+	var target: SimObject = t[2]
+	holder.facing_fx = 2 << 16
+	holder.set_spa(Checking.SPA_HOLD)
+	holder.vel = Vector2i(400, 0)
+	target.vel = Vector2i(0, 200)
+	w.checking.holdcheck(holder, target)
+	eq(holder.vel, Vector2i(200, 100), "velocities averaged")
+	eq(target.vel, Vector2i(200, 100), "both")
+	eq(target.spa, Checking.SPA_FLAIL, "target flails")
+	eq(holder.spa, Checking.SPA_HOLD_AFTER, "holder from $1122 goes to $1154")
+	eq(w.collflag, -1, "no momentum exchange")
+	w.dispose()
+	return true
+
+func test_checkagr_max_aggression() -> bool:
+	var t := pair(10, true)
+	var w: HockeyWorld = t[0]
+	var a3: SimObject = t[1]
+	var a2: SimObject = t[2]
+	a3.aggress = 0x28
+	eq(w.checking.checkagr(a3, a2), 0, "aggression $28 leaves range 0: always a penalty")
+	w.delayed_pen = 4
+	eq(w.checking.checkagr(a3, a2), 0x7F, "no call while the opponent has a delayed penalty")
+	w.dispose()
+	return true
+
+func test_board_pin() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var o := w.place(1, Vector2i(100, 0), SimObject.POS_LD, false, true)
+	o.set_spa(Checking.SPA_BOARDS_RIGHT)
+	o.spa_num = 0
+	w.checking.pin_to_boards(o)
+	eq(o.x(), 100 + ((0x82 - 100) >> 1), "first frame eases halfway")
+	o.spa_num = 4
+	w.checking.pin_to_boards(o)
+	eq(o.x(), 0x82, "then pins to x = $82")
+	w.dispose()
+	return true
+
+## Two opponents skate into each other: they slow down, build impact, and do not pass
+## through each other.
+func test_world_collision() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var a := w.place(1, Vector2i(0, -60), SimObject.POS_LD, false, true)
+	var b := w.place(7, Vector2i(0, 60), SimObject.POS_LD, true, false)
+	for o in [a, b]:
+		o.weight = 6
+		o.legstr = 15
+		o.legspd = 15
+	w.joy[1] = 0
+	w.joy[7] = 4
+	var touched := false
+	var crossed := false
+	for i in 240:
+		w.step()
+		if a.impact > 0:
+			touched = true
+		if a.y() > b.y() + 4:
+			crossed = true
+	check(touched, "they collided")
+	check(not crossed, "and did not pass through each other")
+	w.dispose()
 	return true

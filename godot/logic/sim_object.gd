@@ -14,18 +14,20 @@ const PF_REV := 1 << 4       ## skating backwards
 const PF_ALOCK := 1 << 5     ## locked until the animation is done
 const PF_TEAM := 1 << 6      ## 0 home, 1 away
 const PF_GOAL := 1 << 7      ## 0 shoots at the bottom goal, 1 at the top
-# pflags2 ($63)
-const PF2_FIGHT := 1 << 0
-const PF2_AIP := 1 << 1      ## animation in progress
-const PF2_DW := 1 << 2       ## double weight (oomph)
-const PF2_NP := 1 << 3       ## no joystick pad
-const PF2_UNAV := 1 << 4     ## unavailable (to or from bench or box)
-const PF2_LCM := 1 << 5      ## line change mode
-const PF2_PEN := 1 << 6      ## caused a penalty; in 94 also "hurt in a fight"
-const PF2_NPC := 1 << 7      ## no player collision
+# pflags2 ($63), as 94 uses it (several bits moved from the 93 equates in ram94.asm;
+# see docs/specs/collisions_checking.md).
+const PF2_FIGHT := 1 << 0     ## fighting
+const PF2_AIP := 1 << 1       ## animation in progress
+const PF2_UNAV := 1 << 2      ## unavailable (injured; passes skip him)
+const PF2_LCMENU := 1 << 3    ## line-change menu open
+const PF2_PEN := 1 << 4       ## has committed a penalty (AddPenalty2)
+const PF2_NOCOLL := 1 << 5    ## line change / no player collision
+const PF2_FIGHT_HURT := 1 << 6 ## hurt in a fight (playeracc speed cut, skate injured anim)
+const PF2_BIT7 := 1 << 7
 # pflags3 ($64)
 const PF3_OSIDE := 1 << 0    ## offside
 const PF3_BREAKAWAY := 1 << 1
+const PF3_ONETIMER := 1 << 3 ## one-timer in progress
 const PF3_WALL := 1 << 4     ## hit the boards this loop
 const PF3_FALLING := 1 << 5
 
@@ -85,6 +87,8 @@ var newpnum: int = 0
 var flags: int = 0
 var flags2: int = 0
 var flags3: int = 0
+## $65 glitch counter (de-glitches quick frame changes).
+var glitch: int = 0
 ## $66 roster slot (pnum), -1 for none.
 var pnum: int = -1
 ## $67-$74 ratings, raw retail bytes.
@@ -101,6 +105,12 @@ var spodds: int = 0
 var stickhand: int = 0
 var endurance: int = 0
 var aggress: int = 0
+## $74 fight byte: bit 1 chkFgtBit1, bits 2-7 fight rating (getFgtbyte); 0 adds
+## to ChkCnt twice.
+var hf: int = 0
+## $75 Chk: checking rating (check4check caps it at $1E).
+var checking: int = 0
+## $76 handedness in 94 (1 = left). The goalie and faceoff specs both read it here.
 var handed: int = 0
 ## Energy (getpde/setpde). $1000 is rested.
 var energy: int = 0x1000
@@ -139,6 +149,8 @@ func old_pos() -> Vector2i:
 func on_ice() -> bool:
 	return position >= 0
 
+## position == 0. Retail tests only the field, so the puck (index 14, position 0)
+## also reads as a goalie in routines that do not check SCnum first.
 func is_goalie() -> bool:
 	return position == POS_GOALIE
 
@@ -162,6 +174,12 @@ func reverse() -> bool:
 
 func anim_busy() -> bool:
 	return flags2 & PF2_AIP != 0
+
+func locked() -> bool:
+	return flags & PF_ALOCK != 0
+
+func fighting() -> bool:
+	return flags2 & PF2_FIGHT != 0
 
 func set_flag(bit: int, on: bool) -> void:
 	flags = (flags | bit) if on else (flags & ~bit)
@@ -198,3 +216,5 @@ func load_player(p: PlayerData) -> void:
 	legspd = p.raw_speed()
 	endurance = p.raw_endurance()
 	handed = 1 if p.handedness == PlayerData.Hand.LEFT else 0
+	checking = roundi(p.checking / 100.0 * 30.0)
+	aggress = roundi(p.aggressiveness / 100.0 * 30.0)

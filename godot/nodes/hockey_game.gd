@@ -22,6 +22,10 @@ func _enter_tree() -> void:
 	add_child(sfx)
 	world.sound.connect(sfx.play)
 
+func _exit_tree() -> void:
+	if world:
+		world.dispose()
+
 func _physics_process(delta: float) -> void:
 	_frame_accum += Nhl94Units.frames(delta * world.settings.game_speed)
 	while _frame_accum >= 1.0:

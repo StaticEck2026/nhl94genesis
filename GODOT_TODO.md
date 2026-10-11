@@ -20,6 +20,10 @@ Play the skating sandbox with `godot --path godot`. P1 is the arrow keys, P2 is 
 
 Status keys: `[x]` done, `[~]` started, `[ ]` not started. Add the commit or a note after an item when it changes.
 
+## Research specs
+
+Behavior specs read from the listing live in `docs/specs/`: collisions and checking, puck, shooting and passing, goalie, positional AI, puck-carrier AI, clock and penalties, faceoffs and offsides, input and line changes, team data and attributes, animation and assets. Each port cites its spec. Where two specs disagreed (handedness offset), the listing decides and the tracker records it.
+
 ## Confirmed translation facts
 
 These come from the listing. Add a fact here before code depends on it.
@@ -49,6 +53,9 @@ These come from the listing. Add a fact here before code depends on it.
 | Puck stick bungee | puck moves 1/4 of the gap to the carrier hot spot per loop, copies carrier velocity | `PuckPhysics.follow_carrier()` | `pucknorm` L42526 |
 | Z gravity | only while the Z word or Zvel is non-zero: `Zvel -= 102 * d7` (6 x step), `Zpos += Zvel * 17 * d7`. Landing: `Zpos = 0`, `Zvel = -Zvel / 2`, puck-on-ice sound `$2C + (5 - Zvel low byte)` when 0-3. Drag is skipped while the Z word is non-zero. | `HockeyWorld._integrate()` | `updateplayers` L35517-35555 |
 | RNG | `seed = seed * $BB40E62D + 1`; `randomd0(n) = ((seed >> 8) & $FFFF) * n >> 16`; `randomd0s(n) = randomd0(2n) - n`. Seeded from the VDP counter. | `RetailRng` | `randomd0` L44190 |
+| Crowd boost | `set_bit1_C2FE` always sets `byte_FFC2FE` bit 1 (the clear path is dead), so `playeracc` always adds +2 agility and +2 speed (cap 30) | `HockeyWorld.crowd_boost = true` | L975179 |
+| 94 struct changes | `$74` fight byte, `$75` checking (new in 94), `$76` handedness; `pflags2` bit 2 unavailable, 3 line-change menu, 4 penalized, 5 no collision, 6 hurt in a fight | `SimObject` | collisions, data, input specs |
+| Momentum exchange | masses `weight + $8C`, `evalue` is always 0 (perfectly plastic along the normal), outputs scaled by `|D|^2/256`, one exchange per `checkcoll` call | `Collisions.exchange()` | `checkcx` L48617 |
 | Struct | 16 sort objects of 128 bytes; field names and flag bits from the 93 equates in `src/ram94.asm` | `SimObject` | `ram94.asm` |
 
 ## Open questions
@@ -60,7 +67,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [ ] Rating scale. Player bytes `$67` wgt, `$68` agl, `$69` spd, `$72` endurance. Confirm raw ranges (spd caps at `$1E`) and the 0-100 mapping in `PlayerData`.
 - [x] Rink size in px and the origin. See the Rink row above.
 - [ ] One-shot animation lengths. `Skater2D.ONE_SHOT_FRAMES` (12) stands in until `SetSPA` / `updateanim` and the SPA tables are ported. It decides how long a stop or turn animation blocks the skate animation.
-- [ ] Where stick value 9 (brake) comes from. `doplayeracc` handles it; the input side has not been read yet (`doinput` L35886).
+- [x] Where stick value 9 (brake) comes from: never the pad (`jdtab` gives 0-8). `skateto` sends 9 when its target is within 12 px on both axes (L42978).
 - [ ] `sroot` (L44215) is Newton iteration. `RinkBoards.sroot` uses floor of the real root; check they agree on corner distances (64-100).
 
 ## Phase 0. Project scaffold
@@ -90,7 +97,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [ ] `burst` L36830, `holdplayer` L36863
 - [ ] `skateto` L42953, `skatetopuck` L43138, `avdgoal` L43026
 - [~] Wall collision: `RinkBoards` has the boards and corners (`checkwallcoll2`, `wallcoll`). Still to do: nets (`checkgoal` L49633), stick-end board check (`checkcoll` second call with the `GetHot` point), puck over the glass (`wallcollb2` L50092), `CheckBump` L50048
-- [ ] Player-player collision: `checkcoll` L48484, `checkplcoll` L48570
+- [x] Player-player collision: `Collisions` (`checkplcoll`, `checkcx`, exact momentum exchange, Y-sort walk order, position restore)
 - [ ] Energy and fatigue (`getpde`/`setpde`, endurance `$72`)
 - [x] `scenes/skater.tscn`: `CharacterBody2D`, capsule, runs `SkaterMotion` + `SkaterSteering` + `RinkBoards` in retail loop order
 - [x] `scenes/skate_sandbox.tscn` (main scene): two pad-controlled skaters, readout of retail values
@@ -114,9 +121,9 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 5. Checking and fighting
 
-- [ ] `checkcx` L48617, `newcheck` L48758, `checkint` L48778, `CheckingCalc` L48909
-- [ ] `checkagr` L48971, `holdcheck` L49037, `Bcheck` L49103
-- [ ] `FallDown` L49156, `FallList` L49396, injuries `setInjuryType` L49497
+- [x] `Checking`: `newcheck`, `checkint`/`checkint_ci` (goalie contact, interference), `CCStart`/`CheckingCalc` (body checks), `checkagr`, `holdcheck`, `Bcheck`, `holdplayer`/`Acheck`
+- [x] `FallDown`, `FallList`, board pins (`sub_FEB54`), injuries (`setInjuryType`), `wallcollduringcheck`
+- [ ] `burst` (body-check charge) and `check4check` (CPU) with the input and AI ports
 - [ ] `checkfight` L49544, `fightinput` L36560
 
 ## Phase 6. AI
@@ -172,3 +179,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Tracker written. Godot scaffold, data resources, `SkaterMotion`, `PuckPhysics` carrier follow, debug dock. 55 headless checks pass on Godot 4.4.1, including all 16 `MaxSpeed` entries against the ROM table.
 - 2026-10-11: Phase 2 turning. `$34` resolved (0 = goalie), which moves the extra agility and carrier cuts to goalies only. `SkaterSteering` (facing, turning, hockey stop, backwards skating), `RinkBoards` (boards, corners, bounce), rink constants, input map, skater scene and sandbox. 130 checks pass. Sandbox checked in screenshots under Xvfb.
 - 2026-10-11: World refactor. `HockeyWorld` owns the 16 retail objects and globals and steps `updateplayers`; `SimObject` mirrors the struct; nodes are views (`HockeyGame`, `Skater2D`). Retail RNG ported. Z gravity fact corrected. Research specs for every remaining subsystem are being written to `docs/specs/`.
+- 2026-10-11: Player collision and checking ported (`Collisions`, `Checking`): momentum exchange, Y-sort walk, goalie contact and interference, body checks, holds, sweeps, falls, board pins, injuries. Crowd boost found to be always on. 165 checks pass.
