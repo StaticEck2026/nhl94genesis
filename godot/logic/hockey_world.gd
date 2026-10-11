@@ -426,6 +426,7 @@ func step(d7: int = 1) -> void:
 func periodic_events(d7: int) -> void:
 	rules.penalty_manager(d7)
 	rules.updatecrowdf(d7)
+	rules.updatesound()
 	rules.clockcont()
 	if sflags & SF_HOR:
 		return

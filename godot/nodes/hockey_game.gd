@@ -31,6 +31,7 @@ func _enter_tree() -> void:
 	sfx.name = "Sfx"
 	add_child(sfx)
 	world.sound.connect(sfx.play)
+	world.song.connect(sfx.play_song)
 
 func _exit_tree() -> void:
 	if world:
@@ -46,6 +47,8 @@ func _physics_process(delta: float) -> void:
 		_frame_accum -= 1.0
 		_read_pads()
 		world.step(1)
+	if world.rules_active:
+		sfx.set_crowd_attenuation(world.rules.crowd_attenuation())
 	stepped.emit()
 
 ## Gives pad k (port k + 1) object `index` and its team.

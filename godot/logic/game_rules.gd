@@ -755,6 +755,22 @@ func updatecrowdf(d7: int) -> void:
 		crowd_frame = d0 + crowd_step
 		crowd_cnt = mask + (w.hv_rng.randi() & mask)
 
+## asv: the crowd noise level updatesound (L52982) eases toward the crowd meter.
+var asv: int = 0
+
+## updatesound: asv moves $28 a frame toward crowdlevel*8 + $400 (at most $EFF); the PSG
+## noise attenuation is 15 minus asv's high byte.
+func updatesound() -> void:
+	var target := mini(w.crowd_level * 8 + 0x400, 0xEFF)
+	var diff := target - asv
+	if diff > 0x28:
+		asv += 0x28
+	elif diff < -0x28:
+		asv = maxi(asv - 0x28, 0)
+
+func crowd_attenuation() -> int:
+	return ((asv >> 8) & 0xF) ^ 0xF
+
 ## UpdateCwdExcite (L30009): once a second.
 func update_cwd_excite() -> void:
 	var d0 := w.crowd_excite
