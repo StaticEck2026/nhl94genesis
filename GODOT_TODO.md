@@ -16,7 +16,7 @@ Run the tests from `godot/` with Godot 4.4 or later. The script fails on any scr
 tests/run_tests.sh /path/to/godot
 ```
 
-Play the skating sandbox with `godot --path godot`. P1 is the arrow keys, P2 is WASD, or pads 1 and 2.
+Play with `godot --path godot`: the setup screen picks the teams, who controls each side and the options, then the match runs from the opening faceoff to the final horn. Pad 1 is the arrow keys with Z / X / C for A / B / C and Enter for Start; pad 2 is WASD with G / H / J and Space; real pads work too. `scenes/skate_sandbox.tscn` is the skating sandbox (no rules).
 
 Status keys: `[x]` done, `[~]` started, `[ ]` not started. Add the commit or a note after an item when it changes.
 
@@ -70,7 +70,7 @@ These come from the listing. Add a fact here before code depends on it.
 ## Open questions
 
 - [x] `$34(a3)` meaning. 0 is a goalie (`doplayeracc` branches to `goalieacc` on 0). The extra agility and the carrier cuts in `playeracc` are goalie-only. Fixed in `SkaterMotion`.
-- [ ] Drag runs once per loop, not per vblank. Measure the usual `d7` in a game (1 or 2) so per-second drag matches retail feel.
+- [~] Drag runs once per loop, not per vblank. The usual retail `d7` is unmeasured; `SimSettings.loop_vblanks` (default 1) sets it so the feel can be matched against hardware.
 - [x] `word_FFD06E` is the VDP status bit 0 at boot, the PAL flag (the listing calls it DMA busy): PAL consoles move 22 per vblank instead of 17. `HockeyWorld.alt_step`.
 - [x] Energy (`getpde`/`setpde`, L51186-51229): full is `$1000`; drain and recovery ported as retail (data spec section 4).
 - [x] Rating scale: `$67` is the weight step x 8 (0-120); the rest are `AttributeCalc` 0-30. `PlayerData` uses the retail 25-99 screen values.
@@ -109,7 +109,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Player-player collision: `Collisions` (`checkplcoll`, `checkcx`, exact momentum exchange, Y-sort walk order, position restore)
 - [x] Energy and fatigue: `playeracc` drain (1 in 128 calls, endurance), bench recovery in `periodiceevents`; drain, gate and recovery are tunables
 - [x] `scenes/skater.tscn`: `CharacterBody2D`, capsule, runs `SkaterMotion` + `SkaterSteering` + `RinkBoards` in retail loop order
-- [x] `scenes/skate_sandbox.tscn` (main scene): two pad-controlled skaters, readout of retail values
+- [x] `scenes/skate_sandbox.tscn`: two pad-controlled skaters, readout of retail values (the main scene is now the setup screen)
 
 ## Phase 3. Puck
 

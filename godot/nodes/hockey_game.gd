@@ -43,10 +43,11 @@ func _physics_process(delta: float) -> void:
 		stepped.emit()
 		return
 	_frame_accum += Nhl94Units.frames(delta * world.settings.game_speed)
-	while _frame_accum >= 1.0:
-		_frame_accum -= 1.0
+	var d7 := maxi(world.settings.loop_vblanks, 1)
+	while _frame_accum >= d7:
+		_frame_accum -= d7
 		_read_pads()
-		world.step(1)
+		world.step(d7)
 	if world.rules_active:
 		sfx.set_crowd_attenuation(world.rules.crowd_attenuation())
 	stepped.emit()

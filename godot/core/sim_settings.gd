@@ -21,6 +21,12 @@ static func shared(from: Node) -> SimSettings:
 @export_range(0.1, 3.0, 0.05) var game_speed: float = 1.0:
 	set(v): game_speed = v; emit_changed()
 
+## Vblanks per game loop (DoGameFrame's d7). Retail's loop takes as long as its work, so
+## d7 varies (1 when it keeps up with 60 Hz). Drag runs once per loop, so this sets the
+## feel; the typical retail value is unmeasured (GODOT_TODO open question).
+@export_range(1, 4, 1) var loop_vblanks: int = 1:
+	set(v): loop_vblanks = v; emit_changed()
+
 @export_group("Modules")
 ## CPU skater AI (the positional routines, assnearest, the CPU carrier). Off: CPU
 ## skaters glide to a stop.

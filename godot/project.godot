@@ -8,7 +8,7 @@ config_version=5
 
 config/name="NHL 94 Native"
 config/description="Native Godot 4 rebuild of NHL 94 (Genesis). No emulation."
-run/main_scene="res://scenes/skate_sandbox.tscn"
+run/main_scene="res://ui/setup_screen.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 
 [audio]
