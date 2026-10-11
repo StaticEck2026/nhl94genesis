@@ -115,3 +115,6 @@ func add_object_views() -> void:
 	var gv := GlovesView.new()
 	gv.name = "Gloves"
 	add_child(gv)
+	var iv := IndicatorsView.new()
+	iv.name = "Indicators"
+	add_child(iv)

@@ -81,6 +81,8 @@ func _first_call(p: SimObject) -> bool:
 		w.f_c2fe &= ~HockeyWorld.C2FE_PS_GOAL
 		w.fox = 0
 		w.foy = 0
+	# loc_F420: the marker text shows positions again (byte_FFC2FC bit 7).
+	w.shootout.display = false
 	# Stats overlay for this faceoff (sub_FECAA). Cosmetic, but it sets the drop minimum.
 	var id := overlay_request
 	if id < 0:

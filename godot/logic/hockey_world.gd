@@ -157,6 +157,12 @@ var crowd_boost: bool = true
 var no_fatigue: bool = false
 ## OptLine == 0: line changes on (burst drains energy only then).
 var opt_line_on: bool = true
+## The on-ice markers (word_FFBE78 / word_FFBE86 nibbles), one per ffo object: 0 the
+## puck-carrier star (or the penalized player on the penalty screen), 1 pad 1's star, 2 pad
+## 2's star, 3 the replay cursor, 4-5 pads 3-4. A value is the marked object's index, $E
+## the object's own position, $F hidden. Drawn by IndicatorsView.
+const MARK_HIDDEN := 0xF
+var marks: PackedInt32Array = PackedInt32Array([0xF, 0xF, 0xF, 0xF, 0xF, 0xF])
 ## OptFight (the fight patch's menu option, $FFDF00): 0 off (retail), 1 on, 2 on, Arcade.
 var opt_fight: int = 0
 ## OptPen: penalties on; with OptPen 1 offsides are called too.
@@ -503,6 +509,7 @@ func setupice() -> void:
 		o.copy_from(fresh)
 	puckc = -1
 	camera = Vector2i.ZERO
+	marks.fill(MARK_HIDDEN)
 	collisions.sort_all()
 
 ## periodiceevents loc_79F8: with line changes on, every benched slot gains 9 energy a
@@ -575,6 +582,9 @@ func update_players(d7: int) -> void:
 		o.spa_restarted = false
 		_tick_timers(o, d7)
 		_integrate(o, d7)
+		# _done (L35557): the puck carrier on the ice gets the filled star, unless fighting.
+		if o.index == puckc and not o.fighting() and sflags & SF_HOR == 0:
+			marks[0] = o.index
 		_dispatch_pads(o, d7)
 		_assignment(o, d7)
 		# Clear wallcos/wallsin, then checkcoll if the pixel position changed.
@@ -587,6 +597,9 @@ func update_players(d7: int) -> void:
 ## puck, the one-timer flags clear (so the goalies get their full body box back), and a
 ## carrier on a breakaway clears the breakaway-shot flag.
 func _preamble() -> void:
+	# L35330: the puck-carrier star goes until a carrier claims it this loop.
+	if sflags & SF_HOR == 0:
+		marks[0] = MARK_HIDDEN
 	crowd_record = rules.cur_crowd_meter >= rules.crowd_record_value
 	crowd_boost = true
 	if puckc < 0:

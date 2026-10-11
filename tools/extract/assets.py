@@ -23,6 +23,9 @@ Writes:
   rink/side_idx.png             the horizontal penalty-screen view (256x224)
   sprites/faceoff_idx.png       the face-off close-up frames 1-10 (centres, referee)
   sprites/faceoff_window_idx.png  the close-up window (FaceOffMap, 96x80)
+  sprites/font_idx.png          the font at $AAC52, raw (no remap), palette line 1: the
+                                on-ice marker numbers and position letters (sub_1674A)
+  sprites/font.json             its character map (char code -> tile)
   sprites/ref_idx.png           the referee window frames (PushRef), 56x64 each, in a row
   sprites/ref_side_idx.png      the same on the penalty screen
   audio/dac/instr_XX.wav        the Z80 driver's PCM samples (8-bit unsigned)
@@ -477,6 +480,21 @@ def dac(rom, out_dir):
                    "samples": meta}, f, indent=1)
 
 
+FONT = 0xAAC52   # .map.jim: +4 long map offset, +8 tile count, +$A tiles
+
+
+def font(rom):
+    """The font as the marker text uploads it (sub_1674A): raw tiles, palette line 1."""
+    count = rom.u16(FONT + 8)
+    sheet = Canvas(16 * 8, ((count + 15) // 16) * 8)
+    for t in range(count):
+        sheet.tile(rom, FONT + 0xA + 32 * t, (t % 16) * 8, (t // 16) * 8, 1)
+    gm = FONT + rom.u32(FONT + 4)
+    w, h = rom.u16(gm), rom.u16(gm + 2)
+    chars = {str(c): rom.u16(gm + 4 + 2 * c) & 0x7FF for c in range(min(w * h, 0x80))}
+    return sheet, chars
+
+
 def main():
     rom_path = sys.argv[1] if len(sys.argv) > 1 else "lst/nhl94.bin"
     out = sys.argv[2] if len(sys.argv) > 2 else "godot/assets"
@@ -522,6 +540,11 @@ def main():
     fo_atlas = pack(fo_frames, 256)
     fo_atlas.save(os.path.join(out, "sprites/faceoff_idx.png"))
     window.save(os.path.join(out, "sprites/faceoff_window_idx.png"))
+    sheet, chars = font(rom)
+    sheet.save(os.path.join(out, "sprites/font_idx.png"))
+    with open(os.path.join(out, "sprites/font.json"), "w") as f:
+        json.dump({"source": "font $AAC52 (raw tiles, palette line 1)", "per_row": 16, "chars": chars},
+                  f, separators=(",", ":"))
     with open(os.path.join(out, "sprites/faceoff.json"), "w") as f:
         json.dump({"source": "face-off close-up $A78AE (compressed tiles), FaceOffMap $55BF6",
                    "atlas": [fo_atlas.w, fo_atlas.h],

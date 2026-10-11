@@ -104,6 +104,7 @@ func _initialize() -> void:
 		"test_fightinput",
 		"test_fight_to_penalties",
 		"test_title_screen",
+		"test_markers",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -2186,4 +2187,33 @@ static func _same_cram(a: Array, b: Array) -> bool:
 		for i in 16:
 			if int(a[k][i]) != int(b[k][i]):
 				return false
+	return true
+
+## The marker nibbles: the puck-carrier star goes to the carrier every loop (none while
+## the puck is loose), a pad's star to its player, and the penalized player keeps the
+## filled star on the penalty screen.
+func test_markers() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.setupice()
+	eq(Array(w.marks), [15, 15, 15, 15, 15, 15], "all hidden after setupice")
+	var c := w.place(3, Vector2i(0, 0), SimObject.POS_C, false, true)
+	_rate(c)
+	w.drop_puck(Vector2i(0, 0))
+	w.puckc = c.index
+	w.update_players(1)
+	eq(w.marks[0], 3, "carrier star")
+	w.puckc = -1
+	w.update_players(1)
+	eq(w.marks[0], 15, "loose puck: no carrier star")
+	w.cont_team[0] = 1
+	w.set_c_player(0, c)
+	w.update_players(1)
+	eq(w.marks[1], 3, "pad 1's star on its player")
+	# The penalty screen: asspenalty's first call marks him and nothing clears it.
+	w.sflags |= HockeyWorld.SF_HOR
+	c.flags |= SimObject.PF_NA
+	w.lines.asspenalty(c, 1)
+	w.update_players(1)
+	eq(w.marks[0], 3, "penalized player keeps the filled star")
+	w.dispose()
 	return true

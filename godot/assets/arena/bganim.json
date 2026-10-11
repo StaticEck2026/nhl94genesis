@@ -1,0 +1,9766 @@
+{
+ "source": "unk_FE364 (sub_FE2C8 L973464, sub_FE326, sub_FD78A L970856); tiles at file + 8 loaded to word_FFD6AC ($32 tiles reserved)",
+ "space": "rink map pixels (rink/map.json; map_px = rink_x + 192, 368 - rink_y)",
+ "order": "sprites[0] is in front (VDP link order): draw from the last to the first",
+ "atlas": [
+  256,
+  128
+ ],
+ "pieces": [
+  {
+   "rect": [
+    18,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 8,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    35,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 8,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    52,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 4,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    69,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 4,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    204,
+    69,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 30,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    86,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 12,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    213,
+    69,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 23,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    222,
+    69,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 23,
+   "line": 1,
+   "hf": true,
+   "vf": true
+  },
+  {
+   "rect": [
+    103,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 0,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    120,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 0,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    42,
+    16,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 20,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    231,
+    69,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 25,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    119,
+    25,
+    8,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 16,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    240,
+    69,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 29,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 24,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    9,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 28,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    17,
+    42,
+    16,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 18,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    18,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 27,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    27,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 26,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    36,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 23,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    45,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 30,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    137,
+    0,
+    16,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 12,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    54,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 24,
+   "line": 1,
+   "hf": true,
+   "vf": true
+  },
+  {
+   "rect": [
+    63,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 23,
+   "line": 1,
+   "hf": false,
+   "vf": true
+  },
+  {
+   "rect": [
+    72,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 24,
+   "line": 1,
+   "hf": false,
+   "vf": true
+  },
+  {
+   "rect": [
+    34,
+    42,
+    16,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 20,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    128,
+    25,
+    8,
+    16
+   ],
+   "file": "EA2EC",
+   "tile": 16,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    81,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 24,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    90,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 28,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    51,
+    42,
+    16,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 18,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    99,
+    78,
+    8,
+    8
+   ],
+   "file": "EA2EC",
+   "tile": 22,
+   "line": 1,
+   "hf": false,
+   "vf": false,
+   "blank": true
+  },
+  {
+   "rect": [
+    108,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 13,
+   "line": 0,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    117,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 35,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    126,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 34,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    68,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 11,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    135,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 33,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    144,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 32,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 31,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    85,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 9,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    162,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 30,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    171,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 29,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    180,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 34,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    102,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 11,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    189,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 33,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    198,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 32,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    207,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 28,
+   "line": 0,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    216,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 27,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    225,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 26,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    234,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 25,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    243,
+    78,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 24,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 23,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    9,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 22,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    18,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 21,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    27,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 20,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    36,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 23,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    45,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 19,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    54,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 18,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    137,
+    25,
+    8,
+    16
+   ],
+   "file": "EAB10",
+   "tile": 3,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    63,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 17,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    119,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 7,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    72,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 16,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    81,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 17,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    136,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 7,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    90,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 16,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    0,
+    8,
+    24
+   ],
+   "file": "EAB10",
+   "tile": 0,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    99,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 15,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 5,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    108,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 14,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    117,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 35,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    126,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 31,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    170,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 9,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    135,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 30,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    144,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 29,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 28,
+   "line": 0,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    162,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 27,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    171,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 26,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    180,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 25,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    189,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 24,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    198,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 22,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    207,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 21,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    216,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 20,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    225,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 19,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    234,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 18,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    146,
+    25,
+    8,
+    16
+   ],
+   "file": "EAB10",
+   "tile": 3,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    9,
+    0,
+    8,
+    24
+   ],
+   "file": "EAB10",
+   "tile": 0,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    243,
+    87,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 15,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    187,
+    42,
+    16,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 5,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    96,
+    8,
+    8
+   ],
+   "file": "EAB10",
+   "tile": 14,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    154,
+    0,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 24,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    9,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 49,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    18,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 48,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    27,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 47,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    36,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 48,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    45,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 46,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    54,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 47,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    171,
+    0,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 24,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    204,
+    42,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 38,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    188,
+    0,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 20,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    205,
+    0,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 16,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    155,
+    25,
+    8,
+    16
+   ],
+   "file": "EB816",
+   "tile": 30,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    63,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 49,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    164,
+    25,
+    8,
+    16
+   ],
+   "file": "EB816",
+   "tile": 28,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    222,
+    0,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 12,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    239,
+    0,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 8,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    25,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 12,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    72,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 45,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    17,
+    25,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 20,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    34,
+    25,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 4,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    81,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 45,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    90,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 44,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    99,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 43,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    108,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 42,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    51,
+    25,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 16,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    221,
+    42,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 36,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    238,
+    42,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 34,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    51,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 32,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    117,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 41,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    126,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 41,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    17,
+    51,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 32,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    68,
+    25,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 0,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    173,
+    25,
+    8,
+    16
+   ],
+   "file": "EB816",
+   "tile": 28,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    182,
+    25,
+    8,
+    16
+   ],
+   "file": "EB816",
+   "tile": 30,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    135,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 42,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    34,
+    51,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 36,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    85,
+    25,
+    16,
+    16
+   ],
+   "file": "EB816",
+   "tile": 8,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    51,
+    51,
+    16,
+    8
+   ],
+   "file": "EB816",
+   "tile": 34,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    144,
+    96,
+    8,
+    8
+   ],
+   "file": "EB816",
+   "tile": 40,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 26,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    162,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 25,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    171,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 27,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    102,
+    25,
+    16,
+    16
+   ],
+   "file": "EC284",
+   "tile": 0,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    180,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 42,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    189,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 41,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    198,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 40,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    207,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 39,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    216,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 38,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    225,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 37,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    234,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 34,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    243,
+    96,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 33,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 32,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    9,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 23,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    18,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 31,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    27,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 30,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    68,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 6,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    36,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 38,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    45,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 31,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    85,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 14,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    102,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 12,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    119,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 10,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    136,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 8,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 14,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    54,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 36,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    63,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 35,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    170,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 12,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    187,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 8,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    204,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 10,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    72,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 22,
+   "line": 0,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    81,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 20,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    90,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 19,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    99,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 18,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    108,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 17,
+   "line": 1,
+   "hf": true,
+   "vf": false
+  },
+  {
+   "rect": [
+    117,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 29,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    126,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 28,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    221,
+    51,
+    16,
+    8
+   ],
+   "file": "EC284",
+   "tile": 4,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    135,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 21,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    144,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 24,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    105,
+    8,
+    8
+   ],
+   "file": "EC284",
+   "tile": 16,
+   "line": 1,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    162,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 49,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    171,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 48,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    238,
+    51,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 29,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    180,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 47,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    189,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 46,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 27,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    198,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 45,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    207,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 44,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    216,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 43,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    225,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 42,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    17,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 25,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    34,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 23,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    234,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 41,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    243,
+    105,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 40,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    51,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 21,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    68,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 19,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 39,
+   "line": 3,
+   "hf": false,
+   "vf": false,
+   "blank": true
+  },
+  {
+   "rect": [
+    85,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 17,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    102,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 15,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    9,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 38,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    18,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 37,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    27,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 36,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    36,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 45,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    45,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 46,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    119,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 29,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    54,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 47,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    136,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 25,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    63,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 49,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 23,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    72,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 41,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    170,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 3,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    187,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 13,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    81,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 35,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    90,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 34,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    204,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 21,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    221,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 27,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    238,
+    60,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 11,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    191,
+    25,
+    24,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 0,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    99,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 33,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    108,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 32,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    117,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 40,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    126,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 37,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    0,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 9,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    135,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 31,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    17,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 7,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    34,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 5,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    51,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 15,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    144,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 38,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 36,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    68,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 17,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    162,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 43,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    171,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 48,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    180,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 42,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    85,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 13,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    189,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 35,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    198,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 34,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    102,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 11,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    216,
+    25,
+    24,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 0,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    207,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 33,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    216,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 32,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    119,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 19,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    225,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 44,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    136,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 5,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    153,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 7,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    234,
+    114,
+    8,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 31,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    170,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 9,
+   "line": 2,
+   "hf": false,
+   "vf": false
+  },
+  {
+   "rect": [
+    187,
+    69,
+    16,
+    8
+   ],
+   "file": "ED1B0",
+   "tile": 3,
+   "line": 3,
+   "hf": false,
+   "vf": false
+  }
+ ],
+ "faceoff_ids": [
+  3,
+  5,
+  3,
+  1,
+  5,
+  2,
+  3,
+  3
+ ],
+ "faceoff_left_low_id": 6,
+ "ids": [
+  {
+   "id": 0,
+   "file": "EA2EC",
+   "script_address": "FE4DC",
+   "script": [
+    [
+     1,
+     10
+    ],
+    [
+     2,
+     10
+    ],
+    [
+     3,
+     10
+    ],
+    [
+     4,
+     10
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     7,
+     10
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     9,
+     10
+    ],
+    [
+     10,
+     10
+    ],
+    [
+     11,
+     10
+    ],
+    [
+     12,
+     10
+    ],
+    [
+     13,
+     10
+    ],
+    [
+     14,
+     10
+    ],
+    [
+     15,
+     127
+    ]
+   ],
+   "end": "stop",
+   "vblanks": 282,
+   "shows": "hat trick: fans behind the top goal stand with arms up (frames 1-4), hats fly over the top glass (5-12) and land on the ice around the top goal (13-15); plays once",
+   "trigger": "a home skater's third goal of the game (goal summary loc_1889A, L56031-56045)"
+  },
+  {
+   "id": 1,
+   "file": "EAB10",
+   "script_address": "FE490",
+   "script": [
+    [
+     1,
+     8
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     3,
+     8
+    ],
+    [
+     4,
+     30
+    ],
+    [
+     5,
+     8
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     5,
+     8
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     9,
+     8
+    ],
+    [
+     10,
+     8
+    ],
+    [
+     11,
+     8
+    ],
+    [
+     12,
+     8
+    ],
+    [
+     13,
+     8
+    ],
+    [
+     14,
+     8
+    ]
+   ],
+   "end": "stop",
+   "vblanks": 228,
+   "shows": "a fan in the top end stands (map x 113-135) leaves his seat, comes down to the glass, waves both arms there (frames 4-8), ducks (9) and climbs back to his seat (10-14); once",
+   "trigger": "faceoff (sub_FECAA table)"
+  },
+  {
+   "id": 2,
+   "file": "EAB10",
+   "script_address": "FE4B6",
+   "script": [
+    [
+     15,
+     8
+    ],
+    [
+     16,
+     8
+    ],
+    [
+     17,
+     8
+    ],
+    [
+     18,
+     30
+    ],
+    [
+     19,
+     8
+    ],
+    [
+     20,
+     8
+    ],
+    [
+     21,
+     8
+    ],
+    [
+     22,
+     30
+    ],
+    [
+     19,
+     8
+    ],
+    [
+     20,
+     8
+    ],
+    [
+     21,
+     8
+    ],
+    [
+     22,
+     30
+    ],
+    [
+     23,
+     8
+    ],
+    [
+     24,
+     8
+    ],
+    [
+     25,
+     8
+    ],
+    [
+     26,
+     8
+    ],
+    [
+     27,
+     8
+    ],
+    [
+     28,
+     8
+    ]
+   ],
+   "end": "stop",
+   "vblanks": 228,
+   "shows": "id 1's fan sequence on the right of the top end stands (map x 248-264, frames 15-28); once",
+   "trigger": "faceoff (sub_FECAA table)"
+  },
+  {
+   "id": 3,
+   "file": "EB816",
+   "script_address": "FE47E",
+   "script": [
+    [
+     1,
+     8
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     3,
+     8
+    ],
+    [
+     4,
+     8
+    ],
+    [
+     5,
+     8
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     8,
+     8
+    ]
+   ],
+   "end": "loop",
+   "vblanks": 72,
+   "shows": "scattered fans in the top end stands and both upper corners jump up with arms raised, a different set each frame; loops",
+   "trigger": "faceoff (sub_FECAA table)"
+  },
+  {
+   "id": 4,
+   "file": "EC284",
+   "script_address": "FE428",
+   "script": [
+    [
+     1,
+     8
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     3,
+     60
+    ],
+    [
+     4,
+     60
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     1,
+     8
+    ]
+   ],
+   "end": "loop",
+   "vblanks": 2354,
+   "shows": "fans get up into the aisles of the upper-left corner and the top end stands (frames 1-2), shift there (3/4 alternating every 61 vblanks, 19 times) and go back (2, 1); loops",
+   "trigger": "none: no retail code starts id 4 (only the faceoff drop minimum tests it)"
+  },
+  {
+   "id": 5,
+   "file": "EC284",
+   "script_address": "FE3F8",
+   "script": [
+    [
+     1,
+     10
+    ],
+    [
+     2,
+     10
+    ],
+    [
+     3,
+     10
+    ],
+    [
+     4,
+     10
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     7,
+     10
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     9,
+     10
+    ],
+    [
+     10,
+     10
+    ],
+    [
+     11,
+     10
+    ],
+    [
+     12,
+     10
+    ],
+    [
+     13,
+     10
+    ],
+    [
+     14,
+     10
+    ],
+    [
+     15,
+     10
+    ],
+    [
+     16,
+     10
+    ],
+    [
+     17,
+     10
+    ],
+    [
+     18,
+     10
+    ],
+    [
+     19,
+     10
+    ],
+    [
+     20,
+     10
+    ],
+    [
+     21,
+     10
+    ],
+    [
+     22,
+     10
+    ],
+    [
+     23,
+     10
+    ]
+   ],
+   "end": "stop",
+   "vblanks": 253,
+   "shows": "fans walk down the aisles of the upper-left corner and the top end stands (frames 1-8); one comes down the top-right aisle to the front row behind the glass and walks right along it (9-23); once",
+   "trigger": "faceoff (sub_FECAA table)"
+  },
+  {
+   "id": 6,
+   "file": "ED1B0",
+   "script_address": "FE3E2",
+   "script": [
+    [
+     1,
+     10
+    ],
+    [
+     2,
+     10
+    ],
+    [
+     3,
+     10
+    ],
+    [
+     4,
+     10
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     7,
+     10
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     9,
+     10
+    ],
+    [
+     10,
+     10
+    ]
+   ],
+   "end": "loop",
+   "vblanks": 110,
+   "shows": "the players on both benches stand up and lean over the boards in a ripple along the bench (away bench map y 239-327 in line 3, home bench y 375-464 in line 2); loops",
+   "trigger": "faceoff at fox <= -64 and foy <= 192 (left lower dots, benches in view)"
+  },
+  {
+   "id": 7,
+   "file": "ED1B0",
+   "script_address": "FE3A4",
+   "script": [
+    [
+     1,
+     10
+    ],
+    [
+     2,
+     10
+    ],
+    [
+     3,
+     10
+    ],
+    [
+     4,
+     10
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     7,
+     10
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     9,
+     10
+    ],
+    [
+     10,
+     10
+    ],
+    [
+     1,
+     10
+    ],
+    [
+     2,
+     10
+    ],
+    [
+     3,
+     10
+    ],
+    [
+     4,
+     10
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     7,
+     10
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     9,
+     10
+    ],
+    [
+     10,
+     10
+    ],
+    [
+     1,
+     10
+    ],
+    [
+     2,
+     10
+    ],
+    [
+     3,
+     10
+    ],
+    [
+     4,
+     10
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     7,
+     10
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     9,
+     10
+    ],
+    [
+     10,
+     10
+    ]
+   ],
+   "end": "stop",
+   "vblanks": 330,
+   "shows": "id 6's bench ripple three times (30 entries), then it ends",
+   "trigger": "a skater checked over the left boards at -$59 <= y <= $59 (FallDown L49352)"
+  }
+ ],
+ "files": {
+  "EA2EC": {
+   "tiles": 31,
+   "frames": {
+    "1": {
+     "bbox": [
+      123,
+      -1,
+      138,
+      16
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       245,
+       -1,
+       0
+      ],
+      [
+       123,
+       -1,
+       1
+      ]
+     ]
+    },
+    "2": {
+     "bbox": [
+      119,
+      0,
+      146,
+      32
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       249,
+       0,
+       2
+      ],
+      [
+       119,
+       0,
+       3
+      ],
+      [
+       176,
+       8,
+       4
+      ],
+      [
+       176,
+       16,
+       5
+      ]
+     ]
+    },
+    "3": {
+     "bbox": [
+      117,
+      0,
+      150,
+      41
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       256,
+       12,
+       6
+      ],
+      [
+       128,
+       11,
+       7
+      ],
+      [
+       251,
+       0,
+       8
+      ],
+      [
+       117,
+       0,
+       9
+      ],
+      [
+       168,
+       14,
+       10
+      ],
+      [
+       184,
+       24,
+       11
+      ],
+      [
+       176,
+       22,
+       12
+      ],
+      [
+       211,
+       15,
+       1
+      ],
+      [
+       212,
+       33,
+       13
+      ]
+     ]
+    },
+    "4": {
+     "bbox": [
+      120,
+      -1,
+      145,
+      42
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       257,
+       18,
+       14
+      ],
+      [
+       131,
+       17,
+       14
+      ],
+      [
+       180,
+       27,
+       14
+      ],
+      [
+       245,
+       -1,
+       0
+      ],
+      [
+       120,
+       8,
+       4
+      ],
+      [
+       120,
+       16,
+       5
+      ],
+      [
+       177,
+       15,
+       15
+      ],
+      [
+       176,
+       23,
+       16
+      ],
+      [
+       176,
+       31,
+       17
+      ],
+      [
+       207,
+       16,
+       3
+      ],
+      [
+       214,
+       8,
+       18
+      ],
+      [
+       212,
+       33,
+       13
+      ],
+      [
+       123,
+       -1,
+       1
+      ]
+     ]
+    },
+    "5": {
+     "bbox": [
+      112,
+      8,
+      154,
+      37
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       258,
+       26,
+       7
+      ],
+      [
+       134,
+       25,
+       6
+      ],
+      [
+       210,
+       27,
+       19
+      ],
+      [
+       182,
+       37,
+       6
+      ],
+      [
+       256,
+       8,
+       20
+      ],
+      [
+       248,
+       16,
+       21
+      ],
+      [
+       112,
+       14,
+       10
+      ],
+      [
+       128,
+       24,
+       11
+      ],
+      [
+       120,
+       22,
+       12
+      ],
+      [
+       176,
+       8,
+       4
+      ],
+      [
+       176,
+       16,
+       5
+      ],
+      [
+       205,
+       16,
+       9
+      ],
+      [
+       212,
+       33,
+       13
+      ]
+     ]
+    },
+    "6": {
+     "bbox": [
+      120,
+      14,
+      152,
+      41
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       260,
+       36,
+       22
+      ],
+      [
+       137,
+       35,
+       22
+      ],
+      [
+       121,
+       27,
+       23
+      ],
+      [
+       209,
+       37,
+       24
+      ],
+      [
+       184,
+       47,
+       22
+      ],
+      [
+       256,
+       14,
+       25
+      ],
+      [
+       255,
+       24,
+       11
+      ],
+      [
+       256,
+       22,
+       26
+      ],
+      [
+       121,
+       15,
+       15
+      ],
+      [
+       120,
+       23,
+       16
+      ],
+      [
+       211,
+       15,
+       1
+      ],
+      [
+       212,
+       33,
+       13
+      ]
+     ]
+    },
+    "7": {
+     "bbox": [
+      120,
+      8,
+      150,
+      57
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       262,
+       46,
+       6
+      ],
+      [
+       249,
+       25,
+       27
+      ],
+      [
+       140,
+       45,
+       7
+      ],
+      [
+       121,
+       33,
+       24
+      ],
+      [
+       208,
+       47,
+       23
+      ],
+      [
+       186,
+       57,
+       7
+      ],
+      [
+       255,
+       15,
+       28
+      ],
+      [
+       248,
+       23,
+       29
+      ],
+      [
+       120,
+       8,
+       4
+      ],
+      [
+       120,
+       16,
+       5
+      ]
+     ]
+    },
+    "8": {
+     "bbox": [
+      121,
+      8,
+      151,
+      67
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       264,
+       56,
+       14
+      ],
+      [
+       248,
+       31,
+       23
+      ],
+      [
+       142,
+       55,
+       14
+      ],
+      [
+       121,
+       41,
+       19
+      ],
+      [
+       207,
+       57,
+       27
+      ],
+      [
+       188,
+       67,
+       14
+      ],
+      [
+       256,
+       8,
+       20
+      ],
+      [
+       248,
+       16,
+       21
+      ]
+     ]
+    },
+    "9": {
+     "bbox": [
+      121,
+      39,
+      153,
+      46
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       266,
+       66,
+       7
+      ],
+      [
+       247,
+       39,
+       24
+      ],
+      [
+       144,
+       65,
+       6
+      ],
+      [
+       121,
+       51,
+       27
+      ],
+      [
+       206,
+       67,
+       19
+      ],
+      [
+       190,
+       77,
+       6
+      ]
+     ]
+    },
+    "10": {
+     "bbox": [
+      121,
+      49,
+      155,
+      41
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       268,
+       76,
+       22
+      ],
+      [
+       246,
+       49,
+       19
+      ],
+      [
+       145,
+       75,
+       22
+      ],
+      [
+       121,
+       61,
+       23
+      ],
+      [
+       205,
+       77,
+       24
+      ],
+      [
+       191,
+       82,
+       22
+      ]
+     ]
+    },
+    "11": {
+     "bbox": [
+      121,
+      59,
+      157,
+      35
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       270,
+       86,
+       6
+      ],
+      [
+       245,
+       59,
+       27
+      ],
+      [
+       146,
+       85,
+       7
+      ],
+      [
+       121,
+       71,
+       24
+      ],
+      [
+       205,
+       77,
+       24
+      ],
+      [
+       191,
+       82,
+       22
+      ]
+     ]
+    },
+    "12": {
+     "bbox": [
+      121,
+      69,
+      158,
+      33
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       271,
+       94,
+       14
+      ],
+      [
+       244,
+       69,
+       23
+      ],
+      [
+       146,
+       90,
+       14
+      ],
+      [
+       121,
+       81,
+       19
+      ],
+      [
+       205,
+       77,
+       24
+      ],
+      [
+       191,
+       82,
+       22
+      ]
+     ]
+    },
+    "13": {
+     "bbox": [
+      121,
+      77,
+      158,
+      25
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       271,
+       94,
+       14
+      ],
+      [
+       243,
+       79,
+       24
+      ],
+      [
+       146,
+       90,
+       14
+      ],
+      [
+       121,
+       86,
+       27
+      ],
+      [
+       205,
+       77,
+       24
+      ],
+      [
+       191,
+       82,
+       22
+      ]
+     ]
+    },
+    "14": {
+     "bbox": [
+      121,
+      77,
+      158,
+      25
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       191,
+       82,
+       22
+      ],
+      [
+       121,
+       86,
+       27
+      ],
+      [
+       271,
+       94,
+       14
+      ],
+      [
+       146,
+       90,
+       14
+      ],
+      [
+       205,
+       77,
+       24
+      ],
+      [
+       242,
+       84,
+       19
+      ],
+      [
+       0,
+       0,
+       30
+      ]
+     ]
+    },
+    "15": {
+     "bbox": [
+      121,
+      77,
+      158,
+      25
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       191,
+       82,
+       22
+      ],
+      [
+       121,
+       86,
+       27
+      ],
+      [
+       271,
+       94,
+       14
+      ],
+      [
+       146,
+       90,
+       14
+      ],
+      [
+       205,
+       77,
+       24
+      ],
+      [
+       242,
+       84,
+       19
+      ],
+      [
+       0,
+       0,
+       30
+      ]
+     ]
+    }
+   }
+  },
+  "EAB10": {
+   "tiles": 36,
+   "frames": {
+    "1": {
+     "bbox": [
+      115,
+      16,
+      21,
+      39
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       32,
+       31
+      ],
+      [
+       122,
+       29,
+       32
+      ],
+      [
+       120,
+       29,
+       32
+      ],
+      [
+       120,
+       23,
+       33
+      ],
+      [
+       115,
+       31,
+       34
+      ],
+      [
+       120,
+       39,
+       35
+      ],
+      [
+       120,
+       47,
+       36
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "2": {
+     "bbox": [
+      117,
+      16,
+      19,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       40,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       29,
+       32
+      ],
+      [
+       120,
+       31,
+       41
+      ],
+      [
+       117,
+       39,
+       42
+      ],
+      [
+       120,
+       47,
+       43
+      ],
+      [
+       120,
+       55,
+       44
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "3": {
+     "bbox": [
+      115,
+      16,
+      21,
+      50
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       43,
+       31
+      ],
+      [
+       120,
+       58,
+       45
+      ],
+      [
+       122,
+       45,
+       40
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       39,
+       33
+      ],
+      [
+       115,
+       47,
+       34
+      ],
+      [
+       120,
+       55,
+       35
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "4": {
+     "bbox": [
+      113,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       49,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       55,
+       46
+      ],
+      [
+       113,
+       48,
+       47
+      ],
+      [
+       127,
+       48,
+       48
+      ],
+      [
+       120,
+       47,
+       49
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "5": {
+     "bbox": [
+      113,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       49,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       55,
+       50
+      ],
+      [
+       121,
+       47,
+       51
+      ],
+      [
+       113,
+       47,
+       52
+      ],
+      [
+       127,
+       47,
+       53
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "6": {
+     "bbox": [
+      113,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       49,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       55,
+       46
+      ],
+      [
+       113,
+       48,
+       47
+      ],
+      [
+       127,
+       48,
+       48
+      ],
+      [
+       120,
+       47,
+       49
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "7": {
+     "bbox": [
+      113,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       49,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       55,
+       54
+      ],
+      [
+       127,
+       47,
+       55
+      ],
+      [
+       113,
+       48,
+       47
+      ],
+      [
+       119,
+       47,
+       56
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "8": {
+     "bbox": [
+      113,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       49,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       55,
+       46
+      ],
+      [
+       113,
+       48,
+       47
+      ],
+      [
+       127,
+       48,
+       48
+      ],
+      [
+       120,
+       47,
+       49
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "9": {
+     "bbox": [
+      120,
+      16,
+      16,
+      45
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       49,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       121,
+       45,
+       57
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "10": {
+     "bbox": [
+      112,
+      16,
+      24,
+      50
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       120,
+       58,
+       45
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       119,
+       45,
+       40
+      ],
+      [
+       120,
+       39,
+       58
+      ],
+      [
+       112,
+       47,
+       59
+      ],
+      [
+       120,
+       55,
+       60
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "11": {
+     "bbox": [
+      119,
+      16,
+      17,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       40,
+       31
+      ],
+      [
+       120,
+       45,
+       40
+      ],
+      [
+       120,
+       29,
+       32
+      ],
+      [
+       119,
+       31,
+       61
+      ],
+      [
+       119,
+       39,
+       62
+      ],
+      [
+       119,
+       47,
+       63
+      ],
+      [
+       120,
+       55,
+       44
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "12": {
+     "bbox": [
+      113,
+      16,
+      23,
+      39
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       32,
+       31
+      ],
+      [
+       118,
+       29,
+       32
+      ],
+      [
+       121,
+       29,
+       32
+      ],
+      [
+       121,
+       23,
+       58
+      ],
+      [
+       113,
+       31,
+       59
+      ],
+      [
+       121,
+       39,
+       60
+      ],
+      [
+       120,
+       47,
+       36
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "13": {
+     "bbox": [
+      120,
+      16,
+      16,
+      30
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       32,
+       31
+      ],
+      [
+       121,
+       29,
+       32
+      ],
+      [
+       122,
+       22,
+       64
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "14": {
+     "bbox": [
+      114,
+      16,
+      22,
+      28
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       125,
+       33,
+       31
+      ],
+      [
+       120,
+       29,
+       32
+      ],
+      [
+       122,
+       20,
+       65
+      ],
+      [
+       114,
+       28,
+       66
+      ],
+      [
+       122,
+       36,
+       67
+      ],
+      [
+       120,
+       16,
+       37
+      ],
+      [
+       120,
+       24,
+       38
+      ],
+      [
+       120,
+       32,
+       39
+      ]
+     ]
+    },
+    "15": {
+     "bbox": [
+      248,
+      16,
+      21,
+      39
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       32,
+       31
+      ],
+      [
+       254,
+       29,
+       68
+      ],
+      [
+       256,
+       29,
+       68
+      ],
+      [
+       256,
+       23,
+       41
+      ],
+      [
+       253,
+       31,
+       42
+      ],
+      [
+       256,
+       39,
+       43
+      ],
+      [
+       256,
+       47,
+       44
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "16": {
+     "bbox": [
+      248,
+      16,
+      19,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       40,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       29,
+       68
+      ],
+      [
+       256,
+       31,
+       33
+      ],
+      [
+       251,
+       39,
+       34
+      ],
+      [
+       256,
+       47,
+       35
+      ],
+      [
+       256,
+       55,
+       36
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "17": {
+     "bbox": [
+      248,
+      16,
+      21,
+      50
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       43,
+       31
+      ],
+      [
+       256,
+       58,
+       73
+      ],
+      [
+       254,
+       45,
+       72
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       39,
+       41
+      ],
+      [
+       253,
+       47,
+       42
+      ],
+      [
+       256,
+       55,
+       43
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "18": {
+     "bbox": [
+      248,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       48,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       55,
+       74
+      ],
+      [
+       263,
+       48,
+       75
+      ],
+      [
+       249,
+       48,
+       76
+      ],
+      [
+       256,
+       47,
+       77
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "19": {
+     "bbox": [
+      248,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       48,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       55,
+       54
+      ],
+      [
+       255,
+       47,
+       78
+      ],
+      [
+       263,
+       47,
+       79
+      ],
+      [
+       249,
+       47,
+       80
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "20": {
+     "bbox": [
+      248,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       48,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       55,
+       74
+      ],
+      [
+       263,
+       48,
+       75
+      ],
+      [
+       249,
+       48,
+       76
+      ],
+      [
+       256,
+       47,
+       77
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "21": {
+     "bbox": [
+      248,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       48,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       55,
+       50
+      ],
+      [
+       249,
+       47,
+       81
+      ],
+      [
+       263,
+       48,
+       75
+      ],
+      [
+       257,
+       47,
+       82
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "22": {
+     "bbox": [
+      248,
+      16,
+      23,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       48,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       55,
+       74
+      ],
+      [
+       263,
+       48,
+       75
+      ],
+      [
+       249,
+       48,
+       76
+      ],
+      [
+       256,
+       47,
+       77
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "23": {
+     "bbox": [
+      248,
+      16,
+      16,
+      45
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       48,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       255,
+       45,
+       83
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "24": {
+     "bbox": [
+      248,
+      16,
+      24,
+      50
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       256,
+       58,
+       73
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       257,
+       45,
+       72
+      ],
+      [
+       256,
+       39,
+       61
+      ],
+      [
+       256,
+       47,
+       62
+      ],
+      [
+       256,
+       55,
+       63
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "25": {
+     "bbox": [
+      248,
+      16,
+      17,
+      47
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       41,
+       31
+      ],
+      [
+       256,
+       45,
+       72
+      ],
+      [
+       256,
+       29,
+       68
+      ],
+      [
+       257,
+       31,
+       58
+      ],
+      [
+       249,
+       39,
+       59
+      ],
+      [
+       257,
+       47,
+       60
+      ],
+      [
+       256,
+       55,
+       36
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "26": {
+     "bbox": [
+      248,
+      16,
+      23,
+      39
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       32,
+       31
+      ],
+      [
+       258,
+       29,
+       68
+      ],
+      [
+       255,
+       29,
+       68
+      ],
+      [
+       255,
+       23,
+       61
+      ],
+      [
+       255,
+       31,
+       62
+      ],
+      [
+       255,
+       39,
+       63
+      ],
+      [
+       256,
+       47,
+       44
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "27": {
+     "bbox": [
+      248,
+      16,
+      16,
+      30
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       32,
+       31
+      ],
+      [
+       255,
+       29,
+       68
+      ],
+      [
+       254,
+       22,
+       84
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    },
+    "28": {
+     "bbox": [
+      248,
+      16,
+      22,
+      28
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       252,
+       32,
+       31
+      ],
+      [
+       255,
+       29,
+       68
+      ],
+      [
+       254,
+       20,
+       85
+      ],
+      [
+       254,
+       28,
+       86
+      ],
+      [
+       254,
+       36,
+       87
+      ],
+      [
+       256,
+       16,
+       69
+      ],
+      [
+       248,
+       24,
+       70
+      ],
+      [
+       256,
+       32,
+       71
+      ]
+     ]
+    }
+   }
+  },
+  "EB816": {
+   "tiles": 50,
+   "frames": {
+    "1": {
+     "bbox": [
+      15,
+      0,
+      345,
+      144
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       283,
+       0,
+       88
+      ],
+      [
+       42,
+       31,
+       89
+      ],
+      [
+       15,
+       128,
+       90
+      ],
+      [
+       21,
+       136,
+       91
+      ],
+      [
+       352,
+       64,
+       92
+      ],
+      [
+       140,
+       7,
+       93
+      ],
+      [
+       346,
+       72,
+       94
+      ],
+      [
+       189,
+       0,
+       95
+      ],
+      [
+       157,
+       21,
+       96
+      ]
+     ]
+    },
+    "2": {
+     "bbox": [
+      16,
+      0,
+      350,
+      145
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       283,
+       0,
+       97
+      ],
+      [
+       40,
+       32,
+       98
+      ],
+      [
+       358,
+       95,
+       99
+      ],
+      [
+       334,
+       31,
+       100
+      ],
+      [
+       34,
+       55,
+       101
+      ],
+      [
+       16,
+       129,
+       102
+      ],
+      [
+       133,
+       0,
+       103
+      ],
+      [
+       343,
+       65,
+       104
+      ],
+      [
+       189,
+       0,
+       95
+      ],
+      [
+       168,
+       5,
+       105
+      ],
+      [
+       85,
+       0,
+       106
+      ],
+      [
+       158,
+       16,
+       107
+      ]
+     ]
+    },
+    "3": {
+     "bbox": [
+      16,
+      0,
+      353,
+      145
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       264,
+       5,
+       108
+      ],
+      [
+       283,
+       0,
+       97
+      ],
+      [
+       196,
+       24,
+       109
+      ],
+      [
+       187,
+       21,
+       110
+      ],
+      [
+       40,
+       32,
+       98
+      ],
+      [
+       33,
+       64,
+       111
+      ],
+      [
+       361,
+       128,
+       92
+      ],
+      [
+       328,
+       32,
+       112
+      ],
+      [
+       355,
+       136,
+       94
+      ],
+      [
+       32,
+       56,
+       113
+      ],
+      [
+       16,
+       129,
+       102
+      ],
+      [
+       343,
+       65,
+       104
+      ],
+      [
+       189,
+       0,
+       106
+      ],
+      [
+       133,
+       0,
+       103
+      ],
+      [
+       85,
+       0,
+       106
+      ],
+      [
+       352,
+       96,
+       114
+      ],
+      [
+       163,
+       0,
+       115
+      ],
+      [
+       171,
+       8,
+       116
+      ],
+      [
+       158,
+       16,
+       107
+      ]
+     ]
+    },
+    "4": {
+     "bbox": [
+      10,
+      0,
+      364,
+      145
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       261,
+       8,
+       117
+      ],
+      [
+       261,
+       0,
+       118
+      ],
+      [
+       283,
+       0,
+       88
+      ],
+      [
+       189,
+       17,
+       119
+      ],
+      [
+       42,
+       31,
+       89
+      ],
+      [
+       33,
+       64,
+       111
+      ],
+      [
+       32,
+       56,
+       113
+      ],
+      [
+       366,
+       7,
+       100
+      ],
+      [
+       328,
+       32,
+       112
+      ],
+      [
+       16,
+       129,
+       102
+      ],
+      [
+       352,
+       129,
+       104
+      ],
+      [
+       140,
+       7,
+       93
+      ],
+      [
+       189,
+       0,
+       106
+      ],
+      [
+       85,
+       0,
+       106
+      ],
+      [
+       352,
+       96,
+       114
+      ],
+      [
+       163,
+       0,
+       115
+      ],
+      [
+       171,
+       8,
+       116
+      ],
+      [
+       117,
+       16,
+       95
+      ],
+      [
+       158,
+       16,
+       107
+      ],
+      [
+       251,
+       16,
+       88
+      ],
+      [
+       10,
+       7,
+       89
+      ]
+     ]
+    },
+    "5": {
+     "bbox": [
+      8,
+      0,
+      368,
+      145
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       261,
+       8,
+       117
+      ],
+      [
+       261,
+       0,
+       118
+      ],
+      [
+       189,
+       17,
+       119
+      ],
+      [
+       112,
+       5,
+       105
+      ],
+      [
+       34,
+       55,
+       101
+      ],
+      [
+       334,
+       31,
+       100
+      ],
+      [
+       342,
+       55,
+       120
+      ],
+      [
+       15,
+       128,
+       90
+      ],
+      [
+       360,
+       8,
+       112
+      ],
+      [
+       352,
+       129,
+       104
+      ],
+      [
+       189,
+       0,
+       106
+      ],
+      [
+       168,
+       5,
+       105
+      ],
+      [
+       203,
+       5,
+       110
+      ],
+      [
+       212,
+       8,
+       109
+      ],
+      [
+       117,
+       16,
+       106
+      ],
+      [
+       157,
+       21,
+       96
+      ],
+      [
+       352,
+       96,
+       114
+      ],
+      [
+       251,
+       16,
+       97
+      ],
+      [
+       17,
+       95,
+       121
+      ],
+      [
+       8,
+       8,
+       98
+      ]
+     ]
+    },
+    "6": {
+     "bbox": [
+      8,
+      0,
+      368,
+      144
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       264,
+       5,
+       108
+      ],
+      [
+       187,
+       21,
+       110
+      ],
+      [
+       114,
+       8,
+       116
+      ],
+      [
+       106,
+       0,
+       115
+      ],
+      [
+       251,
+       16,
+       97
+      ],
+      [
+       358,
+       95,
+       99
+      ],
+      [
+       361,
+       128,
+       92
+      ],
+      [
+       342,
+       64,
+       122
+      ],
+      [
+       355,
+       136,
+       94
+      ],
+      [
+       360,
+       8,
+       112
+      ],
+      [
+       336,
+       56,
+       123
+      ],
+      [
+       189,
+       0,
+       95
+      ],
+      [
+       205,
+       1,
+       119
+      ],
+      [
+       117,
+       16,
+       106
+      ],
+      [
+       235,
+       0,
+       124
+      ],
+      [
+       15,
+       96,
+       125
+      ],
+      [
+       8,
+       8,
+       98
+      ]
+     ]
+    },
+    "7": {
+     "bbox": [
+      8,
+      0,
+      366,
+      104
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       114,
+       8,
+       116
+      ],
+      [
+       106,
+       0,
+       115
+      ],
+      [
+       15,
+       96,
+       125
+      ],
+      [
+       235,
+       0,
+       124
+      ],
+      [
+       251,
+       16,
+       88
+      ],
+      [
+       366,
+       7,
+       100
+      ],
+      [
+       117,
+       16,
+       95
+      ],
+      [
+       336,
+       56,
+       123
+      ],
+      [
+       205,
+       1,
+       119
+      ],
+      [
+       8,
+       8,
+       98
+      ]
+     ]
+    },
+    "8": {
+     "bbox": [
+      10,
+      0,
+      241,
+      111
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       112,
+       5,
+       105
+      ],
+      [
+       17,
+       95,
+       121
+      ],
+      [
+       235,
+       0,
+       124
+      ],
+      [
+       212,
+       8,
+       109
+      ],
+      [
+       203,
+       5,
+       126
+      ],
+      [
+       10,
+       7,
+       89
+      ]
+     ]
+    }
+   }
+  },
+  "EC284": {
+   "tiles": 43,
+   "frames": {
+    "1": {
+     "bbox": [
+      -2,
+      -5,
+      266,
+      90
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       145,
+       -5,
+       135
+      ],
+      [
+       145,
+       3,
+       136
+      ],
+      [
+       229,
+       3,
+       136
+      ],
+      [
+       -2,
+       56,
+       137
+      ],
+      [
+       -2,
+       64,
+       138
+      ],
+      [
+       -2,
+       72,
+       139
+      ],
+      [
+       229,
+       -5,
+       135
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "2": {
+     "bbox": [
+      -7,
+      -5,
+      271,
+      90
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       144,
+       -4,
+       141
+      ],
+      [
+       228,
+       -4,
+       141
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       1,
+       67,
+       142
+      ],
+      [
+       -7,
+       74,
+       143
+      ],
+      [
+       1,
+       59,
+       137
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       145,
+       3,
+       136
+      ],
+      [
+       229,
+       3,
+       136
+      ],
+      [
+       145,
+       -5,
+       127
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "3": {
+     "bbox": [
+      3,
+      0,
+      261,
+      85
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       3,
+       59,
+       137
+      ],
+      [
+       3,
+       67,
+       138
+      ],
+      [
+       3,
+       75,
+       139
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       145,
+       0,
+       144
+      ],
+      [
+       229,
+       0,
+       144
+      ],
+      [
+       141,
+       8,
+       136
+      ],
+      [
+       225,
+       8,
+       136
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "4": {
+     "bbox": [
+      -1,
+      0,
+      265,
+      85
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       7,
+       61,
+       137
+      ],
+      [
+       7,
+       69,
+       142
+      ],
+      [
+       -1,
+       77,
+       143
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       146,
+       0,
+       145
+      ],
+      [
+       230,
+       0,
+       145
+      ],
+      [
+       141,
+       8,
+       136
+      ],
+      [
+       225,
+       8,
+       136
+      ],
+      [
+       138,
+       3,
+       127
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "5": {
+     "bbox": [
+      9,
+      -3,
+      255,
+      89
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       10,
+       62,
+       137
+      ],
+      [
+       145,
+       5,
+       135
+      ],
+      [
+       229,
+       5,
+       135
+      ],
+      [
+       9,
+       78,
+       139
+      ],
+      [
+       10,
+       70,
+       138
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       145,
+       13,
+       136
+      ],
+      [
+       229,
+       13,
+       136
+      ],
+      [
+       143,
+       -3,
+       146
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       227,
+       -3,
+       147
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "6": {
+     "bbox": [
+      6,
+      -3,
+      258,
+      91
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       6,
+       80,
+       143
+      ],
+      [
+       143,
+       -3,
+       148
+      ],
+      [
+       14,
+       64,
+       137
+      ],
+      [
+       227,
+       -2,
+       149
+      ],
+      [
+       14,
+       72,
+       142
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       144,
+       5,
+       141
+      ],
+      [
+       228,
+       6,
+       141
+      ],
+      [
+       145,
+       13,
+       136
+      ],
+      [
+       229,
+       13,
+       136
+      ],
+      [
+       145,
+       7,
+       127
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "7": {
+     "bbox": [
+      16,
+      -7,
+      248,
+      96
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       16,
+       73,
+       138
+      ],
+      [
+       16,
+       81,
+       139
+      ],
+      [
+       145,
+       10,
+       144
+      ],
+      [
+       229,
+       10,
+       144
+      ],
+      [
+       16,
+       65,
+       137
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       21,
+       72,
+       129
+      ],
+      [
+       141,
+       18,
+       136
+      ],
+      [
+       225,
+       18,
+       136
+      ],
+      [
+       139,
+       2,
+       150
+      ],
+      [
+       145,
+       -7,
+       151
+      ],
+      [
+       229,
+       -6,
+       152
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       223,
+       2,
+       153
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "8": {
+     "bbox": [
+      13,
+      -7,
+      251,
+      97
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       21,
+       66,
+       137
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       134,
+       8,
+       131
+      ],
+      [
+       141,
+       18,
+       136
+      ],
+      [
+       225,
+       18,
+       136
+      ],
+      [
+       223,
+       3,
+       154
+      ],
+      [
+       21,
+       74,
+       142
+      ],
+      [
+       13,
+       82,
+       143
+      ],
+      [
+       25,
+       69,
+       130
+      ],
+      [
+       25,
+       64,
+       128
+      ],
+      [
+       146,
+       10,
+       145
+      ],
+      [
+       230,
+       11,
+       145
+      ],
+      [
+       139,
+       2,
+       155
+      ],
+      [
+       145,
+       -7,
+       151
+      ],
+      [
+       230,
+       -5,
+       152
+      ],
+      [
+       135,
+       7,
+       127
+      ],
+      [
+       134,
+       0,
+       132
+      ],
+      [
+       136,
+       16,
+       133
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "9": {
+     "bbox": [
+      227,
+      -1,
+      37,
+      42
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       227,
+       7,
+       147
+      ],
+      [
+       229,
+       23,
+       136
+      ],
+      [
+       229,
+       15,
+       135
+      ],
+      [
+       229,
+       -1,
+       152
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "10": {
+     "bbox": [
+      227,
+      0,
+      37,
+      41
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       229,
+       0,
+       152
+      ],
+      [
+       227,
+       8,
+       149
+      ],
+      [
+       228,
+       16,
+       141
+      ],
+      [
+       229,
+       23,
+       136
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "11": {
+     "bbox": [
+      223,
+      4,
+      41,
+      37
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       225,
+       28,
+       136
+      ],
+      [
+       229,
+       4,
+       152
+      ],
+      [
+       223,
+       12,
+       153
+      ],
+      [
+       229,
+       20,
+       144
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "12": {
+     "bbox": [
+      223,
+      5,
+      41,
+      36
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       230,
+       21,
+       145
+      ],
+      [
+       223,
+       13,
+       154
+      ],
+      [
+       230,
+       5,
+       152
+      ],
+      [
+       225,
+       28,
+       136
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "13": {
+     "bbox": [
+      227,
+      9,
+      37,
+      32
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       232,
+       32,
+       156
+      ],
+      [
+       229,
+       33,
+       157
+      ],
+      [
+       229,
+       25,
+       135
+      ],
+      [
+       227,
+       17,
+       147
+      ],
+      [
+       229,
+       9,
+       152
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "14": {
+     "bbox": [
+      227,
+      10,
+      37,
+      31
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       233,
+       32,
+       156
+      ],
+      [
+       228,
+       32,
+       156
+      ],
+      [
+       229,
+       10,
+       152
+      ],
+      [
+       228,
+       26,
+       158
+      ],
+      [
+       229,
+       33,
+       157
+      ],
+      [
+       227,
+       18,
+       149
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "15": {
+     "bbox": [
+      223,
+      14,
+      41,
+      32
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       230,
+       32,
+       156
+      ],
+      [
+       228,
+       32,
+       156
+      ],
+      [
+       223,
+       22,
+       153
+      ],
+      [
+       229,
+       14,
+       152
+      ],
+      [
+       225,
+       38,
+       157
+      ],
+      [
+       229,
+       30,
+       159
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "16": {
+     "bbox": [
+      223,
+      15,
+      41,
+      31
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       231,
+       32,
+       156
+      ],
+      [
+       228,
+       32,
+       156
+      ],
+      [
+       223,
+       23,
+       154
+      ],
+      [
+       230,
+       31,
+       160
+      ],
+      [
+       230,
+       15,
+       152
+      ],
+      [
+       225,
+       38,
+       157
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "17": {
+     "bbox": [
+      224,
+      16,
+      40,
+      26
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       233,
+       32,
+       156
+      ],
+      [
+       232,
+       32,
+       156
+      ],
+      [
+       233,
+       18,
+       161
+      ],
+      [
+       232,
+       26,
+       162
+      ],
+      [
+       224,
+       34,
+       163
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "18": {
+     "bbox": [
+      233,
+      16,
+      31,
+      26
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       239,
+       32,
+       164
+      ],
+      [
+       233,
+       32,
+       156
+      ],
+      [
+       234,
+       26,
+       165
+      ],
+      [
+       235,
+       18,
+       161
+      ],
+      [
+       234,
+       34,
+       166
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "19": {
+     "bbox": [
+      231,
+      16,
+      33,
+      26
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       240,
+       32,
+       164
+      ],
+      [
+       239,
+       32,
+       164
+      ],
+      [
+       239,
+       26,
+       162
+      ],
+      [
+       231,
+       34,
+       163
+      ],
+      [
+       240,
+       18,
+       161
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "20": {
+     "bbox": [
+      241,
+      16,
+      23,
+      26
+     ],
+     "lines": [
+      1
+     ],
+     "sprites": [
+      [
+       241,
+       32,
+       164
+      ],
+      [
+       242,
+       18,
+       161
+      ],
+      [
+       241,
+       34,
+       166
+      ],
+      [
+       241,
+       26,
+       165
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "21": {
+     "bbox": [
+      238,
+      16,
+      26,
+      26
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       238,
+       34,
+       163
+      ],
+      [
+       246,
+       32,
+       156
+      ],
+      [
+       247,
+       18,
+       161
+      ],
+      [
+       246,
+       26,
+       162
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "22": {
+     "bbox": [
+      248,
+      16,
+      16,
+      26
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       248,
+       32,
+       156
+      ],
+      [
+       249,
+       26,
+       165
+      ],
+      [
+       249,
+       34,
+       166
+      ],
+      [
+       250,
+       18,
+       161
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    },
+    "23": {
+     "bbox": [
+      244,
+      16,
+      20,
+      26
+     ],
+     "lines": [
+      0,
+      1
+     ],
+     "sprites": [
+      [
+       248,
+       32,
+       127
+      ],
+      [
+       255,
+       32,
+       164
+      ],
+      [
+       248,
+       32,
+       156
+      ],
+      [
+       253,
+       18,
+       161
+      ],
+      [
+       252,
+       26,
+       162
+      ],
+      [
+       244,
+       34,
+       163
+      ],
+      [
+       255,
+       24,
+       131
+      ],
+      [
+       256,
+       16,
+       134
+      ],
+      [
+       256,
+       24,
+       127
+      ],
+      [
+       255,
+       33,
+       140
+      ]
+     ]
+    }
+   }
+  },
+  "ED1B0": {
+   "tiles": 50,
+   "frames": {
+    "1": {
+     "bbox": [
+      25,
+      376,
+      32,
+      88
+     ],
+     "lines": [
+      2
+     ],
+     "sprites": [
+      [
+       32,
+       448,
+       167
+      ],
+      [
+       25,
+       384,
+       168
+      ],
+      [
+       32,
+       420,
+       169
+      ],
+      [
+       32,
+       428,
+       170
+      ],
+      [
+       37,
+       412,
+       171
+      ],
+      [
+       34,
+       400,
+       172
+      ],
+      [
+       43,
+       428,
+       173
+      ],
+      [
+       40,
+       384,
+       174
+      ],
+      [
+       49,
+       376,
+       175
+      ],
+      [
+       42,
+       384,
+       176
+      ],
+      [
+       32,
+       440,
+       177
+      ],
+      [
+       40,
+       448,
+       178
+      ],
+      [
+       32,
+       456,
+       179
+      ],
+      [
+       42,
+       446,
+       180
+      ],
+      [
+       34,
+       392,
+       181
+      ],
+      [
+       33,
+       376,
+       182
+      ],
+      [
+       0,
+       0,
+       183
+      ]
+     ]
+    },
+    "2": {
+     "bbox": [
+      25,
+      239,
+      32,
+      169
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       25,
+       384,
+       168
+      ],
+      [
+       49,
+       376,
+       175
+      ],
+      [
+       34,
+       392,
+       181
+      ],
+      [
+       33,
+       376,
+       184
+      ],
+      [
+       42,
+       384,
+       176
+      ],
+      [
+       34,
+       400,
+       172
+      ],
+      [
+       34,
+       239,
+       185
+      ],
+      [
+       34,
+       247,
+       186
+      ],
+      [
+       36,
+       255,
+       187
+      ],
+      [
+       36,
+       263,
+       188
+      ],
+      [
+       43,
+       292,
+       189
+      ],
+      [
+       37,
+       276,
+       190
+      ],
+      [
+       32,
+       284,
+       191
+      ],
+      [
+       32,
+       292,
+       192
+      ],
+      [
+       32,
+       304,
+       193
+      ],
+      [
+       32,
+       312,
+       194
+      ],
+      [
+       40,
+       312,
+       195
+      ],
+      [
+       32,
+       320,
+       196
+      ]
+     ]
+    },
+    "3": {
+     "bbox": [
+      25,
+      239,
+      32,
+      185
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       42,
+       384,
+       176
+      ],
+      [
+       33,
+       376,
+       184
+      ],
+      [
+       49,
+       376,
+       175
+      ],
+      [
+       25,
+       384,
+       168
+      ],
+      [
+       35,
+       416,
+       197
+      ],
+      [
+       34,
+       239,
+       198
+      ],
+      [
+       34,
+       247,
+       199
+      ],
+      [
+       42,
+       247,
+       200
+      ],
+      [
+       34,
+       256,
+       201
+      ],
+      [
+       34,
+       264,
+       202
+      ],
+      [
+       37,
+       274,
+       203
+      ],
+      [
+       32,
+       282,
+       204
+      ],
+      [
+       32,
+       290,
+       205
+      ],
+      [
+       43,
+       290,
+       206
+      ],
+      [
+       32,
+       312,
+       194
+      ],
+      [
+       40,
+       312,
+       195
+      ],
+      [
+       32,
+       320,
+       196
+      ],
+      [
+       32,
+       304,
+       193
+      ],
+      [
+       42,
+       310,
+       207
+      ]
+     ]
+    },
+    "4": {
+     "bbox": [
+      25,
+      256,
+      32,
+      168
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       42,
+       384,
+       176
+      ],
+      [
+       33,
+       376,
+       184
+      ],
+      [
+       49,
+       376,
+       175
+      ],
+      [
+       25,
+       384,
+       168
+      ],
+      [
+       36,
+       391,
+       208
+      ],
+      [
+       35,
+       416,
+       197
+      ],
+      [
+       37,
+       274,
+       209
+      ],
+      [
+       32,
+       282,
+       204
+      ],
+      [
+       43,
+       290,
+       206
+      ],
+      [
+       32,
+       290,
+       205
+      ],
+      [
+       34,
+       256,
+       201
+      ],
+      [
+       34,
+       264,
+       202
+      ],
+      [
+       39,
+       282,
+       210
+      ],
+      [
+       32,
+       320,
+       196
+      ],
+      [
+       32,
+       312,
+       194
+      ],
+      [
+       34,
+       304,
+       211
+      ],
+      [
+       36,
+       312,
+       212
+      ]
+     ]
+    },
+    "5": {
+     "bbox": [
+      32,
+      255,
+      24,
+      73
+     ],
+     "lines": [
+      3
+     ],
+     "sprites": [
+      [
+       36,
+       255,
+       187
+      ],
+      [
+       37,
+       274,
+       209
+      ],
+      [
+       32,
+       282,
+       204
+      ],
+      [
+       43,
+       290,
+       206
+      ],
+      [
+       32,
+       290,
+       205
+      ],
+      [
+       39,
+       282,
+       210
+      ],
+      [
+       32,
+       320,
+       196
+      ],
+      [
+       32,
+       312,
+       194
+      ],
+      [
+       34,
+       304,
+       211
+      ],
+      [
+       36,
+       312,
+       212
+      ]
+     ]
+    },
+    "6": {
+     "bbox": [
+      25,
+      240,
+      32,
+      224
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       34,
+       375,
+       213
+      ],
+      [
+       34,
+       383,
+       214
+      ],
+      [
+       36,
+       391,
+       208
+      ],
+      [
+       36,
+       399,
+       215
+      ],
+      [
+       43,
+       428,
+       173
+      ],
+      [
+       37,
+       412,
+       171
+      ],
+      [
+       32,
+       420,
+       169
+      ],
+      [
+       32,
+       428,
+       170
+      ],
+      [
+       32,
+       440,
+       177
+      ],
+      [
+       32,
+       448,
+       167
+      ],
+      [
+       40,
+       448,
+       178
+      ],
+      [
+       32,
+       456,
+       179
+      ],
+      [
+       33,
+       240,
+       216
+      ],
+      [
+       42,
+       310,
+       207
+      ],
+      [
+       32,
+       320,
+       196
+      ],
+      [
+       40,
+       312,
+       195
+      ],
+      [
+       32,
+       304,
+       193
+      ],
+      [
+       36,
+       255,
+       187
+      ],
+      [
+       37,
+       274,
+       209
+      ],
+      [
+       32,
+       282,
+       204
+      ],
+      [
+       43,
+       290,
+       206
+      ],
+      [
+       32,
+       290,
+       205
+      ],
+      [
+       49,
+       240,
+       217
+      ],
+      [
+       39,
+       282,
+       210
+      ],
+      [
+       32,
+       312,
+       194
+      ],
+      [
+       25,
+       248,
+       218
+      ],
+      [
+       42,
+       248,
+       219
+      ]
+     ]
+    },
+    "7": {
+     "bbox": [
+      25,
+      240,
+      32,
+      224
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       34,
+       375,
+       220
+      ],
+      [
+       34,
+       383,
+       221
+      ],
+      [
+       42,
+       383,
+       222
+      ],
+      [
+       34,
+       392,
+       181
+      ],
+      [
+       34,
+       400,
+       172
+      ],
+      [
+       37,
+       410,
+       223
+      ],
+      [
+       32,
+       418,
+       224
+      ],
+      [
+       32,
+       426,
+       225
+      ],
+      [
+       43,
+       426,
+       226
+      ],
+      [
+       32,
+       448,
+       167
+      ],
+      [
+       40,
+       448,
+       178
+      ],
+      [
+       32,
+       456,
+       179
+      ],
+      [
+       32,
+       440,
+       177
+      ],
+      [
+       42,
+       446,
+       180
+      ],
+      [
+       33,
+       240,
+       227
+      ],
+      [
+       34,
+       256,
+       201
+      ],
+      [
+       42,
+       310,
+       207
+      ],
+      [
+       32,
+       320,
+       196
+      ],
+      [
+       40,
+       312,
+       195
+      ],
+      [
+       32,
+       304,
+       193
+      ],
+      [
+       42,
+       248,
+       219
+      ],
+      [
+       49,
+       240,
+       217
+      ],
+      [
+       40,
+       248,
+       228
+      ],
+      [
+       43,
+       292,
+       189
+      ],
+      [
+       34,
+       264,
+       202
+      ],
+      [
+       37,
+       276,
+       190
+      ],
+      [
+       32,
+       292,
+       192
+      ],
+      [
+       32,
+       284,
+       191
+      ],
+      [
+       25,
+       248,
+       218
+      ],
+      [
+       32,
+       312,
+       194
+      ]
+     ]
+    },
+    "8": {
+     "bbox": [
+      25,
+      240,
+      32,
+      224
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       36,
+       448,
+       229
+      ],
+      [
+       34,
+       440,
+       230
+      ],
+      [
+       32,
+       448,
+       167
+      ],
+      [
+       32,
+       456,
+       179
+      ],
+      [
+       39,
+       418,
+       231
+      ],
+      [
+       34,
+       400,
+       172
+      ],
+      [
+       34,
+       392,
+       181
+      ],
+      [
+       32,
+       426,
+       225
+      ],
+      [
+       43,
+       426,
+       226
+      ],
+      [
+       32,
+       418,
+       224
+      ],
+      [
+       37,
+       410,
+       232
+      ],
+      [
+       34,
+       264,
+       202
+      ],
+      [
+       42,
+       248,
+       219
+      ],
+      [
+       33,
+       240,
+       216
+      ],
+      [
+       34,
+       256,
+       201
+      ],
+      [
+       49,
+       240,
+       217
+      ],
+      [
+       25,
+       248,
+       218
+      ]
+     ]
+    },
+    "9": {
+     "bbox": [
+      25,
+      240,
+      32,
+      224
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       32,
+       426,
+       225
+      ],
+      [
+       36,
+       448,
+       229
+      ],
+      [
+       34,
+       440,
+       230
+      ],
+      [
+       32,
+       448,
+       167
+      ],
+      [
+       32,
+       456,
+       179
+      ],
+      [
+       39,
+       418,
+       231
+      ],
+      [
+       43,
+       426,
+       226
+      ],
+      [
+       32,
+       418,
+       224
+      ],
+      [
+       37,
+       410,
+       232
+      ],
+      [
+       36,
+       391,
+       208
+      ],
+      [
+       35,
+       280,
+       233
+      ],
+      [
+       25,
+       248,
+       218
+      ],
+      [
+       49,
+       240,
+       217
+      ],
+      [
+       33,
+       240,
+       216
+      ],
+      [
+       42,
+       248,
+       219
+      ]
+     ]
+    },
+    "10": {
+     "bbox": [
+      25,
+      240,
+      32,
+      224
+     ],
+     "lines": [
+      2,
+      3
+     ],
+     "sprites": [
+      [
+       42,
+       384,
+       176
+      ],
+      [
+       25,
+       384,
+       168
+      ],
+      [
+       32,
+       448,
+       167
+      ],
+      [
+       39,
+       418,
+       231
+      ],
+      [
+       49,
+       376,
+       175
+      ],
+      [
+       32,
+       426,
+       225
+      ],
+      [
+       43,
+       426,
+       226
+      ],
+      [
+       32,
+       418,
+       224
+      ],
+      [
+       37,
+       410,
+       232
+      ],
+      [
+       36,
+       391,
+       208
+      ],
+      [
+       32,
+       440,
+       177
+      ],
+      [
+       40,
+       448,
+       178
+      ],
+      [
+       32,
+       456,
+       179
+      ],
+      [
+       42,
+       446,
+       180
+      ],
+      [
+       33,
+       376,
+       184
+      ],
+      [
+       35,
+       280,
+       233
+      ],
+      [
+       36,
+       255,
+       187
+      ],
+      [
+       25,
+       248,
+       218
+      ],
+      [
+       49,
+       240,
+       217
+      ],
+      [
+       33,
+       240,
+       216
+      ],
+      [
+       42,
+       248,
+       219
+      ]
+     ]
+    }
+   }
+  }
+ }
+}

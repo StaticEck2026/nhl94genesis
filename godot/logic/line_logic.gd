@@ -413,6 +413,8 @@ func asspenalty(o: SimObject, d7: int) -> void:
 	if o.flags & SimObject.PF_NA:
 		o.flags &= ~SimObject.PF_NA
 		o.flags2 |= SimObject.PF2_UNAV
+		# "so graphics know who it is": the filled star follows him to the box.
+		w.marks[0] = o.index
 		if o.joypad():
 			var k := 0 if o.index == w.c_player[0] else 1
 			w.input.changeplayer(o, k)

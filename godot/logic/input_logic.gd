@@ -42,6 +42,8 @@ func doinput(a3: SimObject, pad: PadState, k: int, d7: int) -> void:
 	if w.f_c2fa & HockeyWorld.C2FA_PS_INTRO and (d0 & 0xFF) != 8:
 		if (w.cont_team[1] == 0 or w.puckc == a3.index) and w.ps_intro > 2:
 			w.ps_intro = 2
+	# sub_C656: the pad's star is on the player it drives.
+	w.marks[1 + k] = a3.index
 	var raw_dir := d0 & 0xF
 	# 4. Start pauses.
 	if d1 & PadState.START:
