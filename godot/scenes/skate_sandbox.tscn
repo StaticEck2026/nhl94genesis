@@ -26,6 +26,7 @@ script = ExtResource("overlay")
 
 [node name="Camera" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("4")
+follow_world = false
 target = NodePath("../Skater1")
 
 [node name="Hud" type="CanvasLayer" parent="."]

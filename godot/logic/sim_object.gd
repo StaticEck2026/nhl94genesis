@@ -27,6 +27,7 @@ const PF2_BIT7 := 1 << 7
 # pflags3 ($64)
 const PF3_OSIDE := 1 << 0    ## offside
 const PF3_BREAKAWAY := 1 << 1
+const PF3_OFFCAM := 1 << 2   ## pad goalie off camera: the CPU goalie logic drives him
 const PF3_ONETIMER := 1 << 3 ## one-timer in progress
 const PF3_WALL := 1 << 4     ## hit the boards this loop
 const PF3_FALLING := 1 << 5
@@ -82,9 +83,9 @@ var spa_restarted: bool = false
 ## $5E, $5F: no-puck timers (frames).
 var nopuck_hi: int = 0
 var nopuck_lo: int = 0
-## $60, $61.
-var newpos: int = 0
-var newpnum: int = 0
+## $60, $61: the position and roster slot this object changes to ($FF none).
+var newpos: int = -1
+var newpnum: int = -1
 ## $62, $63, $64.
 var flags: int = 0
 var flags2: int = 0
@@ -114,6 +115,10 @@ var hf: int = 0
 var checking: int = 0
 ## $76 handedness in 94 (1 = left). The goalie and faceoff specs both read it here.
 var handed: int = 0
+## $73 read as the glove rating for goalies (GGSleft in the 93 equates).
+func glove() -> int:
+	return aggress
+
 ## Energy (getpde/setpde). $1000 is rested.
 var energy: int = 0x1000
 
@@ -216,6 +221,21 @@ func set_spa(id: int) -> void:
 	# st $5C(a3): only the high byte, so the word is negative ("load the first frame").
 	spa_cnt = -1
 	spa_restarted = true
+
+## Mid-range retail bytes for an object with no roster data (sandbox, tests).
+func default_ratings() -> void:
+	weight = 6
+	legstr = 15
+	legspd = 15
+	aioff = 10
+	aidef = 10
+	shotspd = 10
+	shotacc = 10
+	passacc = 10
+	spodds = 10
+	endurance = 10
+	aggress = 10
+	checking = 10
 
 ## Copies ratings from a PlayerData resource (provisional scale until Phase 1 lands).
 func load_player(p: PlayerData) -> void:

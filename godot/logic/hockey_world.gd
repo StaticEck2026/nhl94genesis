@@ -30,14 +30,18 @@ const SF2_FACEOFF := 1 << 0
 const SF2_SHOT := 1 << 4     ## shot taken, in flight
 const SF2_PWRPLAY := 1 << 5
 const SF2_PWRTM := 1 << 6    ## 0 home on the power play, 1 away
+const SF2_OFFSIG := 1 << 7   ## delayed-offside ref up (checkob)
 ## sflags3 bits.
 const SF3_FACEOFF_WIN := 1 << 4
 const SF3_PENSEC := 1 << 6
 ## word_FFC2F6.
+const C2F6_BREAKAWAY_RAN := 1 << 2 ## this loop's asspuckc/assnearest came through breakaway()
 const C2F6_FLIP := 1 << 3     ## flip-pass request (A with the puck)
 const C2F6_TOPSHELF := 1 << 4 ## in-close top-shelf shot (prepshot)
 ## word_FFC2F4.
 const C2F4_GOAL := 1 << 0
+const C2F4_REACTED := 1 << 1  ## the goalie's goal-against reaction has played
+const C2F4_SFX := 1 << 3      ## dead sfx-played flag (assgoaliecpu)
 const C2F4_PS_GOAL := 1 << 5
 ## word_FFC2F8.
 const C2F8_ONETIMER_SHOT := 1 << 1
@@ -55,6 +59,7 @@ const C2FE_ONETIMER_TOUCH := 1 << 7
 ## BA_PS_flags.
 const BA_LIVE := 1 << 2
 const BA_AWARDED := 1 << 3
+const BA_GOALIE_HELD := 1 << 4 ## the PS goalie held the puck too long
 const BA_STARTED := 1 << 5   ## the one PS pass or shot has been used
 ## iflags (icing).
 const IF_CGL := 1 << 0
@@ -94,6 +99,8 @@ var checking: Checking
 var puck_logic: PuckLogic
 var shooting: Shooting
 var input: InputLogic
+var ai: HockeyAI
+var goalie: GoalieLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
 ## updateanim with the SPAList data. When the data file is missing (no extraction run),
@@ -225,6 +232,24 @@ var oo_pos: PackedInt32Array = PackedInt32Array()
 var ylist: PackedInt32Array = PackedInt32Array()
 ## word_FFD06E: retail uses step 22 instead of 17 when set. Mode not named yet.
 var alt_step: bool = false
+## byte_FFC2FC bit 6: the crowd record is broken. The AI and goalie reaction timers
+## reload one shorter while it is set.
+var crowd_record: bool = false
+## threat: opponents near the CPU carrier (loc_E12C); the goalie sets 1 before chk4pass.
+var threat: int = 0
+## deltax / deltay: avdgoal's last target correction.
+var deltax: int = 0
+var deltay: int = 0
+## Hpos / Vpos: the camera centre in rink coordinates (checkwindow), and yleader, the
+## look-ahead in the carrier's attacking direction.
+var camera: Vector2i = Vector2i.ZERO
+var yleader: int = 0
+## foy: the faceoff dot Y.
+var foy: int = 0
+## lldisp: periodiceevents countdown for the once-a-second checks.
+var lldisp: int = 0
+## Shootout replay stop countdown (assscore).
+var so_replay_stop: int = 0
 
 signal board_hit(index: int, normal: Vector2i, hard: bool)
 ## The object came down onto the ice. zvel is the bounce speed after landing.
@@ -245,6 +270,8 @@ signal goal_song
 signal onetimer_shot(index: int)
 ## Start pressed on pad k.
 signal pause_requested(k: int)
+## PushRef: the referee graphic (6 delayed offside up, $40 clear).
+signal ref_signal(id: int)
 
 func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	settings = p_settings if p_settings != null else SimSettings.new()
@@ -273,6 +300,10 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	puck_logic = PuckLogic.new(self)
 	shooting = Shooting.new(self)
 	input = InputLogic.new(self)
+	ai = HockeyAI.new(self)
+	goalie = GoalieLogic.new(self)
+	ai.register(asstab)
+	goalie.register(asstab)
 	asstab[Shooting.ASS_SHOOT] = func(o: SimObject, d7: int) -> void: shooting.assshoot(o, d7)
 	asstab[Shooting.ASS_PASSREC] = func(o: SimObject, d7: int) -> void: shooting.asspassrec(o, d7)
 	asstab[Shooting.ASS_ONETIMER] = func(o: SimObject, d7: int) -> void: shooting.assonetimer(o, d7)
@@ -295,7 +326,7 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie]:
 		if m:
 			m.w = null
 	collisions = null
@@ -303,6 +334,8 @@ func dispose() -> void:
 	puck_logic = null
 	shooting = null
 	input = null
+	ai = null
+	goalie = null
 	asstab.clear()
 	for c in onetimer_shot.get_connections():
 		onetimer_shot.disconnect(c["callable"])
@@ -330,6 +363,9 @@ func place(index: int, at: Vector2i, role: int, team_away: bool, attack_top: boo
 	o.set_flag(SimObject.PF_TEAM, team_away)
 	o.set_flag(SimObject.PF_GOAL, attack_top)
 	o.facing_fx = (0 if attack_top else 4) << 16
+	if role == SimObject.POS_GOALIE and stats[o.team()].goalie_pnum < 0:
+		# Retail rosters list goalies first, so slot 0 stands in when none is loaded.
+		stats[o.team()].goalie_pnum = o.pnum if TeamStats.valid_pnum(o.pnum) else 0
 	collisions.sort_all()
 	return o
 
@@ -342,15 +378,75 @@ func drop_puck(at: Vector2i) -> void:
 	p.z_fx = 0
 	p.zvel = 0
 	p.flags &= ~SimObject.PF_NC
+	# pucknorm with pfna: the stalled-puck countdown starts from $78.
+	assreplace(p, PuckLogic.ASS_PUCKNORM)
 	puckc = -1
 	collisions.sort_all()
 
 # --- the loop ------------------------------------------------------------------------
 
-## One DoGameFrame with d7 vblanks elapsed.
+## One DoGameFrame with d7 vblanks elapsed: periodiceevents, updateplayers,
+## setSlotBit, checkwindow.
 func step(d7: int = 1) -> void:
 	vcount += d7
+	periodic_events(d7)
 	update_players(d7)
+	ai.set_slot_bit()
+	checkwindow(d7)
+
+## periodiceevents (L29961). The rules port fills in the penalty manager, crowd,
+## clock and power play; the once-a-second block runs ChkGoalies here.
+func periodic_events(d7: int) -> void:
+	if sflags & SF_HOR:
+		return
+	lldisp -= d7
+	if lldisp >= 0:
+		return
+	lldisp += 0x18
+	goalie.chk_goalies()
+
+## checkwindow (L35783): the camera follows the carrier (with a lead in his attacking
+## direction) or the puck, easing 1/16 of the way once outside a dead zone.
+func checkwindow(d7: int) -> void:
+	var d2 := scroll_lock.y
+	var d3 := scroll_lock.x
+	if sflags & SF_SLOCK == 0:
+		var a3 := puck()
+		if puckc >= 0 and puckc < 12:
+			a3 = objects[puckc]
+			if a3.attacking_top():
+				yleader = mini(yleader + d7 * 2, 0x32)
+			else:
+				yleader = maxi(yleader - d7 * 2, -0x32)
+		d2 = s16((s16(a3.vel.y) >> 7) + a3.y() + yleader)
+		d3 = a3.x()
+		scroll_lock = Vector2i(d3, d2)
+	var d0 := s16(d2 - camera.y)
+	var d1 := 0
+	var moved := true
+	if d0 < -10:
+		d1 = maxi(d2 + 10, -0xC8)
+	elif d0 > 10:
+		d1 = mini(d2 - 10, 0x100)
+	else:
+		moved = false
+	if moved:
+		camera.y = s16(camera.y + _ease(s16(d1 - camera.y)))
+	d0 = s16(d3 - camera.x)
+	if d0 < -40:
+		d1 = maxi(d3 + 40, -0x3C)
+	elif d0 > 40:
+		d1 = mini(d3 - 40, 0x3C)
+	else:
+		return
+	camera.x = s16(camera.x + _ease(s16(d1 - camera.x)))
+
+## checkwindow step: asr #4, at least 1 when not 0.
+static func _ease(d: int) -> int:
+	if d == 0:
+		return 0
+	var s := d >> 4
+	return s if s != 0 else 1
 
 ## updateplayers (L35329) for every sort object.
 func update_players(d7: int) -> void:
@@ -455,9 +551,19 @@ func _dispatch_pads(o: SimObject, d7: int) -> void:
 func _assignment(o: SimObject, d7: int) -> void:
 	var id: int = o.asslist[o.assnum & 7]
 	if asstab.has(id):
+		if _module_off(id):
+			assnothing(o, d7)
+			return
 		asstab[id].call(o, d7)
 	elif o.index < 12 and not o.joypad() and joy[o.index] != SkaterSteering.JOY_NONE:
 		skate(o, joy[o.index], d7)
+
+## The debug dock's module toggles: skater AI and goalie AI assignments idle (glide to
+## a stop) while their module is off. Pad players and the puck are unaffected.
+func _module_off(id: int) -> bool:
+	if not settings.enable_skater_ai and id in HockeyAI.AI_IDS:
+		return true
+	return not settings.enable_goalie_tracking and id in GoalieLogic.CPU_IDS
 
 ## Setplass (L51533): the default assignment for the position (_alist L51542).
 const ALIST: Array[int] = [0x0E, 0x02, 0x02, 0x03, 0x05, 0x03, 0x05]
@@ -466,6 +572,30 @@ func setplass(o: SimObject) -> void:
 	if o.position < 0:
 		return
 	assreplace(o, ALIST[clampi(o.position, 0, 6)])
+
+## forcepldata (L51446), at faceoffs: each of the team's objects takes its newpos (off
+## the ice when it has none), gets its Setplass assignment (the centre also chases the
+## puck), and setplayer loads its roster slot. newpos and newpnum are then cleared.
+func forcepldata(team: int) -> void:
+	var st := stats[team]
+	for i in 6:
+		var o := objects[st.first_object + i]
+		o.position = o.newpos if o.newpos >= 0 else SimObject.POS_OFF_ICE
+		if o.position >= 0:
+			setplass(o)
+			if o.position == SimObject.POS_C:
+				assinsert(o, HockeyAI.ASS_NEAREST)
+			var p := o.newpnum & 0xFF
+			if TeamStats.valid_pnum(p):
+				st.tmpdst[p] = TeamStats.TMPDST_ON_ICE
+			setplayer(o, p)
+		o.newpnum = -1
+		o.newpos = -1
+
+## setplayer (L51620): load roster slot pnum into the object. The data port fills in
+## the ratings; until then only the slot is recorded.
+func setplayer(o: SimObject, pnum: int) -> void:
+	o.pnum = pnum if TeamStats.valid_pnum(pnum) else -1
 
 ## assnothing (L38275): locked or pad players do nothing; others glide to a stop.
 func assnothing(o: SimObject, d7: int) -> void:
@@ -499,11 +629,47 @@ func set_lc_mode(_o: SimObject) -> void:
 func lineinput(_o: SimObject, _d1: int, _k: int) -> void:
 	pass
 
-func checkob(_o: SimObject) -> void:
+func checkob(o: SimObject) -> void:
+	ai.checkob(o)
+
+## doinput's save button: goaliesave with the goalie's goal line at +-$108.
+func goalie_save(o: SimObject) -> void:
+	if o.attacking_top():
+		goalie.goaliesave(o, 2, -0x108)
+	else:
+		goalie.goaliesave(o, 0, 0x108)
+
+## ReadGoaliePulled for a team.
+func goalie_pulled(team: int) -> bool:
+	return goalie.goalie_pulled(team)
+
+## SetPersonel (L51236): rebuild a team's on-ice list. Line-change port.
+func set_personel(_team: int) -> void:
 	pass
 
-func goalie_save(_o: SimObject) -> void:
+## The CPU line change the tired carrier calls before dumping the puck. Line-change port.
+func cpu_line_change(_team: int) -> void:
 	pass
+
+## sub_12EF6: mean stored energy of the team's objects with position > 0; 0 if none.
+func average_energy(team: int) -> int:
+	var total := 0
+	var n := 0
+	for i in 6:
+		var o := objects[team * 6 + i]
+		if o.position <= 0:
+			continue
+		total += energy_raw(o)
+		n += 1
+	return total / n if n > 0 else 0
+
+## Penalty shot / shootout script (sub_FE8EC shoot-or-not, sub_FE864 waypoints).
+## Shootout port.
+func ps_should_shoot(_o: SimObject) -> bool:
+	return false
+
+func ps_waypoint(_o: SimObject) -> Variant:
+	return null
 
 ## assreplace (L43210): replace the current assignment and flag it new.
 func assreplace(o: SimObject, id: int) -> void:
@@ -520,8 +686,12 @@ func assexit(o: SimObject) -> void:
 	o.assnum = (o.assnum + 1) & 7
 	o.flags |= SimObject.PF_NA
 
-## doplayeracc + playeracc for one skater with one stick value.
+## doplayeracc + playeracc for one skater with one stick value. Goalies go to
+## goalieacc.
 func skate(o: SimObject, stick: int, d7: int = 1) -> void:
+	if o.position == SimObject.POS_GOALIE and o.index < 12:
+		goalie.goalieacc(o, stick, d7)
+		return
 	# pfalock: locked out until the animation (check, hold, fall) is done.
 	if o.locked() or o.flags3 & SimObject.PF3_FALLING:
 		return
@@ -535,6 +705,12 @@ func skate(o: SimObject, stick: int, d7: int = 1) -> void:
 			o.vel = motion.apply_accel(skater_view(o), o.vel, motion.dirtab(r.accel_dir), d7, o.wall)
 		SkaterSteering.Action.STOP:
 			o.vel = motion.apply_stop(o.vel)
+
+## playeracc (L43705) in an absolute direction 0-7; 8 (dirtab's zero entry) does nothing.
+func playeracc(o: SimObject, dir: int, d7: int) -> void:
+	if dir < 0 or dir > 7:
+		return
+	o.vel = motion.apply_accel(skater_view(o), o.vel, motion.dirtab(dir), d7, o.wall)
 
 ## SkaterMotion inputs for an object, including the global boosts.
 func skater_view(o: SimObject) -> SkaterMotion.Skater:

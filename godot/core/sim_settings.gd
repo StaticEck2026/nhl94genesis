@@ -22,10 +22,11 @@ static func shared(from: Node) -> SimSettings:
 	set(v): game_speed = v; emit_changed()
 
 @export_group("Modules")
-## Opponent and teammate AI decision loops (asstab dispatch).
+## CPU skater AI (the positional routines, assnearest, the CPU carrier). Off: CPU
+## skaters glide to a stop.
 @export var enable_skater_ai: bool = true:
 	set(v): enable_skater_ai = v; emit_changed()
-## Goalie tracking (goalieacc, assgoaliecpu).
+## CPU goalie AI (assgoaliecpu, assgoalietopuck). Off: goalies glide to a stop.
 @export var enable_goalie_tracking: bool = true:
 	set(v): enable_goalie_tracking = v; emit_changed()
 ## Checks and bumps (checkcoll, CheckingCalc).
@@ -96,7 +97,7 @@ static func shared(from: Node) -> SimSettings:
 	set(v): check_force_scale = v; emit_changed()
 
 @export_group("Goalie")
-## Goalie reaction delay in retail frames (1 frame = 16.7 ms).
+## Extra frames between CPU goalie decisions (retail reloads aidef / 4). 0 is retail.
 @export_range(0.0, 30.0, 1.0) var goalie_reaction_frames: float = 0.0:
 	set(v): goalie_reaction_frames = v; emit_changed()
 

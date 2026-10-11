@@ -62,6 +62,19 @@ func _initialize() -> void:
 		"test_burst",
 		"test_b_tap_switches",
 		"test_pad_shot_scores",
+		"test_slot_bit",
+		"test_checkwindow",
+		"test_assdefd_target",
+		"test_centerd_moves_to_spot",
+		"test_assnearest_hands_off",
+		"test_cpu_carrier_shoots",
+		"test_goalie_skates_back",
+		"test_goalie_angles_to_puck",
+		"test_goalie_turn_never_into_net",
+		"test_goaliesave_choice",
+		"test_goalie_saves_low_shot",
+		"test_cp_goalie",
+		"test_cpu_vs_cpu",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -387,6 +400,9 @@ func test_world_skater_in_rink() -> bool:
 	o.weight = 6
 	o.legstr = 15
 	o.legspd = 15
+	# The puck sits up the ice out of his lane: carrying it in to score would hand him
+	# the celebration assignment.
+	w.drop_puck(Vector2i(-100, 150))
 	w.joy[4] = 0
 	var top_speed := 0.0
 	var min_y := 0
@@ -914,5 +930,274 @@ func test_pad_shot_scores() -> bool:
 		w.step()
 	eq(w.shotplayer, 4, "he shot")
 	eq(w.score(0), 1, "and scored")
+	w.dispose()
+	return true
+
+# --- AI and goalies ---------------------------------------------------------------------
+
+## Ratings that sit mid-range for every byte the AI reads.
+static func _rate(o: SimObject) -> void:
+	o.weight = 6
+	o.legstr = 10
+	o.legspd = 10
+	o.aioff = 10
+	o.aidef = 10
+	o.shotspd = 10
+	o.shotacc = 10
+	o.passacc = 10
+	o.spodds = 10
+	o.checking = 10
+	o.aggress = 10
+
+## Both teams on the ice in their default assignments: home (objects 0-5) attacks the
+## top, away (6-11) the bottom; object 5 and 11 are the goalies.
+static func _two_teams(w: HockeyWorld) -> void:
+	var roles := [SimObject.POS_LD, SimObject.POS_RD, SimObject.POS_LW, SimObject.POS_C,
+		SimObject.POS_RW, SimObject.POS_GOALIE]
+	var spots := [Vector2i(-40, -60), Vector2i(40, -60), Vector2i(-60, -10), Vector2i(0, -10),
+		Vector2i(60, -10), Vector2i(0, -228)]
+	for team in 2:
+		for i in 6:
+			var idx := team * 6 + i
+			w.objects[idx].pnum = i
+			var at: Vector2i = spots[i]
+			if team == 1:
+				at = -at
+			var o := w.place(idx, at, roles[i], team == 1, team == 0)
+			_rate(o)
+			w.setplass(o)
+			# forcepldata: the centre also chases the puck.
+			if o.position == SimObject.POS_C:
+				w.assinsert(o, HockeyAI.ASS_NEAREST)
+
+func _current(o: SimObject) -> int:
+	return o.asslist[o.assnum & 7]
+
+func test_slot_bit() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var c := w.place(4, Vector2i(0, 100), SimObject.POS_C, false, true)
+	w.puckc = c.index
+	w.ai.set_slot_bit()
+	check(w.f_c2f8 & HockeyWorld.C2F8_SLOT != 0, "carrier 100 px up the ice is in the slot")
+	c.set_pos(Vector2i(0, 50))
+	w.ai.set_slot_bit()
+	check(w.f_c2f8 & HockeyWorld.C2F8_SLOT == 0, "inside the blue line is not")
+	c.set_pos(Vector2i(80, 100))
+	w.ai.set_slot_bit()
+	check(w.f_c2f8 & HockeyWorld.C2F8_SLOT == 0, "wide of the slot is not")
+	w.dispose()
+	return true
+
+func test_checkwindow() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.drop_puck(Vector2i(100, 200))
+	for i in 300:
+		w.checkwindow(1)
+	eq(w.camera, Vector2i(60, 190), "camera eases to the puck, clamped to x 60, 10 px dead zone")
+	w.drop_puck(Vector2i(0, -280))
+	for i in 300:
+		w.checkwindow(1)
+	eq(w.camera, Vector2i(40, -200), "bottom limit -200; x only within 40 px of the puck")
+	w.dispose()
+	return true
+
+func test_assdefd_target() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var rd := w.place(1, Vector2i(40, -60), SimObject.POS_RD, false, true)
+	w.place(8, Vector2i(30, -100), SimObject.POS_LW, true, false)
+	w.drop_puck(Vector2i(-20, -50))
+	w.ai._assdefd_target(rd)
+	eq(Vector2i(rd.temp[2], rd.temp[3]), Vector2i(0, -150), "50 px goal-side of the deepest forward; puck on the far side centres him")
+	w.drop_puck(Vector2i(20, -50))
+	w.ai._assdefd_target(rd)
+	eq(Vector2i(rd.temp[2], rd.temp[3]), Vector2i(0x41, -150), "puck on his side: his lane")
+	w.objects[8].set_pos(Vector2i(30, -170))
+	w.ai._assdefd_target(rd)
+	eq(rd.temp[3], -220, "deeper than -190: falls back to -220")
+	w.dispose()
+	return true
+
+func test_centerd_moves_to_spot() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var c := w.place(3, Vector2i(-50, -150), SimObject.POS_C, false, true)
+	_rate(c)
+	w.assreplace(c, HockeyAI.ASS_CENTERD)
+	w.drop_puck(Vector2i(40, 0))
+	for i in 400:
+		w.step()
+	# x = puck x / 2, y = (-128 + puck y) / 2; skateto stops within 12 px.
+	var d := c.pos() - Vector2i(20, -64)
+	check(absi(d.x) <= 14 and absi(d.y) <= 14, "center covers the slot: %s" % c.pos())
+	eq(_current(c), HockeyAI.ASS_CENTERD, "still on defense (loose puck)")
+	w.dispose()
+	return true
+
+func test_assnearest_hands_off() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var far := w.place(3, Vector2i(0, -150), SimObject.POS_C, false, true)
+	var near := w.place(2, Vector2i(10, 0), SimObject.POS_LW, false, true)
+	_rate(far)
+	_rate(near)
+	w.setplass(far)
+	w.setplass(near)
+	w.assinsert(far, HockeyAI.ASS_NEAREST)
+	w.drop_puck(Vector2i(10, 30))
+	w.step()
+	eq(_current(near), HockeyAI.ASS_NEAREST, "the skater nearest the puck becomes the chaser")
+	eq(_current(far), HockeyAI.ASS_CENTERD, "the old chaser goes back to his position")
+	check(w.stats[0].nearest_sq > 0, "team nearest distance recorded")
+	w.dispose()
+	return true
+
+func test_cpu_carrier_shoots() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var c := w.place(3, Vector2i(0, 170), SimObject.POS_C, false, true)
+	_rate(c)
+	w.setplass(c)
+	w.assinsert(c, HockeyAI.ASS_NEAREST)
+	w.drop_puck(Vector2i(0, 180))
+	var shot := false
+	for i in 400:
+		w.step()
+		if w.shotplayer == c.index and w.puckc < 0:
+			shot = true
+			break
+	check(shot, "the CPU carrier in the slot shoots")
+	w.dispose()
+	return true
+
+func test_goalie_skates_back() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var g := w.place(11, Vector2i(60, 100), SimObject.POS_GOALIE, true, false)
+	_rate(g)
+	w.setplass(g)
+	eq(_current(g), GoalieLogic.ASS_GOALIE_CPU, "Setplass gives a goalie assgoaliecpu")
+	w.drop_puck(Vector2i(0, -100))
+	for i in 600:
+		w.step()
+	# Puck in the other half: hold the top of the crease at (0, 244).
+	var d := g.pos() - Vector2i(0, 0xF4)
+	check(absi(d.x) <= 8 and absi(d.y) <= 8, "back in the crease: %s" % g.pos())
+	eq(g.spa, GoalieLogic.SPA_READY, "ready stance in the box")
+	w.dispose()
+	return true
+
+func test_goalie_angles_to_puck() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var g := w.place(11, Vector2i(0, 240), SimObject.POS_GOALIE, true, false)
+	_rate(g)
+	w.setplass(g)
+	w.drop_puck(Vector2i(-80, 150))
+	for i in 300:
+		w.step()
+	# Net point (0, 260) to puck (-80, 150): scaled to 26/137 and 18/137 of the vector.
+	var d := g.pos() - Vector2i(-15, 246)
+	check(absi(d.x) <= 5 and absi(d.y) <= 5, "cuts down the angle: %s" % g.pos())
+	eq(g.facing(), 5, "faces the puck")
+	w.dispose()
+	return true
+
+func test_goalie_turn_never_into_net() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var g := w.place(11, Vector2i(0, 240), SimObject.POS_GOALIE, true, false)
+	g.facing_fx = 1 << 16
+	w.goalie.sub_db68(g, 7)
+	eq(g.facing(), 2, "from 1 toward 7 the short way is 0 (into the top net), so he turns 2")
+	g.facing_fx = 1 << 16
+	g.flags |= SimObject.PF_JOYCON
+	w.goalie.sub_db68(g, 7)
+	eq(g.facing(), 0, "a pad goalie turns freely")
+	w.dispose()
+	return true
+
+func test_goaliesave_choice() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var g := w.place(11, Vector2i(0, 250), SimObject.POS_GOALIE, true, false)
+	g.aggress = 10
+	w.drop_puck(Vector2i(0, 200))
+	w.puck().z_fx = 20 << 16
+	w.puckcross[0] = 30
+	w.puckcross[1] = 5
+	w.goalie.goaliesave(g, 0, 0x104)
+	eq(g.spa, 0x178, "high and wide: glove")
+	g.spa = 0
+	g.aggress = 11
+	w.goalie.goaliesave(g, 0, 0x104)
+	eq(g.spa, GoalieLogic.SPA_REACH_GLOVE, "glove 11+: the reach-out glove save")
+	g.spa = 0
+	w.puck().z_fx = 0
+	w.goalie.goaliesave(g, 0, 0x104)
+	eq(g.spa, 0x1544, "low, wide and close: stick save")
+	g.spa = 0
+	w.puckcross[0] = 0
+	w.puck().z_fx = 20 << 16
+	w.goalie.goaliesave(g, 0, 0x104)
+	eq(g.spa, 0x14C0, "high at the body: shoulder save")
+	w.dispose()
+	return true
+
+func test_goalie_saves_low_shot() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var g := w.place(11, Vector2i(0, 246), SimObject.POS_GOALIE, true, false)
+	_rate(g)
+	w.setplass(g)
+	w.drop_puck(Vector2i(0, 120))
+	w.puck().vel = Vector2i(0, 12000)
+	# A shot in flight (SetShotMode's sflags bit 3): once it is deep, a centred goalie
+	# saves on his next decision without waiting for the crossing prediction.
+	w.sflags |= HockeyWorld.SF_SHOTDIR
+	var spas := {}
+	for i in 60:
+		w.step()
+		spas[g.spa] = true
+	check(spas.has(0x21E), "a low shot at his pads starts the butterfly: %s" % [spas.keys()])
+	eq(w.score(1), 0, "no goal")
+	w.dispose()
+	return true
+
+func test_cp_goalie() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	_two_teams(w)
+	w.gsp = 2
+	w.gameclock = 50
+	w.stats[1].goals = 2
+	w.goalie.cp_goalie(0, 50)
+	check(w.stats[0].goalie_pulled, "down two with under a minute in the 3rd: pull")
+	w.stats[0].goalie_pulled = false
+	w.goalie.cp_goalie(0, -50)
+	check(not w.stats[0].goalie_pulled, "not with the play in his own half")
+	w.stats[1].goals = 3
+	w.goalie.cp_goalie(0, 50)
+	check(not w.stats[0].goalie_pulled, "down three: no pull (exactly two, retail)")
+	w.stats[1].goals = 2
+	w.cont_team[0] = 1
+	w.puckc = 3
+	w.drop_puck(Vector2i(0, 50))
+	w.puckc = 3
+	w.goalie.chk_goalies()
+	check(not w.stats[0].goalie_pulled, "a human team decides for itself")
+	w.dispose()
+	return true
+
+## Twelve CPU players for a minute of game time. Nothing may leave the rink, the puck
+## must change hands and somebody must shoot.
+func test_cpu_vs_cpu() -> bool:
+	var w := HockeyWorld.new(SimSettings.new(), 0x1234)
+	_two_teams(w)
+	w.drop_puck(Vector2i(0, 0))
+	var carriers := {}
+	var inside := true
+	for i in 3600:
+		w.step()
+		if w.puckc >= 0:
+			carriers[w.puckc] = true
+		for k in 12:
+			var o := w.objects[k]
+			if absi(o.x()) > RinkBoards.SIDELINE or absi(o.y()) > RinkBoards.END_BOARD:
+				inside = false
+	check(inside, "everyone stays inside the boards")
+	check(carriers.size() >= 3, "the puck changes hands: %s" % [carriers.keys()])
+	check(w.stats[0].shots + w.stats[1].shots + w.score(0) + w.score(1) > 0 or w.shotplayer >= 0,
+			"somebody shoots")
 	w.dispose()
 	return true

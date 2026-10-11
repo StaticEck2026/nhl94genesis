@@ -37,7 +37,14 @@ func _ready() -> void:
 			if driver != MatchConfig.Driver.CPU and row[0] == SimObject.POS_C:
 				ports[sk.index] = 1 if driver == MatchConfig.Driver.PAD1 else 2
 	pad_ports = ports
-	($Camera as RinkCamera).target = skaters[4]
+	# Start both lines the way a faceoff does (forcepldata): positions, assignments and
+	# the centre chasing the puck. CPU players then run on the AI.
+	for sk in skaters:
+		sk.obj.newpos = sk.role
+		sk.obj.newpnum = sk.index % 6
+	world.forcepldata(0)
+	world.forcepldata(1)
+	world.drop_puck(Vector2i.ZERO)
 	($Hud as Node).call("bind", self)
 	($PauseMenu as Node).connect("quit_requested", func() -> void: get_tree().change_scene_to_file(SETUP_SCENE))
 

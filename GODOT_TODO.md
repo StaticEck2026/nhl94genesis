@@ -102,9 +102,9 @@ These come from the listing. Add a fact here before code depends on it.
 
 - [x] `SkaterMotion` (`playeracc`, `MaxSpeed`, drag, `stopna`)
 - [x] Turning and momentum: `SkaterSteering` (`doplayeracc` L43331, `noturn0`, `vtoa`, backwards skating, hockey stop)
-- [ ] Goalie skating: `goalieacc` L43477, `stopna2` L959753
+- [x] Goalie skating: `goalieacc` L43477, `stopna2` L959753 (`GoalieLogic`; `HockeyWorld.skate` routes position 0 there)
 - [x] `burst` L36830, `holdplayer` L36863
-- [ ] `skateto` L42953, `skatetopuck` L43138, `avdgoal` L43026
+- [x] `skateto` L42953, `skatetopuck` L43138, `avdgoal` L43026 (`HockeyAI`)
 - [x] Wall collision: boards, corners, nets (`checkgoal`/`checkgoalp`), the stick-tip board check, the puck over the glass, `CheckBump`
 - [x] Player-player collision: `Collisions` (`checkplcoll`, `checkcx`, exact momentum exchange, Y-sort walk order, position restore)
 - [ ] Energy and fatigue (`getpde`/`setpde`, endurance `$72`)
@@ -133,25 +133,25 @@ These come from the listing. Add a fact here before code depends on it.
 
 - [x] `Checking`: `newcheck`, `checkint`/`checkint_ci` (goalie contact, interference), `CCStart`/`CheckingCalc` (body checks), `checkagr`, `holdcheck`, `Bcheck`, `holdplayer`/`Acheck`
 - [x] `FallDown`, `FallList`, board pins (`sub_FEB54`), injuries (`setInjuryType`), `wallcollduringcheck`
-- [x] `burst` (body-check charge); `check4check` (CPU) comes with the AI port
+- [x] `burst` (body-check charge); `check4check` (CPU) in `HockeyAI`
 - [ ] `checkfight` L49544, `fightinput` L36560
 
 ## Phase 6. AI
 
-- [ ] Assignment dispatch `asstab` L56671, `assinsert`/`assreplace`/`assexit` L43192-43210
-- [ ] Offense: `assdefo` L38375, `asswingo` L38682, `asscentero` L38856, `asspuckc` L39901, `chk4shot` L40183, `chk4pass` L40337, `EvadePC` L40442
-- [ ] Defense: `assdefd` L38447, `asswingd` L38591, `asscenterd` L38800, `check4check` L40878, `assnearest` L40574
+- [x] Assignment dispatch `asstab` L56671, `assinsert`/`assreplace`/`assexit` L43192-43210, `Setplass`, `forcepldata` L51446 (`setplayer` stubbed until Phase 1)
+- [x] Offense: `assdefo` L38375, `asswingo` L38682, `asscentero` L38856, `asspuckc` L39901, `chk4shot` L40183, `chk4pass` L40337, `compshoot`, `EvadePC` L40442, the carrier's evade (`loc_E12C`), the tired-line dump (`sub_E1F4`), `checkob` (delayed offside ref)
+- [x] Defense: `assdefd` L38447, `asswingd` L38591, `asscenterd` L38800, `check4check` L40878, `assnearest` L40574 (hand-off, chase / contain, slot pressure)
 - [ ] Faceoffs: `assfaceoff` L38206, `puckfaceoff` L41627, `puckfaceoff2` L42031, `updatefaceoff` L42414
-- [ ] Breakaway, shootout and penalty shot: `breakaway` L39775, `puckshootout` L41046, `puckpenshot` L41276
-- [ ] 9x5 tactical grid and slot bits (`setSlotBit` L963062)
-- [ ] `HockeyAI` RefCounted with per-module toggle
+- [~] Breakaway, shootout and penalty shot: `breakaway` L39775, `BreakawayOffsidesFlagSet`, `chkpuckc`, `assbreakaway` done; the PS/SO script (`sub_FE8EC`, `sub_FE864`), `puckshootout` L41046 and `puckpenshot` L41276 come with Phase 8
+- [x] Slot bit (`setSlotBit` L963062), celebrations (`assscore`, `assstanley`), `check4bench`. The "9x5 grid" is an overlay only: retail AI uses the zone thresholds in the spec, not a grid
+- [x] `HockeyAI` RefCounted; `SimSettings.enable_skater_ai` idles the CPU skater assignments
 
 ## Phase 7. Goalie
 
-- [ ] `goalieacc` L43477, `assgoaliecpu` L39072, `assgoaliectrl` L38963
-- [ ] `goaliesave` L39598, `assgoalietopuck` L39731, `chkgoalie` L37366
-- [ ] Pull goalie: `ReadGoaliePulled` L975229, `ChkGoalies` L41839
-- [ ] Reaction latency exposed in frames and ms
+- [x] `goalieacc` L43477, `assgoaliecpu` L39072 (crease box, angle cutting with the `puckcross` lookahead, rebound dive, hold-puck whistle, pass look), `assgoaliectrl` L38963 (range whistle, off-camera hand-back), `sub_DB3E`, `sub_DB68`
+- [x] `goaliesave` L39598 (all ten save animations and the reach-out glove), `assgoalietopuck` L39731, `assgoaliebreakwait` L38175. `chkgoalie` L37366 (auto-goalie redirect in PS/SO) comes with Phase 8
+- [x] Pull goalie: `ReadGoaliePulled` L975229, `ChkGoalies` L41839, `ReturnGoalies`, `CPgoalie` (exactly two down, retail). `SetPersonel` is a hook until the line-change port
+- [x] Reaction latency: `SimSettings.goalie_reaction_frames` adds frames to the decision reload (0 = retail, aidef / 4); `enable_goalie_tracking` idles the CPU goalie
 
 ## Phase 8. Rules and game flow
 
@@ -165,7 +165,7 @@ These come from the listing. Add a fact here before code depends on it.
 ## Phase 9. Scenes and presentation
 
 - [~] Rink: `Rink2D` draws a placeholder from the listing constants and builds static board colliders. The `TileMapLayer` waits on the tile PNGs.
-- [~] `Camera2D` with smoothing, limits and lead: `RinkCamera` with tuning defaults. Retail scroll (`updatescroll` L51912) not ported.
+- [x] Camera: `checkwindow` L35783 ported into the world (`HockeyWorld.camera` = Hpos/Vpos with `yleader`); `RinkCamera` shows it. The tile scroll itself (`updatescroll` L51912) comes with the `TileMapLayer` rink.
 - [ ] Sprite sheets from `Spritetiles` L337811 / `frameSprData` L602163 exported offline to PNG
 - [ ] Team palette swap `.gdshader` (`SetTeamColors` L53781)
 - [x] Animation tables: `SPAList` exported offline (`tools/extract/spalist.py` -> `godot/data/spalist.json`, 66 animations); `updateanim` ported (`Animator`) with the one-loop lag, de-glitch, loop bit and flag clearing; sprite frames are live, so `GetHot` uses the real Hotlist
@@ -194,3 +194,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Puck ported (`PuckLogic`): pickup, steals, ricochets, goalie body box, nets, posts, goals with stats, offside and icing hooks, over the glass. Hotlist exported offline. All ten research specs landed. 191 checks pass.
 - 2026-10-11: Animation system ported (`Animator`, SPAList export). Sprite frames are live and `GetHot` reads the real Hotlist. Attribute word bits fixed (x flip is bit 11). 200 checks pass.
 - 2026-10-11: Shooting, passing, one-timers, bursts and pad input ported (`Shooting`, `InputLogic`, `PadState`); exact `sroot`. A shot taken through the pad scores on an empty net end to end. 226 checks pass.
+- 2026-10-11: AI and goalies ported (`HockeyAI`, `GoalieLogic`): the six positional routines, `assnearest`, the CPU carrier (shoot / pass / evade / breakaway), `check4check`, celebrations, the CPU and pad goalie, saves, pulling the goalie, `checkwindow` camera, `forcepldata`. `DoGameFrame` order in `step()`. Twelve CPU players play a minute (shots, passes, checks, goalie whistles). 260 checks pass.

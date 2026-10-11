@@ -53,6 +53,9 @@ var goalie_pulled: bool = false
 var flags30: int = 0
 const F30_CHAIN_RESET := 1 << 3
 const F30_OFFSIDE := 1 << 4
+## $02A (long) squared distance of the team's nearest available skater to the
+## lead-adjusted puck (assnearest); 0 when the team has the puck or none qualifies.
+var nearest_sq: int = 0
 ## $032 + 2i energy per roster slot ($1000 rested).
 var energy: PackedInt32Array
 ## $066 + 2i tmpdst per roster slot (see TMPDST_* and the penalty bits).
@@ -77,7 +80,9 @@ var pp_shots: int = 0
 ## $356: checkgoal adds 1 when the scoring team is not the team on the power play,
 ## so it counts short-handed goals (the rules spec's listing comment says "PP goals").
 var shorthanded_goals: int = 0
-## $35A breakaway goals, $35C one-timer attempts, $35E one-timer goals.
+## $358 breakaway attempts (breakaway ding), $35A breakaway goals, $35C one-timer
+## attempts, $35E one-timer goals.
+var breakaway_attempts: int = 0
 var breakaway_goals: int = 0
 var onetimer_attempts: int = 0
 var onetimer_goals: int = 0

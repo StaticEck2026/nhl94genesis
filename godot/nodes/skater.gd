@@ -28,9 +28,7 @@ func _ready() -> void:
 	if player:
 		obj.load_player(player)
 	else:
-		obj.weight = 6
-		obj.legstr = 15
-		obj.legspd = 15
+		obj.default_ratings()
 	game.stepped.connect(_sync)
 
 func _find_game() -> HockeyGame:
