@@ -80,6 +80,8 @@ const ONE_SHOT_FRAMES := 12
 signal board_hit(index: int, normal: Vector2i, hard: bool)
 ## The object came down onto the ice. zvel is the bounce speed after landing.
 signal landed(index: int, zvel: int)
+## sfx (L44279): a retail sound effect id.
+signal sound(id: int)
 
 func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	settings = p_settings if p_settings != null else SimSettings.new()
@@ -183,8 +185,13 @@ func _integrate(o: SimObject, d7: int) -> void:
 	if o.z_fx < 0:
 		o.z_fx = 0
 		o.zvel = (-o.zvel) >> 1
-		# Puck-on-ice sound: 5 - Zvel low byte, played when 0-3 (SFXpuckice + n).
 		landed.emit(o.index, o.zvel)
+		# Puck-on-ice sound: 5 - Zvel low byte (0 if negative), played when 0-3.
+		var n := 5 - _sbyte(o.zvel & 0xFF)
+		if n < 0:
+			n = 0
+		if n <= 3:
+			sound.emit(0x2C + n)
 
 ## The assignment call. Pad players steer from `joy`; AI and the puck use hooks.
 func _assignment(o: SimObject, d7: int) -> void:
@@ -241,10 +248,27 @@ func _check_collisions(o: SimObject) -> void:
 		hit = RinkBoards.bounce_puck(o.vel, n)
 	else:
 		hit = RinkBoards.bounce_skater(o.vel, n)
-		o.flags3 |= SimObject.PF3_WALL
+		if hit.responded:
+			o.flags3 |= SimObject.PF3_WALL
 	o.vel = hit.vel
 	o.wall = hit.normal
 	board_hit.emit(o.index, n, hit.hard or hit.puck_pop)
+	if o.index == PUCK and hit.puck_pop:
+		_puck_pop(o, hit)
+	elif o.index != PUCK and hit.hard and o.impact >= 0xA:
+		sound.emit(0x20)
+
+## wallcoll puck pop: random Zvel up to $800 (negated, as retail), puckflip, and a board
+## sound $28 + ((vn >> 10) + 4 clamped at 0) & 3. puckflip is ported with the puck.
+func _puck_pop(o: SimObject, hit: RinkBoards.Hit) -> void:
+	o.zvel = -rng.range_(0x800)
+	var d := (hit.normal_speed >> 10) + 4
+	if d < 0:
+		d = 0
+	sound.emit(0x28 + (d & 3))
+
+static func _sbyte(b: int) -> int:
+	return b - 256 if b >= 128 else b
 
 ## updateplayers _nf: impact falls by 2 per frame.
 func _impact_decay(o: SimObject, d7: int) -> void:

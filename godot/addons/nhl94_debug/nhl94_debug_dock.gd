@@ -2,11 +2,14 @@
 extends VBoxContainer
 ## Builds one row per exported SimSettings property: a CheckBox for bools and a
 ## slider + value label for ranged numbers. Edits save to res://core/sim_settings.tres,
-## which the Sim autoload loads at startup.
+## which the Sim autoload loads at startup, and go live to a running game through the
+## debugger channel.
 
 const SETTINGS_PATH := "res://core/sim_settings.tres"
 
 var settings: SimSettings
+## Set by plugin.gd. Forwards each change to running game sessions.
+var debugger: EditorDebuggerPlugin
 
 @onready var _rows: VBoxContainer = %Rows
 @onready var _save_button: Button = %SaveButton
@@ -74,7 +77,8 @@ func _add_slider(prop_name: String, hint: String, is_int: bool) -> void:
 
 func _set_value(prop_name: String, value: Variant) -> void:
 	settings.set(prop_name, value)
-	# A running game in the editor shares the resource path, so saving makes the change visible on next load.
+	if debugger and debugger.has_method("send_setting"):
+		debugger.call("send_setting", prop_name, value)
 	_save()
 
 func _save() -> void:
@@ -84,3 +88,7 @@ func _reset() -> void:
 	settings = SimSettings.new()
 	_save()
 	_build()
+	if debugger and debugger.has_method("send_setting"):
+		for prop in settings.get_property_list():
+			if prop["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE and prop["usage"] & PROPERTY_USAGE_EDITOR:
+				debugger.call("send_setting", prop["name"], settings.get(prop["name"]))

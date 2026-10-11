@@ -10,12 +10,17 @@ extends Node2D
 @export var seed: int = 0x00500000
 
 var world: HockeyWorld
+var sfx: SfxBank
 var _frame_accum := 0.0
 
 signal stepped
 
 func _enter_tree() -> void:
 	world = HockeyWorld.new(SimSettings.shared(self), seed)
+	sfx = SfxBank.new()
+	sfx.name = "Sfx"
+	add_child(sfx)
+	world.sound.connect(sfx.play)
 
 func _physics_process(delta: float) -> void:
 	_frame_accum += Nhl94Units.frames(delta * world.settings.game_speed)

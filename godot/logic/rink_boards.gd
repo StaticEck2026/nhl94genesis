@@ -27,6 +27,10 @@ class Hit:
 	var hard: bool = false
 	## Puck hit hard enough to pop up (puckflip, random Zvel).
 	var puck_pop: bool = false
+	## The quartered normal speed wallcoll used (negative is away from the board).
+	var normal_speed: int = 0
+	## wallcoll changed the velocity (false when already moving away).
+	var responded: bool = false
 
 	func hit() -> bool:
 		return normal != Vector2i.ZERO
@@ -77,6 +81,7 @@ static func bounce_skater(vel: Vector2i, normal: Vector2i) -> Hit:
 	# Already moving away from the board faster than 1000: keep the velocity.
 	if n > 1000:
 		return h
+	h.responded = true
 	h.hard = n <= -0x1000
 	n >>= 2
 	if n >= -900:
@@ -94,7 +99,9 @@ static func bounce_puck(vel: Vector2i, normal: Vector2i) -> Hit:
 	h.normal = normal
 	if n >= 0:
 		return h
+	h.responded = true
 	n >>= 2
+	h.normal_speed = n
 	h.puck_pop = n <= -0x400
 	var t := vt >> 6
 	vt -= t
