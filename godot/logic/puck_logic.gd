@@ -271,7 +271,11 @@ func puckflip(a3: SimObject, d0: int) -> void:
 func puckshadow(s: SimObject) -> void:
 	var p := w.puck()
 	if s.frame == SHADOW_FRAME:
-		s.pos_fx = Vector2i((p.x() << 16) | (s.pos_fx.x & 0xFFFF), ((p.y() + 1) << 16) | (s.pos_fx.y & 0xFFFF))
+		# One pixel below the puck: Y, or X on the sideways penalty screen.
+		var hor := w.sflags & HockeyWorld.SF_HOR != 0
+		var sx := p.x() + (1 if hor else 0)
+		var sy := p.y() + (0 if hor else 1)
+		s.pos_fx = Vector2i((sx << 16) | (s.pos_fx.x & 0xFFFF), (sy << 16) | (s.pos_fx.y & 0xFFFF))
 		s.z_fx &= 0xFFFF
 		return
 	if s.frame == 0:
@@ -725,8 +729,8 @@ func goal(a3: SimObject) -> void:
 	w.puckcross[3] = -1
 	a3.flags |= SimObject.PF_NC
 	w.assreplace(a3, ASS_PUCKUNFLIP)
+	# The shadow keeps its puck frame until updateanim shows the siren (L49944-49962).
 	w.objects[HockeyWorld.SHADOW].set_spa(SPA_GOAL_SIREN)
-	w.objects[HockeyWorld.SHADOW].frame = 1
 	w.add_penalty2(PEN_GOAL, w.objects[a1.first_object])
 
 ## setass (L49965): every on-ice skater of the team gets assignment id.

@@ -614,6 +614,9 @@ static func _dec_byte(v: int, d7: int) -> int:
 
 ## Drag, move, Z (updateplayers L35486-35555).
 func _integrate(o: SimObject, d7: int) -> void:
+	# updateplayers L35483: an injured player lying on the ice does not move at all.
+	if o.spa == Checking.SPA_INJURED_GAME or o.spa == Checking.SPA_INJURED_PERIOD:
+		return
 	var d4 := int(Nhl94Units.VEL_STEP_ALT if alt_step else Nhl94Units.VEL_STEP) * d7
 	# Retail tests the Z word (whole pixels) here, not the long.
 	if o.z() == 0:
@@ -939,6 +942,9 @@ func get_hot(o: SimObject) -> Vector2i:
 			x = -x
 		if o.attribute & SimObject.ATTR_YFLIP == 0:
 			y = -y
+		# The sideways penalty screen swaps the axes (exg d0,d1; neg d1).
+		if sflags & SF_HOR:
+			return Vector2i(y, -x)
 		return Vector2i(x, y)
 	if o.index > 11:
 		return Vector2i.ZERO
@@ -1055,10 +1061,8 @@ func ps_attempt_end() -> void:
 
 ## sub_FEFF0: cancel a one-timer. Shooting port.
 func cancel_onetimer(o: SimObject) -> void:
-	o.flags3 &= ~SimObject.PF3_ONETIMER
-	o.flags &= ~SimObject.PF_ALOCK
-	o.flags2 &= ~SimObject.PF2_AIP
-	o.set_spa(Spa.GLIDE)
+	# sub_FEFF0: the whole one-timer exit (state, player, Setplass or assexit, SPA restart).
+	shooting.end_onetimer(o)
 
 # --- helpers -------------------------------------------------------------------------
 

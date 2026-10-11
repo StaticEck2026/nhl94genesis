@@ -610,7 +610,8 @@ func assonetimer(a3: SimObject, d7: int) -> void:
 		v = absi(v)
 		if v == 0:
 			v = 1
-		var t := _divu(_divu(d << 16, v) & 0xFFFF, 17) & 0xFFFF
+		# The velocity step: $16 with word_FFD06E set (L959230), else $11.
+		var t := _divu(_divu(d << 16, v) & 0xFFFF, 0x16 if w.alt_step else 17) & 0xFFFF
 		var win := (6 - (a3.spa_num >> 2)) * 4
 		if t <= win:
 			a3.spa_num = 0x18 - a3.spa_num
