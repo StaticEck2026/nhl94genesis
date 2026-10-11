@@ -17,19 +17,23 @@ var _over := false
 func _enter_tree() -> void:
 	auto_place = false
 	super._enter_tree()
-
-func _ready() -> void:
+	# Teams first: the rink and the views build their palettes from them in _ready.
 	var m: MatchConfig = Sim.match
 	if m.home_team == null or m.away_team == null:
 		var teams := MatchConfig.available_teams()
 		if teams.size() >= 2:
 			m.home_team = teams[0]
 			m.away_team = teams[1]
+	world.roster.setup_teams(m.home_team, m.away_team)
+
+func _ready() -> void:
+	var m: MatchConfig = Sim.match
 	for i in 12:
 		var sk: Skater2D = SKATER_SCENE.instantiate()
 		sk.index = i
 		add_child(sk)
 		skaters.append(sk)
+	add_object_views()
 	world.opt_perlen = PERLEN.get(m.period_minutes, 0)
 	world.opt_pen = m.penalties
 	world.opt_offsides = m.offsides
@@ -38,7 +42,6 @@ func _ready() -> void:
 	world.cont_team[1] = 0
 	_take_pad(m.home_control, 1)
 	_take_pad(m.away_control, 2)
-	world.roster.setup_teams(m.home_team, m.away_team)
 	world.rules.intermission.connect(_on_intermission)
 	world.rules.game_over.connect(_on_game_over)
 	($Hud as Node).call("bind", self)

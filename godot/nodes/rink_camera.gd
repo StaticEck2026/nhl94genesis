@@ -39,7 +39,11 @@ func _use_world() -> bool:
 
 func _physics_process(_delta: float) -> void:
 	if _use_world():
-		global_position = Nhl94Units.rink_to_godot(Vector2(_game.world.camera))
+		# The sideways penalty screen does not scroll (find3d ignores Hpos/Vpos there).
+		if _game.world.sflags & HockeyWorld.SF_HOR:
+			global_position = Vector2.ZERO
+		else:
+			global_position = Nhl94Units.rink_to_godot(Vector2(_game.world.camera))
 		return
 	if target == null:
 		return

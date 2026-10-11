@@ -34,20 +34,26 @@ func _ready() -> void:
 	game.stepped.connect(_sync)
 
 func _find_game() -> HockeyGame:
-	var n := get_parent()
-	while n != null and not (n is HockeyGame):
-		n = n.get_parent()
-	return n as HockeyGame
+	return HockeyGame.find(self)
 
 func _sync() -> void:
 	# Sprite frame 0 draws nothing (off the ice, in the box, parked).
 	visible = obj.frame != 0
 	attacking_top = obj.attacking_top()
-	position = Nhl94Units.rink_to_godot(obj.posf())
+	if SpriteAtlas.available():
+		if material == null:
+			material = game.palette_material(obj.away())
+		position = SortObjectView.project_ground(game.world, obj)
+		z_index = clampi(roundi(position.y), -3000, 3000)
+	else:
+		position = Nhl94Units.rink_to_godot(obj.posf())
 	velocity = Nhl94Units.rink_to_godot(Vector2(obj.vel)) * Nhl94Units.VEL_STEP * Nhl94Units.RETAIL_HZ / Nhl94Units.FIXED_ONE
 	queue_redraw()
 
 func _draw() -> void:
+	if obj and not Engine.is_editor_hint() and SpriteAtlas.available():
+		SpriteAtlas.draw_frame(self, obj.frame, Vector2(0, -SortObjectView.lift(obj)), obj.attribute)
+		return
 	var away := obj.away() if obj else index >= 6
 	var color := Color(0.2, 0.35, 0.9) if away else Color(0.85, 0.2, 0.2)
 	draw_circle(Vector2.ZERO, 5.0, color)

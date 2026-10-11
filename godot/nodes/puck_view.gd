@@ -15,7 +15,8 @@ func _ready() -> void:
 	z_index = 2
 
 func _draw() -> void:
-	if game == null:
+	# With the sprite atlas the puck and shadow are SortObjectViews.
+	if game == null or SpriteAtlas.available():
 		return
 	var p := game.world.puck()
 	# A negative height hides the puck (the faceoff setup's st puckz).

@@ -71,13 +71,13 @@ These come from the listing. Add a fact here before code depends on it.
 
 - [x] `$34(a3)` meaning. 0 is a goalie (`doplayeracc` branches to `goalieacc` on 0). The extra agility and the carrier cuts in `playeracc` are goalie-only. Fixed in `SkaterMotion`.
 - [ ] Drag runs once per loop, not per vblank. Measure the usual `d7` in a game (1 or 2) so per-second drag matches retail feel.
-- [ ] `word_FFD06E` (step 22 instead of 17). Name the mode.
+- [x] `word_FFD06E` is the VDP status bit 0 at boot, the PAL flag (the listing calls it DMA busy): PAL consoles move 22 per vblank instead of 17. `HockeyWorld.alt_step`.
 - [x] Energy (`getpde`/`setpde`, L51186-51229): full is `$1000`; drain and recovery ported as retail (data spec section 4).
 - [x] Rating scale: `$67` is the weight step x 8 (0-120); the rest are `AttributeCalc` 0-30. `PlayerData` uses the retail 25-99 screen values.
 - [x] Rink size in px and the origin. See the Rink row above.
 - [x] One-shot animation lengths: real SPAList timings now (the stand-in only runs when the data file is missing).
 - [x] Where stick value 9 (brake) comes from: never the pad (`jdtab` gives 0-8). `skateto` sends 9 when its target is within 12 px on both axes (L42978).
-- [ ] `sroot` (L44215) is Newton iteration. `RinkBoards.sroot` uses floor of the real root; check they agree on corner distances (64-100).
+- [x] `sroot` (L44215): ported exactly (Phase 4).
 
 ## Phase 0. Project scaffold
 
@@ -162,22 +162,23 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Crowd: `UpdateCwdExcite` L30009, `updatecrowdf` L30028
 - [x] Stats: `ChkShotStat` L47451 (Phase 3), team and player stats in `TeamStats`, PenSum. `InitScores` / `UpdateScores` (other games' ticker) not ported: cosmetic, and it needs the season/playoff mode
 - [ ] Penalty shot and shootout: `PenShotChk` returns the foul unchanged until `puckpenshot` L41276, `puckshootout` L41046 and the PS script are ported
-- [ ] Fights: none in '94 (`fightinput`, `assfight`, `assfwatch` are `rts`; no caller raises the fighting penalties)
+- [x] Fights: none in '94 (`fightinput`, `assfight`, `assfwatch` are `rts`; no caller raises the fighting penalties)
 
 ## Phase 9. Scenes and presentation
 
-- [~] Rink: `Rink2D` draws a placeholder from the listing constants and builds static board colliders. The `TileMapLayer` waits on the tile PNGs.
+- [x] Rink: `Rink2D` builds two `TileMapLayer`s from the extracted map (base under the sprites; the priority cells, near boards and glass, over them), the home team's centre-ice logo, and the sideways penalty-screen view for `SetHor`. Placeholder drawing remains when the art is missing
 - [x] Camera: `checkwindow` L35783 ported into the world (`HockeyWorld.camera` = Hpos/Vpos with `yleader`); `RinkCamera` shows it. The tile scroll itself (`updatescroll` L51912) comes with the `TileMapLayer` rink.
-- [ ] Sprite sheets from `Spritetiles` L337811 / `frameSprData` L602163 exported offline to PNG
-- [ ] Team palette swap `.gdshader` (`SetTeamColors` L53781)
+- [x] Sprites: `tools/extract/assets.py` exports all 845 frames into one index atlas (`assets/sprites/atlas_idx.png`) with `frames.json` (origin, hot spot); `SpriteAtlas` draws them with the `addframe2` flips; `find3d`'s projection (height lift, sideways view) in `SortObjectView`; Y-sorted like `SprSort`
+- [x] Team palette swap: `shaders/palette.gdshader` colours the index art from a 16x4 CRAM texture (`PaletteBank`: rink lines, home and away uniforms; away objects use line 3 for line 2)
 - [x] Animation tables: `SPAList` exported offline (`tools/extract/spalist.py` -> `godot/data/spalist.json`, 66 animations); `updateanim` ported (`Animator`) with the one-loop lag, de-glitch, loop bit and flag clearing; sprite frames are live, so `GetHot` uses the real Hotlist
-- [ ] Audio: sfx ids from `ram94.asm` comments, buses wired
+- [~] Audio: the 15 DAC samples export to `assets/audio/dac/*.wav`; `SfxBank` plays `sfx_XX` files by retail id when present. The sound effects themselves are FM sequences (`unk_2C648`): which sample and note each id plays is unresolved, so no `sfx_XX` files are generated yet
+- [ ] Faceoff close-up window and the referee graphics: their tiles are compressed (`$A78AE`; decompressor commands `$Cx-$Fx` unresolved). The HUD shows the referee's calls as text
 
 ## Phase 10. Editor tooling
 
 - [x] `nhl94_debug` `EditorPlugin` and `Nhl94DebugDock.tscn`
 - [x] Dock sliders and module toggles bound to `SimSettings`
-- [ ] `@tool` `_draw()` overlays: goalie cones, pass lines, interception radii, 9x5 grid
+- [x] `@tool` `_draw()` overlays: goalie cones, pass lines, interception radii, 9x5 grid (`DebugOverlay`; always in the editor, in game with `show_in_game`)
 - [ ] Live editing while the game runs (remote `SimSettings` sync)
 
 ## Phase 11. UI
@@ -199,3 +200,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: AI and goalies ported (`HockeyAI`, `GoalieLogic`): the six positional routines, `assnearest`, the CPU carrier (shoot / pass / evade / breakaway), `check4check`, celebrations, the CPU and pad goalie, saves, pulling the goalie, `checkwindow` camera, `forcepldata`. `DoGameFrame` order in `step()`. Twelve CPU players play a minute (shots, passes, checks, goalie whistles). 260 checks pass.
 - 2026-10-11: Data layer: 28 teams and 684 players extracted from the ROM to `.tres`; `setplayer`, `AttributeCalc`, form, bonuses and the energy drain ported. The spec's seven test vectors (Bourque, Oates, Lemieux, Neely, Dollas, Moog, Roy) match byte for byte. 330 checks pass.
 - 2026-10-11: Rules and game flow (`GameRules`, `FaceoffLogic`, `LineLogic`): clock, periods, OT, whistles, faceoff spots and the full faceoff, penalties with delayed calls and the box, power play, line changes and the line menu. The match scene now plays a whole game from `StartGame`; the sandbox runs without rules (`HockeyGame.run_rules`, `SimSettings.enable_rules`). A CPU Boston-Montreal game runs to the final horn in the tests. 396 checks pass.
+- 2026-10-11: Presentation: the ROM art exported offline (845 sprite frames in an index atlas, rink tiles and map, 28 logos, the side view, palettes, DAC samples). The match renders with the real rink as `TileMapLayer`s, team-coloured sprites through a palette shader, the retail camera, and the sideways penalty screen. Debug overlays default to the editor only.

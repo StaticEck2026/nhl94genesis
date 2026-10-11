@@ -1,0 +1,95 @@
+{
+ "nominal_rate": 10000,
+ "rate_formula": "119.5 * step Hz, step = freq[note % 12] >> (8 - octave)",
+ "freq": [
+  326,
+  345,
+  366,
+  388,
+  411,
+  435,
+  461,
+  488,
+  517,
+  548,
+  581,
+  616
+ ],
+ "samples": [
+  {
+   "instr": 96,
+   "address": 180200,
+   "bytes": 604
+  },
+  {
+   "instr": 97,
+   "address": 111240,
+   "bytes": 3369
+  },
+  {
+   "instr": 98,
+   "address": 110740,
+   "bytes": 3869
+  },
+  {
+   "instr": 99,
+   "address": 177200,
+   "bytes": 3604
+  },
+  {
+   "instr": 100,
+   "address": 173226,
+   "bytes": 2603
+  },
+  {
+   "instr": 101,
+   "address": 137032,
+   "bytes": 8014
+  },
+  {
+   "instr": 102,
+   "address": 172026,
+   "bytes": 3803
+  },
+  {
+   "instr": 103,
+   "address": 175834,
+   "bytes": 1362
+  },
+  {
+   "instr": 104,
+   "address": 0,
+   "bytes": 0
+  },
+  {
+   "instr": 105,
+   "address": 0,
+   "bytes": 0
+  },
+  {
+   "instr": 106,
+   "address": 175834,
+   "bytes": 1362
+  },
+  {
+   "instr": 107,
+   "address": 127482,
+   "bytes": 9545
+  },
+  {
+   "instr": 108,
+   "address": 114614,
+   "bytes": 12864
+  },
+  {
+   "instr": 109,
+   "address": 145050,
+   "bytes": 26971
+  },
+  {
+   "instr": 110,
+   "address": 157050,
+   "bytes": 14971
+  }
+ ]
+}

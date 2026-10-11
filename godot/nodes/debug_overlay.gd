@@ -15,7 +15,9 @@ var _settings: SimSettings
 var _game: HockeyGame
 
 func _ready() -> void:
-	z_index = 5
+	# Over the sprites and the rink's front layer.
+	z_index = Rink2D.Z_FRONT + 1
+	z_as_relative = false
 	_settings = SimSettings.shared(self) if not Engine.is_editor_hint() else _editor_settings()
 	if _settings and not _settings.changed.is_connected(queue_redraw):
 		_settings.changed.connect(queue_redraw)
@@ -62,6 +64,11 @@ func _carrier() -> int:
 func _draw() -> void:
 	if _settings == null:
 		return
+	if not Engine.is_editor_hint():
+		if not _settings.show_in_game:
+			return
+		if _game and _game.world.sflags & HockeyWorld.SF_HOR:
+			return
 	if _settings.show_grid:
 		_draw_grid()
 	var skaters := _skaters()

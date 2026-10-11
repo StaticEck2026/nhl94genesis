@@ -110,6 +110,9 @@ static func shared(from: Node) -> SimSettings:
 
 @export_group("Overlay")
 ## Tactical grid (columns across, rows up the ice).
+## Draw the overlays while a game runs (they always draw in the editor).
+@export var show_in_game: bool = false:
+	set(v): show_in_game = v; emit_changed()
 @export var show_grid: bool = true:
 	set(v): show_grid = v; emit_changed()
 @export_range(1, 16, 1) var grid_columns: int = 5:

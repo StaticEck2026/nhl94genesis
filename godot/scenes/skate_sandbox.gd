@@ -7,6 +7,7 @@ extends HockeyGame
 
 func _ready() -> void:
 	pad_ports = {_p1.index: 1, ($Skater2 as Skater2D).index: 2}
+	add_object_views()
 
 func _process(_delta: float) -> void:
 	var o := _p1.obj

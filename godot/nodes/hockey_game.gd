@@ -19,6 +19,8 @@ var sfx: SfxBank
 var _frame_accum := 0.0
 ## While set the simulation does not step (intermissions, the end of the game).
 var hold: bool = false
+var _palette: Texture2D
+var _palette_side: Texture2D
 
 signal stepped
 
@@ -63,3 +65,46 @@ func _read_pads() -> void:
 	for k in 2:
 		if world.cont_team[k] != 0:
 			world.pads[k].held = PadInput.held_bits(k + 1)
+
+## The HockeyGame a node belongs to, or null.
+static func find(n: Node) -> HockeyGame:
+	var p := n.get_parent()
+	while p != null and not (p is HockeyGame):
+		p = p.get_parent()
+	return p as HockeyGame
+
+## Team numbers whose uniforms fill palette lines 2 and 3 (Boston and Montreal when no
+## team data is loaded, as in the sandbox).
+func palette_teams() -> Vector2i:
+	var h := world.stats[0].team_index
+	var a := world.stats[1].team_index
+	return Vector2i(h if h >= 0 else 1, a if a >= 0 else 11)
+
+## The game's CRAM (rink lines, home and away uniforms) as a palette texture.
+func palette_texture(side: bool = false) -> Texture2D:
+	var t := palette_teams()
+	if side:
+		if _palette_side == null:
+			_palette_side = PaletteBank.texture(t.x, t.y, "side")
+		return _palette_side
+	if _palette == null:
+		_palette = PaletteBank.texture(t.x, t.y)
+	return _palette
+
+## A palette material for index art; away objects take line 3 for line 2.
+func palette_material(away: bool) -> ShaderMaterial:
+	return PaletteBank.material(palette_texture(), away)
+
+## Rebuild the palette after the teams change.
+func refresh_palette() -> void:
+	_palette = null
+	_palette_side = null
+
+## Views for the nets, the puck shadow and the puck (in that order, so the puck draws
+## over its shadow when they share a screen row).
+func add_object_views() -> void:
+	for i in [HockeyWorld.NET_TOP, HockeyWorld.NET_BOTTOM, HockeyWorld.SHADOW, HockeyWorld.PUCK]:
+		var v := SortObjectView.new()
+		v.name = "Object%d" % i
+		v.index = i
+		add_child(v)

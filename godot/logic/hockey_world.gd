@@ -241,7 +241,8 @@ var collflag: int = 0
 var oo_list: PackedInt32Array = PackedInt32Array()
 var oo_pos: PackedInt32Array = PackedInt32Array()
 var ylist: PackedInt32Array = PackedInt32Array()
-## word_FFD06E: retail uses step 22 instead of 17 when set. Mode not named yet.
+## word_FFD06E: VDP status bit 0 at boot, the PAL flag. PAL consoles move 22 per
+## vblank instead of 17 to make up for 50 Hz.
 var alt_step: bool = false
 ## byte_FFC2FC bit 6: the crowd record is broken. The AI and goalie reaction timers
 ## reload one shorter while it is set.
