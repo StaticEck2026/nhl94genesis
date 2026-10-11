@@ -2,7 +2,7 @@
 """Export the title screen (newTitleScreen, $FF042) as loose files for the Godot port.
 
 Offline only. The game never reads a ROM; it loads godot/assets/title/<edition>/.
-Usage: python3 tools/extract/title.py [nhl94-patches checkout] [godot/assets/title]
+Usage: python3 tools/extract/title.py [nhl94-patches checkout | patched ROM] [godot/assets/title]
 
 Editions: "retail" from lst/nhl94.bin; "fight" from the fight patch's built ROM
 (94_fight/output/nhl94_fight_v1.01.bin in a checkout of github.com/Chaos81/nhl94-patches,
@@ -185,7 +185,8 @@ def main():
     n = edition(Rom(open("lst/nhl94.bin", "rb").read()), os.path.join(out, "retail"))
     print("retail title: %d credit blocks" % n)
     if len(sys.argv) > 1:
-        n = edition(Rom(open(os.path.join(sys.argv[1], FIGHT_ROM), "rb").read()), os.path.join(out, "fight"))
+        path = os.path.join(sys.argv[1], FIGHT_ROM) if os.path.isdir(sys.argv[1]) else sys.argv[1]
+        n = edition(Rom(open(path, "rb").read()), os.path.join(out, "fight"))
         print("fight patch title: %d credit blocks" % n)
 
 

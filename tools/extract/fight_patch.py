@@ -6,7 +6,11 @@ The patch is Chaos81's nhl94-patches (MIT, https://github.com/Chaos81/nhl94-patc
 94_fight/output/nhl94_fight_v1.01.bin, carries everything this script reads. The game
 never reads a ROM; it loads what this writes.
 
-Usage: python3 tools/extract/fight_patch.py <nhl94-patches checkout> [godot]
+Usage: python3 tools/extract/fight_patch.py <nhl94-patches checkout | patched ROM> [godot]
+
+The checkout's built ROM is the reference. A ROM built with 94_custom_patch (the same
+patches applied to another ROM) works too when it keeps the 28 retail teams; 30- and
+32-team ROM hacks have rosters, palettes and logos the port does not carry.
 
 Writes:
   assets/sprites/fight_idx.png + fight.json   frames 846 (the '93 gloves and stick) and
@@ -35,7 +39,9 @@ import spalist  # noqa: E402
 import teams  # noqa: E402
 
 FIGHT_ROM = "94_fight/output/nhl94_fight_v1.01.bin"
-FIGHT_MD5 = "44b69e03e5968e660ad003aa0ab076ad"
+FIGHT_MD5 = "44b69e03e5968e660ad003aa0ab076ad"   # the reference build (v1.01)
+# chg_header.asm's domestic name.
+HEADER = b"NHL Hockey '94-Fight"
 # GetHot's `movea.l #HotList,a1` and updateanim's `movea.l #SPAList,a0`, repointed by
 # sprite_patch.asm.
 GETHOT_PTR = 0x106F6
@@ -47,13 +53,19 @@ FIGHT_SPAS = [0x1B96, 0x1BC8, 0x1BEA, 0x1C0C, 0x1C3E, 0x1C70, 0x1C92, 0x1CB4, 0x
 RETAIL_HOT = 838            # retail Hotlist entries (frames 0-837)
 
 
+def rom_path(arg: str) -> str:
+    """A patched ROM, or the nhl94-patches checkout holding the reference build."""
+    return os.path.join(arg, FIGHT_ROM) if os.path.isdir(arg) else arg
+
+
 def main() -> None:
     if len(sys.argv) < 2:
         sys.exit(__doc__)
-    repo = sys.argv[1]
     godot = sys.argv[2] if len(sys.argv) > 2 else "godot"
-    data = open(os.path.join(repo, FIGHT_ROM), "rb").read()
-    assert hashlib.md5(data).hexdigest() == FIGHT_MD5, "unexpected fight ROM"
+    data = open(rom_path(sys.argv[1]), "rb").read()
+    assert data[0x120:0x120 + len(HEADER)] == HEADER, "not a fight-patched ROM"
+    if hashlib.md5(data).hexdigest() != FIGHT_MD5:
+        print("note: not the v1.01 reference build; reading it anyway")
     retail = open("lst/nhl94.bin", "rb").read()
     rom = assets.Rom(data)
 

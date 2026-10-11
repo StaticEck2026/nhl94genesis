@@ -55,6 +55,9 @@ var _frame := 0
 func _ready() -> void:
 	var ed: int = Sim.match.edition if Sim.match else MatchConfig.Edition.FIGHT
 	var dir: String = DIRS[ed]
+	# chg_header.asm renames the ROM.
+	if is_inside_tree():
+		get_window().title = "NHL Hockey '94-Fight" if ed == MatchConfig.Edition.FIGHT else "NHL Hockey '94"
 	if not FileAccess.file_exists(dir + "title.json"):
 		dir = DIRS[MatchConfig.Edition.RETAIL]
 	if not FileAccess.file_exists(dir + "title.json"):

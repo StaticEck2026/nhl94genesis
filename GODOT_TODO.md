@@ -134,7 +134,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] `Checking`: `newcheck`, `checkint`/`checkint_ci` (goalie contact, interference), `CCStart`/`CheckingCalc` (body checks), `checkagr`, `holdcheck`, `Bcheck`, `holdplayer`/`Acheck`
 - [x] `FallDown`, `FallList`, board pins (`sub_FEB54`), injuries (`setInjuryType`), `wallcollduringcheck`
 - [x] `burst` (body-check charge); `check4check` (CPU) in `HockeyAI`
-- [x] `checkfight` L49544, `fightinput` L36560: no-ops in '94 (see Phase 8)
+- [x] `checkfight` L49544, `fightinput` L36560: no-ops in retail '94 (see Phase 8); the fight patch fills them in (Phase 12)
 
 ## Phase 6. AI
 
@@ -189,6 +189,19 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] HUD: clock, score, period, power play, referee calls, penalties, intermission and final banners; the penalty shot / shootout intro box and the attempt clock
 - [x] Pause menu (Start; during an intermission Start resumes play instead)
 - [x] Line-change box (`sub_B92E`): rows A / B / C with the line each sends and its energy, while a pad's menu is open
+- [x] Title screen (`newTitleScreen` $FF042): the photo, the shield / NHLPA logo / title sliding in on plane B's line scroll, the fade-in, the scrolling credits, Start to the menus; frame for frame with the ROM (`tools/extract/title.py`, `ui/title_screen.gd`, spec `docs/specs/title_screen.md`)
+- [x] Injury message (`loc_1871C`): "Injury to:", the player, out for the period or the game
+
+## Phase 12. Chaos81's fight patch (nhl94-patches v1.01)
+
+Spec: `docs/specs/fight_patch.md` (and `fight_patch_retail_hooks.md`). The setup screen's edition picks retail '94 or "NHL Hockey '94-Fight".
+
+- [x] Fight code (`FightLogic`): `checkfight`, `ChkFightValue` (instigator minor), `SF`, `assfight`, `chkhit`, `CwdFight`, `FightFall` (Fighting * for the winner, the fight injury and its `$112C` box time), `assfwatch`, `fightinput`, the banner, the gloves (`upgloves`); the period-length and Arcade tables
+- [x] Sprites, hot spots and the nine fight animations from the patched ROM (`tools/extract/fight_patch.py`); the gloves view behind the players
+- [x] The patch's rosters (enforcers' fight ratings raised, some moved onto the checking line): `data/teams_fight/`
+- [x] Menu option Fighting: Off / On / On - Arcade Mode (default On); the patch's Fgt column (0-100) in the setup screen's line tooltips
+- [x] The patch's title screen and credits; its ROM name on the window
+- [x] Not applicable to a native port: ROM expansion and the SRAM relocation, the checksum skip, the reverse-angle replay fixes (no replay yet), the Shootout SetUp and demo-mode menu fixes (those menus are not ported)
 
 ## Log
 
@@ -205,3 +218,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Rules and game flow (`GameRules`, `FaceoffLogic`, `LineLogic`): clock, periods, OT, whistles, faceoff spots and the full faceoff, penalties with delayed calls and the box, power play, line changes and the line menu. The match scene now plays a whole game from `StartGame`; the sandbox runs without rules (`HockeyGame.run_rules`, `SimSettings.enable_rules`). A CPU Boston-Montreal game runs to the final horn in the tests. 396 checks pass.
 - 2026-10-11: Presentation: the ROM art exported offline (845 sprite frames in an index atlas, rink tiles and map, 28 logos, the side view, palettes, DAC samples). The match renders with the real rink as `TileMapLayer`s, team-coloured sprites through a palette shader, the retail camera, and the sideways penalty screen. Debug overlays default to the editor only.
 - 2026-10-11: Penalty shots and the shootout (`ShootoutLogic`). A foul on a breakaway skater becomes a penalty shot: the attempt is set up, played with the CPU script or the pads, and the game resumes with a faceoff. The Shootout play mode (setup screen "SO") plays alternating attempts to a winner. The nets, puck and shadow now start with no animation, as the struct clear leaves them (the puck had shown a skater frame until its first touch). 492 checks pass.
+- 2026-10-11: Chaos81's fight patch (Phase 12) and the title screen. In the '94-Fight edition a hard hit between two willing players (fight ratings, checks thrown) can start a fight: gloves drop, the banner names them, punches land until one goes down, both take majors (Fighting * for the winner), an injured loser is out for the game. The game boots into the title screen, retail's or the patch's. setInjuryType now writes tmpdst as retail does. 599 checks pass.

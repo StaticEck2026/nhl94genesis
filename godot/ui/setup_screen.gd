@@ -64,6 +64,7 @@ func _load_teams() -> void:
 	_select_abbr(_away, keep[1], 1)
 	_fighting.disabled = not _fight_edition()
 	_title.text = "NHL Hockey '94-Fight  -  Exhibition" if _fight_edition() else "NHL 94  -  Exhibition"
+	get_window().title = "NHL Hockey '94-Fight" if _fight_edition() else "NHL Hockey '94"
 	_fill_lines(_home, _home_lines)
 	_fill_lines(_away, _away_lines)
 	_status.text = "%d teams" % _teams.size() if _teams.size() > 0 else "No teams in res://data/teams yet"
