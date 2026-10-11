@@ -441,6 +441,9 @@ func step(d7: int = 1) -> void:
 	update_players(d7)
 	ai.set_slot_bit()
 	checkwindow(d7)
+	# setvideo: the crowd meter, then the sprites (addframe2 keeps the frame it drew last;
+	# chkhit tests a hit once per new frame).
+	rules.crowd_noise(d7)
 	# addframe2 keeps the frame it drew last ($08); chkhit tests a hit once per new frame.
 	for o in objects:
 		o.old_frame = o.frame & 0x7FF
@@ -558,6 +561,7 @@ static func _ease(d: int) -> int:
 ## updateplayers (L35329) for every sort object.
 func update_players(d7: int) -> void:
 	puck_logic.z_stall()
+	_preamble()
 	for o in objects:
 		o.old_pos_fx = o.pos_fx
 		o.old_z_fx = o.z_fx
@@ -578,6 +582,19 @@ func update_players(d7: int) -> void:
 		if o.pos() != o.old_pos():
 			_check_collisions(o)
 		_impact_decay(o, d7)
+
+## updateplayers L35354-35371, once a loop: the crowd-record bit; while someone has the
+## puck, the one-timer flags clear (so the goalies get their full body box back), and a
+## carrier on a breakaway clears the breakaway-shot flag.
+func _preamble() -> void:
+	crowd_record = rules.cur_crowd_meter >= rules.crowd_record_value
+	crowd_boost = true
+	if puckc < 0:
+		return
+	f_c2fe &= ~C2FE_ONETIMER_TOUCH
+	f_c2f8 &= ~C2F8_ONETIMER_SHOT
+	if puckc < 12 and objects[puckc].flags3 & SimObject.PF3_BREAKAWAY:
+		f_c2fa &= ~C2FA_BREAKAWAY
 
 ## updateanim (L35703). Without SPAList data, a fixed-length stand-in keeps the
 ## pf2aip / pfalock / falling flags from sticking.

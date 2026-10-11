@@ -158,6 +158,8 @@ func _cpu_line(team: int) -> void:
 		return
 	w.lines.comp_line(team)
 	w.lines.set_personel(team)
+	w.rules.print_scores1()
+	w.rules.crowd_hold = 0x2710
 
 # --- puckfaceoff2 ($1C) --------------------------------------------------------------------
 
@@ -210,6 +212,7 @@ func _setup(p: SimObject) -> void:
 	p.attribute = 0
 	# "no fighting gloves" (glovecords cleared, L42066).
 	w.fight.clear_gloves()
+	w.rules.crowd_hold = 0x2710
 	w.sflags &= ~HockeyWorld.SF_SLOCK
 	for i in 101:
 		w.checkwindow(1)
@@ -331,6 +334,7 @@ func updatefaceoff(p: SimObject) -> void:
 ## (3 in 4) or randomly forward, biased toward his own end.
 func endfaceoff(p: SimObject) -> void:
 	w.sound.emit(0x2F)
+	w.rules.crowd_hold = 0
 	w.sflags2 &= ~(HockeyWorld.SF2_FACEOFF | GameRules.SF2_NOREC)
 	w.faceoff_grace = 60
 	window_open = false

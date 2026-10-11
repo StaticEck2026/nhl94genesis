@@ -738,6 +738,7 @@ func intermission_bookkeeping() -> void:
 func start_per() -> void:
 	w.setupice()
 	reset_clock()
+	cur_crowd_meter = 0
 	w.c_player[0] = -1
 	w.c_player[1] = -1
 	w.fox = 0
@@ -755,6 +756,63 @@ func start_per() -> void:
 	period_started.emit(w.gsp)
 
 # --- crowd and the per-second jobs ---------------------------------------------------------
+
+# --- the crowd meter (Crowd_Noise?, LoadCrowdRec) -------------------------------------
+
+## CrowdRecord: LoadCrowdRec reads the home team's record from the cartridge's save RAM,
+## $50 when there is none (a fresh cartridge; the port keeps no save RAM).
+var crowd_record_value: int = 0x50
+## CrowdAvg, CurCrowdMeter, CrowdPeak, CwdChkCntr, CwdChkCnt.
+var crowd_avg: int = 0
+var cur_crowd_meter: int = 0
+var crowd_peak: int = 0
+var cwd_chk_cntr: int = 0
+var cwd_chk_cnt: int = 0
+## word_FFC2F6 bit 7: the crowd is loud. word_FFC304: frames before it can get loud.
+var crowd_loud: bool = false
+var crowd_hold: int = 0
+
+## Crowd_Noise? (L959685, from setvideo every loop): the crowd turns loud once the
+## excitement beats a level set by the record; while loud, every 20 loops the meter is
+## sqrt(excitement * 4) + $41. Its record bit (updateplayers) speeds up the AI.
+func crowd_noise(d7: int) -> void:
+	if w.sflags & HockeyWorld.SF_HOR or w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT:
+		return
+	if not crowd_loud:
+		if crowd_hold != 0:
+			crowd_hold -= 1
+			if crowd_hold < 0:
+				crowd_hold = 0
+			return
+		crowd_avg = crowd_record_value - 0xB
+		var d0 := crowd_record_value - 0x49
+		d0 = HockeyWorld.s16(((d0 * d0) >> 2) + 6)
+		if d0 > w.crowd_excite:
+			return
+		crowd_loud = true
+		return
+	var q := crowd_avg - 0x41
+	if HockeyWorld.s16((q * q) >> 2) >= w.crowd_excite:
+		crowd_loud = false
+	cwd_chk_cntr -= d7
+	if cwd_chk_cntr >= 0:
+		return
+	cwd_chk_cntr = 0x14
+	cwd_chk_cnt += 1
+	# ext.l then asl.w: only the low word is shifted.
+	var e := w.crowd_excite
+	var v := (e & ~0xFFFF) | ((e << 2) & 0xFFFF) if e < 0 else (e << 2) & 0xFFFF
+	cur_crowd_meter = RinkBoards.sroot(v) + 0x41
+	crowd_peak = maxi(crowd_peak, cur_crowd_meter)
+
+## PrintScores1's crowd part: the score box is redrawn over the meter, so a loud crowd is
+## reset and held off for 120 loops.
+func print_scores1() -> void:
+	if w.sflags & HockeyWorld.SF_HOR:
+		return
+	if crowd_loud:
+		crowd_loud = false
+		crowd_hold = 0x78
 
 ## updatecrowdf (L30028): crowd noise decays every frame; the crowd animates.
 func updatecrowdf(d7: int) -> void:

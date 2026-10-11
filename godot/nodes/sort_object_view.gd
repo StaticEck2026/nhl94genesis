@@ -23,13 +23,21 @@ func _sync() -> void:
 	if not on:
 		return
 	position = project_ground(game.world, obj)
-	z_index = clampi(roundi(position.y), -3000, 3000)
+	z_index = z_for(obj, position)
 	queue_redraw()
 
 func _draw() -> void:
 	if obj == null:
 		return
 	SpriteAtlas.draw_frame(self, obj.frame, Vector2(0, -lift(obj)), obj.attribute)
+
+## Sprites sort by screen Y. A sprite with the priority bit (attribute $8000: the puck
+## leaving over the near glass, the bottom goal light) draws over the rink's
+## high-priority cells; the others go under them.
+static func z_for(o: SimObject, at: Vector2) -> int:
+	if o.attribute & SimObject.ATTR_PRIORITY:
+		return Rink2D.Z_PRIORITY + clampi(roundi(at.y) >> 3, -40, 40)
+	return clampi(roundi(at.y), -3000, 3000)
 
 ## find3d without the height: where the object stands, in Godot axes (Y down). The
 ## sideways penalty view swaps the axes: (x, y) -> (-y, $C5 - x).

@@ -15,8 +15,8 @@ var _settings: SimSettings
 var _game: HockeyGame
 
 func _ready() -> void:
-	# Over the sprites and the rink's front layer.
-	z_index = Rink2D.Z_FRONT + 1
+	# Over the sprites, the rink's front layer and the priority sprites.
+	z_index = 4090
 	z_as_relative = false
 	_settings = SimSettings.shared(self) if not Engine.is_editor_hint() else _editor_settings()
 	if _settings and not _settings.changed.is_connected(queue_redraw):

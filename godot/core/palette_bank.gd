@@ -40,10 +40,12 @@ static func texture(home_team: int, away_team: int, base: String = "rink") -> Im
 			img.set_pixel(x, y, cram(int(rows[y][x])))
 	return ImageTexture.create_from_image(img)
 
-## A ShaderMaterial for index textures with this palette.
-static func material(pal: Texture2D, away: bool = false) -> ShaderMaterial:
+## A ShaderMaterial for index textures with this palette. zero_transparent: colour 0
+## is see-through (high-priority plane cells).
+static func material(pal: Texture2D, away: bool = false, zero_transparent: bool = false) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = SHADER
 	m.set_shader_parameter("palette", pal)
 	m.set_shader_parameter("away", away)
+	m.set_shader_parameter("zero_transparent", zero_transparent)
 	return m

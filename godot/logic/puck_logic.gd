@@ -16,7 +16,8 @@ const SPA_GOALIE_DIVE := 0x2F4
 const SPA_PAD_STACK_L := 0x250
 const SPA_PAD_STACK_R := 0x2A2
 const SPA_GOAL_SIREN := 0x102E
-const SPA_GOAL_LIGHT := 0x1078
+## The glass shatter (frames 653-657), played on the shadow like the goal light.
+const SPA_GLASS_SHATTER := 0x1078
 const SHADOW_FRAME := 0x18A
 
 const ASS_PUCKNORM := 0x18
@@ -714,6 +715,8 @@ func goal(a3: SimObject) -> void:
 	w.score_summary.append(rec)
 	w.chk_shot_stat()
 	w.pp_goal(scorer)
+	w.rules.print_scores1()
+	w.rules.crowd_hold = 0x2710
 	w.ba_ps_flags &= ~HockeyWorld.BA_AWARDED
 	w.goal_scored.emit(scorer, rec)
 	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT == 0:
@@ -799,9 +802,9 @@ func over_glass(a3: SimObject, n: Vector2i) -> bool:
 	if z <= 0x1D and a3.y() >= 0x118:
 		if a3.x() < 0xD or a3.x() > 0xF or HockeyWorld.s16(a3.vel.y) < 0xFA0:
 			return false
-		# The goal light above the top glass.
+		# The puck shatters the top glass.
 		a3.vel.y >>= 1
-		w.objects[HockeyWorld.SHADOW].set_spa(SPA_GOAL_LIGHT)
+		w.objects[HockeyWorld.SHADOW].set_spa(SPA_GLASS_SHATTER)
 		w.sound.emit(0xE)
 		w.crowd_level += 0x258
 		w.crowd_excite += 0xF

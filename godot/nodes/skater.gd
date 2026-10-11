@@ -44,7 +44,7 @@ func _sync() -> void:
 		if material == null:
 			material = game.palette_material(obj.away())
 		position = SortObjectView.project_ground(game.world, obj)
-		z_index = clampi(roundi(position.y), -3000, 3000)
+		z_index = SortObjectView.z_for(obj, position)
 	else:
 		position = Nhl94Units.rink_to_godot(obj.posf())
 	velocity = Nhl94Units.rink_to_godot(Vector2(obj.vel)) * Nhl94Units.VEL_STEP * Nhl94Units.RETAIL_HZ / Nhl94Units.FIXED_ONE

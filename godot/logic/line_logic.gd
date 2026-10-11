@@ -311,6 +311,8 @@ func lcfound(o: SimObject, row: int) -> void:
 	st.line = line
 	set_personel(team)
 	menu_changed.emit(team)
+	# lcfound2 erases the box and redraws the scores (PrintScores1).
+	w.rules.print_scores1()
 
 # --- trips to the bench and the box ---------------------------------------------------------------
 

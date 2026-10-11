@@ -23,6 +23,8 @@ const NET_RADIUS := Vector2(20, 6)
 const Z_BASE := -4000
 const Z_LOGO := -3999
 const Z_FRONT := 4000
+## Priority sprites (attribute $8000) sit around this, over the front layer.
+const Z_PRIORITY := 4040
 
 @export var build_colliders: bool = true
 ## Team numbers for the editor preview (the game uses its own).
@@ -84,7 +86,8 @@ func _build_tiles() -> bool:
 	ts.add_source(src, 0)
 	var mat := PaletteBank.material(_palette(false))
 	base_layer = _layer("RinkBase", ts, Z_BASE, mat)
-	front_layer = _layer("RinkFront", ts, Z_FRONT, mat)
+	# High-priority cells cover the sprites only with their non-zero pixels.
+	front_layer = _layer("RinkFront", ts, Z_FRONT, PaletteBank.material(_palette(false), false, true))
 	var w: int = m["w"]
 	var origin: Array = m["origin_px"]
 	var cells: Array = m["tilemap"]
@@ -98,8 +101,13 @@ func _build_tiles() -> bool:
 			alt |= TileSetAtlasSource.TRANSFORM_FLIP_H
 		if flags & 2:
 			alt |= TileSetAtlasSource.TRANSFORM_FLIP_V
-		var layer := front_layer if flags & 4 else base_layer
-		layer.set_cell(at, 0, Vector2i(idx % per_row, idx / per_row), alt)
+		var tile := Vector2i(idx % per_row, idx / per_row)
+		# Plane B has one pixel per position: where a priority cell's pixel is colour 0
+		# the backdrop shows ($0EE8, which is also every line's colour 0), so the cell is
+		# drawn opaque under the sprites as well, and again over them with colour 0 clear.
+		base_layer.set_cell(at, 0, tile, alt)
+		if flags & 4:
+			front_layer.set_cell(at, 0, tile, alt)
 	for l in [base_layer, front_layer]:
 		l.position = Vector2(-float(origin[0]), -float(origin[1]))
 	# The centre-ice logo: the home team's, over rink tiles 430-453 (sub_FEA52).

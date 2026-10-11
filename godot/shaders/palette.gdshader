@@ -6,11 +6,17 @@ shader_type canvas_item;
 
 uniform sampler2D palette : filter_nearest;
 uniform bool away = false;
+// Plane cells: colour 0 is transparent on the VDP. Set for the rink's high-priority
+// layer, so sprites show through the near glass between its streaks and posts.
+uniform bool zero_transparent = false;
 
 void fragment() {
 	vec4 t = texture(TEXTURE, UV);
 	int idx = int(round(t.r * 15.0));
 	int line = int(round(t.g * 3.0));
+	if (zero_transparent && idx == 0) {
+		discard;
+	}
 	if (away && line == 2) {
 		line = 3;
 	}
