@@ -32,6 +32,8 @@ var goals: int = 0
 var faceoffs_won: int = 0
 ## $010 checks.
 var checks: int = 0
+## $012 pass attempts.
+var pass_attempts: int = 0
 ## $014 passes completed.
 var passes: int = 0
 ## $016 tmline: current line (0-1 scoring, 2 checking, 3-4 power play, 5-6 penalty kill).

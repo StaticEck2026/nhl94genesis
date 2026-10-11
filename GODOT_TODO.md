@@ -60,6 +60,11 @@ These come from the listing. Add a fact here before code depends on it.
 | Steals | carried puck within 6 px of an opposing stick (8 in the slot): steal when `randomd0(c - k + 36) <= 2` (4 in the slot), c and k the energy-scaled Stk/2; goalies always win, nobody steals from a goalie; the puck is knocked loose, not taken | `puckstick()` | L50566 |
 | Goal | puck within 21 x 7 px of the net centre, below the crossbar (Z 13), entering through the mouth at |x| <= 20; x = 21 is the post | `PuckLogic.checkgoal()` | L49633 |
 | Glass | Z above 18 leaves the rink everywhere except the top end, whose glass is 29 high | `over_glass()` | L50092 |
+| Shot power | `k = energy-scaled shotspd/2 + 20`; `ps = (k * charge) * $5249 >> 16` (charge = 15 + vblanks held during the windup, about 35 full); speed `ps * 68` rvu; backhand loses 1/4 of the charge, a one-timer uses 31 | `Shooting.doshot()` | L37514 |
+| Shot accuracy | perfect with chance (acc+1)/(acc+16) within 200 px; else error `((ps>>4) - acc/2 + 16) * dist >> 6`, halved within 250 px, capped 136 (Y 60) | `doshot()` | L37514 |
+| Pass speed | `160 + 2 * passacc` (+1/16 for odd ratings); receiver = nearest teammate within 45 degrees of the aim, 45 degrees costs 65536 in squared distance | `dopass()` | L36924 |
+| Buttons | B pass (fires on release or a held direction), C shot (hold to charge), A flip pass (tap or hold 15 loops); without the puck: B switch (tap) or goalie (hold 17 loops, Manual Goalie), C burst or one-timer, A hold | `InputLogic` | `doinput` L35886 |
+| `sroot` | odd-number subtraction up to $640, Newton (10 steps, not always floor) to $F00000, bisection above | `RinkBoards.sroot()` | L44215 |
 | Struct | 16 sort objects of 128 bytes; field names and flag bits from the 93 equates in `src/ram94.asm` | `SimObject` | `ram94.asm` |
 
 ## Open questions
@@ -98,7 +103,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] `SkaterMotion` (`playeracc`, `MaxSpeed`, drag, `stopna`)
 - [x] Turning and momentum: `SkaterSteering` (`doplayeracc` L43331, `noturn0`, `vtoa`, backwards skating, hockey stop)
 - [ ] Goalie skating: `goalieacc` L43477, `stopna2` L959753
-- [ ] `burst` L36830, `holdplayer` L36863
+- [x] `burst` L36830, `holdplayer` L36863
 - [ ] `skateto` L42953, `skatetopuck` L43138, `avdgoal` L43026
 - [x] Wall collision: boards, corners, nets (`checkgoal`/`checkgoalp`), the stick-tip board check, the puck over the glass, `CheckBump`
 - [x] Player-player collision: `Collisions` (`checkplcoll`, `checkcx`, exact momentum exchange, Y-sort walk order, position restore)
@@ -118,17 +123,17 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 4. Shooting and passing
 
-- [ ] Shot input and charge: `SetShotMode` L37411, `ShotMode` L37444, `prepshot` L37473
-- [ ] Shot power and aim: `doshot` L37514, `shotsets` L37697, `shotdiradj` L37721, `shotdirmath` L37806
-- [ ] Passing: `setpassmode` L36893, `passmode` L36913, `dopass` L36924, `passto` L37074, `passtoa0` L37114
-- [ ] One-timers: `assonetimer` L959091, `onetimershot` L959386
-- [ ] Pass reception window (`pfdoff` drag, `asspassrec` L40938)
+- [x] Shots: `SetShotMode`, `ShotMode` (charge by elapsed vblanks, aim, forced release under shotspd 20), `prepshot` (top shelf), `doshot` (power, accuracy error, elevation, direction guard), `shotdiradj`/`shotdirmath` (CPU aims away from the goalie), `puckvzadj`
+- [x] Passing: `setpassmode`, `passmode`, `dopass` (receiver cone, blind pass, 94 flip pass), `passto`, `passtoa0` (lead pass, integer for integer), `Findhittype` (decoded from ROM)
+- [x] One-timers: `assonetimer`, `onetimershot`, `setonetimeranim`/`noidea`, `sub_F6C44`, `sub_FEFF0`
+- [x] Pass reception: `asspassrec` (glide with `pfdoff`, CPU one-timer decision); `assshoot` (CPU windup)
+- [x] Input: `PadState` (`ReadJoyN`, `jdtab`, opposite-direction cleanup) and `doinput` (B pass / switch / sweep / goalie hold, C shot / burst / one-timer, A flip pass / hold, start), `chgplayer`, `Sweepcheck`, `burst`
 
 ## Phase 5. Checking and fighting
 
 - [x] `Checking`: `newcheck`, `checkint`/`checkint_ci` (goalie contact, interference), `CCStart`/`CheckingCalc` (body checks), `checkagr`, `holdcheck`, `Bcheck`, `holdplayer`/`Acheck`
 - [x] `FallDown`, `FallList`, board pins (`sub_FEB54`), injuries (`setInjuryType`), `wallcollduringcheck`
-- [ ] `burst` (body-check charge) and `check4check` (CPU) with the input and AI ports
+- [x] `burst` (body-check charge); `check4check` (CPU) comes with the AI port
 - [ ] `checkfight` L49544, `fightinput` L36560
 
 ## Phase 6. AI
@@ -188,3 +193,4 @@ These come from the listing. Add a fact here before code depends on it.
 
 - 2026-10-11: Puck ported (`PuckLogic`): pickup, steals, ricochets, goalie body box, nets, posts, goals with stats, offside and icing hooks, over the glass. Hotlist exported offline. All ten research specs landed. 191 checks pass.
 - 2026-10-11: Animation system ported (`Animator`, SPAList export). Sprite frames are live and `GetHot` reads the real Hotlist. Attribute word bits fixed (x flip is bit 11). 200 checks pass.
+- 2026-10-11: Shooting, passing, one-timers, bursts and pad input ported (`Shooting`, `InputLogic`, `PadState`); exact `sroot`. A shot taken through the pad scores on an empty net end to end. 226 checks pass.

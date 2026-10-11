@@ -34,9 +34,18 @@ func _physics_process(delta: float) -> void:
 		world.step(1)
 	stepped.emit()
 
+## Gives pad k (port k + 1) object `index` and its team.
+func assign_pad(k: int, index: int) -> void:
+	var o := world.objects[index]
+	world.cont_team[k] = 2 if o.away() else 1
+	world.set_c_player(k, o)
+
 func _read_pads() -> void:
 	for i in pad_ports:
 		var port: int = pad_ports[i]
-		var o := world.objects[i]
-		o.set_flag(SimObject.PF_JOYCON, port > 0)
-		world.joy[i] = PadInput.direction(port)
+		var k := port - 1
+		if k < 0 or k > 1:
+			continue
+		if world.cont_team[k] == 0:
+			assign_pad(k, i)
+		world.pads[k].held = PadInput.held_bits(port)

@@ -33,16 +33,21 @@ const SF2_PWRTM := 1 << 6    ## 0 home on the power play, 1 away
 ## sflags3 bits.
 const SF3_FACEOFF_WIN := 1 << 4
 const SF3_PENSEC := 1 << 6
+## word_FFC2F6.
+const C2F6_FLIP := 1 << 3     ## flip-pass request (A with the puck)
+const C2F6_TOPSHELF := 1 << 4 ## in-close top-shelf shot (prepshot)
 ## word_FFC2F4.
 const C2F4_GOAL := 1 << 0
 const C2F4_PS_GOAL := 1 << 5
 ## word_FFC2F8.
 const C2F8_ONETIMER_SHOT := 1 << 1
+const C2F8_HIGH_DUMP := 1 << 2 ## flip pass is the high dump ($3A apex)
 const C2F8_NET := 1 << 4     ## net collision: wallcoll consumes it and skips the wall bit
 const C2F8_SLOT := 1 << 5    ## puck carrier in the slot (setSlotBit)
 ## word_FFC2FA.
 const C2FA_SHOOTOUT := 1 << 0
 const C2FA_BREAKAWAY := 1 << 4
+const C2FA_PS_INTRO := 1 << 7  ## penalty-shot / shootout intro screen up
 ## byte_FFC2FE.
 const C2FE_PS_GOAL := 1 << 0
 const C2FE_GOAL_TOGGLE := 1 << 3
@@ -50,6 +55,7 @@ const C2FE_ONETIMER_TOUCH := 1 << 7
 ## BA_PS_flags.
 const BA_LIVE := 1 << 2
 const BA_AWARDED := 1 << 3
+const BA_STARTED := 1 << 5   ## the one PS pass or shot has been used
 ## iflags (icing).
 const IF_CGL := 1 << 0
 const IF_DIR := 1 << 1
@@ -86,6 +92,8 @@ var steering: SkaterSteering
 var collisions: Collisions
 var checking: Checking
 var puck_logic: PuckLogic
+var shooting: Shooting
+var input: InputLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
 ## updateanim with the SPAList data. When the data file is missing (no extraction run),
@@ -110,6 +118,7 @@ var sflags: int = 0
 var sflags2: int = 0
 var sflags3: int = 0
 var f_c2f4: int = 0
+var f_c2f6: int = 0
 var f_c2f8: int = 0
 var f_c2fa: int = 0
 var f_c2fe: int = 0
@@ -127,8 +136,10 @@ var clock_frac: int = 0
 ## (L975179) sets bit 1 every loop and its clear path is dead code, so in 94 the boost
 ## (+2 agility, +2 speed in playeracc; -2 in Bcheck) is always on.
 var crowd_boost: bool = true
-## byte_FFC2FC bit 4: line changes off (energy ignored).
-var line_changes_off: bool = false
+## byte_FFC2FC bit 4: "auto lines" (OptLine 2): no fatigue, energy reads as $1000.
+var no_fatigue: bool = false
+## OptLine == 0: line changes on (burst drains energy only then).
+var opt_line_on: bool = true
 ## OptPen: penalties on.
 var opt_pen: bool = true
 ## Which team each pad controls (cont1team, cont2team: 0 none, 1 home, 2 away) and the
@@ -163,6 +174,31 @@ var ltplayer: int = 0
 var lastplayer: int = -1
 var passplayer: int = -1
 var shotplayer: int = 0
+## Passing and shooting: direction 0-7 (8 none) and speed (passdir, passspeed).
+var passdir: int = 8
+var passspeed: int = 0
+## One-timer: shooter (onetimerplayer, -1 none), word_FFBF76 state, and the pad that
+## asked for it (inputjoy, -1 = CPU).
+var onetimerplayer: int = -1
+var onetimer_state: int = 0
+var inputjoy: int = -1
+## Flip pass target (word_FFD414/416) and apex height (word_FFD418).
+var flip_target: Vector2i = Vector2i.ZERO
+var flip_apex: int = 0x12
+## Penalty shot / shootout: CPU script shot direction (word_FFDA1A), attempt timer
+## (word_FFC31C) and intro countdown (word_FFC31A).
+var ps_script_dir: int = 8
+var ps_timer: int = 0
+var ps_intro: int = 0
+## Pads 1 and 2, the per-pad B and A counters (word_FFBF06, word_FFD41E bytes), the
+## faceoff grace countdown (word_FFD412), Auto Goalie per pad (word_FFD05A/C) and the
+## faceoff pull directions (fodir1 bottom, fodir2 top).
+var pads: Array[PadState] = [PadState.new(), PadState.new()]
+var b_cnt: PackedInt32Array = PackedInt32Array([0x11, 0x11])
+var a_timer: PackedInt32Array = PackedInt32Array([0, 0])
+var faceoff_grace: int = 0
+var auto_goalie: Array[bool] = [true, true]
+var fodir: PackedInt32Array = PackedInt32Array([-1, -1])
 ## Icing: iflags bits and the last toucher (icingPlayer).
 var iflags: int = 0
 var icing_player: int = 0
@@ -205,8 +241,10 @@ signal penalty_called(id: int, offender: int)
 signal goal_scored(team: int, rec: Dictionary)
 ## The home goal song (ChooseSong after a home goal).
 signal goal_song
-## puckstick handed a loose puck to a one-timer shooter (onetimershot, Phase 4).
+## puckstick handed a loose puck to a one-timer shooter (onetimershot).
 signal onetimer_shot(index: int)
+## Start pressed on pad k.
+signal pause_requested(k: int)
 
 func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	settings = p_settings if p_settings != null else SimSettings.new()
@@ -233,6 +271,12 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	collisions = Collisions.new(self)
 	checking = Checking.new(self)
 	puck_logic = PuckLogic.new(self)
+	shooting = Shooting.new(self)
+	input = InputLogic.new(self)
+	asstab[Shooting.ASS_SHOOT] = func(o: SimObject, d7: int) -> void: shooting.assshoot(o, d7)
+	asstab[Shooting.ASS_PASSREC] = func(o: SimObject, d7: int) -> void: shooting.asspassrec(o, d7)
+	asstab[Shooting.ASS_ONETIMER] = func(o: SimObject, d7: int) -> void: shooting.assonetimer(o, d7)
+	onetimer_shot.connect(func(i: int) -> void: shooting.onetimershot(objects[i]))
 	asstab[PuckLogic.ASS_PUCKNORM] = func(o: SimObject, d7: int) -> void: puck_logic.pucknorm(o, d7)
 	asstab[PuckLogic.ASS_PUCKSHADOW] = func(o: SimObject, _d7: int) -> void: puck_logic.puckshadow(o)
 	asstab[PuckLogic.ASS_PUCKUNFLIP] = func(o: SimObject, _d7: int) -> void: puck_logic.puckunflip(o)
@@ -251,13 +295,17 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic]:
+	for m in [collisions, checking, puck_logic, shooting, input]:
 		if m:
 			m.w = null
 	collisions = null
 	checking = null
 	puck_logic = null
+	shooting = null
+	input = null
 	asstab.clear()
+	for c in onetimer_shot.get_connections():
+		onetimer_shot.disconnect(c["callable"])
 
 func puck() -> SimObject:
 	return objects[PUCK]
@@ -320,8 +368,7 @@ func update_players(d7: int) -> void:
 		o.spa_restarted = false
 		_tick_timers(o, d7)
 		_integrate(o, d7)
-		if o.index < 12 and o.flags & SimObject.PF_JOYCON:
-			doinput(o, d7)
+		_dispatch_pads(o, d7)
 		_assignment(o, d7)
 		# Clear wallcos/wallsin, then checkcoll if the pixel position changed.
 		o.wall = Vector2i.ZERO
@@ -388,10 +435,20 @@ func _integrate(o: SimObject, d7: int) -> void:
 		if n <= 3:
 			sound.emit(0x2C + n)
 
-## doinput for a pad player. The full button handling arrives with the input port;
-## for now the stick drives doplayeracc.
-func doinput(o: SimObject, d7: int) -> void:
-	skate(o, joy[o.index], d7)
+## updateplayers L35567-35597: the faceoff grace countdown (once per processed object,
+## as retail), then doinput for the object a pad controls.
+func _dispatch_pads(o: SimObject, d7: int) -> void:
+	if sflags2 & SF2_FACEOFF == 0 and faceoff_grace != 0:
+		faceoff_grace -= 1
+		if faceoff_grace <= 0:
+			faceoff_grace = 0
+			b_cnt[0] = 0x11
+			b_cnt[1] = 0x11
+	for k in 2:
+		if c_player[k] == o.index:
+			pads[k].read()
+			input.doinput(o, pads[k], k, d7)
+			return
 
 ## The assignment call: asstab[asslist[assnum]]. Skaters without an assignment but with
 ## a stick value in `joy` (tests, sandbox) skate with it.
@@ -401,6 +458,52 @@ func _assignment(o: SimObject, d7: int) -> void:
 		asstab[id].call(o, d7)
 	elif o.index < 12 and not o.joypad() and joy[o.index] != SkaterSteering.JOY_NONE:
 		skate(o, joy[o.index], d7)
+
+## Setplass (L51533): the default assignment for the position (_alist L51542).
+const ALIST: Array[int] = [0x0E, 0x02, 0x02, 0x03, 0x05, 0x03, 0x05]
+
+func setplass(o: SimObject) -> void:
+	if o.position < 0:
+		return
+	assreplace(o, ALIST[clampi(o.position, 0, 6)])
+
+## assnothing (L38275): locked or pad players do nothing; others glide to a stop.
+func assnothing(o: SimObject, d7: int) -> void:
+	if o.locked() or o.joypad():
+		return
+	skate(o, SkaterSteering.JOY_NONE, d7)
+
+## The goalie of team (position 0 among its six objects), or null.
+func goalie_of(team: int) -> SimObject:
+	for i in 6:
+		var o := objects[team * 6 + 5 - i]
+		if o.position == SimObject.POS_GOALIE:
+			return o
+	return null
+
+## getpde / setpde: raw stored energy of a roster slot ($1000 if no slot).
+func energy_raw(o: SimObject) -> int:
+	if o.index > 11 or not TeamStats.valid_pnum(o.pnum):
+		return 0x1000
+	return stats[o.team()].energy[o.pnum]
+
+func set_energy(o: SimObject, e: int) -> void:
+	if o.index <= 11 and TeamStats.valid_pnum(o.pnum):
+		stats[o.team()].energy[o.pnum] = maxi(e, 0)
+
+## Hooks filled by later ports: the line-change menu (SetLCmode, lineinput), the
+## offside signal check (checkob) and the goalie save (goaliesave).
+func set_lc_mode(_o: SimObject) -> void:
+	pass
+
+func lineinput(_o: SimObject, _d1: int, _k: int) -> void:
+	pass
+
+func checkob(_o: SimObject) -> void:
+	pass
+
+func goalie_save(_o: SimObject) -> void:
+	pass
 
 ## assreplace (L43210): replace the current assignment and flag it new.
 func assreplace(o: SimObject, id: int) -> void:
@@ -442,7 +545,7 @@ func skater_view(o: SimObject) -> SkaterMotion.Skater:
 	s.energy = energy_of(o)
 	s.is_goalie = o.is_goalie()
 	s.crowd_boost = crowd_boost
-	s.ignore_energy = line_changes_off
+	s.ignore_energy = no_fatigue
 	s.joypad = o.joypad()
 	s.has_puck = puckc == o.index
 	s.fight_injured = o.flags2 & SimObject.PF2_FIGHT_HURT != 0
@@ -451,7 +554,7 @@ func skater_view(o: SimObject) -> SkaterMotion.Skater:
 ## Energy of a player (team struct $32 + 2 * pnum); $1000 with line changes off or for
 ## objects without a roster slot.
 func energy_of(o: SimObject) -> int:
-	if line_changes_off or o.index > 11 or not TeamStats.valid_pnum(o.pnum):
+	if no_fatigue or o.index > 11 or not TeamStats.valid_pnum(o.pnum):
 		return 0x1000
 	return stats[o.team()].energy[o.pnum]
 

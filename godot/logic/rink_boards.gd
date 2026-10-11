@@ -73,12 +73,43 @@ static func straight_normal(pos: Vector2i, radius: Vector2i) -> Vector2i:
 		return Vector2i(-ONE, 0)
 	return Vector2i.ZERO
 
-## sroot (L44215) returns an integer square root. Retail iterates Newton steps; floor of
-## the real root matches it except possibly by 1 near large perfect squares.
+## sroot (L44215), exactly: odd-number subtraction up to $640, bisection above $F00000,
+## Newton (up to 10 steps, not always the floor) in between. n is an unsigned long.
 static func sroot(v: int) -> int:
-	if v <= 0:
+	var n := v & 0xFFFFFFFF
+	if n == 0:
 		return 0
-	return int(floor(sqrt(float(v))))
+	if n <= 0x640:
+		var d1 := -1
+		while true:
+			d1 += 2
+			var borrow := n < d1
+			n -= d1
+			if borrow:
+				break
+		return d1 >> 1
+	if n > 0xF00000:
+		var lo := 0
+		var hi := 0xFFFF
+		while true:
+			var mid := (lo + hi) >> 1
+			if mid == lo:
+				return lo
+			if n >= mid * mid:
+				lo = mid
+			else:
+				hi = mid
+	var g := ((n >> 8) + 2) & 0xFFFF
+	for _i in 10:
+		var p := g
+		var q := n / p
+		if q > 0xFFFF:
+			# divu overflow leaves the dividend; its low word feeds the add.
+			q = n & 0xFFFF
+		g = ((q + p) & 0xFFFF) >> 1
+		if g == p:
+			break
+	return g
 
 ## wallcoll for a skater. vel is rvu. Returns the bounce result. Retail stores the
 ## normal first, so it is set even when the velocity is left alone.

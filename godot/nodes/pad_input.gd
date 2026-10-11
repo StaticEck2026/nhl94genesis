@@ -26,3 +26,28 @@ static func pressed(port: int, button: String) -> bool:
 
 static func just_pressed(port: int, button: String) -> bool:
 	return port > 0 and Input.is_action_just_pressed("p%d_%s" % [port, button])
+
+## The pad as retail bits (PadState: U D L R B C A Start), active high.
+static func held_bits(port: int) -> int:
+	if port <= 0:
+		return 0
+	var p := "p%d_" % port
+	var bits := 0
+	var v := Input.get_vector(p + "left", p + "right", p + "up", p + "down", DEADZONE)
+	if v.y < -DEADZONE * 0.5:
+		bits |= PadState.UP
+	if v.y > DEADZONE * 0.5:
+		bits |= PadState.DOWN
+	if v.x < -DEADZONE * 0.5:
+		bits |= PadState.LEFT
+	if v.x > DEADZONE * 0.5:
+		bits |= PadState.RIGHT
+	if Input.is_action_pressed(p + "b"):
+		bits |= PadState.B
+	if Input.is_action_pressed(p + "c"):
+		bits |= PadState.C
+	if Input.is_action_pressed(p + "a"):
+		bits |= PadState.A
+	if Input.is_action_pressed(p + "start"):
+		bits |= PadState.START
+	return bits

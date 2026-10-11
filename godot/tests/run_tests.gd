@@ -55,6 +55,13 @@ func _initialize() -> void:
 		"test_offside",
 		"test_anim_timing",
 		"test_anim_loop_and_flags",
+		"test_pad_edges",
+		"test_shot_speed",
+		"test_lead_pass",
+		"test_blind_pass",
+		"test_burst",
+		"test_b_tap_switches",
+		"test_pad_shot_scores",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -785,5 +792,127 @@ func test_anim_loop_and_flags() -> bool:
 	f.set_spa(0x50C)
 	w.animator.update(f, 1, false)
 	eq(f.frame, 0x1F, "glide dir 6 frame when x-flipped facing 2")
+	w.dispose()
+	return true
+
+func test_pad_edges() -> bool:
+	var p := PadState.new()
+	p.held = PadState.B | PadState.UP
+	p.read()
+	eq(p.d1 & PadState.B, PadState.B, "new press")
+	eq(p.dir(), 0, "up is direction 0")
+	p.read()
+	eq(p.d1 & PadState.B, 0, "held, not new")
+	eq(p.d3 & PadState.B, PadState.B, "held")
+	p.held = PadState.UP | PadState.DOWN | PadState.RIGHT
+	p.read()
+	eq(p.d2 & PadState.B, PadState.B, "release shows as changed")
+	eq(p.dir(), 3, "U+D+R cleans to down-right (retail quirk)")
+	return true
+
+## doshot with a full 35 charge, shotspd 30, full energy, aimed straight (highlight mode
+## makes it perfect): ps = 35 * 35 * $5249 >> 16 = 393, speed 393 * 68 = 26724.
+func test_shot_speed() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var o := w.place(4, Vector2i(0, -20), SimObject.POS_C, false, true)
+	o.shotspd = 30
+	o.flags |= SimObject.PF_JOYCON
+	w.drop_puck(Vector2i(0, 0))
+	w.puckc = 4
+	w.gmode |= HockeyWorld.GM_HL
+	w.passdir = 0
+	w.passspeed = 35
+	w.shooting.doshot(o)
+	eq(w.passspeed, 393, "shot power")
+	eq(w.puck().vel, Vector2i(0, 26724), "straight at the goal line")
+	# z 12: (12 * 393 * 68) / 264 + 264 * 2867 / 393 = 1214 + 1925.
+	eq(w.puck().zvel, 3139, "elevation to 12 px at the goal line")
+	eq(w.puckc, -1, "released")
+	check(w.sflags2 & HockeyWorld.SF2_SHOT != 0, "shot flag")
+	w.dispose()
+	return true
+
+func test_lead_pass() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var a := w.place(4, Vector2i(0, 0), SimObject.POS_C, false, true)
+	var b := w.place(3, Vector2i(0, 100), SimObject.POS_LW, false, true)
+	w.drop_puck(Vector2i(0, 10))
+	w.puckc = 4
+	w.passdir = 0
+	w.shooting.dopass(a)
+	eq(w.passplayer, 3, "the teammate ahead is the receiver")
+	eq(b.asslist[b.assnum & 7], Shooting.ASS_PASSREC, "receiver gets asspassrec")
+	check(w.puck().vel.y > 0, "puck heads up the ice")
+	eq(w.lastplayer, 4, "lastplayer is the passer")
+	w.dispose()
+	return true
+
+## No teammate in the cone: the puck goes along passdir at 160 * 200 << 10 / 3000.
+func test_blind_pass() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var a := w.place(4, Vector2i(0, 0), SimObject.POS_C, false, true)
+	w.drop_puck(Vector2i(0, 10))
+	w.puckc = 4
+	w.passdir = 0
+	w.shooting.dopass(a)
+	eq(w.puck().vel, Vector2i(0, 10922), "blind pass speed")
+	eq(w.passplayer, -1, "no receiver")
+	w.dispose()
+	return true
+
+func test_burst() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var a := w.place(4, Vector2i(0, 0), SimObject.POS_C, false, true)
+	a.facing_fx = 2 << 16
+	w.shooting.burst(a)
+	# Line changes on: the burst drains $CC first, so (4096 - 204) >> 7 = 30.
+	eq(a.vel, Vector2i(6000, 0), "rested, line changes on: 200 * 30")
+	eq(a.spa, Shooting.SPA_BURST, "burst animation")
+	check(a.locked(), "locked during the burst")
+	var b := w.place(5, Vector2i(40, 0), SimObject.POS_RW, false, true)
+	b.facing_fx = 2 << 16
+	w.opt_line_on = false
+	w.shooting.burst(b)
+	eq(b.vel, Vector2i(6400, 0), "line changes off: no drain, 200 * 32")
+	w.dispose()
+	return true
+
+func test_b_tap_switches() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var far := w.place(4, Vector2i(0, -150), SimObject.POS_C, false, true)
+	var near := w.place(3, Vector2i(10, 10), SimObject.POS_LW, false, true)
+	w.drop_puck(Vector2i(0, 0))
+	w.cont_team[0] = 1
+	w.set_c_player(0, far)
+	w.faceoff_grace = 0
+	w.pads[0].held = PadState.B
+	w.step()
+	w.pads[0].held = 0
+	w.step()
+	eq(w.c_player[0], 3, "a B tap gives the pad the teammate nearest the puck")
+	check(near.joypad() and not far.joypad(), "pfjoycon moved")
+	w.dispose()
+	return true
+
+## End to end through the pad: hold C to wind up, release, and the shot goes into the
+## empty net (no goalie on either team; with the own goalie missing every shot is
+## perfect, a retail quirk).
+func test_pad_shot_scores() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var o := w.place(4, Vector2i(0, 150), SimObject.POS_C, false, true)
+	o.shotspd = 20
+	w.drop_puck(Vector2i(0, 160))
+	w.cont_team[0] = 1
+	w.set_c_player(0, o)
+	w.step()
+	eq(w.puckc, 4, "picked up")
+	w.pads[0].held = PadState.C
+	for i in 12:
+		w.step()
+	w.pads[0].held = 0
+	for i in 60:
+		w.step()
+	eq(w.shotplayer, 4, "he shot")
+	eq(w.score(0), 1, "and scored")
 	w.dispose()
 	return true

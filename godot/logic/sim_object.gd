@@ -30,6 +30,7 @@ const PF3_BREAKAWAY := 1 << 1
 const PF3_ONETIMER := 1 << 3 ## one-timer in progress
 const PF3_WALL := 1 << 4     ## hit the boards this loop
 const PF3_FALLING := 1 << 5
+const PF3_BLOCK_B := 1 << 6  ## the next B release does nothing (just given control, or B+C)
 
 # position ($34)
 const POS_OFF_ICE := -1
