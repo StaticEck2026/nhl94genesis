@@ -1069,6 +1069,32 @@ func set_c_player(k: int, o: SimObject) -> void:
 		o.flags |= SimObject.PF_JOYCON
 	c_player[k] = d0
 
+# --- the pause menu -------------------------------------------------------------------
+
+## sub_7E0E: the team of the pad that paused (home when that pad plays home, else away).
+func pause_team(k: int) -> int:
+	return 0 if cont_team[clampi(k, 0, 1)] == 1 else 1
+
+## Timeout ($9D7A, L34283): once a game per team; every slot of both teams is rested
+## (sub_13098 refills all 26). False when the team has used it.
+func timeout(team: int) -> bool:
+	var st := stats[team]
+	if st.flags30 & TeamStats.F30_TIMEOUT:
+		return false
+	st.flags30 |= TeamStats.F30_TIMEOUT
+	for s in stats:
+		s.energy.fill(0x1000)
+	return true
+
+## The pause menu's goalie control toggle ($FE1D8): the pausing pad's word_FFD05A /
+## word_FFD05C, or both when the two pads play for the same team.
+func toggle_goalie_control(k: int) -> void:
+	if cont_team[0] == cont_team[1]:
+		auto_goalie[0] = not auto_goalie[0]
+		auto_goalie[1] = not auto_goalie[1]
+	else:
+		auto_goalie[k] = not auto_goalie[k]
+
 ## AddPenalty / AddPenalty2 / PenShotChk / sub_1284A (GameRules).
 func add_penalty(id: int, offender: SimObject) -> void:
 	rules.add_penalty(id, offender)

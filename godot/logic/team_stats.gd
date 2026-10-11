@@ -62,6 +62,9 @@ var goalie_pulled: bool = false
 var flags30: int = 0
 const F30_LINE_REDRAW := 1 << 0
 const F30_LINE_MENU := 1 << 1
+## The team has used its timeout (pause menu, $9D7A): for the rest of the game its puck
+## chaser contains instead of chasing (assnearest L40770).
+const F30_TIMEOUT := 1 << 2
 const F30_CHAIN_RESET := 1 << 3
 const F30_OFFSIDE := 1 << 4
 ## $02E: the line-menu row picked last (A / B / C = 0-2).

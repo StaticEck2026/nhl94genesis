@@ -105,6 +105,7 @@ func _initialize() -> void:
 		"test_fight_to_penalties",
 		"test_title_screen",
 		"test_markers",
+		"test_pause_menu_actions",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -2215,5 +2216,51 @@ func test_markers() -> bool:
 	w.lines.asspenalty(c, 1)
 	w.update_players(1)
 	eq(w.marks[0], 3, "penalized player keeps the filled star")
+	w.dispose()
+	return true
+
+func test_pause_menu_actions() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	# sub_7E0E: pad 2 playing home pauses for home; a pad on the road (or none) for away.
+	w.cont_team[0] = 2
+	w.cont_team[1] = 1
+	eq(w.pause_team(0), 1, "pad 1 on the road: away menu")
+	eq(w.pause_team(1), 0, "pad 2 at home: home menu")
+	# Timeout: once per team; both teams rest.
+	w.stats[0].energy.fill(0x200)
+	w.stats[1].energy.fill(0x300)
+	check(w.timeout(1), "away calls its timeout")
+	check(w.stats[1].flags30 & TeamStats.F30_TIMEOUT != 0, "the timeout flag is set")
+	eq(w.stats[0].energy[5], 0x1000, "home rested")
+	eq(w.stats[1].energy[25], 0x1000, "away rested")
+	check(not w.timeout(1), "only one timeout")
+	check(w.stats[0].flags30 & TeamStats.F30_TIMEOUT == 0, "home still has its own")
+	# Change Goalie.
+	w.stats[0].goalie_pnum = 0
+	w.stats[0].goalie_pulled = false
+	eq(w.goalie.goalie_row(0), 1, "the starter is row 1")
+	w.goalie.change_goalie(0, 2)
+	eq(w.stats[0].goalie_pnum, 1, "row 2: the backup goes in")
+	eq(w.goalie.goalie_row(0), 2, "the list reopens on him")
+	w.goalie.change_goalie(0, 0)
+	eq(w.stats[0].goalie_pnum, -1, "row 0: no goalie")
+	check(w.goalie.goalie_pulled(0), "the net is empty")
+	eq(w.goalie.goalie_row(0), 0, "the list reopens on No Goalie")
+	# A CPU pull ($FFxx) ignores row 0 but a goalie row puts one back.
+	w.stats[1].goalie_pnum = 0
+	w.stats[1].goalie_pulled = true
+	w.goalie.change_goalie(1, 0)
+	eq(w.stats[1].goalie_pnum, 0, "row 0 during a CPU pull does nothing")
+	check(w.stats[1].goalie_pulled, "still pulled")
+	w.goalie.change_goalie(1, 1)
+	check(not w.stats[1].goalie_pulled and w.stats[1].goalie_pnum == 0, "row 1 puts the starter back")
+	# Goalie control: the pausing pad's word, or both when the pads share a team.
+	w.auto_goalie = [true, true]
+	w.toggle_goalie_control(0)
+	eq(w.auto_goalie, [false, true], "pad 1 only")
+	w.cont_team[1] = 2
+	w.toggle_goalie_control(1)
+	eq(w.auto_goalie, [true, false], "same team: both flip")
 	w.dispose()
 	return true

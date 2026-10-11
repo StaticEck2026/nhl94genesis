@@ -38,6 +38,8 @@ func _ready() -> void:
 	world.opt_pen = m.penalties
 	world.opt_offsides = m.offsides
 	world.opt_line_on = m.line_changes
+	world.no_fatigue = m.line_changes and m.auto_lines
+	world.auto_goalie = [m.auto_goalie, m.auto_goalie]
 	world.opt_fight = m.opt_fight()
 	world.cont_team[0] = 0
 	world.cont_team[1] = 0

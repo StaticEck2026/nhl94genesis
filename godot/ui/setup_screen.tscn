@@ -97,13 +97,6 @@ theme_override_font_sizes/font_size = 8
 button_pressed = true
 text = "Offs"
 
-[node name="LineChanges" type="CheckBox" parent="Margin/Rows/Options"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 8
-button_pressed = true
-text = "Lines"
-
 [node name="Shootout" type="CheckBox" parent="Margin/Rows/Options"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -116,6 +109,19 @@ layout_mode = 2
 size_flags_horizontal = 10
 theme_override_font_sizes/font_size = 8
 text = "Start"
+
+[node name="More" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+
+[node name="LineChanges" type="OptionButton" parent="Margin/Rows/More"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+
+[node name="GoalieControl" type="OptionButton" parent="Margin/Rows/More"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
 
 [node name="Patch" type="HBoxContainer" parent="Margin/Rows"]
 layout_mode = 2

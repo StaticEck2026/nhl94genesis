@@ -578,7 +578,7 @@ func _assnearest_move(o: SimObject, d7: int) -> void:
 		return
 	var st := w.stats[o.team()]
 	var contain := false
-	if st.flags30 & (1 << 2):
+	if st.flags30 & TeamStats.F30_TIMEOUT:
 		contain = true
 	elif w.puckc >= 0:
 		o.temp[2] = HockeyWorld.s16(o.temp[2] - d7)
@@ -596,7 +596,7 @@ func _assnearest_move(o: SimObject, d7: int) -> void:
 		y = ((0xF4 - f.y) >> 1) + f.y
 	else:
 		y = ((-f.y - 0xF4) >> 1) + f.y
-	if st.flags30 & (1 << 2):
+	if st.flags30 & TeamStats.F30_TIMEOUT:
 		if _n(o) > 0 and y >= 0x53:
 			y = 0x44
 		elif _n(o) < 0 and y <= -0x53:

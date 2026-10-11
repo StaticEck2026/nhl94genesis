@@ -547,6 +547,23 @@ func return_goalies() -> void:
 			continue
 		cp_goalie(team, w.foy)
 
+## Change Goalie ($9DE6, L34310): row 0 pulls the goalie for good ($FFFF, which
+## ReturnGoalies leaves alone), row n puts in the team's goalie n-1. Row 0 does nothing
+## while the CPU has him pulled ($FFxx < -1).
+func change_goalie(team: int, row: int) -> void:
+	var st := w.stats[team]
+	var d0 := row - 1
+	if d0 < 0 and st.goalie_pulled and st.goalie_pnum >= 0:
+		return
+	st.goalie_pnum = d0
+	st.goalie_pulled = false
+	w.lines.set_personel(team)
+
+## The row the Change Goalie list opens on: the goalie in net, or 0 when pulled.
+func goalie_row(team: int) -> int:
+	var st := w.stats[team]
+	return 0 if st.goalie_pnum < 0 or st.goalie_pulled else st.goalie_pnum + 1
+
 ## CPgoalie (L41898): pull only in the 3rd period, down by exactly two, with a minute or
 ## less left, and with y (puck or faceoff) in the attacking half.
 func cp_goalie(team: int, d1: int) -> void:

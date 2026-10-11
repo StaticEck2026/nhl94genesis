@@ -16,7 +16,9 @@ const GAME_SCENE := "res://scenes/game.tscn"
 @onready var _length: OptionButton = %PeriodLength
 @onready var _penalties: CheckBox = %Penalties
 @onready var _offsides: CheckBox = %Offsides
-@onready var _line_changes: CheckBox = %LineChanges
+## OptLine: On, Off, Auto. OptGoalie: Manual or Auto Control.
+@onready var _line_changes: OptionButton = %LineChanges
+@onready var _goalie_ctrl: OptionButton = %GoalieControl
 ## The Shootout play mode (OptPlayMode 4).
 @onready var _shootout: CheckBox = %Shootout
 @onready var _edition: OptionButton = %Edition
@@ -31,6 +33,11 @@ func _ready() -> void:
 	_edition.add_item("Retail '94")
 	_edition.add_item("'94-Fight patch")
 	_edition.select(Sim.match.edition if Sim.match else MatchConfig.Edition.FIGHT)
+	for t in ["Line changes: On", "Line changes: Off", "Line changes: Auto"]:
+		_line_changes.add_item(t)
+	for t in ["Goalie: Manual Control", "Goalie: Auto Control"]:
+		_goalie_ctrl.add_item(t)
+	_goalie_ctrl.select(1)
 	for f in ["Fighting: Off", "Fighting: On", "Fighting: On - Arcade Mode"]:
 		_fighting.add_item(f)
 	_fighting.select(MatchConfig.Fighting.ON)
@@ -120,7 +127,9 @@ func _on_start() -> void:
 	m.period_minutes = [5, 10, 20][_length.selected]
 	m.penalties = _penalties.button_pressed
 	m.offsides = _offsides.button_pressed
-	m.line_changes = _line_changes.button_pressed
+	m.line_changes = _line_changes.selected != 1
+	m.auto_lines = _line_changes.selected == 2
+	m.auto_goalie = _goalie_ctrl.selected == 1
 	m.shootout = _shootout.button_pressed
 	m.edition = _edition.selected as MatchConfig.Edition
 	m.fighting = _fighting.selected as MatchConfig.Fighting

@@ -21,6 +21,11 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 @export var penalties: bool = true
 @export var offsides: bool = true
 @export var line_changes: bool = true
+## OptLine 2, "Auto": line changes on, but nobody tires and the CPU changes every team's
+## lines (byte_FFC2FC bit 4).
+@export var auto_lines: bool = false
+## OptGoalie: true Auto Control (the CPU plays a pad team's goalie), false Manual.
+@export var auto_goalie: bool = true
 ## Shootout play mode (OptPlayMode 4): the whole game is a penalty-shot shootout.
 @export var shootout: bool = false
 @export var edition: Edition = Edition.FIGHT
