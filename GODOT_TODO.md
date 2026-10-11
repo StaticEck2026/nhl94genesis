@@ -188,6 +188,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Setup screen: Team 1 / Team 2 `OptionButton`, line `ItemList` (the real Sc1-PK2 lines), reads `TeamData`
 - [x] HUD: clock, score, period, power play, referee calls, penalties, intermission and final banners
 - [x] Pause menu (Start; during an intermission Start resumes play instead)
+- [x] Line-change box (`sub_B92E`): rows A / B / C with the line each sends and its energy, while a pad's menu is open
 
 ## Log
 

@@ -26,6 +26,10 @@ func bind(p_game: HockeyGame) -> void:
 	rw.name = "RefWindow"
 	add_child(rw)
 	rw.setup(game)
+	var lm := LineMenu.new()
+	lm.name = "LineMenu"
+	add_child(lm)
+	lm.setup(game)
 	var fw := FaceoffWindow.new()
 	fw.name = "FaceoffWindow"
 	add_child(fw)
