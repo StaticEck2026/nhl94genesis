@@ -56,8 +56,6 @@ const PEN_ICING := 0x0C
 const PEN_GOAL := 0x0E
 const PEN_OFFSIDE := 0x10
 const PEN_DELAY := 0x2C
-## unk_1913A: penalty-shot variant per foul (shifted one entry, quirk Q1); -1 none.
-const PS_MAP := {0x14: 0x38, 0x16: 0x3C, 0x18: 0x36, 0x1A: 0x3A, 0x1C: 0x2E, 0x1E: 0x30, 0x20: 0x34}
 ## Regular-season overtime is always 10:00.
 const OT_LENGTH := 0x258
 ## The puck's faceoff and shootout assignments.
@@ -170,11 +168,6 @@ func add_penalty2(id: int, a3: SimObject) -> void:
 func clr_pen_buf() -> void:
 	for i in 32:
 		pen_buf[i] = 0
-
-## PenShotChk (L46100): a foul on a breakaway skater may become a penalty shot. The
-## shootout port awards it; until then the foul stands.
-func pen_shot_chk(id: int, _victim: SimObject) -> int:
-	return id
 
 # --- PenaltyManager ----------------------------------------------------------------------
 
@@ -370,12 +363,19 @@ func limitfo() -> void:
 
 ## chkprogress (L46014): count down the stoppage, then present it.
 func chkprogress(d7: int) -> void:
-	if w.ba_ps_flags & HockeyWorld.BA_LIVE and w.ps_intro >= 0:
-		w.ps_intro -= 1
-		if w.ps_intro < 0:
+	# A penalty shot or shootout attempt: the intro box, then its countdown (per frame).
+	if w.ba_ps_flags & HockeyWorld.BA_LIVE:
+		if w.ba_ps_flags & ShootoutLogic.BA_INTRO:
+			w.shootout.show_intro()
+			w.ba_ps_flags &= ~ShootoutLogic.BA_INTRO
+			return
+		if w.ps_intro >= 0:
+			w.ps_intro -= 1
+			if w.ps_intro >= 0:
+				return
 			w.sflags2 &= ~SF2_NOREC
 			w.f_c2fa &= ~HockeyWorld.C2FA_PS_INTRO
-		return
+			return
 	if w.gmode & HockeyWorld.GM_PEN == 0:
 		return
 	if pencntdwn < 0:
@@ -515,6 +515,8 @@ func set_pa(id: int) -> void:
 		return
 	refstep = 0
 	ref_message.emit(entry(id)[2])
+	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT and w.f_c2fa & ShootoutLogic.C2FA_DECIDED:
+		ref_message.emit(w.shootout.winner_text())
 	_set_pa2()
 
 ## setPA2: the next script step.
@@ -528,6 +530,8 @@ func _set_pa2() -> void:
 	if refstep >= script.size():
 		refstep = -1
 	refcnt = step[1]
+	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT and w.f_c2fa & ShootoutLogic.C2FA_DECIDED:
+		refcnt *= 2
 	w.ref_signal.emit(step[0])
 
 ## UpdatePA (L46523).
@@ -600,8 +604,16 @@ func vblank_tick() -> void:
 		return
 	if w.f_c2fa & (1 << 2) == 0 and w.gmode & HockeyWorld.GM_CLOCK:
 		return
-	if w.f_c2fa & (1 << 1):
-		# The 25-second penalty-shot / shootout attempt clock (shootout port).
+	if w.f_c2fa & ShootoutLogic.C2FA_ATTEMPT_CLOCK:
+		# The 25-second attempt clock; the intro absorbs the ticks without counting.
+		var so := w.shootout
+		if so.ps_clock == 0:
+			return
+		var b := so.ps_clock_frac < 0xAAA
+		so.ps_clock_frac = (so.ps_clock_frac - 0xAAA) & 0xFFFF
+		if not b or w.f_c2fa & HockeyWorld.C2FA_PS_INTRO:
+			return
+		so.ps_clock -= 1
 		return
 	if w.gameclock == 0:
 		return
@@ -733,6 +745,8 @@ func start_per() -> void:
 	var id := ASS_PUCKFACEOFF
 	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT:
 		id = ASS_PUCKSHOOTOUT
+		w.shootout.ba_skater_offset = 8
+		w.ba_goalie = 11
 	w.assreplace(w.puck(), id)
 	w.sflags2 |= SF2_NOREC
 	w.crowd_excite = gamelevel << 4

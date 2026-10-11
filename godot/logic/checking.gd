@@ -172,10 +172,10 @@ func ccstart(a2: SimObject, a3: SimObject, d4: int) -> void:
 		# The check failed, but a charging or slashing call is still possible.
 		if checkagr(a3, a2) > 4 or w.gmode & HockeyWorld.GM_HL:
 			return
-		w.add_penalty(w.pen_shot_chk(PEN_CHARGING + (_vcounter() & 2), a2), a3)
+		w.add_penalty(w.pen_shot_chk(PEN_CHARGING + (_vcounter() & 2), a2, a3), a3)
 		return
 	if checkagr(a3, a2) <= 3 and w.gmode & HockeyWorld.GM_HL == 0:
-		w.add_penalty(w.pen_shot_chk(PEN_ROUGHING + (_vcounter() & 2), a2), a3)
+		w.add_penalty(w.pen_shot_chk(PEN_ROUGHING + (_vcounter() & 2), a2, a3), a3)
 	fall_down(a2, a3)
 
 ## checkagr (L48971): penalty roll for a3 fouling a2. A call happens when the result is
@@ -227,7 +227,7 @@ func holdcheck(a2: SimObject, a3: SimObject) -> void:
 	a2.set_spa(SPA_HOLD2 if a2.spa == SPA_HOLD_HIGH else SPA_HOLD_AFTER)
 	if checkagr(a2, a3) <= 6 and w.gmode & HockeyWorld.GM_HL == 0:
 		var id := PEN_HOLDING if a2.spa == SPA_HOLD2 else PEN_HOOKING
-		w.add_penalty(w.pen_shot_chk(id, a3), a2)
+		w.add_penalty(w.pen_shot_chk(id, a3, a2), a2)
 	w.collflag = -1
 
 ## Bcheck (L49103): a2 sweep-checks a3.
@@ -245,7 +245,7 @@ func bcheck(a2: SimObject, a3: SimObject) -> void:
 		return
 	fall_down(a3, a2)
 	if checkagr(a2, a3) <= 4:
-		w.add_penalty(w.pen_shot_chk(PEN_TRIPPING, a3), a2)
+		w.add_penalty(w.pen_shot_chk(PEN_TRIPPING, a3, a2), a2)
 	w.collflag = -1
 
 ## holdplayer (L36863): human A without the puck.

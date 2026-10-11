@@ -109,6 +109,7 @@ var roster: RosterLogic
 var rules: GameRules
 var faceoff: FaceoffLogic
 var lines: LineLogic
+var shootout: ShootoutLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
 ## updateanim with the SPAList data. When the data file is missing (no extraction run),
@@ -205,7 +206,7 @@ var flip_target: Vector2i = Vector2i.ZERO
 var flip_apex: int = 0x12
 ## Penalty shot / shootout: CPU script shot direction (word_FFDA1A), attempt timer
 ## (word_FFC31C) and intro countdown (word_FFC31A).
-var ps_script_dir: int = 8
+var ps_script_dir: int = 0
 var ps_timer: int = 0
 var ps_intro: int = 0
 ## Pads 1 and 2, the per-pad B and A counters (word_FFBF06, word_FFD41E bytes), the
@@ -321,10 +322,12 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	rules = GameRules.new(self)
 	faceoff = FaceoffLogic.new(self)
 	lines = LineLogic.new(self)
+	shootout = ShootoutLogic.new(self)
 	ai.register(asstab)
 	goalie.register(asstab)
 	faceoff.register(asstab)
 	lines.register(asstab)
+	shootout.register(asstab)
 	asstab[Shooting.ASS_SHOOT] = func(o: SimObject, d7: int) -> void: shooting.assshoot(o, d7)
 	asstab[Shooting.ASS_PASSREC] = func(o: SimObject, d7: int) -> void: shooting.asspassrec(o, d7)
 	asstab[Shooting.ASS_ONETIMER] = func(o: SimObject, d7: int) -> void: shooting.assonetimer(o, d7)
@@ -347,7 +350,7 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout]:
 		if m:
 			m.w = null
 	collisions = null
@@ -361,6 +364,7 @@ func dispose() -> void:
 	rules = null
 	faceoff = null
 	lines = null
+	shootout = null
 	asstab.clear()
 	for c in onetimer_shot.get_connections():
 		onetimer_shot.disconnect(c["callable"])
@@ -466,7 +470,9 @@ func setupice() -> void:
 		fresh.radius = Vector2i(row[6], row[7])
 		fresh.asslist[0] = row[8]
 		fresh.flags = row[9]
-		fresh.position = SimObject.POS_OFF_ICE if i < 12 else 0
+		# The struct clear leaves every position 0 until forcepldata (the shootout relies
+		# on it: its goalie objects are never given a position).
+		fresh.position = 0
 		if i < 12 and gmode & GM_DIR:
 			fresh.flags ^= SimObject.PF_GOAL
 		o.copy_from(fresh)
@@ -735,13 +741,12 @@ func average_energy(team: int) -> int:
 		n += 1
 	return total / n if n > 0 else 0
 
-## Penalty shot / shootout script (sub_FE8EC shoot-or-not, sub_FE864 waypoints).
-## Shootout port.
-func ps_should_shoot(_o: SimObject) -> bool:
-	return false
+## The CPU shooter's script in a penalty shot or shootout (sub_FE8EC, sub_FE864).
+func ps_should_shoot(o: SimObject) -> bool:
+	return shootout.ps_should_shoot(o)
 
-func ps_waypoint(_o: SimObject) -> Variant:
-	return null
+func ps_waypoint(o: SimObject) -> Variant:
+	return shootout.ps_waypoint(o)
 
 ## assreplace (L43210): replace the current assignment and flag it new.
 func assreplace(o: SimObject, id: int) -> void:
@@ -1013,20 +1018,18 @@ func add_penalty(id: int, offender: SimObject) -> void:
 func add_penalty2(id: int, offender: SimObject) -> void:
 	rules.add_penalty2(id, offender)
 
-func pen_shot_chk(id: int, victim: SimObject) -> int:
-	return rules.pen_shot_chk(id, victim)
+func pen_shot_chk(id: int, victim: SimObject, offender: SimObject = null) -> int:
+	return shootout.pen_shot_chk(id, victim, offender)
 
 func pp_goal(scoring_team: int) -> void:
 	rules.pp_goal(scoring_team)
 
-## sub_F2F4: penalty shot / shootout attempt-over check. Rules port.
+## sub_F2F4 / sub_F37C: the end of a penalty-shot or shootout attempt (ShootoutLogic).
 func ps_attempt_check() -> void:
-	pass
+	shootout.ps_attempt_check()
 
-## sub_F37C: end the penalty shot / shootout attempt. Rules port.
 func ps_attempt_end() -> void:
-	ba_ps_flags = 0
-	gmode |= GM_CLOCK
+	shootout.ps_attempt_end()
 
 ## sub_FEFF0: cancel a one-timer. Shooting port.
 func cancel_onetimer(o: SimObject) -> void:
