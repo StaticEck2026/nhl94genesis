@@ -208,6 +208,8 @@ func _setup(p: SimObject) -> void:
 	sh.spa = 0
 	sh.attribute = 0
 	p.attribute = 0
+	# "no fighting gloves" (glovecords cleared, L42066).
+	w.fight.clear_gloves()
 	w.sflags &= ~HockeyWorld.SF_SLOCK
 	for i in 101:
 		w.checkwindow(1)

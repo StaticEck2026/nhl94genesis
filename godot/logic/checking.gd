@@ -404,7 +404,8 @@ func _fall_anim(a2: SimObject, a3: SimObject, d1: int) -> int:
 	w.song.emit(SONG_CHEER if a2.away() else SONG_BOO)
 	return d1
 
-## setInjuryType (L49497). Returns the d1 it leaves (pnum * 2).
+## setInjuryType (L49497): the player is out for the period ($FFFD) or the game ($FFFC),
+## written to his tmpdst. Returns the d1 it leaves (pnum * 2); a0 is his team's stats.
 func set_injury_type(a2: SimObject, a3: SimObject) -> int:
 	a2.flags2 |= SimObject.PF2_UNAV
 	w.crowd_level += 0x12C
@@ -423,7 +424,7 @@ func set_injury_type(a2: SimObject, a3: SimObject) -> int:
 		game = true
 	w.injury_game = game
 	if pn >= 0 and pn < TeamStats.ROSTER:
-		st.player_status[pn] = TeamStats.STATUS_INJURED_GAME if game else TeamStats.STATUS_INJURED_PERIOD
+		st.tmpdst[pn] = TeamStats.TMPDST_INJURED_GAME if game else TeamStats.TMPDST_INJURED_PERIOD
 	return pn * 2
 
 # --- walls during checks, board pins --------------------------------------------------

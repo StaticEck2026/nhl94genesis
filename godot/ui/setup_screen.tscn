@@ -117,6 +117,19 @@ size_flags_horizontal = 10
 theme_override_font_sizes/font_size = 8
 text = "Start"
 
+[node name="Patch" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+
+[node name="Edition" type="OptionButton" parent="Margin/Rows/Patch"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+
+[node name="Fighting" type="OptionButton" parent="Margin/Rows/Patch"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+
 [node name="Status" type="Label" parent="Margin/Rows"]
 unique_name_in_owner = true
 layout_mode = 2

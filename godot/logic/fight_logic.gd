@@ -356,9 +356,14 @@ func fight_fall(loser: SimObject, winner: SimObject) -> void:
 	banner_cleared.emit()
 	injure(loser)
 
-## The fight injury: setInjuryType, then the slot is marked out for the game.
+## The fight injury: setInjuryType, then `move.w #$112C,$66(a0,d1.w)` replaces his
+## tmpdst: a 5:00 major ($12C) with bit 12, so InProgress keeps him off the strength
+## count and the expiry leaves $1000, out for the rest of the game ("Injury G").
 func injure(loser: SimObject) -> void:
-	w.checking.set_injury_type(loser, loser)
+	var d1 := w.checking.set_injury_type(loser, loser)
+	var pn := d1 >> 1
+	if pn >= 0 and pn < TeamStats.ROSTER:
+		w.stats[loser.team()].tmpdst[pn] = 0x112C
 	w.inj_countdown = 3
 
 # --- the others ------------------------------------------------------------------------------
@@ -456,6 +461,11 @@ func _fighter_line(o: SimObject) -> String:
 		if p:
 			name = "%d %s" % [p.jersey_number, p.full_name]
 	return "%s %s" % [name, abbr]
+
+## glovecords cleared (puckfaceoff2, puckpenshot).
+func clear_gloves() -> void:
+	glove_x = 0
+	glove_y = 0
 
 ## upgloves: the gloves-and-stick sprite's position, or null when none lie on the ice.
 func gloves_pos() -> Variant:

@@ -96,6 +96,13 @@ func _initialize() -> void:
 		"test_shootout_turns",
 		"test_penalty_shot_attempt",
 		"test_shootout_game",
+		"test_injury_sets_tmpdst",
+		"test_fight_assets",
+		"test_fight_off_in_retail",
+		"test_fight_starts",
+		"test_chk_fight_value",
+		"test_fightinput",
+		"test_fight_to_penalties",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -1869,5 +1876,272 @@ func test_shootout_game() -> bool:
 	for i in 120:
 		w.step()
 	eq(over[0], 1, "game over only once")
+	w.dispose()
+	return true
+
+# --- the fight patch ---------------------------------------------------------------------
+
+## A live game (rules on) of the fight patch's rosters with two skaters squared off at
+## centre ice: home object 2 and away object 8, both rated to fight.
+func _fight_world(opt_fight: int, seed: int = 0x2468) -> HockeyWorld:
+	var w := HockeyWorld.new(SimSettings.new(), seed)
+	w.roster.setup_teams(_fight_team("DET"), _fight_team("CHI"))
+	w.opt_fight = opt_fight
+	var drops := [0]
+	var count := func(_h: bool) -> void: drops[0] += 1
+	w.faceoff.faceoff_dropped.connect(count)
+	w.rules.start_game()
+	var f := 0
+	while drops[0] == 0 and f < 3000:
+		w.step()
+		f += 1
+	w.faceoff.faceoff_dropped.disconnect(count)
+	return w
+
+static func _fight_team(abbr: String) -> TeamData:
+	for t in MatchConfig.available_teams(MatchConfig.Edition.FIGHT):
+		if t.abbreviation == abbr:
+			return t
+	return null
+
+## Squares two opposing skaters up for checkfight.
+static func _square_up(w: HockeyWorld, a: SimObject, b: SimObject, hf: int = 14) -> void:
+	a.set_pos(Vector2i(-20, 40))
+	b.set_pos(Vector2i(-6, 40))
+	a.hf = hf
+	b.hf = hf
+	a.impact = 0x20
+	b.impact = 0x20
+	a.flags &= ~SimObject.PF_ALOCK
+	b.flags &= ~SimObject.PF_ALOCK
+	a.flags2 &= ~(SimObject.PF2_PEN | SimObject.PF2_FIGHT)
+	b.flags2 &= ~(SimObject.PF2_PEN | SimObject.PF2_FIGHT)
+	w.chk_cnt = 40
+
+## Retail setInjuryType writes the injury to tmpdst ($FFFD period, $FFFC game).
+func test_injury_sets_tmpdst() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	var v := w.place(8, Vector2i(0, 0), SimObject.POS_C, true, false)
+	w.setplayer(v, 5)
+	var checker := w.objects[2]
+	checker.hf = 0
+	var d1 := w.checking.set_injury_type(v, checker)
+	eq(d1, 10, "d1 = pnum * 2")
+	eq(w.stats[1].tmpdst[5], TeamStats.TMPDST_INJURED_PERIOD, "out for the period")
+	check(v.flags2 & SimObject.PF2_UNAV != 0, "unavailable")
+	checker.hf = 12
+	w.checking.set_injury_type(v, checker)
+	eq(w.stats[1].tmpdst[5], TeamStats.TMPDST_INJURED_GAME, "Fgt 12 >> 2 = 3: out for the game")
+	w.dispose()
+	return true
+
+## The extracted patch data: frames 846-869, the nine fight animations, the extra hot
+## spots, and the patched rosters (Probert's Fgt raised to 7 and back to the ROM byte).
+func test_fight_assets() -> bool:
+	check(SpriteAtlas.has_frame(FightLogic.SPF_GLOVES), "gloves frame 846")
+	for f in range(FightLogic.SPF_FIGHT, FightLogic.SPF_FIGHT + 23):
+		check(SpriteAtlas.has_frame(f), "fight frame %d" % f)
+	check(not SpriteAtlas.has_frame(870), "870 is the end marker")
+	var w := HockeyWorld.new(SimSettings.new())
+	for spa in [FightLogic.SPA_FIGHT, FightLogic.SPA_FGRAB, FightLogic.SPA_FHELD, FightLogic.SPA_FHIGH,
+			FightLogic.SPA_FLOW, FightLogic.SPA_FHITH, FightLogic.SPA_FHITL, FightLogic.SPA_BFALL, FightLogic.SPA_FFALL]:
+		check(w.animator.anims.has(spa), "animation $%X" % spa)
+	eq(w.hotlist.size(), 870, "hot spots 0-869")
+	eq(Vector2i(int(w.hotlist[847][0]), int(w.hotlist[847][1])), Vector2i(6, -2), "first fight frame's hot spot")
+	w.dispose()
+	var det := _fight_team("DET")
+	var probert: PlayerData
+	for p in det.players:
+		if p.full_name == "Bob Probert":
+			probert = p
+	check(probert != null, "Probert in the patched Detroit roster")
+	if probert:
+		eq(PlayerData.fight_nibble_of(probert.fighting), 7, "Fgt nibble 7 (retail 5)")
+		eq(PlayerData.fight_display(7), 100, "the patch's Fgt column shows 100")
+		eq(probert.rom_bytes()[4] & 0xE, 0xE, "rebuilds the H/F byte")
+	var retail_det := _team("DET")
+	for p in retail_det.players:
+		if p.full_name == "Bob Probert":
+			eq(PlayerData.fight_nibble_of(p.fighting), 5, "retail Fgt nibble 5")
+	return true
+
+## OptFight 0 (retail): checkfight never starts a fight.
+func test_fight_off_in_retail() -> bool:
+	var w := _fight_world(0)
+	var a := w.objects[2]
+	var b := w.objects[8]
+	_square_up(w, a, b)
+	w.fight.checkfight(a, b)
+	check(not a.fighting() and not b.fighting(), "no fight with the option off")
+	w.dispose()
+	return true
+
+## checkfight: the fight bits, the majors, the puck held, the camera locked, the others
+## watching, collflag set (no momentum exchange).
+func test_fight_starts() -> bool:
+	var w := _fight_world(1)
+	var a := w.objects[2]
+	var b := w.objects[8]
+	_square_up(w, a, b)
+	var started := []
+	w.fight.fight_started.connect(func(x: int, y: int) -> void: started.append([x, y]))
+	w.fight.checkfight(a, b)
+	check(a.fighting() and b.fighting(), "both fighting")
+	eq(started, [[2, 8]], "fight_started")
+	eq(w.chk_cnt, 0, "ChkCnt cleared")
+	eq(a.asslist[a.assnum], FightLogic.ASS_FIGHT, "assfight")
+	eq(b.asslist[b.assnum], FightLogic.ASS_FIGHT, "assfight")
+	eq(a.impactp, 8, "opponent")
+	eq(a.facing(), 2, "left fighter faces 2")
+	eq(b.facing(), 5, "right fighter faces 5")
+	check(not a.x_flip() and b.x_flip(), "the right one is mirrored")
+	eq(a.vel.x, -0x400, "backs off")
+	eq(b.vel.x, 0x400, "backs off")
+	eq(a.spa, FightLogic.SPA_FIGHT, "drops the gloves")
+	check(a.flags2 & SimObject.PF2_UNAV and a.flags2 & SimObject.PF2_NOCOLL, "unavailable, no collisions")
+	eq(w.puckc, 2, "puckc = the first fighter")
+	var p := w.puck()
+	check(p.flags2 & SimObject.PF2_FIGHT != 0, "the puck's fight bit")
+	eq(p.asslist[p.assnum], PuckLogic.ASS_PUCKUNFLIP, "puckunflip")
+	check(w.sflags & HockeyWorld.SF_SLOCK != 0, "camera locked")
+	eq(w.scroll_lock.y, 40, "between the fighters")
+	eq(w.collflag, -1, "no momentum exchange")
+	var fights := 0
+	for e in w.rules.pen_buf:
+		if (e >> 8) & 0xFF == FightLogic.PEN_FIGHTING:
+			fights += 1
+	eq(fights, 2, "two Fighting majors queued")
+	var watching := 0
+	for i in 12:
+		var o := w.objects[i]
+		if not o.fighting() and o.position > 0 and o.asslist[o.assnum] == FightLogic.ASS_FWATCH:
+			watching += 1
+	check(watching >= 6, "the other skaters watch: %d" % watching)
+	# No second fight while the puck's bit is set.
+	var c := w.objects[3]
+	var d := w.objects[9]
+	_square_up(w, c, d)
+	w.fight.checkfight(c, d)
+	check(not c.fighting(), "one fight at a time")
+	w.dispose()
+	return true
+
+## ChkFightValue: the starter needs Fgt >= threshold; the joiner Fgt >= the minimum and
+## >= the ChksF table less twice his checks. d0 is not restored between the two calls.
+func test_chk_fight_value() -> bool:
+	var w := _fight_world(1)
+	var a := w.objects[2]
+	var b := w.objects[8]
+	a.hf = 8
+	b.hf = 12
+	w.period_seconds = 300
+	eq(w.fight._period_index(), 1, "5:00 periods: chkcnttab entry 1 (30)")
+	w.period_seconds = 30
+	eq(w.fight._period_index(), 0, "0:30: entry 0 (20)")
+	eq(w.fight._period_index_chkf(), 1, "but chkftab entry 1 (moveq #2)")
+	w.period_seconds = 1200
+	eq(w.fight._period_index(), 3, "20:00: entry 3")
+	# Threshold 10: a (8) cannot start; d0 comes back unchanged.
+	eq(w.fight.chk_fight_value(a, b, 10), 10, "starter too weak: d0 kept")
+	check(not a.fighting(), "no fight")
+	# b starts (12 >= 10); a joins only with checks: 16 - 2 * ChksF <= 8 needs 4 checks.
+	w.stats[0].player_checks[a.pnum] = 3
+	eq(w.fight.chk_fight_value(b, a, 10), 16, "joiner short of checks: d0 = chkftab")
+	check(not b.fighting(), "no fight")
+	w.stats[0].player_checks[a.pnum] = 4
+	w.fight.chk_fight_value(b, a, 10)
+	check(a.fighting() and b.fighting(), "fight")
+	# Arcade halves the checks needed (16 -> 8): no checks at all are enough for Fgt 8.
+	var w2 := _fight_world(2)
+	var c := w2.objects[2]
+	var d := w2.objects[8]
+	c.hf = 8
+	d.hf = 12
+	w2.period_seconds = 1200
+	w2.stats[0].player_checks[c.pnum] = 0
+	w2.fight.chk_fight_value(d, c, 6)
+	check(c.fighting(), "Arcade: joins on Fgt alone")
+	w.dispose()
+	w2.dispose()
+	return true
+
+## fightinput: C throws high, B low, A grabs; nothing while squaring up.
+func test_fightinput() -> bool:
+	var w := _fight_world(1)
+	var a := w.objects[2]
+	var b := w.objects[8]
+	_square_up(w, a, b)
+	w.fight.checkfight(a, b)
+	w.rules.pencntdwn = 0x500
+	w.fight.fightinput(a, 8, PadState.C, 1)
+	eq(a.spa, FightLogic.SPA_FIGHT, "still dropping the gloves")
+	for pair in [[PadState.C, FightLogic.SPA_FHIGH], [PadState.B, FightLogic.SPA_FLOW], [PadState.A, FightLogic.SPA_FGRAB]]:
+		a.spa = FightLogic.SPA_FHITH
+		a.flags2 &= ~SimObject.PF2_AIP
+		w.fight.fightinput(a, 8, pair[0], 1)
+		eq(a.spa, pair[1], "button %x" % pair[0])
+		check(a.flags2 & SimObject.PF2_AIP != 0, "animation in progress")
+	a.spa = FightLogic.SPA_FHITH
+	a.flags2 &= ~SimObject.PF2_AIP
+	w.fight.fightinput(a, 8, 0, 1)
+	check(a.flags2 & SimObject.PF2_AIP == 0, "no button: AIP cleared")
+	w.dispose()
+	return true
+
+## A whole fight, CPU against CPU: the gloves drop, the banner shows, punches land until
+## one goes down, the countdown is cut, both majors are assessed (Fighting * for the one
+## who landed the last blow), they serve coincidental time, and the faceoff clears the
+## gloves.
+func test_fight_to_penalties() -> bool:
+	var w := _fight_world(1, 0x1357)
+	var a := w.objects[2]
+	var b := w.objects[8]
+	_square_up(w, a, b, 10)
+	var banner := []
+	w.fight.banner.connect(func(l: PackedStringArray) -> void: banner.append(l))
+	var assessed := []
+	w.rules.penalty_assessed.connect(func(t: int, p: int, id: int, m: int) -> void: assessed.append([t, p, id, m]))
+	var hits := [0]
+	w.sound.connect(func(id: int) -> void:
+		if id == FightLogic.SFX_HIT_HIGH or id == FightLogic.SFX_HIT_LOW:
+			hits[0] += 1)
+	var drops := [0]
+	w.faceoff.faceoff_dropped.connect(func(_h: bool) -> void: drops[0] += 1)
+	var slots := [a.pnum, b.pnum]
+	w.fight.checkfight(a, b)
+	var gloves := false
+	var f := 0
+	while drops[0] == 0 and f < 6000:
+		w.step()
+		f += 1
+		gloves = gloves or w.fight.gloves_pos() != null
+	check(gloves, "the gloves hit the ice")
+	eq(banner.size(), 1, "the banner, once")
+	if banner.size() > 0:
+		eq(banner[0][1], "vs", "two names around vs")
+	check(hits[0] > 0, "punches landed: %d" % hits[0])
+	var ids := []
+	for e in assessed:
+		if e[2] == FightLogic.PEN_FIGHTING or e[2] == FightLogic.PEN_FIGHTING_STAR:
+			ids.append(e[2])
+			eq(e[3], 5, "a major")
+	ids.sort()
+	eq(ids, [FightLogic.PEN_FIGHTING, FightLogic.PEN_FIGHTING_STAR], "Fighting and Fighting *")
+	check(drops[0] > 0, "play resumed with a faceoff (%d frames)" % f)
+	check(w.fight.gloves_pos() == null, "the faceoff picked up the gloves")
+	check(w.puck().flags2 & SimObject.PF2_FIGHT == 0, "Endfaceoff cleared the puck's bit")
+	# Coincidental majors: in the box, bit 14, not counted against the strength.
+	var home := w.stats[0].tmpdst[slots[0]]
+	var away := w.stats[1].tmpdst[slots[1]]
+	check(home > 0 and home & 0x4000 != 0, "home fighter serving coincidental time: %x" % home)
+	check(away > 0 and away & 0x4000 != 0, "away fighter serving coincidental time: %x" % away)
+	# The majors do not change the strength; one fight in four also draws an instigator
+	# minor, a real power play.
+	var short := [0, 0]
+	for e in assessed:
+		if e[2] == FightLogic.PEN_INSTIGATOR:
+			short[e[0]] += 1
+	eq(w.stats[0].on_ice - w.stats[1].on_ice, short[1] - short[0], "strength (instigators %s)" % [short])
 	w.dispose()
 	return true

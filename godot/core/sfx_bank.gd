@@ -18,6 +18,8 @@ const NAMES := {
 	0x05: "shot wiff; puck contact",
 	0x06: "stick deflection (puckstick)",
 	0x08: "puck hits the net frame, play live",
+	0x09: "punch, high (fight patch)", 0x0A: "punch, low (fight patch)",
+	0x0B: "fight over, away loser (fight patch)", 0x0C: "fight over, home loser (fight patch)",
 	0x0D: "injury (setInjuryType)",
 	0x0E: "puck over the glass (wallcollb2)",
 	0x10: "pass, soft", 0x11: "pass", 0x12: "pass", 0x13: "pass, hard",

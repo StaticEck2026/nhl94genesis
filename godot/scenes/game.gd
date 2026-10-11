@@ -20,7 +20,7 @@ func _enter_tree() -> void:
 	# Teams first: the rink and the views build their palettes from them in _ready.
 	var m: MatchConfig = Sim.match
 	if m.home_team == null or m.away_team == null:
-		var teams := MatchConfig.available_teams()
+		var teams := MatchConfig.available_teams(m.edition)
 		if teams.size() >= 2:
 			m.home_team = teams[0]
 			m.away_team = teams[1]
@@ -38,6 +38,7 @@ func _ready() -> void:
 	world.opt_pen = m.penalties
 	world.opt_offsides = m.offsides
 	world.opt_line_on = m.line_changes
+	world.opt_fight = m.opt_fight()
 	world.cont_team[0] = 0
 	world.cont_team[1] = 0
 	_take_pad(m.home_control, 1)

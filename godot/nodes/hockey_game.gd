@@ -105,10 +105,13 @@ func refresh_palette() -> void:
 	_palette_side = null
 
 ## Views for the nets, the puck shadow and the puck (in that order, so the puck draws
-## over its shadow when they share a screen row).
+## over its shadow when they share a screen row), and the fight patch's gloves.
 func add_object_views() -> void:
 	for i in [HockeyWorld.NET_TOP, HockeyWorld.NET_BOTTOM, HockeyWorld.SHADOW, HockeyWorld.PUCK]:
 		var v := SortObjectView.new()
 		v.name = "Object%d" % i
 		v.index = i
 		add_child(v)
+	var gv := GlovesView.new()
+	gv.name = "Gloves"
+	add_child(gv)

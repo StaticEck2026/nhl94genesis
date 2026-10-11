@@ -1,6 +1,9 @@
 extends Control
 ## Team select. Two OptionButtons over the TeamData resources, who controls each side,
 ## a line list for each team, and the main game options. Start loads the game scene.
+## The edition picks retail '94 or the fight patch ("NHL Hockey '94-Fight": its rosters
+## and the Fighting option, Off / On / On - Arcade Mode, default On); the patch's Fgt
+## column shows in each line's tooltip.
 
 const GAME_SCENE := "res://scenes/game.tscn"
 
@@ -16,16 +19,22 @@ const GAME_SCENE := "res://scenes/game.tscn"
 @onready var _line_changes: CheckBox = %LineChanges
 ## The Shootout play mode (OptPlayMode 4).
 @onready var _shootout: CheckBox = %Shootout
+@onready var _edition: OptionButton = %Edition
+@onready var _fighting: OptionButton = %Fighting
+@onready var _title: Label = $Margin/Rows/Title
 @onready var _start: Button = %Start
 @onready var _status: Label = %Status
 
 var _teams: Array[TeamData] = []
 
 func _ready() -> void:
-	_teams = MatchConfig.available_teams()
-	for t in _teams:
-		_home.add_item(t.abbreviation if t.abbreviation != "" else t.display_name())
-		_away.add_item(t.abbreviation if t.abbreviation != "" else t.display_name())
+	_edition.add_item("Retail '94")
+	_edition.add_item("'94-Fight patch")
+	_edition.select(MatchConfig.Edition.FIGHT)
+	for f in ["Fighting: Off", "Fighting: On", "Fighting: On - Arcade Mode"]:
+		_fighting.add_item(f)
+	_fighting.select(MatchConfig.Fighting.ON)
+	_edition.item_selected.connect(func(_i: int) -> void: _load_teams())
 	for o in [_home_ctrl, _away_ctrl]:
 		for c in MatchConfig.Driver.keys():
 			o.add_item(c.capitalize())
@@ -36,13 +45,40 @@ func _ready() -> void:
 	_home.item_selected.connect(func(_i: int) -> void: _fill_lines(_home, _home_lines))
 	_away.item_selected.connect(func(_i: int) -> void: _fill_lines(_away, _away_lines))
 	_start.pressed.connect(_on_start)
-	if _teams.size() > 1:
-		_away.select(1)
+	_load_teams()
+	_home.grab_focus()
+
+func _fight_edition() -> bool:
+	return _edition.selected == MatchConfig.Edition.FIGHT
+
+## The edition's rosters, keeping the teams picked so far; the patch renames the ROM
+## "NHL Hockey '94-Fight" (chg_header).
+func _load_teams() -> void:
+	var keep := [_abbr_at(_home), _abbr_at(_away)]
+	_teams = MatchConfig.available_teams(_edition.selected as MatchConfig.Edition)
+	for o in [_home, _away]:
+		o.clear()
+		for t in _teams:
+			o.add_item(t.abbreviation if t.abbreviation != "" else t.display_name())
+	_select_abbr(_home, keep[0], 0)
+	_select_abbr(_away, keep[1], 1)
+	_fighting.disabled = not _fight_edition()
+	_title.text = "NHL Hockey '94-Fight  -  Exhibition" if _fight_edition() else "NHL 94  -  Exhibition"
 	_fill_lines(_home, _home_lines)
 	_fill_lines(_away, _away_lines)
 	_status.text = "%d teams" % _teams.size() if _teams.size() > 0 else "No teams in res://data/teams yet"
 	_start.disabled = _teams.size() < 2
-	_home.grab_focus()
+
+func _abbr_at(o: OptionButton) -> String:
+	return _teams[o.selected].abbreviation if o.selected >= 0 and o.selected < _teams.size() else ""
+
+func _select_abbr(o: OptionButton, abbr: String, fallback: int) -> void:
+	for i in _teams.size():
+		if _teams[i].abbreviation == abbr and abbr != "":
+			o.select(i)
+			return
+	if _teams.size() > fallback:
+		o.select(fallback)
 
 func _fill_lines(team_pick: OptionButton, list: ItemList) -> void:
 	list.clear()
@@ -57,8 +93,22 @@ func _fill_lines(team_pick: OptionButton, list: ItemList) -> void:
 			var p := t.player(ln[pos] - 1)
 			names.append(p.full_name.get_slice(" ", p.full_name.get_slice_count(" ") - 1) if p else "-")
 		list.add_item("%s  %s" % [TeamData.LINE_NAMES[k], " - ".join(names)])
+		list.set_item_tooltip(list.item_count - 1, _line_tooltip(t, ln))
 	if list.item_count > 0:
 		list.select(0)
+
+## The line's six players; the fight patch adds its Fgt column (fgtdisp, 0-100).
+func _line_tooltip(t: TeamData, ln: PackedInt32Array) -> String:
+	var rows := []
+	for pos in [0, 1, 2, 3, 4, 5]:
+		var p := t.player(ln[pos] - 1)
+		if p == null:
+			continue
+		var row := "%s  #%d %s" % [["G", "LD", "RD", "LW", "C", "RW"][pos], p.jersey_number, p.full_name]
+		if _fight_edition() and not p.is_goalie():
+			row += "  Fgt %d" % PlayerData.fight_display(PlayerData.fight_nibble_of(p.fighting))
+		rows.append(row)
+	return "\n".join(rows)
 
 func _on_start() -> void:
 	var m := MatchConfig.new()
@@ -71,6 +121,8 @@ func _on_start() -> void:
 	m.offsides = _offsides.button_pressed
 	m.line_changes = _line_changes.button_pressed
 	m.shootout = _shootout.button_pressed
+	m.edition = _edition.selected as MatchConfig.Edition
+	m.fighting = _fighting.selected as MatchConfig.Fighting
 	var hs := _home_lines.get_selected_items()
 	var aws := _away_lines.get_selected_items()
 	m.home_line = hs[0] if hs.size() > 0 else 0

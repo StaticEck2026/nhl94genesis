@@ -239,6 +239,7 @@ func puckpenshot(p: SimObject) -> void:
 	w.sflags &= ~HockeyWorld.SF_PAUSE
 	w.iflags = 0
 	w.rules.refcnt = -1
+	w.fight.clear_gloves()
 	w.passplayer = -1
 	w.rules.set_hor(false)
 	w.camera = Vector2i.ZERO

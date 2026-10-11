@@ -12,9 +12,6 @@ const TMPDST_ON_ICE := -1
 const TMPDST_BENCH := -2
 const TMPDST_INJURED_PERIOD := -3
 const TMPDST_INJURED_GAME := -4
-## Status words written by setInjuryType.
-const STATUS_INJURED_PERIOD := 0xFFFD
-const STATUS_INJURED_GAME := 0xFFFC
 
 ## $1E: the team record (null in the sandbox and tests), $28 its team number, and
 ## the 8 roster bytes per slot rebuilt from it (setplayer reads these).
@@ -85,8 +82,6 @@ var player_assists: PackedInt32Array
 var player_shots: PackedInt32Array
 var player_pim: PackedInt32Array
 var player_checks: PackedInt32Array
-## Status words written by setInjuryType ($066 + 2 * pnum in the collision spec's terms).
-var player_status: PackedInt32Array
 ## $342 + 2 * gsp goals per period, $34A + 2 * gsp shots per period (gsp 0..3).
 var period_goals: PackedInt32Array = PackedInt32Array([0, 0, 0, 0])
 var period_shots: PackedInt32Array = PackedInt32Array([0, 0, 0, 0])
@@ -115,7 +110,6 @@ func _init() -> void:
 	player_shots = _filled(0)
 	player_pim = _filled(0)
 	player_checks = _filled(0)
-	player_status = _filled(0)
 	hotcold = PackedInt32Array()
 	hotcold.resize(ROSTER * 16)
 
@@ -149,7 +143,6 @@ func clear_game() -> void:
 	player_shots = _filled(0)
 	player_pim = _filled(0)
 	player_checks = _filled(0)
-	player_status = _filled(0)
 	period_goals = PackedInt32Array([0, 0, 0, 0])
 	period_shots = PackedInt32Array([0, 0, 0, 0])
 	pp_time = 0
