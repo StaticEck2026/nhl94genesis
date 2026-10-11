@@ -4,6 +4,18 @@ extends Resource
 ## Live tuning and module toggles. The game reads one shared instance (Sim.settings).
 ## The debug dock edits the same resource. Defaults are the retail values.
 
+static var _fallback: SimSettings
+
+## The Sim autoload's settings, or a default instance when the autoload is not running
+## (headless tests, editor previews).
+static func shared(from: Node) -> SimSettings:
+	var sim: Node = from.get_node_or_null("/root/Sim") if from != null and from.is_inside_tree() else null
+	if sim != null:
+		return sim.get("settings")
+	if _fallback == null:
+		_fallback = SimSettings.new()
+	return _fallback
+
 @export_group("Global")
 ## Scales delta for the whole simulation. 1.0 is retail speed.
 @export_range(0.1, 3.0, 0.05) var game_speed: float = 1.0:
@@ -45,7 +57,14 @@ extends Resource
 ## stopna deceleration per call, retail velocity units ($96).
 @export_range(0.0, 600.0, 1.0) var stop_decel: float = 150.0:
 	set(v): stop_decel = v; emit_changed()
-## Turn rate scale for doplayeracc. Not translated yet.
+## Turn rate when standing, facing units per loop before the x16 (doplayeracc $300).
+## $300 is 0.1875 of a 45 degree step, about 8.4 degrees per loop.
+@export_range(64, 2048, 1) var turn_rate_standing: int = 0x300:
+	set(v): turn_rate_standing = v; emit_changed()
+## Lowest turn rate at speed (doplayeracc $180), about 4.2 degrees per loop.
+@export_range(32, 2048, 1) var turn_rate_floor: int = 0x180:
+	set(v): turn_rate_floor = v; emit_changed()
+## Multiplier on the doplayeracc turn step. 1.0 is retail.
 @export_range(0.1, 4.0, 0.05) var turn_rate_scale: float = 1.0:
 	set(v): turn_rate_scale = v; emit_changed()
 

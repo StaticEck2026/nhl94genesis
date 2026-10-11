@@ -27,9 +27,9 @@ class Skater:
 	var speed: int = 0
 	## Energy from getpde. ENERGY_FULL is rested.
 	var energy: int = ENERGY_FULL
-	## playeracc adds agility + 16 again when $34(a3) is 0. The listing comments disagree
-	## on whether 0 is a skater or a goalie. See GODOT_TODO open questions.
-	var double_agility: bool = true
+	## $34(a3) == 0. doplayeracc sends these to goalieacc ("goalie is special").
+	## In playeracc a goalie gets agility twice plus 16, and the puck-carrier cuts.
+	var is_goalie: bool = false
 	## byte_FFC2FE bit 1 or byte_FFC2FC bit 6: crowd meter boost (+2 agility, +2 speed).
 	var crowd_boost: bool = false
 	## byte_FFC2FC bit 4: energy ignored (line changes off).
@@ -47,21 +47,41 @@ func agility_factor(s: Skater) -> int:
 	k += s.agility
 	if s.crowd_boost:
 		k += 2
-	if s.double_agility:
+	if s.is_goalie:
 		k += s.agility + 16
 	return k >> 1
 
-## Acceleration for one retail frame in rvu. dir is a dirtab entry in retail axes (Y up),
-## for example Vector2i(0, 200). frames is d7.
-func accel(s: Skater, dir: Vector2i, frames: int = 1) -> Vector2i:
-	var k := agility_factor(s)
+## dirtab (L43933) entry for a retail direction 0-7, scaled by settings.run_speed.
+func dirtab(dir: int) -> Vector2i:
+	var v: Vector2i = DIRTAB[posmod(dir, 8)]
+	if is_equal_approx(settings.run_speed, 200.0):
+		return v
 	var scale := settings.run_speed / 200.0
-	var ax := (roundi(dir.x * scale) * k) >> 5
-	var ay := (roundi(dir.y * scale) * k) >> 5
+	return Vector2i(roundi(v.x * scale), roundi(v.y * scale))
+
+## Retail dirtab: run speed 200 ($C8), 141 ($8D) on diagonals. Retail axes, Y up.
+const DIRTAB: Array[Vector2i] = [
+	Vector2i(0, 200), Vector2i(141, 141), Vector2i(200, 0), Vector2i(141, -141),
+	Vector2i(0, -200), Vector2i(-141, -141), Vector2i(-200, 0), Vector2i(-141, 141),
+]
+
+## Acceleration for one retail frame in rvu. dir is a dirtab entry in retail axes (Y up),
+## for example Vector2i(0, 200). frames is d7. wall is the last board normal from
+## RinkBoards (wallcos/wallsin); acceleration into that board is dropped per axis.
+func accel(s: Skater, dir: Vector2i, frames: int = 1, wall: Vector2i = Vector2i.ZERO) -> Vector2i:
+	var dx := dir.x
+	var dy := dir.y
+	# wallsin is -normal.x, wallcos is normal.y. Retail clears an axis that pushes into the board.
+	if wall.x != 0 and signi(dx) == signi(wall.x):
+		dx = 0
+	if wall.y != 0 and signi(dy) == signi(wall.y):
+		dy = 0
+	var k := agility_factor(s)
+	var ax := (dx * k) >> 5
+	var ay := (dy * k) >> 5
 	ax *= frames
 	ay *= frames
-	# Retail halves only when $34 is 0, the same flag that doubles agility.
-	if s.double_agility and s.joypad and s.has_puck:
+	if s.is_goalie and s.joypad and s.has_puck:
 		ax >>= 1
 		ay >>= 1
 	return Vector2i(ax, ay)
@@ -86,7 +106,7 @@ func max_speed_sq(s: Skater) -> int:
 		sq += (max_speed_sq_entry(i + 1) - sq) >> 1
 	if s.fight_injured:
 		sq >>= 3
-	if s.double_agility and s.has_puck:
+	if s.is_goalie and s.has_puck:
 		sq >>= 1
 	return sq
 
@@ -95,8 +115,8 @@ func max_speed(s: Skater) -> float:
 	return sqrt(float(max_speed_sq(s)))
 
 ## One playeracc call. Velocity only changes when the new speed is within the cap.
-func apply_accel(s: Skater, vel: Vector2i, dir: Vector2i, frames: int = 1) -> Vector2i:
-	var nv := vel + accel(s, dir, frames)
+func apply_accel(s: Skater, vel: Vector2i, dir: Vector2i, frames: int = 1, wall: Vector2i = Vector2i.ZERO) -> Vector2i:
+	var nv := vel + accel(s, dir, frames, wall)
 	var speed_sq := nv.x * nv.x + nv.y * nv.y
 	if speed_sq > max_speed_sq(s):
 		return vel
@@ -136,4 +156,5 @@ static func skater_from(p: PlayerData) -> Skater:
 	s.weight = p.raw_weight()
 	s.agility = p.raw_agility()
 	s.speed = p.raw_speed()
+	s.is_goalie = p.is_goalie()
 	return s
