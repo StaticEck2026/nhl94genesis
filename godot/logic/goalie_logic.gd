@@ -454,6 +454,7 @@ func goalieacc(o: SimObject, d0: int, d7: int) -> void:
 			w.playeracc(o, d0, d7)
 			return
 		stopna2(o)
+		w.playeracc(o, 8, d7)
 		return
 	if o.joypad():
 		if o.flags & SimObject.PF_NC == 0 and d0 != 8:

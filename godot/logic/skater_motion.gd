@@ -150,11 +150,13 @@ static func _toward_zero(v: int, d: int) -> int:
 static func wants_stop_anim(vel: Vector2i) -> bool:
 	return absi(vel.x) > 0x1000 or absi(vel.y) > 0x1000
 
-## Builds a Skater from a PlayerData resource.
+## Builds a Skater from a PlayerData resource (setplayer bytes, no form or bonuses).
 static func skater_from(p: PlayerData) -> Skater:
+	var o := SimObject.new()
+	o.load_player(p)
 	var s := Skater.new()
-	s.weight = p.raw_weight()
-	s.agility = p.raw_agility()
-	s.speed = p.raw_speed()
+	s.weight = o.weight
+	s.agility = o.legstr
+	s.speed = o.legspd
 	s.is_goalie = p.is_goalie()
 	return s

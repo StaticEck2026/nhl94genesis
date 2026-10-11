@@ -72,8 +72,8 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] `$34(a3)` meaning. 0 is a goalie (`doplayeracc` branches to `goalieacc` on 0). The extra agility and the carrier cuts in `playeracc` are goalie-only. Fixed in `SkaterMotion`.
 - [ ] Drag runs once per loop, not per vblank. Measure the usual `d7` in a game (1 or 2) so per-second drag matches retail feel.
 - [ ] `word_FFD06E` (step 22 instead of 17). Name the mode.
-- [ ] Energy (`getpde`/`setpde`, L51186-51229). Confirm full energy is `$1000` and map recovery to a fatigue curve.
-- [ ] Rating scale. Player bytes `$67` wgt, `$68` agl, `$69` spd, `$72` endurance. Confirm raw ranges (spd caps at `$1E`) and the 0-100 mapping in `PlayerData`.
+- [x] Energy (`getpde`/`setpde`, L51186-51229): full is `$1000`; drain and recovery ported as retail (data spec section 4).
+- [x] Rating scale: `$67` is the weight step x 8 (0-120); the rest are `AttributeCalc` 0-30. `PlayerData` uses the retail 25-99 screen values.
 - [x] Rink size in px and the origin. See the Rink row above.
 - [x] One-shot animation lengths: real SPAList timings now (the stand-in only runs when the data file is missing).
 - [x] Where stick value 9 (brake) comes from: never the pad (`jdtab` gives 0-8). `skateto` sends 9 when its target is within 12 px on both axes (L42978).
@@ -92,11 +92,11 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 1. Data layer
 
-- [x] `PlayerData` resource (0-100 ratings, raw converters)
-- [x] `TeamData` resource (roster, home/away colors, arena)
-- [ ] Rating extraction: read `teamdata94.asm` (offline) and write `data/teams/*.tres`. 26 teams + 2 All-Star teams. Anaheim and Florida are new. Dallas, not Minnesota.
-- [ ] Attribute math: `CalcAttrib` L966169, `AttributeCalc` L959917, `AttribWgtList` L966313, hot/cold `Create_HotCold_Table` L959871
-- [ ] Line data: `SetPersonel` L51236, `SetPlList` L51300, `setplayer` L51556 (home/away bonus, 3rd period bonus)
+- [x] `PlayerData`: ratings on the retail roster-screen scale (25-99), `rom_bytes()` rebuilds the 8 roster bytes exactly, `overall()` is the retail Overall
+- [x] `TeamData`: the retail record (roster groups, 8 lines, PP/PK/home/away bonuses, ticker rows, CRAM palettes)
+- [x] Extraction: `tools/extract/teams.py` reads the ROM team table at `$30E` (not `teamdata94.asm`, which is '93 data) and writes `godot/data/teams/*.tres`: 28 teams, 684 players, every nibble round-trips
+- [x] Attribute math: `AttributeCalc` L959917 (with its one-form-byte quirk), `checkattriblimits`, `Create_HotCold_Table` L959871; display math (`CalcAttrib` weights, `AttribAdjust`) for the UI
+- [x] `setplayer` L51556 (`RosterLogic`): PP / PK / home-away / 3rd-period bonuses, the `$73` wrap, sprite flip from handedness; team setup `sub_171BE` (RAM lines). `SetPersonel` / `SetPlList` come with the line-change port (Phase 8)
 
 ## Phase 2. Skater movement
 
@@ -107,7 +107,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] `skateto` L42953, `skatetopuck` L43138, `avdgoal` L43026 (`HockeyAI`)
 - [x] Wall collision: boards, corners, nets (`checkgoal`/`checkgoalp`), the stick-tip board check, the puck over the glass, `CheckBump`
 - [x] Player-player collision: `Collisions` (`checkplcoll`, `checkcx`, exact momentum exchange, Y-sort walk order, position restore)
-- [ ] Energy and fatigue (`getpde`/`setpde`, endurance `$72`)
+- [x] Energy and fatigue: `playeracc` drain (1 in 128 calls, endurance), bench recovery in `periodiceevents`; drain, gate and recovery are tunables
 - [x] `scenes/skater.tscn`: `CharacterBody2D`, capsule, runs `SkaterMotion` + `SkaterSteering` + `RinkBoards` in retail loop order
 - [x] `scenes/skate_sandbox.tscn` (main scene): two pad-controlled skaters, readout of retail values
 
@@ -195,3 +195,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Animation system ported (`Animator`, SPAList export). Sprite frames are live and `GetHot` reads the real Hotlist. Attribute word bits fixed (x flip is bit 11). 200 checks pass.
 - 2026-10-11: Shooting, passing, one-timers, bursts and pad input ported (`Shooting`, `InputLogic`, `PadState`); exact `sroot`. A shot taken through the pad scores on an empty net end to end. 226 checks pass.
 - 2026-10-11: AI and goalies ported (`HockeyAI`, `GoalieLogic`): the six positional routines, `assnearest`, the CPU carrier (shoot / pass / evade / breakaway), `check4check`, celebrations, the CPU and pad goalie, saves, pulling the goalie, `checkwindow` camera, `forcepldata`. `DoGameFrame` order in `step()`. Twelve CPU players play a minute (shots, passes, checks, goalie whistles). 260 checks pass.
+- 2026-10-11: Data layer: 28 teams and 684 players extracted from the ROM to `.tres`; `setplayer`, `AttributeCalc`, form, bonuses and the energy drain ported. The spec's seven test vectors (Bourque, Oates, Lemieux, Neely, Dollas, Moog, Roy) match byte for byte. 330 checks pass.

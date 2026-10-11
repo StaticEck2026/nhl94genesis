@@ -222,27 +222,23 @@ func set_spa(id: int) -> void:
 	spa_cnt = -1
 	spa_restarted = true
 
-## Mid-range retail bytes for an object with no roster data (sandbox, tests).
+## Mid-range setplayer bytes (every rating nibble 3, 188 lb) for an object with no
+## roster data (sandbox, tests).
 func default_ratings() -> void:
-	weight = 6
+	weight = 48
 	legstr = 15
 	legspd = 15
-	aioff = 10
-	aidef = 10
-	shotspd = 10
-	shotacc = 10
-	passacc = 10
-	spodds = 10
-	endurance = 10
-	aggress = 10
-	checking = 10
+	aioff = RosterLogic.reaction(15)
+	aidef = RosterLogic.reaction(15)
+	shotspd = 15
+	shotacc = 15
+	passacc = 15
+	stickhand = 15
+	spodds = 15
+	endurance = 15
+	aggress = 15
+	checking = 15
 
-## Copies ratings from a PlayerData resource (provisional scale until Phase 1 lands).
+## Loads a PlayerData's ratings as setplayer would with no form and no bonuses.
 func load_player(p: PlayerData) -> void:
-	weight = p.raw_weight()
-	legstr = p.raw_agility()
-	legspd = p.raw_speed()
-	endurance = p.raw_endurance()
-	handed = 1 if p.handedness == PlayerData.Hand.LEFT else 0
-	checking = roundi(p.checking / 100.0 * 30.0)
-	aggress = roundi(p.aggressiveness / 100.0 * 30.0)
+	RosterLogic.load_bytes(self, p.rom_bytes())

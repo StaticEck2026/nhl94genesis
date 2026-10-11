@@ -101,6 +101,7 @@ var shooting: Shooting
 var input: InputLogic
 var ai: HockeyAI
 var goalie: GoalieLogic
+var roster: RosterLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
 ## updateanim with the SPAList data. When the data file is missing (no extraction run),
@@ -149,6 +150,8 @@ var no_fatigue: bool = false
 var opt_line_on: bool = true
 ## OptPen: penalties on.
 var opt_pen: bool = true
+## OptPerlen: period length 0-3 (5, 10, 20 minutes, 30 seconds; ClockLength).
+var opt_perlen: int = 0
 ## Which team each pad controls (cont1team, cont2team: 0 none, 1 home, 2 away) and the
 ## object each pad drives (c1playernum, c2playernum, -1 none).
 var cont_team: PackedInt32Array = PackedInt32Array([0, 0])
@@ -302,6 +305,7 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	input = InputLogic.new(self)
 	ai = HockeyAI.new(self)
 	goalie = GoalieLogic.new(self)
+	roster = RosterLogic.new(self)
 	ai.register(asstab)
 	goalie.register(asstab)
 	asstab[Shooting.ASS_SHOOT] = func(o: SimObject, d7: int) -> void: shooting.assshoot(o, d7)
@@ -326,7 +330,7 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster]:
 		if m:
 			m.w = null
 	collisions = null
@@ -336,6 +340,7 @@ func dispose() -> void:
 	input = null
 	ai = null
 	goalie = null
+	roster = null
 	asstab.clear()
 	for c in onetimer_shot.get_connections():
 		onetimer_shot.disconnect(c["callable"])
@@ -404,6 +409,17 @@ func periodic_events(d7: int) -> void:
 		return
 	lldisp += 0x18
 	goalie.chk_goalies()
+	_bench_recovery()
+
+## periodiceevents loc_79F8: with line changes on, every benched slot gains 9 energy a
+## second, up to $1000.
+func _bench_recovery() -> void:
+	if not opt_line_on:
+		return
+	for st in stats:
+		for i in TeamStats.ROSTER:
+			if st.tmpdst[i] == TeamStats.TMPDST_BENCH:
+				st.energy[i] = mini(st.energy[i] + settings.bench_recovery, 0x1000)
 
 ## checkwindow (L35783): the camera follows the carrier (with a lead in his attacking
 ## direction) or the puck, easing 1/16 of the way once outside a dead zone.
@@ -592,10 +608,9 @@ func forcepldata(team: int) -> void:
 		o.newpnum = -1
 		o.newpos = -1
 
-## setplayer (L51620): load roster slot pnum into the object. The data port fills in
-## the ratings; until then only the slot is recorded.
+## setplayer (L51556): roster slot pnum takes the object (RosterLogic).
 func setplayer(o: SimObject, pnum: int) -> void:
-	o.pnum = pnum if TeamStats.valid_pnum(pnum) else -1
+	roster.setplayer(o, pnum)
 
 ## assnothing (L38275): locked or pad players do nothing; others glide to a stop.
 func assnothing(o: SimObject, d7: int) -> void:
@@ -702,15 +717,32 @@ func skate(o: SimObject, stick: int, d7: int = 1) -> void:
 	var r := steering.steer(o, stick, ctx)
 	match r.action:
 		SkaterSteering.Action.ACCEL:
-			o.vel = motion.apply_accel(skater_view(o), o.vel, motion.dirtab(r.accel_dir), d7, o.wall)
+			playeracc(o, r.accel_dir, d7)
 		SkaterSteering.Action.STOP:
 			o.vel = motion.apply_stop(o.vel)
 
-## playeracc (L43705) in an absolute direction 0-7; 8 (dirtab's zero entry) does nothing.
+## playeracc (L43705) in an absolute direction 0-7 (8 is dirtab's zero entry), then the
+## energy drain, which runs whether or not the speed cap let the push through.
 func playeracc(o: SimObject, dir: int, d7: int) -> void:
-	if dir < 0 or dir > 7:
+	if dir >= 0 and dir <= 7:
+		o.vel = motion.apply_accel(skater_view(o), o.vel, motion.dirtab(dir), d7, o.wall)
+	_drain_energy(o)
+
+## playeracc _sube (L43828): with line changes on, 1 call in 128 drains 33, less half
+## the endurance byte while the player is above 75%.
+func _drain_energy(o: SimObject) -> void:
+	if not opt_line_on or o.index > 11:
 		return
-	o.vel = motion.apply_accel(skater_view(o), o.vel, motion.dirtab(dir), d7, o.wall)
+	if hv_rng.randi() % maxi(settings.energy_drain_gate, 1) != 0:
+		return
+	var e := energy_raw(o) - roundi(settings.energy_drain)
+	if e < 0xC00:
+		set_energy(o, e)
+		return
+	e += (o.endurance & 0xFF) >> 1
+	set_energy(o, e)
+	if o.endurance & 1 and vcount & 1:
+		set_energy(o, e + 1)
 
 ## SkaterMotion inputs for an object, including the global boosts.
 func skater_view(o: SimObject) -> SkaterMotion.Skater:

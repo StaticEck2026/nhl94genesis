@@ -47,8 +47,14 @@ func _fill_lines(team_pick: OptionButton, list: ItemList) -> void:
 	if team_pick.selected < 0 or team_pick.selected >= _teams.size():
 		return
 	var t := _teams[team_pick.selected]
-	for line_name in t.lines:
-		list.add_item(str(line_name))
+	# The seven RAM lines with line changes on (data lines 1-7): forwards LW-C-RW.
+	for k in range(1, 8):
+		var ln := t.line(k)
+		var names := []
+		for pos in [3, 4, 5]:
+			var p := t.player(ln[pos] - 1)
+			names.append(p.full_name.get_slice(" ", p.full_name.get_slice_count(" ") - 1) if p else "-")
+		list.add_item("%s  %s" % [TeamData.LINE_NAMES[k], " - ".join(names)])
 	if list.item_count > 0:
 		list.select(0)
 

@@ -70,12 +70,16 @@ static func shared(from: Node) -> SimSettings:
 	set(v): turn_rate_scale = v; emit_changed()
 
 @export_group("Fatigue")
-## Full energy value (getpde). Retail $1000.
-@export_range(256.0, 8192.0, 1.0) var energy_full: float = 4096.0:
-	set(v): energy_full = v; emit_changed()
-## Energy drained per drain tick (playeracc subi #$21).
+## Energy drained per drain tick (playeracc subi #$21). Full energy is $1000.
 @export_range(0.0, 200.0, 1.0) var energy_drain: float = 33.0:
 	set(v): energy_drain = v; emit_changed()
+## A playeracc call drains on 1 in this many calls. Retail gates on the H counter's low
+## 7 bits (1 in 128 nominal; 86-106 on hardware timing).
+@export_range(1, 1024, 1) var energy_drain_gate: int = 128:
+	set(v): energy_drain_gate = v; emit_changed()
+## Energy a benched player regains per game second (periodiceevents loc_79F8).
+@export_range(0, 200, 1) var bench_recovery: int = 9:
+	set(v): bench_recovery = v; emit_changed()
 
 @export_group("Puck")
 ## Shot power multiplier. 1.0 is retail.

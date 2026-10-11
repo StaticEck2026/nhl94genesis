@@ -75,6 +75,10 @@ func _initialize() -> void:
 		"test_goalie_saves_low_shot",
 		"test_cp_goalie",
 		"test_cpu_vs_cpu",
+		"test_teams_extracted",
+		"test_setplayer_vectors",
+		"test_setplayer_bonuses_and_form",
+		"test_energy_drain_and_recovery",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -1199,5 +1203,125 @@ func test_cpu_vs_cpu() -> bool:
 	check(carriers.size() >= 3, "the puck changes hands: %s" % [carriers.keys()])
 	check(w.stats[0].shots + w.stats[1].shots + w.score(0) + w.score(1) > 0 or w.shotplayer >= 0,
 			"somebody shoots")
+	w.dispose()
+	return true
+
+# --- data -------------------------------------------------------------------------------
+
+static func _team(abbr: String) -> TeamData:
+	for t in MatchConfig.available_teams():
+		if t.abbreviation == abbr:
+			return t
+	return null
+
+func test_teams_extracted() -> bool:
+	var teams := MatchConfig.available_teams()
+	eq(teams.size(), 28, "26 clubs and the two All-Star teams")
+	var total := 0
+	for t in teams:
+		total += t.players.size()
+		check(t.players.size() == t.goalie_count + t.forward_count + t.defense_count, "%s roster groups" % t.abbreviation)
+	eq(total, 684, "684 player records")
+	var bos := _team("BOS")
+	eq(bos.players[17].full_name, "Ray Bourque", "Bourque in slot 17")
+	eq(bos.players[17].rom_bytes(), PackedByteArray([0x77, 0xA5, 0x44, 0x65, 0x60, 0x55, 0x62, 0x52]), "Bourque's bytes round-trip")
+	eq(bos.players[0].rom_bytes(), PackedByteArray([0x35, 0x44, 0x42, 0x24, 0x00, 0x00, 0x43, 0x43]), "Moog's goalie bytes round-trip")
+	eq(bos.line(0), PackedInt32Array([1, 19, 18, 7, 3, 12, 8, 0]), "data line 0 (line changes off)")
+	eq([bos.pp_bonus, bos.pk_penalty, bos.home_bonus, bos.away_penalty], [1, 2, 2, 1], "Boston bonuses")
+	eq(bos.goalie_count, 2, "goalie word $B400 counts 2")
+	eq(_team("HFD").goalie_count, 3, "goalie word $A360 counts 3")
+	eq(bos.players[17].overall(), 99, "Bourque overall")
+	eq(bos.players[2].overall(), 93, "Oates overall")
+	eq(_team("ANH").players[16].overall(), 37, "Dollas overall")
+	eq(bos.players[0].overall(), 59, "Moog overall")
+	eq(_team("ASE").players[0].overall(), 94, "Roy overall")
+	return true
+
+## Spec 1.6 test vectors: $67/$68/$69/$6A/$6B/$6C/$6D/$6E/$70/$71/$72/$73/$74/$75/$76
+## with form 0 and no bonuses.
+func _struct(o: SimObject) -> Array:
+	return [o.weight, o.legstr, o.legspd, o.aioff, o.aidef, o.shotspd, o.shotacc, o.passacc,
+		o.spodds, o.stickhand, o.endurance, o.aggress, o.hf, o.checking, o.handed]
+
+func test_setplayer_vectors() -> bool:
+	var cases := [
+		["BOS", 17, "Ray Bourque", [80, 25, 20, 10, 7, 25, 25, 25, 10, 25, 30, 10, 0, 30, 1]],
+		["BOS", 2, "Adam Oates", [56, 25, 20, 7, 9, 15, 20, 30, 0, 25, 25, 5, 0, 15, 0]],
+		["ASE", 3, "Mario Lemieux", [80, 25, 20, 7, 10, 20, 30, 30, 0, 30, 30, 10, 2, 15, 0]],
+		["BOS", 11, "Cam Neely", [80, 20, 20, 9, 10, 20, 25, 20, 15, 20, 25, 4, 8, 20, 0]],
+		["ANH", 16, "Bobby Dollas", [88, 10, 5, 14, 12, 5, 0, 5, 5, 5, 10, 5, 0, 10, 0]],
+		["BOS", 0, "Andy Moog", [32, 20, 20, 12, 12, 20, 0, 20, 15, 0, 20, 15, 0, 0, 1]],
+		["ASE", 0, "Patrick Roy", [48, 30, 20, 10, 10, 30, 0, 30, 25, 0, 25, 14, 0, 0, 0]],
+	]
+	for c in cases:
+		var t := _team(c[0])
+		var p: PlayerData = t.players[c[1]]
+		eq(p.full_name, c[2], "%s slot %d" % [c[0], c[1]])
+		var o := SimObject.new()
+		o.load_player(p)
+		eq(_struct(o), c[3], "%s in-game bytes" % c[2])
+	var o := SimObject.new()
+	o.load_player(_team("BOS").players[2])
+	check(o.attribute & SimObject.ATTR_XFLIP != 0, "a righty gets the sprite flip bit")
+	return true
+
+func test_setplayer_bonuses_and_form() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var bos := _team("BOS")
+	w.roster.setup_teams(bos, _team("MTL"))
+	var o := w.place(1, Vector2i(0, -60), SimObject.POS_RD, false, true)
+	w.setplayer(o, 17)
+	# OfA nibble 4 -> 20, + home bonus 2 = 22 -> aioff 9 (10 with no bonus).
+	eq(o.aioff, 9, "home bonus quickens aioff")
+	eq(w.stats[0].tmpdst[17], TeamStats.TMPDST_ON_ICE, "slot on the ice")
+	eq(o.pnum, 17, "pnum")
+	# Third period, trailing, first half of it: +2 checking.
+	w.gsp = 2
+	w.gameclock = 200
+	w.stats[1].goals = 1
+	w.setplayer(o, 17)
+	eq(o.checking, 30, "checking capped at 30")
+	eq(o.spodds, 14, "shot bias +2 x 2 in the 3rd while trailing")
+	w.gameclock = 100
+	w.setplayer(o, 17)
+	eq(o.spodds, 10, "no bonus once half the 3rd has gone (retail)")
+	# Form: byte 0 of the slot's block, divided by 3 toward zero, on every rating.
+	w.stats[0].hotcold[17 * 16] = -9
+	w.setplayer(o, 17)
+	eq(o.legstr, 22, "form -9 takes 3 off agility")
+	w.stats[0].hotcold[17 * 16] = 8
+	w.setplayer(o, 17)
+	eq(o.legstr, 27, "form +8 adds 2")
+	w.roster.new_game_form()
+	var lo := 99
+	var hi := -99
+	for v in w.stats[1].hotcold:
+		lo = mini(lo, v)
+		hi = maxi(hi, v)
+	check(lo >= -9 and hi <= 8 and hi > lo, "form bytes in -9..8: %d..%d" % [lo, hi])
+	w.dispose()
+	return true
+
+func test_energy_drain_and_recovery() -> bool:
+	var s := SimSettings.new()
+	s.energy_drain_gate = 1
+	var w := HockeyWorld.new(s)
+	var o := w.place(3, Vector2i(0, 0), SimObject.POS_C, false, true)
+	o.pnum = 4
+	w.stats[0].tmpdst[4] = TeamStats.TMPDST_ON_ICE
+	o.endurance = 30
+	w.playeracc(o, 0, 1)
+	eq(w.energy_raw(o), 0x1000 - 33 + 15, "drain 33 less half the endurance above 75%")
+	w.stats[0].energy[4] = 0xC00
+	w.playeracc(o, 0, 1)
+	eq(w.energy_raw(o), 0xC00 - 33, "flat 33 below 75%")
+	w.stats[0].energy[5] = 0x800
+	w.stats[0].tmpdst[5] = TeamStats.TMPDST_BENCH
+	for i in 0x18:
+		w.periodic_events(1)
+	eq(w.stats[0].energy[5], 0x800 + 9, "bench +9 a game second")
+	w.opt_line_on = false
+	w.playeracc(o, 0, 1)
+	eq(w.energy_raw(o), 0xC00 - 33, "no drain with line changes off")
 	w.dispose()
 	return true

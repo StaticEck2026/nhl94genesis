@@ -1,55 +1,111 @@
 @tool
 class_name PlayerData
 extends Resource
-## One player's ratings. Ratings are 0-100. Retail stores them as small integers;
-## the raw_* helpers give the retail value the logic tables expect.
+## One roster player. Ratings use the retail roster-screen scale (25-99): the value the
+## game shows for a rating nibble with hot/cold 0 (CalcAttrib + AttribAdjust,
+## docs/specs/data_attributes.md section 3). Nibbles 0-6 show as 25, 34, 43, 54, 72, 90
+## and 99. `rom_bytes()` turns the ratings back into the 8 roster bytes setplayer reads,
+## picking the nearest nibble, so the extracted teams round-trip exactly.
+## Goalies use the goalie group for the nibbles they share with skater ratings.
 
-enum Position { CENTER, LEFT_WING, RIGHT_WING, DEFENSE, GOALIE }
+## The roster groups retail keeps: slots 0..G-1 goalies, then forwards, then defense.
+enum Position { FORWARD, DEFENSE, GOALIE }
 enum Hand { LEFT, RIGHT }
 
 @export var full_name: String = ""
 @export_range(0, 99, 1) var jersey_number: int = 0
-@export var position: Position = Position.CENTER
+@export var position: Position = Position.FORWARD
 @export var handedness: Hand = Hand.LEFT
-## Body weight in pounds.
-@export_range(140.0, 260.0, 1.0) var weight_lbs: float = 190.0
+## Pounds: 140 + 8 per weight step (0-15), so 140-260.
+@export_range(140.0, 260.0, 8.0) var weight_lbs: float = 188.0
 
-@export_group("Ratings (0-100)")
-@export_range(0.0, 100.0, 1.0) var agility: float = 50.0
-@export_range(0.0, 100.0, 1.0) var speed: float = 50.0
-@export_range(0.0, 100.0, 1.0) var offensive_awareness: float = 50.0
-@export_range(0.0, 100.0, 1.0) var defensive_awareness: float = 50.0
-@export_range(0.0, 100.0, 1.0) var shot_power: float = 50.0
-@export_range(0.0, 100.0, 1.0) var shot_accuracy: float = 50.0
-@export_range(0.0, 100.0, 1.0) var pass_rating: float = 50.0
-@export_range(0.0, 100.0, 1.0) var checking: float = 50.0
-@export_range(0.0, 100.0, 1.0) var stick_handling: float = 50.0
-@export_range(0.0, 100.0, 1.0) var endurance: float = 50.0
-@export_range(0.0, 100.0, 1.0) var aggressiveness: float = 50.0
-@export_range(0.0, 100.0, 1.0) var roughness: float = 50.0
-@export_group("Goalie (0-100)")
-@export_range(0.0, 100.0, 1.0) var glove_left: float = 50.0
-@export_range(0.0, 100.0, 1.0) var glove_right: float = 50.0
-@export_range(0.0, 100.0, 1.0) var stick_left: float = 50.0
-@export_range(0.0, 100.0, 1.0) var stick_right: float = 50.0
-@export_range(0.0, 100.0, 1.0) var puck_control: float = 50.0
+@export_group("Ratings (25-99)")
+@export_range(0.0, 100.0, 1.0) var agility: float = 54.0
+@export_range(0.0, 100.0, 1.0) var speed: float = 54.0
+@export_range(0.0, 100.0, 1.0) var offensive_awareness: float = 54.0
+@export_range(0.0, 100.0, 1.0) var defensive_awareness: float = 54.0
+@export_range(0.0, 100.0, 1.0) var shot_power: float = 54.0
+@export_range(0.0, 100.0, 1.0) var checking: float = 54.0
+## Not shown on the retail roster screens; the fight engine reads it ($74).
+@export_range(0.0, 100.0, 1.0) var fighting: float = 25.0
+@export_range(0.0, 100.0, 1.0) var stick_handling: float = 54.0
+@export_range(0.0, 100.0, 1.0) var shot_accuracy: float = 54.0
+@export_range(0.0, 100.0, 1.0) var endurance: float = 54.0
+## Shot / pass bias (spodds $70). Not shown on the retail screens.
+@export_range(0.0, 100.0, 1.0) var shot_bias: float = 43.0
+@export_range(0.0, 100.0, 1.0) var pass_accuracy: float = 54.0
+@export_range(0.0, 100.0, 1.0) var aggressiveness: float = 54.0
 
-## Retail speed byte ($69, legspd). playeracc caps it at $1E.
-## Mapping 0-100 to 0-30 is provisional (see GODOT_TODO open questions).
-func raw_speed() -> int:
-	return roundi(speed / 100.0 * 30.0)
+@export_group("Goalie (25-99)")
+## Shot power's nibble for goalies ($6C).
+@export_range(0.0, 100.0, 1.0) var puck_control: float = 54.0
+## Endurance's nibble ($72, GSSright).
+@export_range(0.0, 100.0, 1.0) var stick_right: float = 54.0
+## Shot bias's nibble ($70, GSSleft).
+@export_range(0.0, 100.0, 1.0) var stick_left: float = 54.0
+## Pass accuracy's nibble ($6E, GGSright).
+@export_range(0.0, 100.0, 1.0) var glove_right: float = 54.0
+## Aggressiveness's nibble ($73, GGSleft).
+@export_range(0.0, 100.0, 1.0) var glove_left: float = 54.0
 
-## Retail agility byte ($68, legstr). Provisional 0-30 mapping.
-func raw_agility() -> int:
-	return roundi(agility / 100.0 * 30.0)
+## Roster-screen value of a nibble with hot/cold 0.
+static func display_value(n: int) -> int:
+	var v := 18 * n
+	if v >= 100:
+		return 99
+	if v < 50:
+		return (v >> 1) + 25
+	return v
 
-## Retail weight byte ($67). Provisional: pounds above 140, in 8 lb steps, 0-15.
-func raw_weight() -> int:
-	return clampi(roundi((weight_lbs - 140.0) / 8.0), 0, 15)
-
-## Retail endurance byte ($72). Provisional 0-30 mapping.
-func raw_endurance() -> int:
-	return roundi(endurance / 100.0 * 30.0)
+## The nibble 0-6 whose screen value is nearest r (ties go to the lower nibble).
+static func nibble_of(r: float) -> int:
+	var best := 0
+	var best_d := INF
+	for n in 7:
+		var d := absf(display_value(n) - r)
+		if d < best_d:
+			best = n
+			best_d = d
+	return best
 
 func is_goalie() -> bool:
 	return position == Position.GOALIE
+
+## Weight step 0-15.
+func weight_step() -> int:
+	return clampi(roundi((weight_lbs - 140.0) / 8.0), 0, 15)
+
+## The 8 roster bytes A0..A7 (docs/specs/data_attributes.md section 1.3).
+func rom_bytes() -> PackedByteArray:
+	var g := is_goalie()
+	var a := PackedByteArray()
+	a.resize(8)
+	var j := clampi(jersey_number, 0, 99)
+	a[0] = ((j / 10) << 4) | (j % 10)
+	a[1] = (weight_step() << 4) | nibble_of(agility)
+	a[2] = (nibble_of(speed) << 4) | nibble_of(offensive_awareness)
+	a[3] = (nibble_of(defensive_awareness) << 4) | nibble_of(puck_control if g else shot_power)
+	var hand := 1 if handedness == Hand.RIGHT else 0
+	a[4] = (nibble_of(checking) << 4) | ((nibble_of(fighting) & 7) << 1) | hand
+	a[5] = (nibble_of(stick_handling) << 4) | nibble_of(shot_accuracy)
+	a[6] = (nibble_of(stick_right if g else endurance) << 4) | nibble_of(stick_left if g else shot_bias)
+	a[7] = (nibble_of(glove_right if g else pass_accuracy) << 4) | nibble_of(glove_left if g else aggressiveness)
+	return a
+
+## The retail Overall rating with hot/cold 0 (CalcAttrib with the Overall weight lists).
+func overall() -> int:
+	var raw: int
+	if is_goalie():
+		raw = (9 * nibble_of(agility)) / 2 + (9 * nibble_of(defensive_awareness)) / 2 \
+				+ (9 * nibble_of(puck_control)) / 2 + nibble_of(stick_right) + nibble_of(stick_left) \
+				+ nibble_of(glove_right) + nibble_of(glove_left)
+	else:
+		raw = 2 * nibble_of(agility) + 3 * nibble_of(speed) + 3 * nibble_of(offensive_awareness) \
+				+ 2 * nibble_of(defensive_awareness) + nibble_of(shot_power) + 2 * nibble_of(checking) \
+				+ 3 * nibble_of(stick_handling) + 2 * nibble_of(shot_accuracy) + nibble_of(endurance) \
+				+ nibble_of(pass_accuracy)
+	if raw >= 100:
+		return 99
+	if raw < 50:
+		return (raw >> 1) + 25
+	return raw

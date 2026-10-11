@@ -16,6 +16,16 @@ const TMPDST_INJURED_GAME := -4
 const STATUS_INJURED_PERIOD := 0xFFFD
 const STATUS_INJURED_GAME := 0xFFFC
 
+## $1E: the team record (null in the sandbox and tests), $28 its team number, and
+## the 8 roster bytes per slot rebuilt from it (setplayer reads these).
+var data: TeamData = null
+var team_index: int = -1
+var rom: Array = []
+## $16A: the 7 RAM lines (8 one-based slots each), copied by sub_171BE.
+var ram_lines: PackedInt32Array = PackedInt32Array()
+## $1A2: per-game form, 16 signed bytes per roster slot (Create_HotCold_Table).
+var hotcold: PackedInt32Array
+
 ## $000 shots on goal.
 var shots: int = 0
 ## $002 power-play goals (sub_1284A).
@@ -100,6 +110,8 @@ func _init() -> void:
 	player_pim = _filled(0)
 	player_checks = _filled(0)
 	player_status = _filled(0)
+	hotcold = PackedInt32Array()
+	hotcold.resize(ROSTER * 16)
 
 static func _filled(v: int) -> PackedInt32Array:
 	var a := PackedInt32Array()
