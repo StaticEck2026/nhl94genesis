@@ -90,6 +90,12 @@ func _initialize() -> void:
 		"test_endfaceoff_draw",
 		"test_full_game",
 		"test_pad_mash_game",
+		"test_pen_shot_chk",
+		"test_ps_pick_shooter",
+		"test_ps_waypoints",
+		"test_shootout_turns",
+		"test_penalty_shot_attempt",
+		"test_shootout_game",
 	]:
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
@@ -1599,5 +1605,269 @@ func test_pad_mash_game() -> bool:
 		if w.objects[i].position >= 0:
 			on_ice += 1
 	check(on_ice >= 8, "players still on the ice: %d" % on_ice)
+	w.dispose()
+	return true
+
+# --- penalty shots and the shootout ----------------------------------------------------------
+
+## A game world with real teams, stepped until the opening faceoff has been dropped.
+func _live_game(seed: int) -> HockeyWorld:
+	var w := HockeyWorld.new(SimSettings.new(), seed)
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	var drops := [0]
+	var count := func(_h: bool) -> void: drops[0] += 1
+	w.faceoff.faceoff_dropped.connect(count)
+	w.rules.start_game()
+	var f := 0
+	while drops[0] == 0 and f < 3000:
+		w.step()
+		f += 1
+	w.faceoff.faceoff_dropped.disconnect(count)
+	for i in 30:
+		w.step()
+	return w
+
+## PenShotChk: only a foul on a breakaway skater becomes the (shifted, Q1) variant, one at
+## a time, and never against an empty net.
+func test_pen_shot_chk() -> bool:
+	var w := _live_game(0x4321)
+	var victim := w.objects[2]
+	var offender := w.objects[8]
+	eq(w.pen_shot_chk(0x1E, victim, offender), 0x1E, "no breakaway: the foul stands")
+	victim.flags3 |= SimObject.PF3_BREAKAWAY
+	eq(w.pen_shot_chk(0x24, victim, offender), 0x24, "holding has no variant")
+	eq(w.pen_shot_chk(0x1E, victim, offender), 0x30, "hooking on a breakaway: the Tripping variant")
+	check(w.ba_ps_flags & HockeyWorld.BA_AWARDED != 0, "awarded")
+	eq(w.ba_sktr, 2, "the fouled skater")
+	eq(w.ba_goalie, 11, "against the away goalie")
+	eq(w.shootout.ba_team, 0, "home shoots")
+	eq(w.shootout.ba_skater_offset, victim.pnum, "his roster slot")
+	eq(w.shootout.ba_checker_offset, offender.pnum, "the offender's slot")
+	eq(w.pen_shot_chk(0x20, victim, offender), 0x20, "one penalty shot at a time")
+	# An empty net: no goalie object in the defending six.
+	w.ba_ps_flags = 0
+	w.objects[11].position = SimObject.POS_OFF_ICE
+	eq(w.pen_shot_chk(0x1E, victim, offender), 0x1E, "no goalie: no penalty shot")
+	check(w.ba_ps_flags & HockeyWorld.BA_AWARDED == 0, "award withdrawn")
+	w.objects[11].position = SimObject.POS_GOALIE
+	w.opt_pen = false
+	eq(w.pen_shot_chk(0x1E, victim, offender), 0x1E, "penalties off: no penalty shot")
+	w.dispose()
+	return true
+
+## sub_EE58: the fouled player shoots when he is on the bench or the ice; otherwise the
+## best of the rest by the nine ratings (ties to the later slot), never a goalie.
+func test_ps_pick_shooter() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	var so := w.shootout
+	var st := w.stats[1]
+	so.ba_team = 1
+	so.ba_skater_offset = 6
+	check(so.pick_shooter(), "found a shooter")
+	eq(so.ba_skater_offset, 6, "the fouled player")
+	eq(w.ba_sktr, 6, "the away shooter is object 6")
+	# Guy Carbonneau (slot 5) has Shot Accuracy 1: even fouled, he cannot shoot.
+	eq(st.rom[5][5] & 0xF, 1, "Carbonneau's shot accuracy")
+	so.ba_skater_offset = 5
+	so.pick_shooter()
+	check(so.ba_skater_offset != 5, "Shot Accuracy 1 never shoots")
+	so.ba_skater_offset = 6
+	st.tmpdst[6] = TeamStats.TMPDST_INJURED_GAME
+	check(so.pick_shooter(), "found another")
+	var pick := so.ba_skater_offset
+	check(pick != 6, "not the injured player")
+	var score := func(slot: int) -> int:
+		var a: PackedByteArray = st.rom[slot]
+		return (a[1] & 0xF) + (a[2] & 0xF) + (a[2] >> 4) + (a[3] & 0xF) + (a[3] >> 4) \
+				+ (a[5] & 0xF) + (a[5] >> 4) + (a[6] >> 4) + (a[7] >> 4)
+	var best := -1
+	for slot in st.rom.size():
+		if st.rom[slot][5] & 0xF <= 1 or slot == 6:
+			continue
+		if score.call(slot) >= best:
+			best = score.call(slot)
+	eq(score.call(pick), best, "the best of the rest")
+	check(st.rom[pick][5] & 0xF > 1, "not a goalie")
+	for slot in st.rom.size():
+		st.tmpdst[slot] = TeamStats.TMPDST_INJURED_GAME
+	check(not so.pick_shooter(), "nobody available")
+	w.dispose()
+	return true
+
+## sub_FE7FC: path 0 for a righty and a lefty. A lefty's terminator is mirrored too and
+## never reads as finished (Q1).
+func test_ps_waypoints() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var so := w.shootout
+	var righty := w.objects[0]
+	righty.handed = 0
+	var lefty := w.objects[6]
+	lefty.handed = 1
+	for o in [righty, lefty]:
+		so.ps_path = 0
+		so.ps_wp_idx = -1
+		so.ps_wp_x = 0
+		so.last_wp = false
+		so.load_waypoint(w.puck())
+		eq(Vector2i(HockeyWorld.s16(so.ps_wp_x), so.ps_wp_y), Vector2i(16, 226), "first waypoint unmirrored (Q2)")
+		check(not so.last_wp, "not the last")
+		so.load_waypoint(o)
+		var x := 16 if o == righty else -16
+		eq(Vector2i(HockeyWorld.s16(so.ps_wp_x), so.ps_wp_y), Vector2i(x, 208), "second waypoint")
+		check(so.last_wp, "last waypoint loaded")
+		eq(so.ps_shoot_tol, 0x20, "shoot box")
+		eq(w.ps_script_dir, 5, "script shot direction")
+		so.load_waypoint(o)
+		var done := (so.ps_wp_x >> 8) & 0xFF == 0x80
+		check(done == (o == righty), "righty finished, lefty never (Q1)")
+	# The shoot test: inside the last waypoint's box with the clock running.
+	so.ps_path = 0
+	so.ps_wp_idx = 0
+	so.ps_wp_x = 0x10
+	so.load_waypoint(righty)
+	w.f_c2fa |= ShootoutLogic.C2FA_ATTEMPT_CLOCK
+	so.ps_clock = 20
+	w.puckc = righty.index
+	righty.flags |= SimObject.PF_GOAL
+	righty.set_pos(Vector2i(16 + 40, 208))
+	check(not so.ps_should_shoot(righty), "outside the box")
+	righty.set_pos(Vector2i(16 + 30, 208 - 30))
+	check(so.ps_should_shoot(righty), "inside the box")
+	so.ps_clock = 3
+	righty.set_pos(Vector2i(-100, 0))
+	check(so.ps_should_shoot(righty), "three seconds left")
+	w.dispose()
+	return true
+
+## sub_FC516: home then away each round; nothing is decided before the away shot of
+## round 5, then full rounds of sudden death. The shooters cycle through the five.
+func test_shootout_turns() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	w.f_c2fa |= HockeyWorld.C2FA_SHOOTOUT
+	var so := w.shootout
+	so.init_shootout()
+	var ln := w.stats[0].data.line(0)
+	eq(Array(so.so_list[0]), [ln[5] - 1, ln[4] - 1, ln[3] - 1, ln[2] - 1, ln[1] - 1, ln[0] - 1],
+		"home list: RW, C, LW, RD, LD, then the goalie")
+	w.shootout_goals[0] = 3
+	for r in range(1, 5):
+		eq(so.so_round, r, "round %d" % r)
+		eq(w.shootout_side, 0, "home first")
+		so.next_turn()
+		eq(w.shootout_side, 1, "then away")
+		so.next_turn()
+		check(w.f_c2fa & ShootoutLogic.C2FA_DECIDED == 0, "nothing decided in round %d" % r)
+	eq(so.so_shooter_idx, 4, "the fifth shooter")
+	so.next_turn()
+	check(w.f_c2fa & ShootoutLogic.C2FA_DECIDED == 0, "not after the home shot")
+	w.shootout_goals[1] = 3
+	so.next_turn()
+	check(w.f_c2fa & ShootoutLogic.C2FA_DECIDED == 0, "level after five: sudden death")
+	eq(so.so_round, 6, "round 6")
+	eq(so.so_shooter_idx, 0, "back to the first shooter")
+	so.next_turn()
+	w.shootout_goals[0] = 4
+	so.next_turn()
+	check(w.f_c2fa & ShootoutLogic.C2FA_DECIDED != 0, "decided after the away shot")
+	eq(w.shootout_side, 1, "the side is left on away")
+	check(so.winner_text().begins_with("SHOOTOUT WON BY Boston"), "winner text: %s" % so.winner_text())
+	w.dispose()
+	return true
+
+## A penalty shot in a regular game: the foul is called, the attempt is set up (shooter at
+## centre, goalie at his net, the rest parked), played out, and the game resumes with a
+## faceoff and the game clock. Nobody goes to the box.
+func test_penalty_shot_attempt() -> bool:
+	var w := _live_game(0x4321)
+	var victim := w.objects[2]
+	var offender := w.objects[8]
+	victim.flags3 |= SimObject.PF3_BREAKAWAY
+	var assessed := [0]
+	w.rules.penalty_assessed.connect(func(_t: int, _p: int, _i: int, _m: int) -> void: assessed[0] += 1)
+	var intro := []
+	w.shootout.intro.connect(func(l: PackedStringArray) -> void: intro.append(l))
+	var drops := [0]
+	w.faceoff.faceoff_dropped.connect(func(_h: bool) -> void: drops[0] += 1)
+	w.add_penalty(w.pen_shot_chk(0x1E, victim, offender), offender)
+	var f := 0
+	while w.ba_ps_flags & HockeyWorld.BA_LIVE == 0 and f < 3000:
+		w.step()
+		f += 1
+	check(w.ba_ps_flags & HockeyWorld.BA_LIVE != 0, "the attempt started (%d frames)" % f)
+	check(w.f_c2fa & ShootoutLogic.C2FA_ATTEMPT_CLOCK != 0, "attempt clock")
+	eq(w.shootout.ps_clock, 25, "25 seconds")
+	w.step()
+	var s := w.objects[w.ba_sktr]
+	eq(w.ba_sktr, 0, "home shooter object")
+	eq(s.pos(), Vector2i(0, -16 if s.attacking_top() else 16), "shooter behind the puck")
+	var g := w.objects[w.ba_goalie]
+	eq(g.pos(), Vector2i(0, 250 if s.attacking_top() else -250), "goalie at his net")
+	eq(w.puck().pos(), Vector2i.ZERO, "puck at centre")
+	var parked := 0
+	for i in 12:
+		if i != w.ba_sktr and i != w.ba_goalie and w.objects[i].x() == -240:
+			parked += 1
+	eq(parked, 10, "the other ten are parked")
+	w.step()
+	eq(intro.size(), 1, "the intro")
+	if intro.size() > 0:
+		eq(intro[0][0], "PENALTY SHOT!", "intro title")
+		eq(intro[0][2].split(" by ")[0], "Tripping", "the shifted variant's name (Q1)")
+	var clock: int = w.gameclock
+	while w.ba_ps_flags & HockeyWorld.BA_LIVE and f < 6000:
+		w.step()
+		f += 1
+	check(w.ba_ps_flags & HockeyWorld.BA_LIVE == 0, "the attempt ended")
+	eq(w.gameclock, clock, "the game clock stood still")
+	eq(w.stats[0].ps_attempts, 1, "one attempt counted")
+	while drops[0] == 0 and f < 9000:
+		w.step()
+		f += 1
+	check(drops[0] > 0, "faceoff after the attempt")
+	check(w.f_c2fa & ShootoutLogic.C2FA_ATTEMPT_CLOCK == 0, "attempt clock off")
+	for i in 200:
+		w.step()
+	check(w.gameclock < clock, "the game clock runs again")
+	eq(assessed[0], 0, "a penalty shot sends nobody to the box")
+	w.dispose()
+	return true
+
+## Boston against Montreal in the Shootout play mode: alternating attempts to a winner;
+## no game clock and no periods.
+func test_shootout_game() -> bool:
+	var w := HockeyWorld.new(SimSettings.new(), 0x1234)
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	w.f_c2fa |= HockeyWorld.C2FA_SHOOTOUT
+	w.shootout.init_shootout()
+	var over := [0]
+	w.rules.game_over.connect(func() -> void: over[0] += 1)
+	var sides := []
+	w.shootout.intro.connect(func(_l: PackedStringArray) -> void: sides.append(w.shootout_side))
+	var won := [-1]
+	w.shootout.shootout_won.connect(func(t: int) -> void: won[0] = t)
+	w.rules.start_game()
+	var clock := w.gameclock
+	var frames := 0
+	while over[0] == 0 and frames < 60000:
+		w.step()
+		frames += 1
+	eq(over[0], 1, "the shootout ended (%d frames)" % frames)
+	check(w.shootout.finished, "finished")
+	check(w.shootout.so_round >= 5, "at least five rounds: %d" % w.shootout.so_round)
+	check(w.shootout_goals[0] != w.shootout_goals[1], "a winner: %s" % w.shootout_goals)
+	eq(won[0], 0 if w.shootout_goals[0] > w.shootout_goals[1] else 1, "the celebration's team")
+	eq(sides.size(), 2 * w.shootout.so_round, "full rounds of attempts")
+	var alternate := true
+	for i in sides.size():
+		alternate = alternate and sides[i] == i % 2
+	check(alternate, "home, away, home, away ...")
+	eq(w.gameclock, clock, "the game clock never ran")
+	eq(w.gsp, 0, "no periods")
+	eq(w.score(0) - w.score(1), w.shootout_goals[0] - w.shootout_goals[1], "the goals count on the board")
+	for i in 120:
+		w.step()
+	eq(over[0], 1, "game over only once")
 	w.dispose()
 	return true

@@ -46,6 +46,10 @@ func _ready() -> void:
 	world.rules.game_over.connect(_on_game_over)
 	($Hud as Node).call("bind", self)
 	($PauseMenu as Node).connect("quit_requested", _quit)
+	if m.shootout:
+		# GameSetUp with OptPlayMode 4: the shootout flag and sub_FC47C.
+		world.f_c2fa |= HockeyWorld.C2FA_SHOOTOUT
+		world.shootout.init_shootout()
 	world.rules.start_game()
 	world.stats[0].line = clampi(m.home_line, 0, 6)
 	world.stats[1].line = clampi(m.away_line, 0, 6)

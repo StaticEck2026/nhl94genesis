@@ -783,6 +783,9 @@ func updatesound() -> void:
 		asv = maxi(asv - 0x28, 0)
 
 func crowd_attenuation() -> int:
+	# Crowd_Noise? (L959688): no crowd noise in a shootout.
+	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT:
+		return 15
 	return ((asv >> 8) & 0xF) ^ 0xF
 
 ## UpdateCwdExcite (L30009): once a second.

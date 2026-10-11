@@ -14,6 +14,8 @@ const GAME_SCENE := "res://scenes/game.tscn"
 @onready var _penalties: CheckBox = %Penalties
 @onready var _offsides: CheckBox = %Offsides
 @onready var _line_changes: CheckBox = %LineChanges
+## The Shootout play mode (OptPlayMode 4).
+@onready var _shootout: CheckBox = %Shootout
 @onready var _start: Button = %Start
 @onready var _status: Label = %Status
 
@@ -68,6 +70,7 @@ func _on_start() -> void:
 	m.penalties = _penalties.button_pressed
 	m.offsides = _offsides.button_pressed
 	m.line_changes = _line_changes.button_pressed
+	m.shootout = _shootout.button_pressed
 	var hs := _home_lines.get_selected_items()
 	var aws := _away_lines.get_selected_items()
 	m.home_line = hs[0] if hs.size() > 0 else 0

@@ -142,7 +142,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Offense: `assdefo` L38375, `asswingo` L38682, `asscentero` L38856, `asspuckc` L39901, `chk4shot` L40183, `chk4pass` L40337, `compshoot`, `EvadePC` L40442, the carrier's evade (`loc_E12C`), the tired-line dump (`sub_E1F4`), `checkob` (delayed offside ref)
 - [x] Defense: `assdefd` L38447, `asswingd` L38591, `asscenterd` L38800, `check4check` L40878, `assnearest` L40574 (hand-off, chase / contain, slot pressure)
 - [x] Faceoffs (`FaceoffLogic`): `assfaceoff` L38206, `assfaceoffpl` L38218, `puckfaceoff` L41627, `puckfaceoff2` L42031 (line-up tables, drop countdown), `Endfaceoff` (the draw formula), `updatefaceoff` L42414, `setchgplayer`, `resetplstuff`
-- [~] Breakaway, shootout and penalty shot: `breakaway` L39775, `BreakawayOffsidesFlagSet`, `chkpuckc`, `assbreakaway` done; the PS/SO script (`sub_FE8EC`, `sub_FE864`), `puckshootout` L41046 and `puckpenshot` L41276 come with Phase 8
+- [x] Breakaway, shootout and penalty shot: `breakaway` L39775, `BreakawayOffsidesFlagSet`, `chkpuckc`, `assbreakaway`; the CPU shooter's script (`sub_FE756`, `sub_FE7FC`, `sub_FE864`, `sub_FE8EC`) drives `asspuckc` in PS/SO
 - [x] Slot bit (`setSlotBit` L963062), celebrations (`assscore`, `assstanley`), `check4bench`. The "9x5 grid" is an overlay only: retail AI uses the zone thresholds in the spec, not a grid
 - [x] `HockeyAI` RefCounted; `SimSettings.enable_skater_ai` idles the CPU skater assignments
 
@@ -161,7 +161,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Line changes (`LineLogic`): `SetPersonel` L51236, `SetPlList` L51300 (sublist substitutes), `findAvailablePlayer`, `ResetBench`, `CompLine` + `getlinee`, `SetLCmode` L36566, `getlchoice`, `lineinput` L36756, `lcfound`; `assbench` L37886, `assben`, `asspenalty`, `assdopen`, `assepen`; `restorep1` in `set_c_player`
 - [x] Crowd: `UpdateCwdExcite` L30009, `updatecrowdf` L30028
 - [x] Stats: `ChkShotStat` L47451 (Phase 3), team and player stats in `TeamStats`, PenSum. `InitScores` / `UpdateScores` (other games' ticker) not ported: cosmetic, and it needs the season/playoff mode
-- [ ] Penalty shot and shootout: `PenShotChk` returns the foul unchanged until `puckpenshot` L41276, `puckshootout` L41046 and the PS script are ported
+- [x] Penalty shot and shootout (`ShootoutLogic`, spec `docs/specs/shootout_penaltyshot.md`): `PenShotChk` L46100 and `getBAplayerInfo` (the shifted variants, Q1), `puckshootout` L41046, `sub_EE58` (the shooter), `puckpenshot` L41276, `sub_1592C`, the intro and its skip, the 25-second attempt clock in the VBlank, `sub_F2F4` / `sub_F37C` (end of the attempt), the PS/SO goal, and the Shootout play mode: `sub_FC47C`, `sub_FC4C0`, `sub_FC516` (home then away, five rounds, then sudden death), `sub_FD618` (the winners skate on), the decided ref text. The "Shootout SetUp" menu that reorders the lists (U2) is not ported: the lists come from each team's first line
 - [x] Fights: none in '94 (`fightinput`, `assfight`, `assfwatch` are `rts`; no caller raises the fighting penalties)
 
 ## Phase 9. Scenes and presentation
@@ -185,8 +185,8 @@ These come from the listing. Add a fact here before code depends on it.
 
 ## Phase 11. UI
 
-- [x] Setup screen: Team 1 / Team 2 `OptionButton`, line `ItemList` (the real Sc1-PK2 lines), reads `TeamData`
-- [x] HUD: clock, score, period, power play, referee calls, penalties, intermission and final banners
+- [x] Setup screen: Team 1 / Team 2 `OptionButton`, line `ItemList` (the real Sc1-PK2 lines), reads `TeamData`; the Shootout play mode ("SO")
+- [x] HUD: clock, score, period, power play, referee calls, penalties, intermission and final banners; the penalty shot / shootout intro box and the attempt clock
 - [x] Pause menu (Start; during an intermission Start resumes play instead)
 - [x] Line-change box (`sub_B92E`): rows A / B / C with the line each sends and its energy, while a pad's menu is open
 
@@ -204,3 +204,4 @@ These come from the listing. Add a fact here before code depends on it.
 - 2026-10-11: Data layer: 28 teams and 684 players extracted from the ROM to `.tres`; `setplayer`, `AttributeCalc`, form, bonuses and the energy drain ported. The spec's seven test vectors (Bourque, Oates, Lemieux, Neely, Dollas, Moog, Roy) match byte for byte. 330 checks pass.
 - 2026-10-11: Rules and game flow (`GameRules`, `FaceoffLogic`, `LineLogic`): clock, periods, OT, whistles, faceoff spots and the full faceoff, penalties with delayed calls and the box, power play, line changes and the line menu. The match scene now plays a whole game from `StartGame`; the sandbox runs without rules (`HockeyGame.run_rules`, `SimSettings.enable_rules`). A CPU Boston-Montreal game runs to the final horn in the tests. 396 checks pass.
 - 2026-10-11: Presentation: the ROM art exported offline (845 sprite frames in an index atlas, rink tiles and map, 28 logos, the side view, palettes, DAC samples). The match renders with the real rink as `TileMapLayer`s, team-coloured sprites through a palette shader, the retail camera, and the sideways penalty screen. Debug overlays default to the editor only.
+- 2026-10-11: Penalty shots and the shootout (`ShootoutLogic`). A foul on a breakaway skater becomes a penalty shot: the attempt is set up, played with the CPU script or the pads, and the game resumes with a faceoff. The Shootout play mode (setup screen "SO") plays alternating attempts to a winner. The nets, puck and shadow now start with no animation, as the struct clear leaves them (the puck had shown a skater frame until its first touch). 492 checks pass.

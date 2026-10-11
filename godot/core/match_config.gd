@@ -14,6 +14,8 @@ enum Driver { CPU, PAD1, PAD2 }
 @export var penalties: bool = true
 @export var offsides: bool = true
 @export var line_changes: bool = true
+## Shootout play mode (OptPlayMode 4): the whole game is a penalty-shot shootout.
+@export var shootout: bool = false
 ## Starting line index for each team (into TeamData.lines).
 @export var home_line: int = 0
 @export var away_line: int = 0

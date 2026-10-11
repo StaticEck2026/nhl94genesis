@@ -307,6 +307,9 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 		o.asslist[0] = row[8]
 		o.flags = row[9]
 		o.position = SimObject.POS_OFF_ICE if i < 12 else 0
+		if i >= 12:
+			# The struct clear: no animation on the nets, puck and shadow.
+			o.spa = 0
 		objects.append(o)
 		joy[i] = SkaterSteering.JOY_NONE
 	stats[0].first_object = 0
@@ -473,6 +476,8 @@ func setupice() -> void:
 		# The struct clear leaves every position 0 until forcepldata (the shootout relies
 		# on it: its goalie objects are never given a position).
 		fresh.position = 0
+		if i >= 12:
+			fresh.spa = 0
 		if i < 12 and gmode & GM_DIR:
 			fresh.flags ^= SimObject.PF_GOAL
 		o.copy_from(fresh)
