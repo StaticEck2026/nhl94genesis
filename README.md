@@ -28,3 +28,8 @@ The full `npm run build:retail` path is not ready. It still points at `src/hocke
 ## Godot rebuild
 
 `godot/` is a separate native Godot 4 rebuild that uses the listing as a behavior reference. It does not emulate the Genesis and does not read the ROM. Progress is tracked in `GODOT_TODO.md`.
+
+- Run: `godot --path godot` opens the setup screen (teams, controls, options), then a full match.
+- Tests: `godot/tests/run_tests.sh /path/to/godot` (headless).
+- Assets: the game loads loose files under `godot/assets/` and `godot/data/teams/`. They are produced offline from `lst/nhl94.bin` by `tools/extract/assets.py` (sprites, rink, palettes, samples), `tools/extract/teams.py` (rosters), `tools/extract/spalist.py` and `tools/extract/hotlist.py` (animation and stick tables).
+- Behaviour specs for every ported routine are in `docs/specs/`.
