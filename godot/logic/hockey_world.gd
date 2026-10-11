@@ -110,6 +110,7 @@ var rules: GameRules
 var faceoff: FaceoffLogic
 var lines: LineLogic
 var shootout: ShootoutLogic
+var fight: FightLogic
 ## Hot spot per sprite frame (Hotlist, exported offline to res://data/hotlist.json).
 var hotlist: Array = []
 ## updateanim with the SPAList data. When the data file is missing (no extraction run),
@@ -156,6 +157,8 @@ var crowd_boost: bool = true
 var no_fatigue: bool = false
 ## OptLine == 0: line changes on (burst drains energy only then).
 var opt_line_on: bool = true
+## OptFight (the fight patch's menu option, $FFDF00): 0 off (retail), 1 on, 2 on, Arcade.
+var opt_fight: int = 0
 ## OptPen: penalties on; with OptPen 1 offsides are called too.
 var opt_pen: bool = true
 var opt_offsides: bool = true
@@ -326,11 +329,13 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	faceoff = FaceoffLogic.new(self)
 	lines = LineLogic.new(self)
 	shootout = ShootoutLogic.new(self)
+	fight = FightLogic.new(self)
 	ai.register(asstab)
 	goalie.register(asstab)
 	faceoff.register(asstab)
 	lines.register(asstab)
 	shootout.register(asstab)
+	fight.register(asstab)
 	asstab[Shooting.ASS_SHOOT] = func(o: SimObject, d7: int) -> void: shooting.assshoot(o, d7)
 	asstab[Shooting.ASS_PASSREC] = func(o: SimObject, d7: int) -> void: shooting.asspassrec(o, d7)
 	asstab[Shooting.ASS_ONETIMER] = func(o: SimObject, d7: int) -> void: shooting.assonetimer(o, d7)
@@ -350,10 +355,18 @@ func _load_hotlist() -> void:
 	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if data is Dictionary and data.has("frames"):
 		hotlist = data["frames"]
+	# The fight patch's entries from 838 on (empty spots for the arrows, then the fight
+	# frames). Retail objects never show frames past 837.
+	path = "res://data/hotlist_fight.json"
+	if not FileAccess.file_exists(path):
+		return
+	data = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if data is Dictionary and data.has("frames") and int(data["first"]) == hotlist.size():
+		hotlist.append_array(data["frames"])
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout, fight]:
 		if m:
 			m.w = null
 	collisions = null
@@ -368,6 +381,7 @@ func dispose() -> void:
 	faceoff = null
 	lines = null
 	shootout = null
+	fight = null
 	asstab.clear()
 	for c in onetimer_shot.get_connections():
 		onetimer_shot.disconnect(c["callable"])
@@ -427,6 +441,9 @@ func step(d7: int = 1) -> void:
 	update_players(d7)
 	ai.set_slot_bit()
 	checkwindow(d7)
+	# addframe2 keeps the frame it drew last ($08); chkhit tests a hit once per new frame.
+	for o in objects:
+		o.old_frame = o.frame & 0x7FF
 
 ## periodiceevents (L29940): the penalty manager, crowd and clock every frame; the
 ## once-a-second jobs every 24 vblanks (not on the sideways penalty screen).

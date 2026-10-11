@@ -43,6 +43,17 @@ def display(n: int) -> int:
     return v
 
 
+def fight_display(n: int) -> int:
+    """The fight patch's Fgt column (fgtdisp, NHLPA '93 style): (H/F & $E) * 100 / 14,
+    no curve. Retail never shows fighting. Fight nibbles reach 7 in the patched rosters."""
+    return (2 * n * 100) // 14
+
+
+def fight_nibble_of(r: float) -> int:
+    """PlayerData.fight_nibble_of: the 0-7 nibble whose Fgt value is nearest."""
+    return min(range(8), key=lambda n: (abs(fight_display(n) - r), n))
+
+
 def nibble_of(r: float) -> int:
     """PlayerData.nibble_of: the nibble whose display value is nearest (ties go low)."""
     best, best_d = 0, None
@@ -141,7 +152,7 @@ def player_fields(p: dict, role: str) -> list:
         # skater fields (left at their 25 default = nibble 0).
         fields += [
             ("checking", "%d.0" % display(hi(A[4]))),
-            ("fighting", "%d.0" % display((lo(A[4]) >> 1) & 7)),
+            ("fighting", "%d.0" % fight_display((lo(A[4]) >> 1) & 7)),
             ("stick_handling", "%d.0" % display(hi(A[5]))),
             ("shot_accuracy", "%d.0" % display(lo(A[5]))),
         ]
@@ -149,7 +160,7 @@ def player_fields(p: dict, role: str) -> list:
         fields += [
             ("shot_power", "%d.0" % display(lo(A[3]))),
             ("checking", "%d.0" % display(hi(A[4]))),
-            ("fighting", "%d.0" % display((lo(A[4]) >> 1) & 7)),
+            ("fighting", "%d.0" % fight_display((lo(A[4]) >> 1) & 7)),
             ("stick_handling", "%d.0" % display(hi(A[5]))),
             ("shot_accuracy", "%d.0" % display(lo(A[5]))),
             ("endurance", "%d.0" % display(hi(A[6]))),
@@ -164,9 +175,11 @@ def check_round_trip(p: dict, role: str) -> None:
     """The nibbles PlayerData will rebuild equal the ROM nibbles (0-6 range)."""
     A = p["attr"]
     nibs = [A[1] & 15, A[2] >> 4, A[2] & 15, A[3] >> 4, A[3] & 15, A[4] >> 4,
-            (A[4] >> 1) & 7, A[5] >> 4, A[5] & 15, A[6] >> 4, A[6] & 15, A[7] >> 4, A[7] & 15]
+            A[5] >> 4, A[5] & 15, A[6] >> 4, A[6] & 15, A[7] >> 4, A[7] & 15]
     for n in nibs:
         assert 0 <= n <= 6 and nibble_of(display(n)) == n, (p["name"], n)
+    f = (A[4] >> 1) & 7
+    assert fight_nibble_of(fight_display(f)) == f, (p["name"], f)
     assert (A[4] >> 4) <= 6
 
 

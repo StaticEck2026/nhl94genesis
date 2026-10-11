@@ -2,12 +2,14 @@ class_name SpriteAtlas
 extends RefCounted
 ## Sprite frames exported by tools/extract/assets.py: an index atlas and, per frame, its
 ## rectangle, the origin pixel that sits on the object's projected position, and the
-## stick hot spot. Sets: "main" (frameSprData, 845 frames) and "faceoff" (the face-off
-## close-up, frames 1-10). Drawing mirrors a frame about its origin for the attribute
-## flips (addframe2), so a pixel column px maps to -px-1.
+## stick hot spot. Sets: "main" (frameSprData, 845 frames), "fight" (the fight patch's
+## frames 846-869, tools/extract/fight_patch.py; the main set falls back to it) and
+## "faceoff" (the face-off close-up, frames 1-10). Drawing mirrors a frame about its
+## origin for the attribute flips (addframe2), so a pixel column px maps to -px-1.
 
 const SETS := {
 	"main": ["res://assets/sprites/atlas_idx.png", "res://assets/sprites/frames.json"],
+	"fight": ["res://assets/sprites/fight_idx.png", "res://assets/sprites/fight.json"],
 	"faceoff": ["res://assets/sprites/faceoff_idx.png", "res://assets/sprites/faceoff.json"],
 }
 
@@ -31,13 +33,19 @@ static func available(set_name: String = "main") -> bool:
 	var s := _get_set(set_name)
 	return s[0] != null and not (s[1] as Dictionary).is_empty()
 
+## The set that holds frame f: the main set's frames past retail live in "fight".
+static func _set_for(f: int, set_name: String) -> String:
+	if set_name == "main" and not (_get_set("main")[1] as Dictionary).has(str(f & 0x7FF)):
+		return "fight"
+	return set_name
+
 static func has_frame(f: int, set_name: String = "main") -> bool:
-	return (_get_set(set_name)[1] as Dictionary).has(str(f & 0x7FF))
+	return (_get_set(_set_for(f, set_name))[1] as Dictionary).has(str(f & 0x7FF))
 
 ## Draws frame f on `ci` with its origin at `at`. The attribute's bits 11 and 12 flip it
 ## (the frame word's own flag bits XOR in, as addframe2 does).
 static func draw_frame(ci: CanvasItem, f: int, at: Vector2, attribute: int, set_name: String = "main") -> void:
-	var s := _get_set(set_name)
+	var s := _get_set(_set_for(f, set_name))
 	var frames: Dictionary = s[1]
 	var key := str(f & 0x7FF)
 	if s[0] == null or not frames.has(key):

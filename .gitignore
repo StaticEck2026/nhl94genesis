@@ -142,3 +142,5 @@ Extracted/**
 output/**
 # nhl*.bin
 nhl*.md
+# Python bytecode
+__pycache__/

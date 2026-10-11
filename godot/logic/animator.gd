@@ -5,6 +5,8 @@ extends RefCounted
 ## (tools/extract/spalist.py). Spec: docs/specs/animation_assets.md section 1.
 
 const DATA_PATH := "res://data/spalist.json"
+## The fight patch's nine animations ($1B96-$1CD6), tools/extract/fight_patch.py.
+const FIGHT_PATH := "res://data/spalist_fight.json"
 
 ## id -> {"loop": bool, "dirs": [[[frame, time], ...] x 8]}
 var anims: Dictionary = {}
@@ -13,10 +15,13 @@ func _init() -> void:
 	if not FileAccess.file_exists(DATA_PATH):
 		push_warning("Animator: %s missing; run tools/extract/spalist.py" % DATA_PATH)
 		return
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(DATA_PATH))
-	if data is Dictionary and data.has("anims"):
-		for k in data["anims"]:
-			anims[int(k)] = data["anims"][k]
+	for path in [DATA_PATH, FIGHT_PATH]:
+		if not FileAccess.file_exists(path):
+			continue
+		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if data is Dictionary and data.has("anims"):
+			for k in data["anims"]:
+				anims[int(k)] = data["anims"][k]
 
 func loaded() -> bool:
 	return not anims.is_empty()

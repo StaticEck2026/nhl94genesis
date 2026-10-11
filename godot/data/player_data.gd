@@ -26,8 +26,9 @@ enum Hand { LEFT, RIGHT }
 @export_range(0.0, 100.0, 1.0) var defensive_awareness: float = 54.0
 @export_range(0.0, 100.0, 1.0) var shot_power: float = 54.0
 @export_range(0.0, 100.0, 1.0) var checking: float = 54.0
-## Not shown on the retail roster screens; the fight engine reads it ($74).
-@export_range(0.0, 100.0, 1.0) var fighting: float = 25.0
+## Fgt, 0-100 on the fight patch's scale (nibble * 100 / 7, see fight_display). Not
+## shown on the retail roster screens; the fight engine reads it ($74).
+@export_range(0.0, 100.0, 1.0) var fighting: float = 0.0
 @export_range(0.0, 100.0, 1.0) var stick_handling: float = 54.0
 @export_range(0.0, 100.0, 1.0) var shot_accuracy: float = 54.0
 @export_range(0.0, 100.0, 1.0) var endurance: float = 54.0
@@ -68,6 +69,22 @@ static func nibble_of(r: float) -> int:
 			best_d = d
 	return best
 
+## The fight patch's Fgt column (fgtdisp): (H/F & $E) * 100 / 14, no curve. Fight
+## nibbles run 0-7 (the patched rosters use 7).
+static func fight_display(n: int) -> int:
+	return (2 * n * 100) / 14
+
+## The fight nibble 0-7 whose Fgt value is nearest r.
+static func fight_nibble_of(r: float) -> int:
+	var best := 0
+	var best_d := INF
+	for n in 8:
+		var d := absf(fight_display(n) - r)
+		if d < best_d:
+			best = n
+			best_d = d
+	return best
+
 func is_goalie() -> bool:
 	return position == Position.GOALIE
 
@@ -86,7 +103,7 @@ func rom_bytes() -> PackedByteArray:
 	a[2] = (nibble_of(speed) << 4) | nibble_of(offensive_awareness)
 	a[3] = (nibble_of(defensive_awareness) << 4) | nibble_of(puck_control if g else shot_power)
 	var hand := 1 if handedness == Hand.RIGHT else 0
-	a[4] = (nibble_of(checking) << 4) | ((nibble_of(fighting) & 7) << 1) | hand
+	a[4] = (nibble_of(checking) << 4) | (fight_nibble_of(fighting) << 1) | hand
 	a[5] = (nibble_of(stick_handling) << 4) | nibble_of(shot_accuracy)
 	a[6] = (nibble_of(stick_right if g else endurance) << 4) | nibble_of(stick_left if g else shot_bias)
 	a[7] = (nibble_of(glove_right if g else pass_accuracy) << 4) | nibble_of(glove_left if g else aggressiveness)

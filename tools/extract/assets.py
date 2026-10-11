@@ -245,14 +245,20 @@ def palettes(rom):
 
 # --- sprites ------------------------------------------------------------------------------
 
-def sprite_frames(rom):
+def sprite_frames(rom, first=1, last=845, hotlist=HOTLIST, hot_last=837, retail=True):
+    """frameSprData frames first..last. The fight patch (tools/extract/fight_patch.py)
+    reads its added frames from the patched ROM with retail=False."""
     fs = ANIM + rom.u32(ANIM + 4)
     tiles = ANIM + 10
     ntiles = rom.u16(ANIM + 8)
-    assert ntiles == 0x2041
-    assert fs + rom.u16(fs + 2 * 846) == HOTLIST + 2
+    if retail:
+        assert ntiles == 0x2041
+        assert fs + rom.u16(fs + 2 * 846) == HOTLIST + 2
+    else:
+        # The patch appends its tiles past the retail count without updating it.
+        ntiles = (len(rom.b) - tiles) // 32
     frames = []
-    for f in range(1, 846):
+    for f in range(first, last + 1):
         a0 = fs + rom.u16(fs + 2 * f)
         a1 = fs + rom.u16(fs + 2 * f + 2)
         pieces = []
@@ -280,7 +286,7 @@ def sprite_frames(rom):
                     dr = p["h"] - 1 - row if p["vf"] else row
                     c.tile(rom, tiles + 32 * t, p["x"] - x0 + 8 * dc, p["y"] - y0 + 8 * dr, p["pal"],
                            p["hf"], p["vf"], only_empty=True)
-        hot = [rom.s8(HOTLIST + 2 * f), rom.s8(HOTLIST + 2 * f + 1)] if f <= 837 else None
+        hot = [rom.s8(hotlist + 2 * f), rom.s8(hotlist + 2 * f + 1)] if f <= hot_last else None
         frames.append({"frame": f, "canvas": c, "origin": [-x0, -y0], "hot": hot,
                        "lines": sorted({p["pal"] for p in pieces}), "pieces": pieces})
     return frames

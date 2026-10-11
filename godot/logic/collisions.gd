@@ -126,6 +126,7 @@ func checkcx(a3: SimObject, a2: SimObject, d2: int, d5: int) -> void:
 		if leaked != D1_UNCHANGED:
 			d1 = leaked
 		w.checking.checkcheck(a3, a2, d4)
+		w.fight.checkfight(a3, a2)
 	var v1n := HockeyWorld.s16(d1)
 	if w.collflag < 0:
 		return

@@ -66,6 +66,7 @@ func doinput(a3: SimObject, pad: PadState, k: int, d7: int) -> void:
 		_locked(a3, d1, k)
 		return
 	if a3.fighting():
+		w.fight.fightinput(a3, d0, d1, d7)
 		return
 	if w.puckc == a3.index:
 		_offense(a3, d0, d1, d2, d3, k, d7)

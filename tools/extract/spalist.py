@@ -29,13 +29,11 @@ def w(rom: bytes, a: int) -> int:
     return struct.unpack(">h", rom[a:a + 2])[0]
 
 
-def main() -> None:
-    rom_path = sys.argv[1] if len(sys.argv) > 1 else "lst/nhl94.bin"
-    out_path = sys.argv[2] if len(sys.argv) > 2 else "godot/data/spalist.json"
-    rom = open(rom_path, "rb").read()
+def parse(rom: bytes, base: int, ids: list) -> dict:
+    """The entries `ids` of an SPAList at `base` (the fight patch moves it)."""
     out = {}
-    for spa in SPA_IDS:
-        e = BASE + spa
+    for spa in ids:
+        e = base + spa
         dirs = []
         for d in range(8):
             a = e + w(rom, e + 2 * d)
@@ -48,6 +46,14 @@ def main() -> None:
                     break
             dirs.append(pairs)
         out["%d" % spa] = {"loop": bool(w(rom, e + 0x10) & 1), "dirs": dirs}
+    return out
+
+
+def main() -> None:
+    rom_path = sys.argv[1] if len(sys.argv) > 1 else "lst/nhl94.bin"
+    out_path = sys.argv[2] if len(sys.argv) > 2 else "godot/data/spalist.json"
+    rom = open(rom_path, "rb").read()
+    out = parse(rom, BASE, SPA_IDS)
     json.dump({"source": "SPAList L22741, ROM $5B1C", "anims": out}, open(out_path, "w"), separators=(",", ":"))
     print("wrote %d animations to %s" % (len(out), out_path))
 

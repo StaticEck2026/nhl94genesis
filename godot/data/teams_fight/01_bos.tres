@@ -1,0 +1,553 @@
+[gd_resource type="Resource" script_class="TeamData" load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://data/team_data.gd" id="1"]
+[ext_resource type="Script" path="res://data/player_data.gd" id="2"]
+
+[sub_resource type="Resource" id="p0"]
+script = ExtResource("2")
+full_name = "Andy Moog"
+jersey_number = 35
+position = 2
+handedness = 0
+weight_lbs = 172.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 43.0
+defensive_awareness = 43.0
+puck_control = 72.0
+stick_right = 72.0
+stick_left = 54.0
+glove_right = 72.0
+glove_left = 54.0
+checking = 25.0
+fighting = 0.0
+stick_handling = 25.0
+shot_accuracy = 25.0
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("2")
+full_name = "John Blue"
+jersey_number = 39
+position = 2
+handedness = 0
+weight_lbs = 188.0
+agility = 54.0
+speed = 72.0
+offensive_awareness = 90.0
+defensive_awareness = 90.0
+puck_control = 54.0
+stick_right = 72.0
+stick_left = 54.0
+glove_right = 72.0
+glove_left = 54.0
+checking = 25.0
+fighting = 0.0
+stick_handling = 25.0
+shot_accuracy = 25.0
+
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("2")
+full_name = "Adam Oates"
+jersey_number = 12
+position = 0
+handedness = 1
+weight_lbs = 196.0
+agility = 90.0
+speed = 72.0
+offensive_awareness = 99.0
+defensive_awareness = 90.0
+shot_power = 54.0
+checking = 54.0
+fighting = 0.0
+stick_handling = 90.0
+shot_accuracy = 72.0
+endurance = 90.0
+shot_bias = 25.0
+pass_accuracy = 99.0
+aggressiveness = 34.0
+
+[sub_resource type="Resource" id="p3"]
+script = ExtResource("2")
+full_name = "Dave Poulin"
+jersey_number = 19
+position = 0
+handedness = 0
+weight_lbs = 196.0
+agility = 72.0
+speed = 54.0
+offensive_awareness = 54.0
+defensive_awareness = 72.0
+shot_power = 54.0
+checking = 72.0
+fighting = 28.0
+stick_handling = 54.0
+shot_accuracy = 54.0
+endurance = 72.0
+shot_bias = 34.0
+pass_accuracy = 72.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p4"]
+script = ExtResource("2")
+full_name = "Vladimir Ruzicka"
+jersey_number = 38
+position = 0
+handedness = 0
+weight_lbs = 220.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 54.0
+defensive_awareness = 54.0
+shot_power = 72.0
+checking = 43.0
+fighting = 42.0
+stick_handling = 72.0
+shot_accuracy = 54.0
+endurance = 54.0
+shot_bias = 54.0
+pass_accuracy = 54.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p5"]
+script = ExtResource("2")
+full_name = "Ted Donato"
+jersey_number = 21
+position = 0
+handedness = 0
+weight_lbs = 172.0
+agility = 54.0
+speed = 72.0
+offensive_awareness = 54.0
+defensive_awareness = 72.0
+shot_power = 54.0
+checking = 54.0
+fighting = 0.0
+stick_handling = 54.0
+shot_accuracy = 54.0
+endurance = 54.0
+shot_bias = 54.0
+pass_accuracy = 54.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p6"]
+script = ExtResource("2")
+full_name = "Joe Juneau"
+jersey_number = 49
+position = 0
+handedness = 0
+weight_lbs = 180.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 72.0
+defensive_awareness = 54.0
+shot_power = 72.0
+checking = 43.0
+fighting = 0.0
+stick_handling = 72.0
+shot_accuracy = 54.0
+endurance = 72.0
+shot_bias = 25.0
+pass_accuracy = 72.0
+aggressiveness = 34.0
+
+[sub_resource type="Resource" id="p7"]
+script = ExtResource("2")
+full_name = "Dmitri Kvartalnov"
+jersey_number = 10
+position = 0
+handedness = 0
+weight_lbs = 188.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 72.0
+defensive_awareness = 43.0
+shot_power = 54.0
+checking = 43.0
+fighting = 0.0
+stick_handling = 72.0
+shot_accuracy = 54.0
+endurance = 72.0
+shot_bias = 43.0
+pass_accuracy = 72.0
+aggressiveness = 34.0
+
+[sub_resource type="Resource" id="p8"]
+script = ExtResource("2")
+full_name = "Dave Reid"
+jersey_number = 17
+position = 0
+handedness = 0
+weight_lbs = 212.0
+agility = 43.0
+speed = 54.0
+offensive_awareness = 54.0
+defensive_awareness = 54.0
+shot_power = 54.0
+checking = 34.0
+fighting = 28.0
+stick_handling = 43.0
+shot_accuracy = 72.0
+endurance = 72.0
+shot_bias = 72.0
+pass_accuracy = 43.0
+aggressiveness = 25.0
+
+[sub_resource type="Resource" id="p9"]
+script = ExtResource("2")
+full_name = "Gregori Pantaleyev"
+jersey_number = 13
+position = 0
+handedness = 0
+weight_lbs = 188.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 43.0
+defensive_awareness = 43.0
+shot_power = 43.0
+checking = 34.0
+fighting = 14.0
+stick_handling = 54.0
+shot_accuracy = 54.0
+endurance = 43.0
+shot_bias = 72.0
+pass_accuracy = 54.0
+aggressiveness = 34.0
+
+[sub_resource type="Resource" id="p10"]
+script = ExtResource("2")
+full_name = "Brent Hughes"
+jersey_number = 42
+position = 0
+handedness = 0
+weight_lbs = 188.0
+agility = 54.0
+speed = 54.0
+offensive_awareness = 34.0
+defensive_awareness = 54.0
+shot_power = 43.0
+checking = 54.0
+fighting = 71.0
+stick_handling = 54.0
+shot_accuracy = 43.0
+endurance = 43.0
+shot_bias = 90.0
+pass_accuracy = 54.0
+aggressiveness = 72.0
+
+[sub_resource type="Resource" id="p11"]
+script = ExtResource("2")
+full_name = "Cam Neely"
+jersey_number = 8
+position = 0
+handedness = 1
+weight_lbs = 220.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 90.0
+defensive_awareness = 72.0
+shot_power = 72.0
+checking = 72.0
+fighting = 57.0
+stick_handling = 72.0
+shot_accuracy = 90.0
+endurance = 90.0
+shot_bias = 54.0
+pass_accuracy = 72.0
+aggressiveness = 72.0
+
+[sub_resource type="Resource" id="p12"]
+script = ExtResource("2")
+full_name = "Stephen Leach"
+jersey_number = 27
+position = 0
+handedness = 1
+weight_lbs = 188.0
+agility = 54.0
+speed = 54.0
+offensive_awareness = 54.0
+defensive_awareness = 54.0
+shot_power = 54.0
+checking = 54.0
+fighting = 42.0
+stick_handling = 54.0
+shot_accuracy = 43.0
+endurance = 72.0
+shot_bias = 90.0
+pass_accuracy = 54.0
+aggressiveness = 54.0
+
+[sub_resource type="Resource" id="p13"]
+script = ExtResource("2")
+full_name = "Stephen Heinze"
+jersey_number = 23
+position = 0
+handedness = 1
+weight_lbs = 188.0
+agility = 54.0
+speed = 54.0
+offensive_awareness = 54.0
+defensive_awareness = 54.0
+shot_power = 54.0
+checking = 54.0
+fighting = 14.0
+stick_handling = 54.0
+shot_accuracy = 54.0
+endurance = 54.0
+shot_bias = 90.0
+pass_accuracy = 54.0
+aggressiveness = 34.0
+
+[sub_resource type="Resource" id="p14"]
+script = ExtResource("2")
+full_name = "C.J. Young"
+jersey_number = 18
+position = 0
+handedness = 1
+weight_lbs = 188.0
+agility = 54.0
+speed = 54.0
+offensive_awareness = 43.0
+defensive_awareness = 43.0
+shot_power = 54.0
+checking = 43.0
+fighting = 28.0
+stick_handling = 54.0
+shot_accuracy = 54.0
+endurance = 43.0
+shot_bias = 54.0
+pass_accuracy = 43.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p15"]
+script = ExtResource("2")
+full_name = "Darin Kimble"
+jersey_number = 29
+position = 0
+handedness = 1
+weight_lbs = 212.0
+agility = 34.0
+speed = 34.0
+offensive_awareness = 43.0
+defensive_awareness = 34.0
+shot_power = 34.0
+checking = 43.0
+fighting = 71.0
+stick_handling = 43.0
+shot_accuracy = 72.0
+endurance = 34.0
+shot_bias = 54.0
+pass_accuracy = 34.0
+aggressiveness = 90.0
+
+[sub_resource type="Resource" id="p16"]
+script = ExtResource("2")
+full_name = "Peter Douris"
+jersey_number = 16
+position = 0
+handedness = 1
+weight_lbs = 204.0
+agility = 54.0
+speed = 72.0
+offensive_awareness = 54.0
+defensive_awareness = 54.0
+shot_power = 54.0
+checking = 43.0
+fighting = 28.0
+stick_handling = 54.0
+shot_accuracy = 54.0
+endurance = 43.0
+shot_bias = 72.0
+pass_accuracy = 43.0
+aggressiveness = 34.0
+
+[sub_resource type="Resource" id="p17"]
+script = ExtResource("2")
+full_name = "Ray Bourque"
+jersey_number = 77
+position = 1
+handedness = 0
+weight_lbs = 220.0
+agility = 90.0
+speed = 72.0
+offensive_awareness = 72.0
+defensive_awareness = 99.0
+shot_power = 90.0
+checking = 99.0
+fighting = 0.0
+stick_handling = 90.0
+shot_accuracy = 90.0
+endurance = 99.0
+shot_bias = 43.0
+pass_accuracy = 90.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p18"]
+script = ExtResource("2")
+full_name = "Don Sweeney"
+jersey_number = 32
+position = 1
+handedness = 0
+weight_lbs = 172.0
+agility = 72.0
+speed = 72.0
+offensive_awareness = 54.0
+defensive_awareness = 72.0
+shot_power = 72.0
+checking = 72.0
+fighting = 28.0
+stick_handling = 72.0
+shot_accuracy = 34.0
+endurance = 72.0
+shot_bias = 34.0
+pass_accuracy = 72.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p19"]
+script = ExtResource("2")
+full_name = "Glen Wesley"
+jersey_number = 26
+position = 1
+handedness = 0
+weight_lbs = 204.0
+agility = 90.0
+speed = 72.0
+offensive_awareness = 54.0
+defensive_awareness = 72.0
+shot_power = 72.0
+checking = 54.0
+fighting = 42.0
+stick_handling = 72.0
+shot_accuracy = 34.0
+endurance = 72.0
+shot_bias = 72.0
+pass_accuracy = 72.0
+aggressiveness = 43.0
+
+[sub_resource type="Resource" id="p20"]
+script = ExtResource("2")
+full_name = "David Shaw"
+jersey_number = 34
+position = 1
+handedness = 1
+weight_lbs = 212.0
+agility = 43.0
+speed = 43.0
+offensive_awareness = 43.0
+defensive_awareness = 72.0
+shot_power = 43.0
+checking = 54.0
+fighting = 14.0
+stick_handling = 43.0
+shot_accuracy = 43.0
+endurance = 72.0
+shot_bias = 90.0
+pass_accuracy = 43.0
+aggressiveness = 54.0
+
+[sub_resource type="Resource" id="p21"]
+script = ExtResource("2")
+full_name = "Gord Murphy"
+jersey_number = 28
+position = 1
+handedness = 1
+weight_lbs = 204.0
+agility = 90.0
+speed = 72.0
+offensive_awareness = 43.0
+defensive_awareness = 54.0
+shot_power = 72.0
+checking = 72.0
+fighting = 57.0
+stick_handling = 54.0
+shot_accuracy = 34.0
+endurance = 54.0
+shot_bias = 54.0
+pass_accuracy = 54.0
+aggressiveness = 54.0
+
+[sub_resource type="Resource" id="p22"]
+script = ExtResource("2")
+full_name = "Gordie Roberts"
+jersey_number = 14
+position = 1
+handedness = 0
+weight_lbs = 196.0
+agility = 54.0
+speed = 43.0
+offensive_awareness = 43.0
+defensive_awareness = 54.0
+shot_power = 34.0
+checking = 54.0
+fighting = 28.0
+stick_handling = 43.0
+shot_accuracy = 54.0
+endurance = 54.0
+shot_bias = 25.0
+pass_accuracy = 43.0
+aggressiveness = 54.0
+
+[sub_resource type="Resource" id="p23"]
+script = ExtResource("2")
+full_name = "Glen Feathrston"
+jersey_number = 6
+position = 1
+handedness = 0
+weight_lbs = 228.0
+agility = 54.0
+speed = 54.0
+offensive_awareness = 43.0
+defensive_awareness = 43.0
+shot_power = 43.0
+checking = 72.0
+fighting = 57.0
+stick_handling = 43.0
+shot_accuracy = 54.0
+endurance = 43.0
+shot_bias = 54.0
+pass_accuracy = 43.0
+aggressiveness = 72.0
+
+[sub_resource type="Resource" id="p24"]
+script = ExtResource("2")
+full_name = "Jim Wiemer"
+jersey_number = 36
+position = 1
+handedness = 0
+weight_lbs = 220.0
+agility = 43.0
+speed = 34.0
+offensive_awareness = 43.0
+defensive_awareness = 43.0
+shot_power = 34.0
+checking = 43.0
+fighting = 57.0
+stick_handling = 43.0
+shot_accuracy = 25.0
+endurance = 43.0
+shot_bias = 54.0
+pass_accuracy = 43.0
+aggressiveness = 72.0
+
+[resource]
+script = ExtResource("1")
+team_index = 1
+city = "Boston"
+team_name = "Bruins"
+abbreviation = "BOS"
+conference = 0
+division = 1
+arena_name = "Boston Garden"
+players = Array[ExtResource("2")]([SubResource("p0"), SubResource("p1"), SubResource("p2"), SubResource("p3"), SubResource("p4"), SubResource("p5"), SubResource("p6"), SubResource("p7"), SubResource("p8"), SubResource("p9"), SubResource("p10"), SubResource("p11"), SubResource("p12"), SubResource("p13"), SubResource("p14"), SubResource("p15"), SubResource("p16"), SubResource("p17"), SubResource("p18"), SubResource("p19"), SubResource("p20"), SubResource("p21"), SubResource("p22"), SubResource("p23"), SubResource("p24")])
+goalie_count = 2
+forward_count = 15
+defense_count = 8
+goalie_marks = 46080
+lines = PackedInt32Array(1, 19, 18, 7, 3, 12, 8, 0, 1, 19, 18, 8, 3, 12, 5, 0, 1, 20, 21, 7, 5, 13, 3, 0, 1, 22, 23, 11, 4, 14, 3, 0, 1, 20, 18, 8, 3, 12, 5, 0, 1, 22, 21, 7, 5, 13, 3, 0, 1, 19, 18, 9, 4, 3, 6, 0, 1, 20, 21, 3, 6, 9, 4, 0)
+sim_offense = 4
+sim_defense = 1
+pp_bonus = 1
+pk_penalty = 2
+home_bonus = 2
+away_penalty = 1
+home_palette = PackedInt32Array(3816, 546, 0, 0, 514, 548, 2188, 1642, 140, 142, 3276, 2730, 3276, 2184, 1164, 2692)
+away_palette = PackedInt32Array(3816, 546, 0, 0, 514, 548, 2188, 1642, 140, 142, 3276, 514, 548, 0, 1164, 2692)

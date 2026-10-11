@@ -57,6 +57,8 @@ var zvel: int = 0
 ## set for one handedness), bit 12 y flip, bits 13-14 palette, bit 15 priority. $06 frame.
 var attribute: int = 0
 var frame: int = 0
+## $08: the frame addframe2 drew last.
+var old_frame: int = 0
 ## $2E, $30, $32.
 var impactp: int = 0
 var limpact: int = 0
