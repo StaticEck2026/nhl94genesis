@@ -89,6 +89,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 8
 button_pressed = true
 text = "Pen"
+tooltip_text = "Penalties"
 
 [node name="Offsides" type="CheckBox" parent="Margin/Rows/Options"]
 unique_name_in_owner = true
@@ -96,12 +97,13 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 8
 button_pressed = true
 text = "Offs"
+tooltip_text = "Offsides"
 
-[node name="Shootout" type="CheckBox" parent="Margin/Rows/Options"]
+[node name="PlayMode" type="OptionButton" parent="Margin/Rows/Options"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
-text = "SO"
+tooltip_text = "Regular Game, or Shootout (the whole game is a penalty-shot shootout)"
 
 [node name="Start" type="Button" parent="Margin/Rows/Options"]
 unique_name_in_owner = true

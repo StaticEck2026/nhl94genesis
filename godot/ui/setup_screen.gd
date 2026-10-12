@@ -19,8 +19,8 @@ const GAME_SCENE := "res://scenes/game.tscn"
 ## OptLine: On, Off, Auto. OptGoalie: Manual or Auto Control.
 @onready var _line_changes: OptionButton = %LineChanges
 @onready var _goalie_ctrl: OptionButton = %GoalieControl
-## The Shootout play mode (OptPlayMode 4).
-@onready var _shootout: CheckBox = %Shootout
+## Play mode: Regular Game, or Shootout (OptPlayMode 4).
+@onready var _play_mode: OptionButton = %PlayMode
 @onready var _edition: OptionButton = %Edition
 @onready var _fighting: OptionButton = %Fighting
 @onready var _title: Label = $Margin/Rows/Title
@@ -38,6 +38,9 @@ func _ready() -> void:
 	for t in ["Goalie: Manual Control", "Goalie: Auto Control"]:
 		_goalie_ctrl.add_item(t)
 	_goalie_ctrl.select(1)
+	for t in ["Regular Game", "Shootout"]:
+		_play_mode.add_item(t)
+	_play_mode.select(0)
 	for f in ["Fighting: Off", "Fighting: On", "Fighting: On - Arcade Mode"]:
 		_fighting.add_item(f)
 	_fighting.select(MatchConfig.Fighting.ON)
@@ -130,7 +133,7 @@ func _on_start() -> void:
 	m.line_changes = _line_changes.selected != 1
 	m.auto_lines = _line_changes.selected == 2
 	m.auto_goalie = _goalie_ctrl.selected == 1
-	m.shootout = _shootout.button_pressed
+	m.shootout = _play_mode.selected == 1
 	m.edition = _edition.selected as MatchConfig.Edition
 	m.fighting = _fighting.selected as MatchConfig.Fighting
 	var hs := _home_lines.get_selected_items()
