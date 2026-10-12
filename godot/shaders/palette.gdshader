@@ -9,11 +9,22 @@ uniform bool away = false;
 // Plane cells: colour 0 is transparent on the VDP. Set for the rink's high-priority
 // layer, so sprites show through the near glass between its streaks and posts.
 uniform bool zero_transparent = false;
+// Window-plane text: a draw whose modulate has blue 0 takes its palette line from green
+// (line / 3), as a cell's attribute word picks the line for the whole tile. White
+// modulate (the default) keeps the art's own line.
+varying vec4 vcol;
+
+void vertex() {
+	vcol = COLOR;
+}
 
 void fragment() {
 	vec4 t = texture(TEXTURE, UV);
 	int idx = int(round(t.r * 15.0));
 	int line = int(round(t.g * 3.0));
+	if (vcol.b < 0.5) {
+		line = int(round(vcol.g * 3.0));
+	}
 	if (zero_transparent && idx == 0) {
 		discard;
 	}
@@ -21,5 +32,5 @@ void fragment() {
 		line = 3;
 	}
 	vec4 c = texelFetch(palette, ivec2(idx, line), 0);
-	COLOR = vec4(c.rgb, t.a * COLOR.a);
+	COLOR = vec4(c.rgb, t.a * vcol.a);
 }
