@@ -89,6 +89,8 @@ var crowd_cnt: int = 0
 var crowd_step: int = 0
 var crowd_frame: int = 0
 var crowd_flash: int = 0
+## word_FFC300 bit 0: the last goal freed a penalized player (the goal box says PP GOAL!).
+var pp_goal_flag: bool = false
 ## The flash's VDP counter read. Retail's counter reads do not disturb one another, so the
 ## (purely visual) flash draws from its own stream instead of HockeyWorld.hv_rng.
 var flash_rng := RandomNumberGenerator.new()
@@ -98,6 +100,15 @@ var num_excite: int = 0
 
 ## The referee's message text (prefmes).
 signal ref_message(text: String)
+## SetPA (L46552) with an id below $2E: the overlay draws the referee's message box.
+signal pa_set(id: int)
+## loc_1889A (L55990): the goal box, at SetPA($E). See goal_box_info.
+signal goal_box(info: Dictionary)
+## PrintScores1 (L47137) ran: the score box is redrawn.
+signal scores_printed
+## sub_1850A (L55666): the three stars, as [team, roster slot], in the last 64 VBlanks of
+## the Game Over script.
+signal stars(picks: Array)
 ## The penalty presentation turned the rink sideways (SetHor) or back (ClrHor).
 signal horizontal_changed(on: bool)
 signal period_started(gsp: int)
@@ -516,10 +527,12 @@ func recount(team: int) -> void:
 ## SetPA (L46552): start the referee script and message for an id.
 func set_pa(id: int) -> void:
 	refpen = id
-	if id == PEN_GOAL:
-		w.arena.hat_trick_check()
 	if id >= 0x2E:
 		return
+	pa_set.emit(id)
+	if id == PEN_GOAL:
+		w.arena.hat_trick_check()
+		goal_box.emit(goal_box_info())
 	refstep = 0
 	ref_message.emit(entry(id)[2])
 	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT and w.f_c2fa & ShootoutLogic.C2FA_DECIDED:
@@ -545,6 +558,9 @@ func _set_pa2() -> void:
 func update_pa(d7: int) -> void:
 	if refcnt < 0:
 		return
+	if refpen == PEN_EOG and refcnt <= 0x40 and w.gmode & HockeyWorld.GM_STARS == 0:
+		w.gmode |= HockeyWorld.GM_STARS
+		stars.emit(stars_of_game())
 	refcnt -= d7
 	if refcnt < 0:
 		_set_pa2()
@@ -589,7 +605,109 @@ func pp_goal(scoring_team: int) -> void:
 		w.delayed_pen |= 1
 		a1.on_ice += 1
 		a2.pp_goals += 1
+		pp_goal_flag = true
 		return
+
+## loc_1889A (L55990): what the goal box shows for the last ScoreSum record. The header
+## is "PP GOAL!" when the goal freed a penalized player (word_FFC300 bit 0) and "HAT TRICK!"
+## for a skater's third; a penalty-shot goal (word_FFC2F4 bit 5) lists no assists. Both
+## flags are consumed here, as retail's bclr does.
+func goal_box_info() -> Dictionary:
+	var pp := pp_goal_flag
+	pp_goal_flag = false
+	var ps := w.f_c2f4 & HockeyWorld.C2F4_PS_GOAL != 0
+	w.f_c2f4 &= ~HockeyWorld.C2F4_PS_GOAL
+	if w.score_summary.is_empty():
+		return {}
+	var rec: Dictionary = w.score_summary[w.score_summary.size() - 1]
+	var team := 1 if rec["away"] else 0
+	var st := w.stats[team]
+	var goalies := st.data.goalie_count if st.data else 2
+	var scorer := int(rec["scorer"])
+	var skater := TeamStats.valid_pnum(scorer) and scorer >= goalies
+	var header := "PP GOAL!" if pp else "GOAL!"
+	if skater and st.player_goals[scorer] == 3:
+		header = "HAT TRICK!"
+	var info := {"team": team, "header": header, "scorer": scorer,
+		"goals": st.player_goals[scorer] if skater else -1, "assists": []}
+	if not ps:
+		for k in ["assist1", "assist2"]:
+			var a := int(rec[k])
+			if a < 0:
+				break
+			info["assists"].append([a, st.player_assists[a] if TeamStats.valid_pnum(a) else 0])
+	return info
+
+## sub_18620 / sub_1867E (L55791): the star scores of every roster slot of both teams,
+## then sub_185E0 three times (the largest, ties to the lower slot; zeroed once picked).
+## A skater scores goals*11000 + assists*10100, plus shots*10 in a decided game or
+## shots*1000 + time on ice in a tie; a goalie who played the game (time on ice at least
+## ClockLength + 6, d2 inferred) with shots against earns 32000 for 4 % or less against
+## and 75000 more for a shutout. Everyone starts from his team's goal difference. In
+## overtime the last goal's scorer is the first star.
+func stars_of_game() -> Array:
+	var scores := []
+	for team in 2:
+		var st := w.stats[team]
+		var d3 := w.score(team) - w.score(1 - team)
+		var goalies := st.data.goalie_count if st.data else 2
+		var n := st.data.players.size() if st.data else TeamStats.ROSTER
+		for k in TeamStats.ROSTER:
+			var s := d3
+			if k >= n:
+				s = -0x7FFFFFFF
+			elif k >= goalies:
+				s += st.player_goals[k] * 11000 + st.player_assists[k] * 10100
+				if d3 != 0:
+					s += st.player_shots[k] * 10
+				else:
+					s += st.player_shots[k] * 1000 + st.player_toi[k]
+			elif st.player_toi[k] >= w.roster.clock_length() + 6 and st.player_shots[k] > 0:
+				var r := 100 * st.player_goals[k] / st.player_shots[k]
+				if r <= 4:
+					s += 32000
+				if r == 0:
+					s += 75000
+			scores.append(s)
+	if w.gsp == 3 and not w.score_summary.is_empty():
+		var rec: Dictionary = w.score_summary[w.score_summary.size() - 1]
+		var sc := int(rec["scorer"])
+		if TeamStats.valid_pnum(sc):
+			scores[(TeamStats.ROSTER if rec["away"] else 0) + sc] = 0x7FFFFFFF
+	var picks := []
+	for i in 3:
+		var best := 0
+		for j in scores.size():
+			if scores[j] > scores[best]:
+				best = j
+		picks.append([best / TeamStats.ROSTER, best % TeamStats.ROSTER])
+		scores[best] = -0x7FFFFFFF
+	return picks
+
+## CalcPenTime (L46955): the power-play banner's time left. a2 is the shorthanded team,
+## a3 the team on the power play. Ported as is, odd accumulation included
+## (rules_clock_penalties.md); the box times are the low 11 bits of tmpdst.
+func calc_pen_time(a2: TeamStats, a3: TeamStats) -> int:
+	var d0 := 0
+	var d3 := 0
+	for b in a2.box:
+		var t := a2.tmpdst[b]
+		if t & 0x4000:
+			continue
+		t = (t & 0x7FF) - d3
+		d0 += t
+		d3 = t
+	if a3.on_ice == 6:
+		return d0
+	d0 -= d3
+	for b in a3.box:
+		var t := a3.tmpdst[b]
+		if t & 0x4000:
+			continue
+		if d0 < (t & 0x7FF):
+			return d0
+		return d0 + d3
+	return d0
 
 ## sub_FF88E: the end-of-game wipe of every penalty.
 func wipe_penalties() -> void:
@@ -629,6 +747,9 @@ func vblank_tick() -> void:
 	if not borrow:
 		return
 	w.gameclock -= 1
+	for o in w.objects.slice(0, 12):
+		if o.position >= 0 and TeamStats.valid_pnum(o.pnum & 0xFF):
+			w.stats[o.team()].player_toi[o.pnum & 0xFF] += 1
 	if w.gameclock >= 60 and w.gameclock <= 61:
 		w.sound.emit(2)
 
@@ -817,6 +938,7 @@ func crowd_noise(d7: int) -> void:
 ## PrintScores1's crowd part: the score box is redrawn over the meter, so a loud crowd is
 ## reset and held off for 120 loops.
 func print_scores1() -> void:
+	scores_printed.emit()
 	if w.sflags & HockeyWorld.SF_HOR:
 		return
 	if crowd_loud:

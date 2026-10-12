@@ -107,6 +107,7 @@ func _initialize() -> void:
 		"test_markers",
 		"test_pause_menu_actions",
 		"test_edit_lines",
+		"test_overlay_logic",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2442,4 +2443,52 @@ func test_arena_sheets_assembled() -> bool:
 	var z: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/arena/zamboni.json"))
 	for k in z["frames"]:
 		eq(z["frames"][k]["parts"].size(), 1, "zamboni frame %s is one image" % k)
+	return true
+
+func test_overlay_logic() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("BOS"), _team("MTL"))
+	var boxes := []
+	w.rules.goal_box.connect(func(i: Dictionary) -> void: boxes.append(i))
+	var pas := []
+	w.rules.pa_set.connect(func(id: int) -> void: pas.append(id))
+	# A power-play goal: the freed penalty sets the header.
+	w.stats[1].on_ice = 5
+	w.stats[1].box = PackedInt32Array([12])
+	w.stats[1].tmpdst[12] = 100
+	w.pp_goal(0)
+	w.stats[0].player_goals[7] = 1
+	w.score_summary.append({"away": false, "scorer": 7, "assist1": 2, "assist2": -1})
+	w.rules.set_pa(GameRules.PEN_GOAL)
+	eq(pas, [GameRules.PEN_GOAL], "pa_set for the goal")
+	eq(boxes.size(), 1, "one goal box")
+	eq(boxes[0]["header"], "PP GOAL!", "power-play goal")
+	eq(boxes[0]["assists"].size(), 1, "one assist")
+	check(not w.rules.pp_goal_flag, "the flag is consumed")
+	# Third goal: hat trick; a penalty-shot goal lists no assists.
+	w.stats[0].player_goals[7] = 3
+	w.f_c2f4 |= HockeyWorld.C2F4_PS_GOAL
+	w.rules.set_pa(GameRules.PEN_GOAL)
+	eq(boxes[1]["header"], "HAT TRICK!", "hat trick")
+	eq(boxes[1]["assists"].size(), 0, "a penalty-shot goal has no assists")
+	# CalcPenTime: one minor left on the shorthanded team.
+	w.stats[1].on_ice = 5
+	w.stats[1].box = PackedInt32Array([10])
+	w.stats[1].tmpdst[10] = 95
+	w.stats[0].on_ice = 6
+	eq(w.rules.calc_pen_time(w.stats[1], w.stats[0]), 95, "PP time left")
+	# Stars: the hat trick first.
+	w.stats[0].goals = 3
+	var picks := w.rules.stars_of_game()
+	eq(picks[0], [0, 7], "the hat-trick scorer is the first star")
+	# Time on ice counts on the game-second tick.
+	w.place(3, Vector2i(0, 0), SimObject.POS_C, false, true)
+	w.objects[3].pnum = 2
+	w.gmode &= ~HockeyWorld.GM_CLOCK
+	w.f_c2fa |= 1 << 2
+	w.gameclock = 100
+	for i in 70:
+		w.rules.vblank_tick()
+	check(w.stats[0].player_toi[2] >= 1, "time on ice: %d" % w.stats[0].player_toi[2])
+	w.dispose()
 	return true

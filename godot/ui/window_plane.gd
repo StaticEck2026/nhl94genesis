@@ -1,68 +1,74 @@
 class_name WindowPlane
 extends Node2D
-## The window plane as retail's print routines use it: a 32 x 28 grid of 8 x 8 cells,
-## each a font glyph or a frame tile with its own palette line. The 256-pixel screen sits
-## centred in the port's 320-pixel view, so cell (c, r) is at (32 + 8c, 8r). Text uses the
-## ROM font ($AAC52, assets/sprites/font_idx.png); frame tiles come from
-## assets/ui (tools/extract/ui_overlay.py) when exported.
+## A screen plane as retail's print routines use it (print / printz, printbig, Framer,
+## eraser, dobitmap): a 32 x 28 grid of 8 x 8 cells, each a tile with its own palette
+## line. The 256-pixel screen sits centred in the port's 320-pixel view, so cell (c, r)
+## is at (32 + 8c, 8r) of the overlay (`origin` moves it, e.g. onto the side view).
+## Art from tools/extract/ui_overlay.py (assets/ui, spec docs/specs/ui_ingame.md):
+## the in-game font (opaque black cells, grey text), the printbig font, the Framer
+## tiles, the EA logo, the team plates and the energy bars. Colours come from the
+## material's palette (the rink CRAM: retail's overlays use lines 0 and 1).
 
 const COLS := 32
 const ROWS := 28
-const X0 := 32
-const FONT_PATH := "res://assets/sprites/font_idx.png"
-const FONT_JSON := "res://assets/sprites/font.json"
+const DIR := "res://assets/ui/"
 
-## Cell -> [texture key, tile index, palette line, flags (bit 0 h-flip, bit 1 v-flip)].
+## Top-left of cell (0, 0) in this node's space.
+var origin := Vector2(32, 0)
+## Cell -> [texture key, source rect, palette line (-1: the art's own), flags].
 var cells := {}
-var _tex := {}
-## Texture key -> tile index -> atlas rect.
-var _tiles := {}
-var _chars := {}
-## Shared across planes.
-static var _font_cache: Array = []
+
+static var _data := {}
+static var _tex := {}
 
 func _init() -> void:
-	_load_font()
+	_load()
 
-func _load_font() -> void:
-	if _font_cache.is_empty():
-		var tex: Texture2D = null
-		var chars := {}
-		if ResourceLoader.exists(FONT_PATH) and FileAccess.file_exists(FONT_JSON):
-			tex = load(FONT_PATH)
-			var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(FONT_JSON))
-			if d is Dictionary:
-				for k in d["chars"]:
-					chars[int(k)] = int(d["chars"][k])
-		_font_cache = [tex, chars]
-	_tex["font"] = _font_cache[0]
-	_chars = _font_cache[1]
+static func _load() -> void:
+	if not _data.is_empty():
+		return
+	var path := DIR + "ui.json"
+	if not FileAccess.file_exists(path):
+		_data = {"missing": true}
+		return
+	_data = JSON.parse_string(FileAccess.get_file_as_string(path))
+	for k in ["font", "bigfont", "framer", "ea_logo", "team_plates", "energy"]:
+		var f := DIR + String(_data[k]["file"])
+		if ResourceLoader.exists(f):
+			_tex[k] = load(f)
+	var m := DIR + "messages.json"
+	if FileAccess.file_exists(m):
+		_data["messages"] = JSON.parse_string(FileAccess.get_file_as_string(m))
 
-## Another tile set (a texture of 8 x 8 tiles, `per_row` to a row) under `key`.
-func add_tileset(key: String, tex: Texture2D, per_row: int) -> void:
-	_tex[key] = tex
-	_tiles[key] = per_row
+static func available() -> bool:
+	_load()
+	return _tex.has("font")
 
-func has_tileset(key: String) -> bool:
-	return _tex.get(key) != null
+## messages.json (penalty list texts, period labels, line names...).
+static func messages() -> Dictionary:
+	_load()
+	return _data.get("messages", {})
 
 func clear() -> void:
 	cells.clear()
-	_boxes.clear()
 	queue_redraw()
 
-## eraser: blank a rectangle of cells.
+## eraser: blank (transparent) cells.
 func erase(col: int, row: int, w: int, h: int) -> void:
 	for y in range(row, row + h):
 		for x in range(col, col + w):
 			cells.erase(Vector2i(x, y))
-	var r := Rect2i(col, row, w, h)
-	_boxes = _boxes.filter(func(b: Rect2i) -> bool: return not r.encloses(b))
 	queue_redraw()
 
-## print / printz: text from (col, row) in palette line `line`; '\n' starts the next row
-## back at `col`. Characters the font lacks are left blank.
-func print_at(col: int, row: int, text: String, line: int = 0) -> void:
+func _tile_rect(key: String, tile: int, per_row: int) -> Rect2:
+	return Rect2((tile % per_row) * 8, (tile / per_row) * 8, 8, 8)
+
+## print: text from (col, row). '\n' goes to the next row at `col`; '@' writes a
+## transparent cell, '^' skips one. Returns the column after the text.
+func print_at(col: int, row: int, text: String, line: int = -1) -> int:
+	if not available():
+		return col
+	var chars: Dictionary = _data["font"]["chars"]
 	var x := col
 	var y := row
 	for i in text.length():
@@ -71,77 +77,66 @@ func print_at(col: int, row: int, text: String, line: int = 0) -> void:
 			x = col
 			y += 1
 			continue
-		var t: int = _chars.get(c, 0)
-		if c == 32 or t == 0:
+		if c == 0x5E:
+			x += 1
+			continue
+		if c == 0x40:
 			cells.erase(Vector2i(x, y))
 		else:
-			cells[Vector2i(x, y)] = ["font", t, line, 0]
+			var t: int = chars.get(str(c), chars.get("32", 0))
+			cells[Vector2i(x, y)] = ["font", _tile_rect("font", t, 16), line, 0]
 		x += 1
 	queue_redraw()
+	return x
 
-## Centred on a row (in cells), as retail's centring prints do (printx -= len / 2).
-func print_centered(row: int, text: String, line: int = 0, center_col: int = 16) -> void:
-	print_at(center_col - text.length() / 2, row, text, line)
+## Centred on column `center` (printx -= len / 2).
+func print_centered(center: int, row: int, text: String, line: int = -1) -> void:
+	print_at(center - text.length() / 2, row, text, line)
 
-## One tile of a tile set.
-func put_tile(col: int, row: int, key: String, tile: int, line: int, flags: int = 0) -> void:
-	cells[Vector2i(col, row)] = [key, tile, line, flags]
+## printbig: the 2-cell-tall font, letters upper-cased. Returns the column after it.
+func print_big(col: int, row: int, text: String) -> int:
+	if not _tex.has("bigfont"):
+		return print_at(col, row, text)
+	var glyphs: Dictionary = _data["bigfont"]["glyphs"]
+	var x := col
+	for ch in text.to_upper():
+		var g: Dictionary = glyphs.get(str(ch.unicode_at(0)), glyphs["65"])
+		for half in 2:
+			var parts: Array = g["top" if half == 0 else "bottom"]
+			for k in parts.size():
+				var p: Array = parts[k]
+				cells[Vector2i(x + k, row + half)] = ["bigfont", _tile_rect("bigfont", int(p[0]), 16), -1, int(p[1]) & 3]
+		x += int(g["w"])
+	queue_redraw()
+	return x
+
+## Framer: a w x h box of the bevelled border and an opaque black centre.
+func frame(col: int, row: int, w: int, h: int) -> void:
+	if not _tex.has("framer"):
+		return
+	for y in h:
+		for x in w:
+			var i := (0 if y == 0 else (6 if y == h - 1 else 3)) + (0 if x == 0 else (2 if x == w - 1 else 1))
+			cells[Vector2i(col + x, row + y)] = ["framer", _tile_rect("framer", i, 3), -1, 0]
 	queue_redraw()
 
-## Framer: a w x h box (cells) with its border, interior blank (solid colour 0 of
-## `fill_line` when `fill`).
-func frame(col: int, row: int, w: int, h: int, line: int = 0, fill: bool = true) -> void:
-	for y in range(row, row + h):
-		for x in range(col, col + w):
-			cells[Vector2i(x, y)] = ["fill", 0, line, 0] if fill else null
-			if not fill:
-				cells.erase(Vector2i(x, y))
-	_frame_border(col, row, w, h, line)
+## dobitmap of an exported picture: a w x h cell block starting at cell (sx, sy) of `key`.
+func bitmap(col: int, row: int, key: String, sx: int, sy: int, w: int, h: int) -> void:
+	if not _tex.has(key):
+		return
+	for y in h:
+		for x in w:
+			cells[Vector2i(col + x, row + y)] = [key, Rect2((sx + x) * 8, (sy + y) * 8, 8, 8), -1, 0]
 	queue_redraw()
-
-## The border tiles: the exported Framer set when there is one, else a drawn line.
-func _frame_border(col: int, row: int, w: int, h: int, line: int) -> void:
-	if has_tileset("frame"):
-		var t: Array = _frame_tiles
-		cells[Vector2i(col, row)] = ["frame", t[0], line, 0]
-		cells[Vector2i(col + w - 1, row)] = ["frame", t[2], line, 0]
-		cells[Vector2i(col, row + h - 1)] = ["frame", t[6], line, 0]
-		cells[Vector2i(col + w - 1, row + h - 1)] = ["frame", t[8], line, 0]
-		for x in range(col + 1, col + w - 1):
-			cells[Vector2i(x, row)] = ["frame", t[1], line, 0]
-			cells[Vector2i(x, row + h - 1)] = ["frame", t[7], line, 0]
-		for y in range(row + 1, row + h - 1):
-			cells[Vector2i(col, y)] = ["frame", t[3], line, 0]
-			cells[Vector2i(col + w - 1, y)] = ["frame", t[5], line, 0]
-	else:
-		_boxes.append(Rect2i(col, row, w, h))
-
-## The Framer's nine tiles (corners, edges, centre) in the "frame" tile set.
-var _frame_tiles: Array = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-var _boxes: Array[Rect2i] = []
-
-func set_frame_tiles(tiles: Array) -> void:
-	_frame_tiles = tiles
 
 func _draw() -> void:
-	for b in _boxes:
-		var r := Rect2(X0 + b.position.x * 8 + 2, b.position.y * 8 + 2, b.size.x * 8 - 4, b.size.y * 8 - 4)
-		draw_rect(r, Color(1, 1, 1), false, 1.0)
 	for k in cells:
-		var cell: Variant = cells[k]
-		if cell == null:
-			continue
-		var at := Vector2(X0 + k.x * 8, k.y * 8)
-		var mod := Color(1, cell[2] / 3.0, 0, 1)
-		if cell[0] == "fill":
-			# Colour 0 of the line: the font's (0,0) texel is index 0 when the tile is blank.
-			draw_rect(Rect2(at, Vector2(8, 8)), Color(0, 0, 0, 0.85))
-			continue
+		var cell: Array = cells[k]
 		var tex: Texture2D = _tex.get(cell[0])
 		if tex == null:
 			continue
-		var per_row: int = 16 if cell[0] == "font" else _tiles.get(cell[0], 16)
-		var t: int = cell[1]
-		var src := Rect2((t % per_row) * 8, (t / per_row) * 8, 8, 8)
-		var size := Vector2(-8 if cell[3] & 1 else 8, -8 if cell[3] & 2 else 8)
-		draw_texture_rect_region(tex, Rect2(at, size), src, mod)
+		var at := origin + Vector2(k.x * 8, k.y * 8)
+		var f: int = cell[3]
+		var size := Vector2(-8 if f & 1 else 8, -8 if f & 2 else 8)
+		var mod := Color(1, 1, 1, 1) if cell[2] < 0 else Color(1, cell[2] / 3.0, 0, 1)
+		draw_texture_rect_region(tex, Rect2(at, size), cell[1], mod)

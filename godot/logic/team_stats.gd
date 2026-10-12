@@ -85,6 +85,9 @@ var player_assists: PackedInt32Array
 var player_shots: PackedInt32Array
 var player_pim: PackedInt32Array
 var player_checks: PackedInt32Array
+## $136 + 2 * pnum, the word Stars of the Game reads after the checks: seconds on the ice
+## (inferred; ui_ingame.md §10 UNRESOLVED 2). Counted once a game second.
+var player_toi: PackedInt32Array
 ## $342 + 2 * gsp goals per period, $34A + 2 * gsp shots per period (gsp 0..3).
 var period_goals: PackedInt32Array = PackedInt32Array([0, 0, 0, 0])
 var period_shots: PackedInt32Array = PackedInt32Array([0, 0, 0, 0])
@@ -111,6 +114,7 @@ func _init() -> void:
 	player_goals = _filled(0)
 	player_assists = _filled(0)
 	player_shots = _filled(0)
+	player_toi = _filled(0)
 	player_pim = _filled(0)
 	player_checks = _filled(0)
 	hotcold = PackedInt32Array()
@@ -144,6 +148,7 @@ func clear_game() -> void:
 	player_goals = _filled(0)
 	player_assists = _filled(0)
 	player_shots = _filled(0)
+	player_toi = _filled(0)
 	player_pim = _filled(0)
 	player_checks = _filled(0)
 	period_goals = PackedInt32Array([0, 0, 0, 0])

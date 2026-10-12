@@ -1,0 +1,1825 @@
+{
+ "clock_digits": {
+  "address": 91030,
+  "strings": [
+   "0",
+   "1",
+   "2",
+   "3",
+   "4",
+   "5",
+   "6",
+   "7",
+   "8",
+   "9"
+  ]
+ },
+ "inline": [
+  {
+   "address": 76838,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47145,
+   "ops": [
+    {
+     "at": [
+      0,
+      23
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "score box frame origin (Framer 9x5)",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 76862,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47159,
+   "ops": [
+    {
+     "at": [
+      1,
+      24
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "period label / clock row",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 76920,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47179,
+   "ops": [
+    {
+     "at": [
+      23,
+      23
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "team box frame origin (Framer 8x5)",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 76938,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47185,
+   "ops": [
+    {
+     "at": [
+      24,
+      26
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "home abbreviation and goals",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 76956,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47190,
+   "ops": [
+    {
+     "at": [
+      24,
+      24
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "away abbreviation and goals",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 76980,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47199,
+   "ops": [
+    {
+     "at": [
+      17,
+      2
+     ],
+     "attr": 32768,
+     "plane": "B"
+    }
+   ],
+   "purpose": "horizontal: period label (centred)",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 77030,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47215,
+   "ops": [
+    {
+     "at": [
+      23,
+      2
+     ],
+     "attr": 32768,
+     "plane": "B"
+    }
+   ],
+   "purpose": "horizontal: home plate and goals",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 77050,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47221,
+   "ops": [
+    {
+     "at": [
+      8,
+      2
+     ],
+     "attr": 32768,
+     "plane": "B"
+    }
+   ],
+   "purpose": "horizontal: away plate and goals",
+   "routine": "PrintScores1"
+  },
+  {
+   "address": 77182,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47274,
+   "ops": [
+    {
+     "at": [
+      1,
+      25
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "EA logo origin (no power play)",
+   "routine": "sub_12D70"
+  },
+  {
+   "address": 77240,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47295,
+   "ops": [
+    {
+     "at": [
+      20,
+      8
+     ],
+     "attr": 32768,
+     "plane": "B"
+    }
+   ],
+   "purpose": "horizontal: home penalty box list",
+   "routine": "sub_12DA6"
+  },
+  {
+   "address": 77258,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47301,
+   "ops": [
+    {
+     "at": [
+      5,
+      8
+     ],
+     "attr": 32768,
+     "plane": "B"
+    }
+   ],
+   "purpose": "horizontal: away penalty box list",
+   "routine": "sub_12DA6"
+  },
+  {
+   "address": 76524,
+   "bytes": 18,
+   "kind": "print",
+   "line": 47024,
+   "ops": [
+    {
+     "at": [
+      1,
+      25
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "   \u0016\u0017\u0018\u0019"
+    },
+    {
+     "at": [
+      1,
+      26
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "  "
+    }
+   ],
+   "purpose": "power-play banner: Pwr Play glyphs, time row",
+   "routine": "updatepwrplay"
+  },
+  {
+   "address": 76570,
+   "bytes": 6,
+   "kind": "print",
+   "line": 47054,
+   "ops": [
+    {
+     "at": [
+      1,
+      25
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "power-play banner: team abbreviation (appendz)",
+   "routine": "updatepwrplay"
+  },
+  {
+   "address": 90906,
+   "bytes": 6,
+   "kind": "print",
+   "line": 52296,
+   "ops": [
+    {
+     "at": [
+      13,
+      5
+     ],
+     "attr": 32768,
+     "plane": "B"
+    }
+   ],
+   "purpose": "horizontal clock origin",
+   "routine": "showclock"
+  },
+  {
+   "address": 91004,
+   "bytes": 6,
+   "kind": "print",
+   "line": 52329,
+   "ops": [
+    {
+     "at": [
+      13,
+      5
+     ],
+     "attr": 32768,
+     "plane": "W"
+    }
+   ],
+   "purpose": "horizontal clock: print state reset",
+   "routine": "showclock"
+  },
+  {
+   "address": 75666,
+   "bytes": 6,
+   "kind": "print",
+   "line": 46676,
+   "ops": [
+    {
+     "at": [
+      0,
+      10
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "erase the referee message (eraser 13x3)",
+   "routine": "prefmes"
+  },
+  {
+   "address": 75692,
+   "bytes": 6,
+   "kind": "print",
+   "line": 46685,
+   "ops": [
+    {
+     "at": [
+      5,
+      10
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "referee message box origin (vertical)",
+   "routine": "prefmes"
+  },
+  {
+   "address": 75780,
+   "bytes": 6,
+   "kind": "print",
+   "line": 46718,
+   "ops": [
+    {
+     "at": [
+      17,
+      11
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "referee message (horizontal, centred)",
+   "routine": "prefmes"
+  },
+  {
+   "address": 75820,
+   "bytes": 28,
+   "kind": "print",
+   "line": 46733,
+   "ops": [
+    {
+     "at": [
+      5,
+      11
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "                      "
+    }
+   ],
+   "purpose": "horizontal: blank the message row",
+   "routine": "sub_12828"
+  },
+  {
+   "address": 75298,
+   "bytes": 6,
+   "kind": "print",
+   "line": 46539,
+   "ops": [
+    {
+     "at": [
+      17,
+      11
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "horizontal: the penalized player's name (centred)",
+   "routine": "UpdatePA"
+  },
+  {
+   "address": 100558,
+   "bytes": 6,
+   "kind": "print",
+   "line": 56002,
+   "ops": [
+    {
+     "at": [
+      11,
+      2
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "goal box frame origin (Framer 19 x 5/7/8)",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 100798,
+   "bytes": 18,
+   "kind": "print",
+   "line": 56071,
+   "ops": [
+    {
+     "at": [
+      14,
+      6
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Assist by:"
+    },
+    {
+     "at": [
+      12,
+      7
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "goal box: Assist by:",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 100848,
+   "bytes": 6,
+   "kind": "print",
+   "line": 56086,
+   "ops": [
+    {
+     "at": [
+      12,
+      8
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "goal box: second assist row",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 1043182,
+   "bytes": 4,
+   "kind": "print",
+   "line": 974731,
+   "ops": [
+    {
+     "text": " ("
+    }
+   ],
+   "purpose": "goal box: count opener",
+   "routine": "sub_FEAE4"
+  },
+  {
+   "address": 1043204,
+   "bytes": 4,
+   "kind": "print",
+   "line": 974740,
+   "ops": [
+    {
+     "text": " ("
+    }
+   ],
+   "purpose": "goal box: count opener",
+   "routine": "sub_FEAFA"
+  },
+  {
+   "address": 1043264,
+   "bytes": 4,
+   "kind": "print",
+   "line": 974757,
+   "ops": [
+    {
+     "text": ")"
+    }
+   ],
+   "purpose": "goal box: count closer",
+   "routine": "sub_FEAFA"
+  },
+  {
+   "address": 100954,
+   "bytes": 6,
+   "kind": "print",
+   "line": 56165,
+   "ops": [
+    {
+     "at": [
+      11,
+      2
+     ],
+     "attr": 0,
+     "plane": "A"
+    }
+   ],
+   "purpose": "erase the goal / injury box area (eraser 19x8)",
+   "routine": "box"
+  },
+  {
+   "address": 100132,
+   "bytes": 6,
+   "kind": "print",
+   "line": 55853,
+   "ops": [
+    {
+     "at": [
+      11,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "injury box frame origin (Framer 18x5)",
+   "routine": "loc_1871C"
+  },
+  {
+   "address": 100160,
+   "bytes": 36,
+   "kind": "print",
+   "line": 55861,
+   "ops": [
+    {
+     "at": [
+      12,
+      4
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Injury to:"
+    },
+    {
+     "at": [
+      12,
+      6
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Out for period"
+    },
+    {
+     "at": [
+      12,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "injury text, out for period",
+   "routine": "loc_1871C"
+  },
+  {
+   "address": 100204,
+   "bytes": 34,
+   "kind": "print",
+   "line": 55877,
+   "ops": [
+    {
+     "at": [
+      12,
+      4
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Injury to:"
+    },
+    {
+     "at": [
+      12,
+      6
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Out for game"
+    },
+    {
+     "at": [
+      12,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "injury text, out for game",
+   "routine": "loc_1871C"
+  },
+  {
+   "address": 100260,
+   "bytes": 14,
+   "kind": "print",
+   "line": 55896,
+   "ops": [
+    {
+     "at": [
+      20,
+      6
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "the game"
+    }
+   ],
+   "purpose": "injury text: fight overprint",
+   "routine": "loc_1871C"
+  },
+  {
+   "address": 100320,
+   "bytes": 6,
+   "kind": "print",
+   "line": 55918,
+   "ops": [
+    {
+     "at": [
+      3,
+      2
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "penalty-shot intro frame origin (Framer 27x8)",
+   "routine": "sub_187B8"
+  },
+  {
+   "address": 100394,
+   "bytes": 6,
+   "kind": "print",
+   "line": 55943,
+   "ops": [
+    {
+     "at": [
+      4,
+      7
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "penalty-shot intro: penalty row",
+   "routine": "sub_187B8"
+  },
+  {
+   "address": 100434,
+   "bytes": 8,
+   "kind": "print",
+   "line": 55953,
+   "ops": [
+    {
+     "text": " by"
+    },
+    {
+     "at": [
+      4,
+      8
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "penalty-shot intro: by",
+   "routine": "sub_187B8"
+  },
+  {
+   "address": 73786,
+   "bytes": 6,
+   "kind": "print",
+   "line": 46026,
+   "ops": [
+    {
+     "at": [
+      3,
+      2
+     ],
+     "attr": 0,
+     "plane": "A"
+    }
+   ],
+   "purpose": "erase the intro box (eraser 27 x 8/12)",
+   "routine": "chkprogress"
+  },
+  {
+   "address": 1033012,
+   "bytes": 6,
+   "kind": "print",
+   "line": 968693,
+   "ops": [
+    {
+     "at": [
+      3,
+      2
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "shootout intro frame origin (Framer 27x12)",
+   "routine": "loc_FC320"
+  },
+  {
+   "address": 1033096,
+   "bytes": 10,
+   "kind": "print",
+   "line": 968712,
+   "ops": [
+    {
+     "text": " vs."
+    },
+    {
+     "at": [
+      4,
+      7
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "shootout intro: vs.",
+   "routine": "loc_FC320"
+  },
+  {
+   "address": 1033164,
+   "bytes": 6,
+   "kind": "print",
+   "line": 968729,
+   "ops": [
+    {
+     "at": [
+      4,
+      9
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "shootout intro: home row",
+   "routine": "loc_FC320"
+  },
+  {
+   "address": 1033222,
+   "bytes": 6,
+   "kind": "print",
+   "line": 968741,
+   "ops": [
+    {
+     "at": [
+      4,
+      10
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "shootout intro: away row",
+   "routine": "loc_FC320"
+  },
+  {
+   "address": 1033280,
+   "bytes": 12,
+   "kind": "print",
+   "line": 968754,
+   "ops": [
+    {
+     "at": [
+      4,
+      12
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Round "
+    }
+   ],
+   "purpose": "shootout intro: Round",
+   "routine": "loc_FC320"
+  },
+  {
+   "address": 1033656,
+   "bytes": 6,
+   "kind": "print",
+   "line": 968892,
+   "ops": [
+    {
+     "at": [
+      1,
+      13
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "shootout winner frame origin (Framer 30x6)",
+   "routine": "sub_FC5AE"
+  },
+  {
+   "address": 99646,
+   "bytes": 6,
+   "kind": "print",
+   "line": 55679,
+   "ops": [
+    {
+     "at": [
+      2,
+      14
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "stars box frame origin (Framer 28x9)",
+   "routine": "sub_1850A"
+  },
+  {
+   "address": 99664,
+   "bytes": 26,
+   "kind": "print",
+   "line": 55685,
+   "ops": [
+    {
+     "at": [
+      9,
+      16
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "Stars of the Game"
+    },
+    {
+     "at": [
+      3,
+      15
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "Stars of the Game",
+   "routine": "sub_1850A"
+  },
+  {
+   "address": 47586,
+   "bytes": 6,
+   "kind": "print",
+   "line": 36644,
+   "ops": [
+    {
+     "at": [
+      22,
+      0
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "line menu origin",
+   "routine": "setlccords"
+  },
+  {
+   "address": 79080,
+   "bytes": 6,
+   "kind": "print",
+   "line": 48119,
+   "ops": [
+    {
+     "at": [
+      3,
+      23
+     ],
+     "attr": 32768,
+     "plane": "W"
+    }
+   ],
+   "purpose": "playoff ticker origin (window when paused)",
+   "routine": "sub_134E4"
+  },
+  {
+   "address": 79100,
+   "bytes": 6,
+   "kind": "print",
+   "line": 48129,
+   "ops": [
+    {
+     "at": [
+      3,
+      23
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "playoff ticker origin (plane A)",
+   "routine": "sub_134E4"
+  },
+  {
+   "address": 78810,
+   "bytes": 26,
+   "kind": "print",
+   "line": 47954,
+   "ops": [
+    {
+     "text": "                        "
+    }
+   ],
+   "purpose": "playoff ticker: blank heading row",
+   "routine": "NewTicker3pt2"
+  },
+  {
+   "address": 64344,
+   "bytes": 6,
+   "kind": "print",
+   "line": 42215,
+   "ops": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "attr": 0,
+     "plane": "A"
+    }
+   ],
+   "purpose": "face-off window origin",
+   "routine": "puckfaceoff2"
+  },
+  {
+   "address": 64450,
+   "bytes": 6,
+   "kind": "print2",
+   "line": 42251,
+   "ops": [
+    {
+     "dy": 10
+    },
+    {
+     "attr": 32768
+    }
+   ],
+   "purpose": "face-off line box (Framer 12x3)",
+   "routine": "puckfaceoff2"
+  },
+  {
+   "address": 64488,
+   "bytes": 6,
+   "kind": "print2",
+   "line": 42261,
+   "ops": [
+    {
+     "dx": 1
+    },
+    {
+     "dy": -2
+    }
+   ],
+   "purpose": "face-off line names",
+   "routine": "puckfaceoff2"
+  },
+  {
+   "address": 65000,
+   "bytes": 6,
+   "kind": "print",
+   "line": 42429,
+   "ops": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "erase the face-off window (eraser 12x13)",
+   "routine": "loc_FDDE"
+  },
+  {
+   "address": 100884,
+   "bytes": 14,
+   "kind": "printbig",
+   "line": 56022,
+   "ops": [
+    {
+     "at": [
+      15,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "GOAL!"
+    },
+    {
+     "at": [
+      12,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "goal header",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 100898,
+   "bytes": 18,
+   "kind": "printbig",
+   "line": 56039,
+   "ops": [
+    {
+     "at": [
+      12,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "HAT TRICK!"
+    },
+    {
+     "at": [
+      12,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "goal header, hat trick",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 100916,
+   "bytes": 16,
+   "kind": "printbig",
+   "line": 56026,
+   "ops": [
+    {
+     "at": [
+      13,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "PP GOAL!"
+    },
+    {
+     "at": [
+      12,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "power-play goal header",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 100932,
+   "bytes": 18,
+   "kind": "printbig",
+   "line": 56039,
+   "ops": [
+    {
+     "at": [
+      12,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "HAT TRICK!"
+    },
+    {
+     "at": [
+      12,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "power-play goal header, hat trick",
+   "routine": "loc_1889A"
+  },
+  {
+   "address": 100484,
+   "bytes": 22,
+   "kind": "printbig",
+   "line": 55924,
+   "ops": [
+    {
+     "at": [
+      4,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "PENALTY SHOT!"
+    },
+    {
+     "at": [
+      4,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "penalty-shot intro header",
+   "routine": "sub_187B8"
+  },
+  {
+   "address": 1033318,
+   "bytes": 22,
+   "kind": "printbig",
+   "line": 968698,
+   "ops": [
+    {
+     "at": [
+      4,
+      3
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "SHOOTOUT MODE"
+    },
+    {
+     "at": [
+      4,
+      5
+     ],
+     "attr": 32768,
+     "plane": "A"
+    }
+   ],
+   "purpose": "shootout intro header",
+   "routine": "loc_FC320"
+  },
+  {
+   "address": 1033682,
+   "bytes": 20,
+   "kind": "printbig",
+   "line": 968904,
+   "ops": [
+    {
+     "at": [
+      2,
+      14
+     ],
+     "attr": 32768,
+     "plane": "A"
+    },
+    {
+     "text": "SHOOTOUT WON BY"
+    }
+   ],
+   "purpose": "shootout winner header",
+   "routine": "sub_FC5AE"
+  }
+ ],
+ "line_names": [
+  {
+   "address": 102822,
+   "id": 0,
+   "text": "Sc1"
+  },
+  {
+   "address": 102828,
+   "id": 1,
+   "text": "Sc2"
+  },
+  {
+   "address": 102834,
+   "id": 2,
+   "text": "Chk"
+  },
+  {
+   "address": 102840,
+   "id": 3,
+   "text": "PP1"
+  },
+  {
+   "address": 102846,
+   "id": 4,
+   "text": "PP2"
+  },
+  {
+   "address": 102852,
+   "id": 5,
+   "text": "PK1"
+  },
+  {
+   "address": 102858,
+   "id": 6,
+   "text": "PK2"
+  }
+ ],
+ "penalty_list": [
+  {
+   "address": 101962,
+   "delay": 1,
+   "id": 2,
+   "minutes": 0,
+   "ref_script": [
+    64240
+   ],
+   "text": "Period Over",
+   "text_bytes": 14
+  },
+  {
+   "address": 101980,
+   "delay": 1,
+   "id": 4,
+   "minutes": 0,
+   "ref_script": [
+    1296,
+    49056
+   ],
+   "text": "Game Over",
+   "text_bytes": 12
+  },
+  {
+   "address": 102048,
+   "delay": 1,
+   "id": 6,
+   "minutes": 0,
+   "ref_script": [
+    64246
+   ],
+   "text": "Face Off",
+   "text_bytes": 10
+  },
+  {
+   "address": 102048,
+   "delay": 1,
+   "id": 8,
+   "minutes": 0,
+   "ref_script": [
+    64246
+   ],
+   "text": "Face Off",
+   "text_bytes": 10
+  },
+  {
+   "address": 102094,
+   "delay": 0,
+   "id": 10,
+   "minutes": 0,
+   "ref_script": [
+    64246
+   ],
+   "text": "",
+   "text_bytes": 2
+  },
+  {
+   "address": 102014,
+   "delay": 1,
+   "id": 12,
+   "minutes": 0,
+   "ref_script": [
+    2,
+    257,
+    65018
+   ],
+   "text": "Icing",
+   "text_bytes": 8
+  },
+  {
+   "address": 101998,
+   "delay": 1,
+   "id": 14,
+   "minutes": 0,
+   "ref_script": [
+    1290,
+    49128
+   ],
+   "text": "",
+   "text_bytes": 2
+  },
+  {
+   "address": 102030,
+   "delay": 1,
+   "id": 16,
+   "minutes": 0,
+   "ref_script": [
+    2,
+    769,
+    64497
+   ],
+   "text": "Off-side",
+   "text_bytes": 10
+  },
+  {
+   "address": 102300,
+   "delay": 10,
+   "id": 18,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    65279
+   ],
+   "text": "Roughing",
+   "text_bytes": 10
+  },
+  {
+   "address": 102006,
+   "delay": 1,
+   "id": 20,
+   "minutes": 0,
+   "ref_script": [
+    1296,
+    49128
+   ],
+   "text": "",
+   "text_bytes": 2
+  },
+  {
+   "address": 102100,
+   "delay": 4,
+   "id": 22,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    257,
+    2561,
+    2817,
+    2561,
+    2817,
+    2561,
+    2817,
+    2561,
+    2817,
+    65279
+   ],
+   "text": "Charging",
+   "text_bytes": 10
+  },
+  {
+   "address": 102168,
+   "delay": 4,
+   "id": 24,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    257,
+    513,
+    769,
+    513,
+    769,
+    513,
+    769,
+    513,
+    769,
+    65279
+   ],
+   "text": "Slashing",
+   "text_bytes": 10
+  },
+  {
+   "address": 102332,
+   "delay": 4,
+   "id": 26,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    65279
+   ],
+   "text": "Roughing",
+   "text_bytes": 10
+  },
+  {
+   "address": 102464,
+   "delay": 4,
+   "id": 28,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    1537,
+    3841,
+    4097,
+    3841,
+    4097,
+    3841,
+    4097,
+    3841,
+    4097,
+    65279
+   ],
+   "text": "Cross Check",
+   "text_bytes": 14
+  },
+  {
+   "address": 102396,
+   "delay": 4,
+   "id": 30,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    257,
+    2305,
+    2049,
+    2305,
+    2049,
+    2305,
+    2049,
+    2305,
+    2049,
+    65279
+   ],
+   "text": "Hooking",
+   "text_bytes": 10
+  },
+  {
+   "address": 102236,
+   "delay": 4,
+   "id": 32,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    1025,
+    1281,
+    1025,
+    1281,
+    1025,
+    1281,
+    1025,
+    1281,
+    65279
+   ],
+   "text": "Tripping",
+   "text_bytes": 10
+  },
+  {
+   "address": 102540,
+   "delay": 4,
+   "id": 34,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    257,
+    3078,
+    65279
+   ],
+   "text": "Interference",
+   "text_bytes": 14
+  },
+  {
+   "address": 102588,
+   "delay": 4,
+   "id": 36,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    257,
+    1798,
+    65279
+   ],
+   "text": "Holding",
+   "text_bytes": 10
+  },
+  {
+   "address": 102608,
+   "delay": 40,
+   "id": 38,
+   "minutes": 5,
+   "ref_script": [
+    4,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    65279
+   ],
+   "text": "Fighting",
+   "text_bytes": 10
+  },
+  {
+   "address": 102640,
+   "delay": 40,
+   "id": 40,
+   "minutes": 5,
+   "ref_script": [
+    4,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    65279
+   ],
+   "text": "Fighting *",
+   "text_bytes": 12
+  },
+  {
+   "address": 102674,
+   "delay": 40,
+   "id": 42,
+   "minutes": 2,
+   "ref_script": [
+    4,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    65279
+   ],
+   "text": "Fight Instigator",
+   "text_bytes": 18
+  },
+  {
+   "address": 102076,
+   "delay": 0,
+   "id": 44,
+   "minutes": 0,
+   "ref_script": [
+    3,
+    769,
+    64497
+   ],
+   "text": "Penalty",
+   "text_bytes": 10
+  },
+  {
+   "address": 102430,
+   "delay": 4,
+   "id": 46,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    257,
+    2305,
+    2049,
+    2305,
+    2049,
+    2305,
+    2049,
+    2305,
+    2049,
+    65279
+   ],
+   "text": "Hooking",
+   "text_bytes": 10
+  },
+  {
+   "address": 102268,
+   "delay": 4,
+   "id": 48,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    1025,
+    1281,
+    1025,
+    1281,
+    1025,
+    1281,
+    1025,
+    1281,
+    65279
+   ],
+   "text": "Tripping",
+   "text_bytes": 10
+  },
+  {
+   "address": 102062,
+   "delay": 0,
+   "id": 50,
+   "minutes": 0,
+   "ref_script": [
+    64246
+   ],
+   "text": "Face Off",
+   "text_bytes": 10
+  },
+  {
+   "address": 102564,
+   "delay": 4,
+   "id": 52,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    257,
+    3078,
+    65279
+   ],
+   "text": "Interference",
+   "text_bytes": 14
+  },
+  {
+   "address": 102364,
+   "delay": 4,
+   "id": 54,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    3329,
+    3585,
+    65279
+   ],
+   "text": "Roughing",
+   "text_bytes": 10
+  },
+  {
+   "address": 102134,
+   "delay": 4,
+   "id": 56,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    257,
+    2561,
+    2817,
+    2561,
+    2817,
+    2561,
+    2817,
+    2561,
+    2817,
+    65279
+   ],
+   "text": "Charging",
+   "text_bytes": 10
+  },
+  {
+   "address": 102502,
+   "delay": 4,
+   "id": 58,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    1537,
+    3841,
+    4097,
+    3841,
+    4097,
+    3841,
+    4097,
+    3841,
+    4097,
+    65279
+   ],
+   "text": "Cross Check",
+   "text_bytes": 14
+  },
+  {
+   "address": 102202,
+   "delay": 4,
+   "id": 60,
+   "minutes": -1,
+   "ref_script": [
+    4,
+    257,
+    513,
+    769,
+    513,
+    769,
+    513,
+    769,
+    513,
+    769,
+    65279
+   ],
+   "text": "Slashing",
+   "text_bytes": 10
+  }
+ ],
+ "period_labels": [
+  {
+   "address": 102884,
+   "id": 0,
+   "text": "1\u0012"
+  },
+  {
+   "address": 102888,
+   "id": 1,
+   "text": "2\u0013"
+  },
+  {
+   "address": 102892,
+   "id": 2,
+   "text": "3\u0014"
+  },
+  {
+   "address": 102896,
+   "id": 3,
+   "text": "OT"
+  },
+  {
+   "address": 102900,
+   "id": 4,
+   "text": " F"
+  }
+ ],
+ "period_labels_alt": [
+  {
+   "address": 102904,
+   "id": 0,
+   "text": "1\u0012"
+  },
+  {
+   "address": 102908,
+   "id": 1,
+   "text": "2\u0013"
+  },
+  {
+   "address": 102912,
+   "id": 2,
+   "text": "3\u0014"
+  },
+  {
+   "address": 102916,
+   "id": 3,
+   "text": "OT"
+  },
+  {
+   "address": 102920,
+   "id": 4,
+   "text": "  "
+  }
+ ],
+ "source": "lst/nhl94.bin; see docs/specs/ui_ingame.md",
+ "special_chars": {
+  "0x12": "ST",
+  "0x13": "ND",
+  "0x14": "RD",
+  "0x16-0x19": "Pwr Play (4 cells)"
+ },
+ "ticker_headings": [
+  {
+   "address": 78984,
+   "id": 0,
+   "text": "EA Hockey Night"
+  },
+  {
+   "address": 79002,
+   "id": 1,
+   "text": "Stanley Cup Qualifier"
+  },
+  {
+   "address": 79026,
+   "id": 2,
+   "text": "Quarterfinal"
+  },
+  {
+   "address": 79040,
+   "id": 3,
+   "text": "Stanley Cup Semifinal"
+  }
+ ]
+}

@@ -19,6 +19,7 @@ const GM_PENDEL := 1 << 3    ## delayed penalty pending
 const GM_HL := 1 << 4        ## highlight / replay
 const GM_OFFS := 1 << 5      ## offsides on
 const GM_EOG := 1 << 6       ## 94: game over (clockcont _eog)
+const GM_STARS := 1 << 7     ## Stars of the Game drawn (sub_1850A)
 ## sflags bits.
 const SF_PAUSE := 1 << 0
 const SF_PASSDIR := 1 << 2
