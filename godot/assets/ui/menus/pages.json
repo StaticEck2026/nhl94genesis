@@ -1,0 +1,4472 @@
+{
+ "assets": {
+  "fonts": {
+   "0": "font_stats_idx.png",
+   "1": "font_stats_alt_idx.png"
+  },
+  "in_game": "res://assets/ui/ (ui_overlay.py): font_idx.png (pause menu text), bigfont_idx.png (printbig on every page), framer_idx.png (pause boxes), team_plates_idx.png (sub_8078 plates, 11x2 cells)"
+ },
+ "attr_lines": {
+  "0x8000": "line 0 cyan ($EE2)",
+  "0xA000": "line 1 white ($CCC)",
+  "0xC000": "line 2 yellow ($0EE)",
+  "0xE000": "line 3 green ($0E0)"
+ },
+ "pages": {
+  "change_goalie": {
+   "controls": {
+    "C or Start": "row 0: $26 = $FFFF (kept unless already pulled by the CPU); row k: $26 = k-1; then SetPersonel",
+    "after": "returns to the pause menu",
+    "up/down": "row (clamped)"
+   },
+   "cursor_start": "goalie word $26 + 1, 0 when pulled",
+   "handler": 40422,
+   "line": 34315,
+   "rows": "row 0 'no goalie' (x 11); row k (k >= 1): goalie k-1: number (2 BCD digits of the player record byte 0) at x 5, name (getname) at x 8; rows from y 13; attr $8000 on the cursor row, $A000 others",
+   "screen": "pause screen (H32 window over the side view)",
+   "static": [
+    {
+     "address": 40442,
+     "kind": "printz",
+     "line": 34319,
+     "note": "box (4,12) w $18, h 3 + goalies",
+     "ops": [
+      {
+       "at": [
+        4,
+        12
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "address": 40624,
+     "kind": "printz",
+     "line": 34376,
+     "note": "row blank (22 spaces) at x 5",
+     "ops": [
+      {
+       "text": "                      "
+      }
+     ]
+    },
+    {
+     "address": 40664,
+     "kind": "printz",
+     "line": 34391,
+     "note": "row 0 at x 11",
+     "ops": [
+      {
+       "text": "no goalie"
+      }
+     ]
+    }
+   ]
+  },
+  "crowd_meter": {
+   "controls": {
+    "Start (new press)": "exit ($9CD8)"
+   },
+   "handler": 39466,
+   "line": 33980,
+   "setup": {
+    "d0": 9,
+    "d1": 28,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 39480,
+     "kind": "printz",
+     "line": 33983,
+     "note": "window (6,1): box",
+     "ops": [
+      {
+       "at": [
+        6,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      6,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 28
+    },
+    {
+     "address": 39500,
+     "kind": "printbig",
+     "line": 33995,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        9,
+        4
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Crowd  Meter"
+      },
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "op": "plate",
+     "team": "away"
+    },
+    {
+     "at": [
+      22,
+      1
+     ],
+     "op": "plate",
+     "team": "home"
+    },
+    {
+     "address": 39560,
+     "kind": "printz2",
+     "line": 34032,
+     "note": "row 1",
+     "ops": [
+      {
+       "at": [
+        4,
+        12
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "Current Level"
+      },
+      {
+       "x": 28
+      }
+     ]
+    },
+    {
+     "address": 39594,
+     "kind": "printz2",
+     "line": 34059,
+     "note": "row 2",
+     "ops": [
+      {
+       "x": 4
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "Average Level"
+      },
+      {
+       "x": 28
+      }
+     ]
+    },
+    {
+     "address": 39632,
+     "kind": "printz2",
+     "line": 34072,
+     "note": "row 3",
+     "ops": [
+      {
+       "x": 4
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "Peak Level"
+      },
+      {
+       "x": 28
+      }
+     ]
+    },
+    {
+     "address": 39710,
+     "kind": "printz2",
+     "line": 34095,
+     "note": "row 4 (only when ValidSRAM >= 0)",
+     "ops": [
+      {
+       "x": 4
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "Arena Record"
+      },
+      {
+       "x": 28
+      }
+     ]
+    },
+    {
+     "address": 39804,
+     "kind": "printz2",
+     "line": 34128,
+     "note": "row 5 (only when ValidSRAM >= 0)",
+     "ops": [
+      {
+       "x": 4
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "League Record"
+      },
+      {
+       "x": 28
+      }
+     ]
+    },
+    {
+     "address": 39888,
+     "kind": "printz",
+     "line": 34161,
+     "note": "unit after each value",
+     "ops": [
+      {
+       "text": " dB"
+      }
+     ]
+    }
+   ],
+   "values": {
+    "arena_record": "SRAM record of HomeTeam, byte 8 of the $FFCF36 block, $50 when 0",
+    "average": "sroot((SumCwdExciteLvl $FFB8A8 / NumCwdExciteLvl $FFB8A6) * 4) + $41",
+    "current": "sroot(CwdExciteLvl $FFB8A2 * 4) + $41",
+    "first_row": 12,
+    "league_record": "the same for sub_FEC5E's team (league best), $50 when 0",
+    "peak": "sroot(MaxCwdExciteLvl $FFB8A4 * 4) + $41",
+    "row_step": 2,
+    "width": 3,
+    "x": 28
+   }
+  },
+  "edit_lines": {
+   "columns": {
+    "address": 34718,
+    "entries": [
+     [
+      4,
+      12,
+      4
+     ],
+     [
+      16,
+      12,
+      4
+     ],
+     [
+      28,
+      12,
+      4
+     ],
+     [
+      4,
+      12,
+      4
+     ],
+     [
+      16,
+      12,
+      4
+     ],
+     [
+      4,
+      12,
+      3
+     ],
+     [
+      16,
+      12,
+      3
+     ]
+    ],
+    "note": "per line (Sc1 Sc2 Chk PP1 PP2 PK1 PK2): x, y of the header, slots - 1; with OptLine != 0 the table starts one entry earlier ($8798)"
+   },
+   "controls": {
+    "C": "Select Player list",
+    "Start": "exit menu (sub_7E36 with the H40 box at (9,12))",
+    "left/right": "line (+-8)",
+    "up/down": "slot"
+   },
+   "cursor_moves": {
+    "address": 34762,
+    "bytes": [
+     1,
+     1,
+     2,
+     3,
+     4,
+     5,
+     25,
+     1,
+     1,
+     1,
+     2,
+     3,
+     4,
+     5,
+     25,
+     1,
+     9,
+     9,
+     10,
+     11,
+     12,
+     13,
+     33,
+     1
+    ],
+    "note": "d5b8 = line * 8 + slot (1-based); up/down +-1, left/right +-8"
+   },
+   "exit_menu": "menus.json line_editor_exit / line_editor_exit_nosave (Exit, Set Original lines, Save Team Line, Load Team Line); C or Start chooses; Exit returns to the pause menu",
+   "handler": 33498,
+   "line": 30809,
+   "line_names": [
+    {
+     "address": 102822,
+     "ops": [
+      {
+       "text": "Sc1"
+      }
+     ]
+    },
+    {
+     "address": 102828,
+     "ops": [
+      {
+       "text": "Sc2"
+      }
+     ]
+    },
+    {
+     "address": 102834,
+     "ops": [
+      {
+       "text": "Chk"
+      }
+     ]
+    },
+    {
+     "address": 102840,
+     "ops": [
+      {
+       "text": "PP1"
+      }
+     ]
+    },
+    {
+     "address": 102846,
+     "ops": [
+      {
+       "text": "PP2"
+      }
+     ]
+    },
+    {
+     "address": 102852,
+     "ops": [
+      {
+       "text": "PK1"
+      }
+     ]
+    },
+    {
+     "address": 102858,
+     "ops": [
+      {
+       "text": "PK2"
+      }
+     ]
+    }
+   ],
+   "pages": {
+    "address": 34278,
+    "bytes": [
+     1,
+     7,
+     7,
+     7,
+     24,
+     24,
+     96,
+     96
+    ],
+    "note": "bit mask of the lines shown, indexed by (d5b8 >> 3) [- 1 with OptLine]: Sc1+Sc2+Chk, PP1+PP2, PK1+PK2"
+   },
+   "select_player": {
+    "controls": {
+     "C": "put him in the slot; if he is already on that line the two trade places (sub_8898)",
+     "Start": "back to the editor",
+     "left/right": "attribute column (PAttribColumns)",
+     "up/down": "player"
+    },
+    "rows": "6 visible, from d5b0; name via getNameandAttrib (L32055); the cursor row in the selected attribute (d7)",
+    "static": [
+     {
+      "address": 33764,
+      "kind": "printz2",
+      "line": 30907,
+      "note": "plane W (1,0) box",
+      "ops": [
+       {
+        "at": [
+         1,
+         0
+        ],
+        "attr": 0,
+        "plane": "W"
+       }
+      ]
+     },
+     {
+      "at": [
+       1,
+       0
+      ],
+      "h": 3,
+      "op": "framer",
+      "w": 18
+     },
+     {
+      "address": 33788,
+      "kind": "printz2",
+      "note": "(21,0) attribute box",
+      "ops": [
+       {
+        "x": 21
+       },
+       {
+        "y": 0
+       }
+      ]
+     },
+     {
+      "at": [
+       21,
+       0
+      ],
+      "h": 3,
+      "op": "framer",
+      "w": 18
+     },
+     {
+      "address": 33810,
+      "kind": "printz2",
+      "line": 30915,
+      "note": "'{Select Player}'",
+      "ops": [
+       {
+        "at": [
+         2,
+         1
+        ],
+        "attr": 32768,
+        "plane": "B"
+       },
+       {
+        "text": "{Select  Player}"
+       }
+      ]
+     },
+     {
+      "address": 34004,
+      "kind": "printz",
+      "line": 30988,
+      "note": "attribute header at (22,1)",
+      "ops": [
+       {
+        "at": [
+         22,
+         1
+        ],
+        "attr": 32768,
+        "plane": "B"
+       }
+      ]
+     },
+     {
+      "address": 34088,
+      "kind": "printz2",
+      "line": 31025,
+      "note": "row blank + cursor",
+      "ops": [
+       {
+        "attr": 32768
+       },
+       {
+        "x": 5
+       },
+       {
+        "dy": 1
+       },
+       {
+        "text": "                      "
+       },
+       {
+        "x": 5
+       }
+      ]
+     }
+    ]
+   },
+   "setup": {
+    "d0": 0,
+    "d1": 28,
+    "note": "sets the team's $30 bit 0 (line menu redraw) first",
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 34566,
+     "kind": "printz",
+     "line": 31201,
+     "note": "header (sub_86F8 L31199): window redrawn with stats_bg",
+     "ops": [
+      {
+       "at": [
+        0,
+        0
+       ],
+       "attr": 0,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "address": 34616,
+     "kind": "printz",
+     "line": 31221,
+     "note": "plane B (7,1) box",
+     "ops": [
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 26
+    },
+    {
+     "address": 34638,
+     "kind": "printbig",
+     "line": 31227,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        10,
+        4
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "Line  Editor"
+      },
+      {
+       "at": [
+        14,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      14,
+      1
+     ],
+     "op": "plate",
+     "team": "editing"
+    },
+    {
+     "address": 34214,
+     "kind": "printz2",
+     "line": 31096,
+     "note": "name box (8,7)",
+     "ops": [
+      {
+       "at": [
+        8,
+        7
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "font": 1
+      }
+     ]
+    },
+    {
+     "at": [
+      8,
+      7
+     ],
+     "attr": 49152,
+     "h": 3,
+     "op": "framer",
+     "w": 24
+    },
+    {
+     "address": 34240,
+     "kind": "printz2",
+     "line": 31103,
+     "note": "selected player centred on x 21, row 8",
+     "ops": [
+      {
+       "x": 21
+      },
+      {
+       "y": 8
+      }
+     ]
+    },
+    {
+     "address": 34450,
+     "kind": "printz2",
+     "line": 31174,
+     "note": "position labels (sub_868C)",
+     "ops": [
+      {
+       "plane": "B"
+      },
+      {
+       "x": 0
+      },
+      {
+       "y": 10
+      }
+     ]
+    },
+    {
+     "address": 34516,
+     "kind": "printz2",
+     "line": 31187,
+     "note": "LD RD LW C RW at x 1, rows 14-22 (from $879E/$87A0, or $8798)",
+     "ops": [
+      {
+       "attr": 32768
+      },
+      {
+       "dx": -3
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "LD"
+      },
+      {
+       "dx": -2
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "RD"
+      },
+      {
+       "dx": -2
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "LW"
+      },
+      {
+       "dx": -2
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "C "
+      },
+      {
+       "dx": -2
+      },
+      {
+       "dy": 2
+      },
+      {
+       "text": "RW"
+      }
+     ]
+    },
+    {
+     "address": 34342,
+     "kind": "printz2",
+     "line": 31141,
+     "note": "' Line' after each line name",
+     "ops": [
+      {
+       "text": " Line"
+      }
+     ]
+    }
+   ]
+  },
+  "game_stats": {
+   "append": {
+    "addresses": [
+     1040112,
+     1040186,
+     1040220,
+     1040266
+    ],
+    "close": "%)",
+    "open": " (",
+    "pct": "%",
+    "slash": "/"
+   },
+   "arrows": [
+    {
+     "address": 1039814,
+     "kind": "printz2",
+     "note": "up arrow when scrolled",
+     "ops": [
+      {
+       "at": [
+        38,
+        8
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "{"
+      }
+     ]
+    },
+    {
+     "address": 1039834,
+     "kind": "printz2",
+     "note": "erase up arrow",
+     "ops": [
+      {
+       "at": [
+        38,
+        8
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": " "
+      }
+     ]
+    },
+    {
+     "address": 1039862,
+     "kind": "printz2",
+     "note": "down arrow when more below",
+     "ops": [
+      {
+       "at": [
+        38,
+        26
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "}"
+      }
+     ]
+    },
+    {
+     "address": 1039882,
+     "kind": "printz2",
+     "note": "erase down arrow",
+     "ops": [
+      {
+       "at": [
+        38,
+        26
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": " "
+      }
+     ]
+    }
+   ],
+   "controls": {
+    "Start": "Start (held, d3 bit 7) -> $9CD8 (L34244): forceblack, back to H32 and the in-game VRAM, then sub_7E46 redraws the pause menu (the pause loop re-enters at the same row)",
+    "up/down (held)": "scroll 2 px a frame until a 16 px step"
+   },
+   "handler": 1039450,
+   "layout": {
+    "attr": 32768,
+    "away_center_x": 9,
+    "home_center_x": 34,
+    "label_x": "0x15 - len/2 (len = the string's length word)",
+    "plane": "B",
+    "row0": 0,
+    "row_step": 2,
+    "value_x": "center - len/2 of the built string"
+   },
+   "line": 971880,
+   "rows_with_penalties": [
+    {
+     "address": 1040298,
+     "field": 12,
+     "field2": null,
+     "format": "n",
+     "label": "Score",
+     "label_x": 17,
+     "len": 8,
+     "port": [
+      "goals"
+     ]
+    },
+    {
+     "address": 1040310,
+     "field": 0,
+     "field2": null,
+     "format": "n",
+     "label": "Shots",
+     "label_x": 17,
+     "len": 8,
+     "port": [
+      "shots"
+     ]
+    },
+    {
+     "address": 1040322,
+     "field": null,
+     "field2": null,
+     "format": "goals*100/shots then '%'",
+     "label": "Shooting Pct",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "goals/shots"
+     ]
+    },
+    {
+     "address": 1040340,
+     "field": 2,
+     "field2": 4,
+     "format": "n/m",
+     "label": "Power Play",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "pp_goals",
+      "power_plays"
+     ]
+    },
+    {
+     "address": 1040356,
+     "field": 850,
+     "field2": null,
+     "format": "PushTime m:ss",
+     "label": "PP Minutes",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "pp_time"
+     ]
+    },
+    {
+     "address": 1040372,
+     "field": 852,
+     "field2": null,
+     "format": "n",
+     "label": "PP Shots",
+     "label_x": 16,
+     "len": 10,
+     "port": [
+      "pp_shots"
+     ]
+    },
+    {
+     "address": 1040386,
+     "field": 854,
+     "field2": null,
+     "format": "n",
+     "label": "SH Goals",
+     "label_x": 16,
+     "len": 10,
+     "port": [
+      "shorthanded_goals"
+     ]
+    },
+    {
+     "address": 1040400,
+     "field": 858,
+     "field2": 856,
+     "format": "n/m",
+     "label": "Breakaways",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "breakaway_goals",
+      "breakaway_attempts"
+     ]
+    },
+    {
+     "address": 1040416,
+     "field": 862,
+     "field2": 860,
+     "format": "n/m",
+     "label": "One-Timers",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "onetimer_goals",
+      "onetimer_attempts"
+     ]
+    },
+    {
+     "address": 1040432,
+     "field": 866,
+     "field2": 864,
+     "format": "n/m",
+     "label": "Penalty Shots",
+     "label_x": 13,
+     "len": 16,
+     "port": [
+      "penalty_shot_goals",
+      "ps_attempts"
+     ]
+    },
+    {
+     "address": 1040452,
+     "field": 14,
+     "field2": null,
+     "format": "n",
+     "label": "Faceoffs Won",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "faceoffs_won"
+     ]
+    },
+    {
+     "address": 1040470,
+     "field": 16,
+     "field2": null,
+     "format": "n",
+     "label": "Body Checks",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "checks"
+     ]
+    },
+    {
+     "address": 1040488,
+     "field": 6,
+     "field2": 8,
+     "format": "n/m",
+     "label": "Penalties",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "penalties",
+      "penalty_minutes"
+     ]
+    },
+    {
+     "address": 1040504,
+     "field": 10,
+     "field2": null,
+     "format": "PushTime m:ss",
+     "label": "Attack Zone",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "attack_time"
+     ]
+    },
+    {
+     "address": 1040522,
+     "field": 20,
+     "field2": 18,
+     "format": "n/m (pct%)",
+     "label": "Passing",
+     "label_x": 16,
+     "len": 10,
+     "port": [
+      "passes",
+      "pass_attempts"
+     ]
+    }
+   ],
+   "rows_without_penalties": [
+    {
+     "address": 1040536,
+     "field": 12,
+     "field2": null,
+     "format": "n",
+     "label": "Score",
+     "label_x": 17,
+     "len": 8,
+     "port": [
+      "goals"
+     ]
+    },
+    {
+     "address": 1040548,
+     "field": 0,
+     "field2": null,
+     "format": "n",
+     "label": "Shots",
+     "label_x": 17,
+     "len": 8,
+     "port": [
+      "shots"
+     ]
+    },
+    {
+     "address": 1040560,
+     "field": null,
+     "field2": null,
+     "format": "goals*100/shots then '%'",
+     "label": "Shooting Pct",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "goals/shots"
+     ]
+    },
+    {
+     "address": 1040578,
+     "field": 858,
+     "field2": 856,
+     "format": "n/m",
+     "label": "Breakaways",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "breakaway_goals",
+      "breakaway_attempts"
+     ]
+    },
+    {
+     "address": 1040594,
+     "field": 862,
+     "field2": 860,
+     "format": "n/m",
+     "label": "One-Timers",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "onetimer_goals",
+      "onetimer_attempts"
+     ]
+    },
+    {
+     "address": 1040610,
+     "field": 866,
+     "field2": 864,
+     "format": "n/m",
+     "label": "Penalty Shots",
+     "label_x": 13,
+     "len": 16,
+     "port": [
+      "penalty_shot_goals",
+      "ps_attempts"
+     ]
+    },
+    {
+     "address": 1040630,
+     "field": 14,
+     "field2": null,
+     "format": "n",
+     "label": "Faceoffs Won",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "faceoffs_won"
+     ]
+    },
+    {
+     "address": 1040648,
+     "field": 16,
+     "field2": null,
+     "format": "n",
+     "label": "Body Checks",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "checks"
+     ]
+    },
+    {
+     "address": 1040666,
+     "field": 6,
+     "field2": 8,
+     "format": "n/m",
+     "label": "Penalties",
+     "label_x": 15,
+     "len": 12,
+     "port": [
+      "penalties",
+      "penalty_minutes"
+     ]
+    },
+    {
+     "address": 1040682,
+     "field": 10,
+     "field2": null,
+     "format": "PushTime m:ss",
+     "label": "Attack Zone",
+     "label_x": 14,
+     "len": 14,
+     "port": [
+      "attack_time"
+     ]
+    },
+    {
+     "address": 1040700,
+     "field": 20,
+     "field2": 18,
+     "format": "n/m (pct%)",
+     "label": "Passing",
+     "label_x": 16,
+     "len": 10,
+     "port": [
+      "passes",
+      "pass_attempts"
+     ]
+    }
+   ],
+   "scroll": {
+    "max": "$70 with OptPen, else $30",
+    "step_px": 2,
+    "stop_every_px": 16,
+    "vscroll_b": "$FFB0 + d5ae (plane row 0 at screen row 10)"
+   },
+   "setup": {
+    "d0": 9,
+    "d1": 26,
+    "note": "sub_9BD8 (L34170): forceblack; H40 ($8C81), window map 64 wide, full-screen window ($921C stays from the pause screen), stats Framer tiles (remap 91..) at framercset, font 0 raw at word_FFB012, window = stats_bg with priority, rows d0..d1-1 redrawn without priority (where plane B text shows), font 1 (remap D1..) at word_FFB014, plane B cleared to $7FF; fade in ($18)",
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 1039466,
+     "kind": "printz",
+     "line": 971890,
+     "note": "window (4,1): box",
+     "ops": [
+      {
+       "at": [
+        4,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      4,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "line": 971906,
+     "op": "framer",
+     "w": 32
+    },
+    {
+     "address": 1039488,
+     "kind": "printbig",
+     "line": 971912,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        6,
+        4
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Game  Statistics"
+      },
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "line": 971946,
+     "op": "plate",
+     "routine": "sub_8078 d0=$2C",
+     "team": "away"
+    },
+    {
+     "at": [
+      22,
+      1
+     ],
+     "line": 971958,
+     "op": "plate",
+     "routine": "sub_8078 d0=0",
+     "team": "home"
+    },
+    {
+     "address": 1039914,
+     "kind": "printz",
+     "line": 972338,
+     "note": "window (2,7): away plate",
+     "ops": [
+      {
+       "at": [
+        2,
+        7
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      2,
+      7
+     ],
+     "op": "plate",
+     "team": "away"
+    },
+    {
+     "address": 1039936,
+     "kind": "printz",
+     "line": 972360,
+     "note": "window (26,7): home plate",
+     "ops": [
+      {
+       "at": [
+        26,
+        7
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      26,
+      7
+     ],
+     "op": "plate",
+     "team": "home"
+    }
+   ]
+  },
+  "instant_replay": {
+   "controls": "docs/specs/ui_menus.md section 14: C play/stop, A rewind, B slow forward, d-pad picks the camera target, Start opens the prompt (Start back to play, B pause menu, C reverse angle)",
+   "describe_only": true,
+   "handler": 40912,
+   "line": 34505,
+   "panel": "sub_A448 (L34848): replay_panel_idx.png at window (2,2) for $F0 frames, then erased (sub_A48A)"
+  },
+  "other_scores": {
+   "arrows": [
+    {
+     "address": 33468,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 19
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 33478,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 19
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 33488,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 19
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ],
+   "controls": {
+    "Start": "Start (held, d3 bit 7) -> $9CD8 (L34244): forceblack, back to H32 and the in-game VRAM, then sub_7E46 redraws the pause menu (the pause loop re-enters at the same row)",
+    "up/down (held)": "scroll"
+   },
+   "data": "gsstruct $FFCE66, 16 bytes a series (rules_clock_penalties.md 0.6), GetShifter() + 1 games; skips gamenum, flags bit 1 (held for a highlight) and bit 2 (series over)",
+   "handler": 32980,
+   "layout": {
+    "game_rows": 3,
+    "order": "team 2 (+2, score +$C) on the first row, team 1 (+0, score +$A) on the second",
+    "period": "unk_191E4[gsper - 1] (1st 2nd 3rd OT F)",
+    "period_x": 28,
+    "plane": "B",
+    "score_width": 2,
+    "score_x": 24,
+    "team": "city",
+    "team_x": 6
+   },
+   "line": 30583,
+   "period_labels": [
+    {
+     "address": 102884,
+     "ops": [
+      {
+       "text": "1\u0012"
+      }
+     ]
+    },
+    {
+     "address": 102888,
+     "ops": [
+      {
+       "text": "2\u0013"
+      }
+     ]
+    },
+    {
+     "address": 102892,
+     "ops": [
+      {
+       "text": "3\u0014"
+      }
+     ]
+    },
+    {
+     "address": 102896,
+     "ops": [
+      {
+       "text": "OT"
+      }
+     ]
+    },
+    {
+     "address": 102900,
+     "ops": [
+      {
+       "text": " F"
+      }
+     ]
+    }
+   ],
+   "quirk": "the arrow table has 3 strings; index 3 (both arrows) would read the Edit Lines code at $82DA. With 8 games the range is one 24 px step, so both arrows never show",
+   "scroll": {
+    "game_px": 24,
+    "max": "(rows - $15) * 8",
+    "step_px": 2,
+    "vscroll_b": "$FFD0 + d5ae"
+   },
+   "setup": {
+    "d0": 6,
+    "d1": 26,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 32994,
+     "kind": "printz",
+     "line": 30586,
+     "note": "window (5,0): box",
+     "ops": [
+      {
+       "at": [
+        5,
+        0
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      5,
+      0
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 30
+    },
+    {
+     "address": 33016,
+     "kind": "printbig",
+     "line": 30598,
+     "note": "big 'Scores' at (14,3), then the cursor to (11,1)",
+     "ops": [
+      {
+       "at": [
+        14,
+        3
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Scores"
+      },
+      {
+       "at": [
+        11,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      11,
+      1
+     ],
+     "line": 30623,
+     "name": "hockey_night",
+     "op": "image",
+     "palette": "none (d5 = 0)"
+    },
+    {
+     "address": 33068,
+     "kind": "printz2",
+     "line": 30624,
+     "note": "list origin plane B (4,0)",
+     "ops": [
+      {
+       "at": [
+        4,
+        0
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    }
+   ]
+  },
+  "penalty_summary": {
+   "arrows": [
+    {
+     "address": 37888,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 37898,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 37908,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 37918,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ],
+   "arrows_at": "sub_93C4 (L33189): printz2 window (4,9) attr $8000 font 1, then the table entry",
+   "controls": {
+    "Start": "Start (held, d3 bit 7) -> $9CD8 (L34244): forceblack, back to H32 and the in-game VRAM, then sub_7E46 redraws the pause menu (the pause loop re-enters at the same row)",
+    "up/down (held)": "scroll"
+   },
+   "handler": 37186,
+   "layout": {
+    "entry_rows": 3,
+    "minutes_x": 35,
+    "penalty_attr": 57344,
+    "penalty_x": 19,
+    "period_x": 1,
+    "plane": "B",
+    "player_x": 16,
+    "team_x": 12,
+    "time_x": 3,
+    "visible_entries": 5
+   },
+   "line": 32544,
+   "penalty_names": "PenaltyList $18E0C (ui/messages.json penalty_list): byte 1 = minutes, then the text",
+   "record": "PenSum $FFC5DE, 4 bytes: word time, byte PenaltyList id | $80 away, byte pnum; PenSumLength $FFC5DC",
+   "scroll": {
+    "entry_px": 24,
+    "start": "d5ae = entries * 24, scrolls up to max(entries*24 - $78, 0)",
+    "step_px": 2,
+    "vscroll_b": "$FFB0 + d5ae"
+   },
+   "setup": {
+    "d0": 10,
+    "d1": 25,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 37200,
+     "kind": "printz",
+     "line": 32552,
+     "note": "window (4,1): box",
+     "ops": [
+      {
+       "at": [
+        4,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      4,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 32
+    },
+    {
+     "address": 37222,
+     "kind": "printbig",
+     "line": 32574,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        5,
+        4
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Penalty  Summary"
+      },
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "op": "plate",
+     "team": "away"
+    },
+    {
+     "at": [
+      22,
+      1
+     ],
+     "op": "plate",
+     "team": "home"
+    },
+    {
+     "address": 37270,
+     "kind": "printz2",
+     "line": 32622,
+     "note": "column headers",
+     "ops": [
+      {
+       "at": [
+        0,
+        8
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "^Per^^Time^^Tm^^Player/Penalty^^^^min^^^"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ]
+  },
+  "period_stats": {
+   "controls": {
+    "Start (new press)": "exit",
+    "left": "goals",
+    "right": "shots"
+   },
+   "handler": 1038604,
+   "headers": [
+    {
+     "address": 1038972,
+     "kind": "printz",
+     "ops": [
+      {
+       "at": [
+        12,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "1"
+      },
+      {
+       "at": [
+        17,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "2"
+      },
+      {
+       "at": [
+        22,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "3"
+      },
+      {
+       "at": [
+        32,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "Total"
+      }
+     ]
+    },
+    {
+     "address": 1039000,
+     "kind": "printz",
+     "ops": [
+      {
+       "at": [
+        12,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<"
+      },
+      {
+       "at": [
+        17,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<"
+      },
+      {
+       "at": [
+        22,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<"
+      },
+      {
+       "at": [
+        32,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<<<<<"
+      }
+     ]
+    }
+   ],
+   "headers_with_ot": [
+    {
+     "address": 1038900,
+     "kind": "printz",
+     "note": "byte_FFC2FC bit 1 set",
+     "ops": [
+      {
+       "at": [
+        12,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "1"
+      },
+      {
+       "at": [
+        17,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "2"
+      },
+      {
+       "at": [
+        22,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "3"
+      },
+      {
+       "at": [
+        26,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "OT"
+      },
+      {
+       "at": [
+        32,
+        9
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "Total"
+      }
+     ]
+    },
+    {
+     "address": 1038934,
+     "kind": "printz",
+     "ops": [
+      {
+       "at": [
+        12,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<"
+      },
+      {
+       "at": [
+        17,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<"
+      },
+      {
+       "at": [
+        22,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<"
+      },
+      {
+       "at": [
+        26,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<<"
+      },
+      {
+       "at": [
+        32,
+        10
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "<<<<<"
+      }
+     ]
+    }
+   ],
+   "layout": {
+    "away_row": 14,
+    "columns_x": [
+     11,
+     16,
+     21,
+     26
+    ],
+    "fields": {
+     "goals": 834,
+     "shots": 842
+    },
+    "home_row": 22,
+    "periods": "printed while gsp > column; OT only when byte_FFC2FC bit 1",
+    "plane": "B",
+    "total_x": 33,
+    "width": "2, or 3 when >= 100"
+   },
+   "line": 971034,
+   "mode_goals": {
+    "address": 1039164,
+    "kind": "printz",
+    "note": "d598 = 0",
+    "ops": [
+     {
+      "at": [
+       18,
+       7
+      ],
+      "attr": 32768,
+      "plane": "B"
+     },
+     {
+      "text": "Goals"
+     },
+     {
+      "at": [
+       15,
+       26
+      ],
+      "attr": 32768,
+      "plane": "B"
+     },
+     {
+      "text": "For Shots ]"
+     }
+    ]
+   },
+   "mode_shots": {
+    "address": 1039132,
+    "kind": "printz",
+    "note": "d598 = -1",
+    "ops": [
+     {
+      "at": [
+       18,
+       7
+      ],
+      "attr": 32768,
+      "plane": "B"
+     },
+     {
+      "text": "Shots"
+     },
+     {
+      "at": [
+       15,
+       26
+      ],
+      "attr": 32768,
+      "plane": "B"
+     },
+     {
+      "text": "[ For Goals"
+     }
+    ]
+   },
+   "port": {
+    "0x342": "period_goals[gsp]",
+    "0x34A": "period_shots[gsp]"
+   },
+   "setup": {
+    "d0": 0,
+    "d1": 28,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 1038628,
+     "kind": "printz",
+     "line": 971052,
+     "note": "logo box (1,11)",
+     "ops": [
+      {
+       "at": [
+        1,
+        11
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      1,
+      11
+     ],
+     "attr": 32768,
+     "h": 8,
+     "op": "framer",
+     "w": 8
+    },
+    {
+     "address": 1038654,
+     "kind": "printz",
+     "line": 971078,
+     "note": "logo box (1,19)",
+     "ops": [
+      {
+       "at": [
+        1,
+        19
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      1,
+      19
+     ],
+     "attr": 32768,
+     "h": 8,
+     "op": "framer",
+     "w": 8
+    },
+    {
+     "address": 1038680,
+     "kind": "printz",
+     "line": 971104,
+     "note": "away logo at (2,12), attr $C000",
+     "ops": [
+      {
+       "at": [
+        2,
+        12
+       ],
+       "attr": 49152,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      2,
+      12
+     ],
+     "line": "map 1 ^ 2 = 3 (the away line is copied from 2 to 3 after loading, L971172)",
+     "op": "team_logo",
+     "team": "away"
+    },
+    {
+     "address": 1038770,
+     "kind": "printz",
+     "line": 971194,
+     "note": "home logo at (2,20), attr $E000",
+     "ops": [
+      {
+       "at": [
+        2,
+        20
+       ],
+       "attr": 57344,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      2,
+      20
+     ],
+     "line": "map 1 ^ 3 = 2",
+     "op": "team_logo",
+     "team": "home"
+    },
+    {
+     "address": 1038838,
+     "kind": "printz",
+     "line": 971262,
+     "note": "window (4,1): box",
+     "ops": [
+      {
+       "at": [
+        4,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      4,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 32
+    },
+    {
+     "address": 1038860,
+     "kind": "printbig",
+     "line": 971284,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        6,
+        3
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "  Period Stats  "
+      },
+      {
+       "at": [
+        6,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    }
+   ]
+  },
+  "player_cards": {
+   "cards": "index 0 = the team card (team name, Team Rating, Records, Starting Line G LD RD LW C RW), then one card a player: photo (6x6 at B (1,8), line 2 = photo palette), number and ' Goalie' / ' Forward' / ' Defenseman', Overall Rating, Records (season, from SRAM), This Game (Goals/Assists or Saves/Save %); team logo 6x6 at B (33,8) (line 1)",
+   "controls": {
+    "A": "other team",
+    "C": "next card",
+    "Start": "exit ($9CD8)",
+    "left/right": "previous / next card (wraps)"
+   },
+   "handler": 1024126,
+   "line": 965326,
+   "requires": "ValidSRAM ($FFD458) >= 0, else the row does nothing",
+   "setup": "own: H40, sub_F9FC0/sub_F9FEA (SRAM records into $FFCF36..), font 0 remap 05 23 41.., window = cards_bg (palette lines 0, 2, 3), NHL shield at B (1,1) (line 3 palette), NHLPA at B (33,1)",
+   "static": [
+    {
+     "address": 1024258,
+     "kind": "printz",
+     "line": 965355,
+     "note": "window (0,0)",
+     "ops": [
+      {
+       "at": [
+        0,
+        0
+       ],
+       "attr": 0,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      0,
+      0
+     ],
+     "name": "cards_bg",
+     "op": "image"
+    },
+    {
+     "address": 1024352,
+     "kind": "printz",
+     "line": 965383,
+     "note": "plane B (1,1)",
+     "ops": [
+      {
+       "at": [
+        1,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      1,
+      1
+     ],
+     "name": "logo_nhl",
+     "op": "image"
+    },
+    {
+     "address": 1024396,
+     "kind": "printz",
+     "line": 965397,
+     "note": "plane B (33,1)",
+     "ops": [
+      {
+       "at": [
+        33,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      33,
+      1
+     ],
+     "name": "logo_nhlpa",
+     "op": "image"
+    }
+   ],
+   "strings": [
+    {
+     "address": 1025072,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "  Records"
+      }
+     ]
+    },
+    {
+     "address": 1025098,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "-----------"
+      }
+     ]
+    },
+    {
+     "address": 1025138,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": " This Game "
+      }
+     ]
+    },
+    {
+     "address": 1025166,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "-----------"
+      }
+     ]
+    },
+    {
+     "address": 1026240,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Overall"
+      }
+     ]
+    },
+    {
+     "address": 1026264,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Rating   "
+      }
+     ]
+    },
+    {
+     "address": 1026424,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Starting Line"
+      }
+     ]
+    },
+    {
+     "address": 1026974,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": " Goalie"
+      }
+     ]
+    },
+    {
+     "address": 1026994,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": " Forward"
+      }
+     ]
+    },
+    {
+     "address": 1027014,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": " Defenseman"
+      }
+     ]
+    },
+    {
+     "address": 1027056,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Team"
+      }
+     ]
+    },
+    {
+     "address": 1027076,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Rating  "
+      }
+     ]
+    },
+    {
+     "address": 1027364,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Goals    "
+      }
+     ]
+    },
+    {
+     "address": 1027418,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Assists  "
+      }
+     ]
+    },
+    {
+     "address": 1027516,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Saves    "
+      }
+     ]
+    },
+    {
+     "address": 1027564,
+     "kind": "printz2",
+     "ops": [
+      {
+       "text": "Save %   "
+      }
+     ]
+    }
+   ],
+   "team_rating": {
+    "address": 1040782,
+    "routine": "sub_FE172 (L973164): byte table by team number",
+    "values": [
+     51,
+     76,
+     73,
+     75,
+     78,
+     67,
+     75,
+     67,
+     52,
+     66,
+     74,
+     73,
+     68,
+     66,
+     74,
+     55,
+     69,
+     75,
+     71,
+     56,
+     69,
+     56,
+     72,
+     71,
+     72,
+     70,
+     91,
+     89
+    ]
+   }
+  },
+  "player_stats": {
+   "arrows": [
+    {
+     "address": 39426,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 12
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 39436,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 12
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 39446,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 12
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 39456,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 12
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ],
+   "categories": [
+    {
+     "address": 39234,
+     "ops": [
+      {
+       "text": "    Goalie Saves   ]"
+      }
+     ]
+    },
+    {
+     "address": 39256,
+     "ops": [
+      {
+       "text": "[      Goals       ]"
+      }
+     ]
+    },
+    {
+     "address": 39278,
+     "ops": [
+      {
+       "text": "[     Assists      ]"
+      }
+     ]
+    },
+    {
+     "address": 39300,
+     "ops": [
+      {
+       "text": "[      Points      ]"
+      }
+     ]
+    },
+    {
+     "address": 39322,
+     "ops": [
+      {
+       "text": "[  Shots On Goal   ]"
+      }
+     ]
+    },
+    {
+     "address": 39344,
+     "ops": [
+      {
+       "text": "[ Penalty Minutes   "
+      }
+     ]
+    }
+   ],
+   "category_index": "d5ac: -1 Goalie Saves, 0 Goals, 1 Assists, 2 Points, 3 Shots On Goal, 4 Penalty Minutes",
+   "controls": {
+    "A": "switch teams (not in Playoff Stats)",
+    "Start": "Start (held, d3 bit 7) -> $9CD8 (L34244): forceblack, back to H32 and the in-game VRAM, then sub_7E46 redraws the pause menu (the pause loop re-enters at the same row)",
+    "left/right": "category -1..4 (redraws, sub_961A)",
+    "up/down (held)": "scroll"
+   },
+   "fields": {
+    "address": 39162,
+    "note": "team-struct byte arrays + pnum: $B4 goals, $CE assists, $E8 shots, $102 PIM; points = goals + assists; Playoff Stats (d7 = 1) reads word arrays at $FFCD96/$FFCDCA/$FFCDFE/$FFCE32 ($98E6) instead",
+    "per_category": [
+     [
+      180,
+      null
+     ],
+     [
+      206,
+      null
+     ],
+     [
+      180,
+      206
+     ],
+     [
+      232,
+      null
+     ],
+     [
+      258,
+      null
+     ]
+    ],
+    "port": {
+     "0x102": "player_pim",
+     "0xB4": "player_goals",
+     "0xCE": "player_assists",
+     "0xE8": "player_shots"
+    }
+   },
+   "handler": 37978,
+   "headers_goalie": [
+    {
+     "address": 39182,
+     "ops": [
+      {
+       "text": "Saves Shots Save %  "
+      }
+     ]
+    }
+   ],
+   "headers_skater": [
+    {
+     "address": 39204,
+     "ops": [
+      {
+       "text": "   G"
+      }
+     ]
+    },
+    {
+     "address": 39210,
+     "ops": [
+      {
+       "text": "   A"
+      }
+     ]
+    },
+    {
+     "address": 39216,
+     "ops": [
+      {
+       "text": " Pts"
+      }
+     ]
+    },
+    {
+     "address": 39222,
+     "ops": [
+      {
+       "text": " SOG"
+      }
+     ]
+    },
+    {
+     "address": 39228,
+     "ops": [
+      {
+       "text": " PIM"
+      }
+     ]
+    }
+   ],
+   "layout": {
+    "goalie_columns": "saves = shots - goals against, shots against, save % (%d%%)",
+    "name": "sub_18B26: number + ' ' + last name",
+    "name_x": 4,
+    "other_attr": 32768,
+    "plane": "B",
+    "rank_attr": 57344,
+    "rank_width": 2,
+    "rank_x": 1,
+    "row_step": 2,
+    "rows_visible": 6,
+    "selected_column_attr": 49152,
+    "value_width": 4,
+    "values_x": 17
+   },
+   "line": 33268,
+   "scroll": {
+    "row_px": 16,
+    "step_px": 2,
+    "vscroll_b": "$FF98 + d5ae"
+   },
+   "setup": {
+    "d0": 13,
+    "d1": 22,
+    "routine": "sub_9BD8"
+   },
+   "sort": "sub_961A (L33434): the roster minus goalies (or the goalies only for Goalie Saves) by the category value, larger first; ties keep the lower roster slot ($FF - slot as low byte); the list is stored at Satt $FFC018, terminated by $FF",
+   "static": [
+    {
+     "address": 38006,
+     "kind": "printz",
+     "line": 33280,
+     "note": "window (5,1): box",
+     "ops": [
+      {
+       "at": [
+        5,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      5,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 30
+    },
+    {
+     "address": 38066,
+     "kind": "printz2",
+     "line": 33297,
+     "note": "'A - Switch Teams' (not in Playoff Stats)",
+     "ops": [
+      {
+       "at": [
+        12,
+        26
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "A^-^Switch^Teams"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 38100,
+     "kind": "printbig",
+     "line": 33308,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        8,
+        4
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Player  Stats"
+      },
+      {
+       "at": [
+        14,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      14,
+      1
+     ],
+     "op": "plate",
+     "routine": "sub_8078",
+     "team": "shown"
+    },
+    {
+     "address": 38432,
+     "kind": "printz2",
+     "line": 33434,
+     "note": "column header 'Player' (sub_961A)",
+     "ops": [
+      {
+       "at": [
+        4,
+        11
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "Player"
+      },
+      {
+       "dx": 7
+      }
+     ]
+    },
+    {
+     "address": 38508,
+     "kind": "printz2",
+     "line": 33457,
+     "note": "category box (9,7)",
+     "ops": [
+      {
+       "at": [
+        9,
+        7
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      9,
+      7
+     ],
+     "attr": 49152,
+     "h": 3,
+     "op": "framer",
+     "w": 22
+    },
+    {
+     "address": 38532,
+     "kind": "printz",
+     "line": 33464,
+     "note": "category text at (10,8), attr $E000",
+     "ops": [
+      {
+       "at": [
+        10,
+        8
+       ],
+       "attr": 57344,
+       "plane": "W"
+      }
+     ]
+    }
+   ]
+  },
+  "record_holders": {
+   "controls": {
+    "A+C (page 0)": "clear ALL win records",
+    "Start": "exit",
+    "left/right": "page 0..2"
+   },
+   "data": "SRAM user records (win %, most goals, most saves); A+C on page 0 clears the win records (sub_FE6D2)",
+   "handler": 1031188,
+   "line": 967908,
+   "pages": [
+    {
+     "address": 1031602,
+     "ops": [
+      {
+       "at": [
+        16,
+        8
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "   Win %   Win-Loss-Tie"
+      },
+      {
+       "x": 4
+      },
+      {
+       "y": 25
+      },
+      {
+       "text": "Use A+C to clear ALL win records"
+      },
+      {
+       "x": 16
+      },
+      {
+       "y": 26
+      },
+      {
+       "text": "  More ]"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 1031684,
+     "ops": [
+      {
+       "at": [
+        18,
+        8
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "Goals       Teams    "
+      },
+      {
+       "x": 4
+      },
+      {
+       "y": 25
+      },
+      {
+       "text": "    TEAM MUST WIN TO QUALIFY    "
+      },
+      {
+       "x": 16
+      },
+      {
+       "y": 26
+      },
+      {
+       "text": "[ More ]"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 1031764,
+     "ops": [
+      {
+       "at": [
+        18,
+        8
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "Saves       Teams    "
+      },
+      {
+       "x": 4
+      },
+      {
+       "y": 25
+      },
+      {
+       "text": "    TEAM MUST WIN TO QUALIFY    "
+      },
+      {
+       "x": 16
+      },
+      {
+       "y": 26
+      },
+      {
+       "text": "[ More  "
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ],
+   "setup": {
+    "d0": 0,
+    "d1": 26,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 1031208,
+     "kind": "printz",
+     "note": "plane B (1,1)",
+     "ops": [
+      {
+       "at": [
+        1,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      1,
+      1
+     ],
+     "name": "logo_nhl",
+     "op": "image"
+    },
+    {
+     "address": 1031252,
+     "kind": "printz",
+     "note": "plane B (33,1)",
+     "ops": [
+      {
+       "at": [
+        33,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      33,
+      1
+     ],
+     "name": "logo_nhlpa",
+     "op": "image"
+    },
+    {
+     "address": 1031296,
+     "kind": "printz",
+     "note": "window (11,1) box",
+     "ops": [
+      {
+       "at": [
+        11,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      11,
+      1
+     ],
+     "attr": 32768,
+     "h": 7,
+     "op": "framer",
+     "w": 18
+    },
+    {
+     "address": 1031322,
+     "kind": "printbig",
+     "note": "big 'Record' / 'Holders'",
+     "ops": [
+      {
+       "at": [
+        14,
+        2
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Record"
+      },
+      {
+       "at": [
+        13,
+        5
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Holders"
+      },
+      {
+       "at": [
+        1,
+        9
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "address": 1031352,
+     "kind": "printz2",
+     "note": "'Name' header",
+     "ops": [
+      {
+       "at": [
+        5,
+        8
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "Name"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ]
+  },
+  "scoring_summary": {
+   "arrows": [
+    {
+     "address": 37888,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 37898,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": " "
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 37908,
+     "ops": [
+      {
+       "text": " "
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 37918,
+     "ops": [
+      {
+       "text": "{"
+      },
+      {
+       "dx": -1
+      },
+      {
+       "dy": 17
+      },
+      {
+       "text": "}"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ],
+   "arrows_at": "sub_93C4 (L33189), shared with Penalty Summary",
+   "controls": {
+    "Start": "Start (held, d3 bit 7) -> $9CD8 (L34244): forceblack, back to H32 and the in-game VRAM, then sub_7E46 redraws the pause menu (the pause loop re-enters at the same row)",
+    "up/down (held)": "scroll"
+   },
+   "handler": 36528,
+   "layout": {
+    "assist_attr": 57344,
+    "assist_x": 18,
+    "entry_rows": 4,
+    "name": "sub_18AE8: number, ' ', initial, '. ', last name",
+    "period_x": 1,
+    "plane": "B",
+    "scorer_x": 16,
+    "strength_x": 35,
+    "team": "abbreviation",
+    "team_x": 12,
+    "time_x": 3,
+    "visible_entries": 4
+   },
+   "line": 32247,
+   "periods": [
+    {
+     "address": 72850,
+     "text": " 1"
+    },
+    {
+     "address": 72854,
+     "text": " 2"
+    },
+    {
+     "address": 72858,
+     "text": " 3"
+    },
+    {
+     "address": 72862,
+     "text": "OT"
+    }
+   ],
+   "record": "ScoreSum $FFC474, 6 bytes: word time ((gsp << 14) + seconds into the period), byte strength | $80 away, byte scorer, byte assist 1, byte assist 2 ($FF none); ScoreSumbytes $FFC472",
+   "scroll": {
+    "entry_px": 32,
+    "start": "d5ae = entries * 32, then scrolls up to max(entries*32 - $80, 0) at 2 px a frame",
+    "step_px": 2,
+    "vscroll_b": "$FFB0 + d5ae"
+   },
+   "setup": {
+    "d0": 10,
+    "d1": 26,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 36542,
+     "kind": "printz",
+     "line": 32250,
+     "note": "window (4,1): box",
+     "ops": [
+      {
+       "at": [
+        4,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      4,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 32
+    },
+    {
+     "address": 36564,
+     "kind": "printbig",
+     "line": 32262,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        6,
+        4
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Scoring Summary"
+      },
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "op": "plate",
+     "team": "away"
+    },
+    {
+     "at": [
+      22,
+      1
+     ],
+     "op": "plate",
+     "team": "home"
+    },
+    {
+     "address": 36612,
+     "kind": "printz2",
+     "line": 32294,
+     "note": "column headers, font 1, line 2",
+     "ops": [
+      {
+       "at": [
+        0,
+        8
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "^Per^^Time^^Tm^^Goal/Assist^^^^^^^^P/S^^"
+      },
+      {
+       "font": 0
+      }
+     ]
+    }
+   ],
+   "strength": [
+    {
+     "address": 37162,
+     "text": "SH2"
+    },
+    {
+     "address": 37168,
+     "text": "SH"
+    },
+    {
+     "address": 37172,
+     "text": " "
+    },
+    {
+     "address": 37176,
+     "text": "PP"
+    },
+    {
+     "address": 37180,
+     "text": "PP2"
+    }
+   ],
+   "strength_index": "byte 2 of the record & $7F = 2 + scorer.tmap - other.tmap: 0 SH2, 1 SH, 2 even, 3 PP, 4 PP2"
+  },
+  "shootout_setup": {
+   "controls": {
+    "C": "Select Player list (as Edit Lines)",
+    "Start": "back to the intermission menu",
+    "up/down": "shooter 1-5 / goalie"
+   },
+   "handler": 1033760,
+   "line": 968926,
+   "setup": {
+    "d0": 0,
+    "d1": 28,
+    "routine": "sub_9BD8"
+   },
+   "static": [
+    {
+     "address": 1034694,
+     "kind": "printz",
+     "note": "plane B (7,1) box",
+     "ops": [
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 26
+    },
+    {
+     "address": 1034716,
+     "kind": "printbig",
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        10,
+        4
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "  Shootout  "
+      },
+      {
+       "at": [
+        15,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      }
+     ]
+    },
+    {
+     "address": 1034822,
+     "kind": "printz2",
+     "note": "'Shooters'",
+     "ops": [
+      {
+       "x": 7
+      },
+      {
+       "y": 12
+      },
+      {
+       "text": "Shooters"
+      }
+     ]
+    },
+    {
+     "address": 1034842,
+     "kind": "printz2",
+     "ops": [
+      {
+       "x": 3
+      },
+      {
+       "y": 14
+      },
+      {
+       "text": "1. "
+      }
+     ]
+    },
+    {
+     "address": 1034858,
+     "kind": "printz2",
+     "ops": [
+      {
+       "x": 3
+      },
+      {
+       "y": 16
+      },
+      {
+       "text": "2. "
+      }
+     ]
+    },
+    {
+     "address": 1034874,
+     "kind": "printz2",
+     "ops": [
+      {
+       "x": 3
+      },
+      {
+       "y": 18
+      },
+      {
+       "text": "3. "
+      }
+     ]
+    },
+    {
+     "address": 1034890,
+     "kind": "printz2",
+     "ops": [
+      {
+       "x": 3
+      },
+      {
+       "y": 20
+      },
+      {
+       "text": "4. "
+      }
+     ]
+    },
+    {
+     "address": 1034906,
+     "kind": "printz2",
+     "ops": [
+      {
+       "x": 3
+      },
+      {
+       "y": 22
+      },
+      {
+       "text": "5. "
+      }
+     ]
+    },
+    {
+     "address": 1034922,
+     "kind": "printz2",
+     "note": "'Goalie'",
+     "ops": [
+      {
+       "x": 26
+      },
+      {
+       "y": 12
+      },
+      {
+       "text": "Goalie"
+      }
+     ]
+    },
+    {
+     "address": 1034942,
+     "kind": "printz2",
+     "note": "name box (8,7)",
+     "ops": [
+      {
+       "at": [
+        8,
+        7
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "font": 1
+      }
+     ]
+    },
+    {
+     "address": 1034106,
+     "kind": "printz2",
+     "note": "'{Select Player}' (list mode)",
+     "ops": [
+      {
+       "at": [
+        2,
+        1
+       ],
+       "attr": 32768,
+       "plane": "B"
+      },
+      {
+       "text": "{Select Player}"
+      }
+     ]
+    }
+   ]
+  },
+  "team_roster": {
+   "controls": {
+    "A": "switch teams",
+    "Start": "Start (held, d3 bit 7) -> $9CD8 (L34244): forceblack, back to H32 and the in-game VRAM, then sub_7E46 redraws the pause menu (the pause loop re-enters at the same row)",
+    "left/right": "attribute column",
+    "up/down": "previous / next line (scrolls $80 px)"
+   },
+   "goalie_columns": [
+    {
+     "address": 103770,
+     "d4": 0,
+     "kind": "status",
+     "mask": 0,
+     "ops": [
+      {
+       "text": "     Status    ]"
+      }
+     ]
+    },
+    {
+     "address": 103792,
+     "d4": 319750154,
+     "kind": "rating",
+     "mask": 4879,
+     "ops": [
+      {
+       "text": "[   Overall    ]"
+      }
+     ]
+    },
+    {
+     "address": 103814,
+     "d4": 268435466,
+     "kind": "rating",
+     "mask": 4096,
+     "ops": [
+      {
+       "text": "[   Agility    ]"
+      }
+     ]
+    },
+    {
+     "address": 103836,
+     "d4": 134217738,
+     "kind": "rating",
+     "mask": 2048,
+     "ops": [
+      {
+       "text": "[    Speed     ]"
+      }
+     ]
+    },
+    {
+     "address": 103858,
+     "d4": 4194308,
+     "kind": "handed",
+     "mask": 64,
+     "ops": [
+      {
+       "text": "[  Glove Hand  ]"
+      }
+     ]
+    },
+    {
+     "address": 103880,
+     "d4": 33554442,
+     "kind": "rating",
+     "mask": 512,
+     "ops": [
+      {
+       "text": "[Def. Awareness]"
+      }
+     ]
+    },
+    {
+     "address": 103902,
+     "d4": 16777226,
+     "kind": "rating",
+     "mask": 256,
+     "ops": [
+      {
+       "text": "[ Puck Control ]"
+      }
+     ]
+    },
+    {
+     "address": 103924,
+     "d4": 524298,
+     "kind": "rating",
+     "mask": 8,
+     "ops": [
+      {
+       "text": "[ Stick  Right ]"
+      }
+     ]
+    },
+    {
+     "address": 103946,
+     "d4": 262154,
+     "kind": "rating",
+     "mask": 4,
+     "ops": [
+      {
+       "text": "[  Stick Left  ]"
+      }
+     ]
+    },
+    {
+     "address": 103968,
+     "d4": 131082,
+     "kind": "rating",
+     "mask": 2,
+     "ops": [
+      {
+       "text": "[ Glove  Right ]"
+      }
+     ]
+    },
+    {
+     "address": 103990,
+     "d4": 65546,
+     "kind": "rating",
+     "mask": 1,
+     "ops": [
+      {
+       "text": "[  Glove Left  ]"
+      }
+     ]
+    },
+    {
+     "address": 104012,
+     "d4": 536870918,
+     "kind": "weight",
+     "mask": 8192,
+     "ops": [
+      {
+       "text": "[    Weight     "
+      }
+     ]
+    }
+   ],
+   "handed": [
+    {
+     "address": 36474,
+     "text": "Righty  "
+    },
+    {
+     "address": 36484,
+     "text": "Lefty   "
+    }
+   ],
+   "handler": 35244,
+   "line": 31609,
+   "line_names": [
+    {
+     "address": 36030,
+     "ops": [
+      {
+       "text": "    Goalies    }"
+      }
+     ]
+    },
+    {
+     "address": 36048,
+     "ops": [
+      {
+       "text": "{  Scoring  1  }"
+      }
+     ]
+    },
+    {
+     "address": 36066,
+     "ops": [
+      {
+       "text": "{  Scoring  2  }"
+      }
+     ]
+    },
+    {
+     "address": 36084,
+     "ops": [
+      {
+       "text": "{   Checking   }"
+      }
+     ]
+    },
+    {
+     "address": 36102,
+     "ops": [
+      {
+       "text": "{ Power Play 1 }"
+      }
+     ]
+    },
+    {
+     "address": 36120,
+     "ops": [
+      {
+       "text": "{ Power Play 2 }"
+      }
+     ]
+    },
+    {
+     "address": 36138,
+     "ops": [
+      {
+       "text": "{Penalty Kill 1}"
+      }
+     ]
+    },
+    {
+     "address": 36156,
+     "ops": [
+      {
+       "text": "{Penalty Kill 2 "
+      }
+     ]
+    }
+   ],
+   "positions": "RAM line slots LD RD LW C RW (G for the goalie line), from the line-name order",
+   "scroll": {
+    "line_px": 128,
+    "range": "0..$380",
+    "step_px": 2,
+    "vscroll_b": "$FF90 + d5ae"
+   },
+   "setup": {
+    "d0": 13,
+    "d1": 23,
+    "routine": "sub_9BD8"
+   },
+   "skater_columns": [
+    {
+     "address": 103416,
+     "d4": 0,
+     "kind": "status",
+     "mask": 0,
+     "ops": [
+      {
+       "text": "     Status    ]"
+      }
+     ]
+    },
+    {
+     "address": 103438,
+     "d4": 532283402,
+     "kind": "rating",
+     "mask": 8122,
+     "ops": [
+      {
+       "text": "[   Overall    ]"
+      }
+     ]
+    },
+    {
+     "address": 103460,
+     "d4": 2,
+     "kind": "energy",
+     "mask": 0,
+     "ops": [
+      {
+       "text": "[   Energy     ]"
+      }
+     ]
+    },
+    {
+     "address": 103482,
+     "d4": 268435466,
+     "kind": "rating",
+     "mask": 4096,
+     "ops": [
+      {
+       "text": "[   Agility    ]"
+      }
+     ]
+    },
+    {
+     "address": 103504,
+     "d4": 134217738,
+     "kind": "rating",
+     "mask": 2048,
+     "ops": [
+      {
+       "text": "[    Speed     ]"
+      }
+     ]
+    },
+    {
+     "address": 103526,
+     "d4": 4194308,
+     "kind": "handed",
+     "mask": 64,
+     "ops": [
+      {
+       "text": "[   Handed     ]"
+      }
+     ]
+    },
+    {
+     "address": 103548,
+     "d4": 67108874,
+     "kind": "rating",
+     "mask": 1024,
+     "ops": [
+      {
+       "text": "[Off. Awareness]"
+      }
+     ]
+    },
+    {
+     "address": 103570,
+     "d4": 33554442,
+     "kind": "rating",
+     "mask": 512,
+     "ops": [
+      {
+       "text": "[Def. Awareness]"
+      }
+     ]
+    },
+    {
+     "address": 103592,
+     "d4": 16777226,
+     "kind": "rating",
+     "mask": 256,
+     "ops": [
+      {
+       "text": "[  Shot Power  ]"
+      }
+     ]
+    },
+    {
+     "address": 103614,
+     "d4": 1048586,
+     "kind": "rating",
+     "mask": 16,
+     "ops": [
+      {
+       "text": "[Shot  Accuracy]"
+      }
+     ]
+    },
+    {
+     "address": 103636,
+     "d4": 131082,
+     "kind": "rating",
+     "mask": 2,
+     "ops": [
+      {
+       "text": "[Pass  Accuracy]"
+      }
+     ]
+    },
+    {
+     "address": 103658,
+     "d4": 2097162,
+     "kind": "rating",
+     "mask": 32,
+     "ops": [
+      {
+       "text": "[Stick Handling]"
+      }
+     ]
+    },
+    {
+     "address": 103680,
+     "d4": 536870918,
+     "kind": "weight",
+     "mask": 8192,
+     "ops": [
+      {
+       "text": "[    Weight    ]"
+      }
+     ]
+    },
+    {
+     "address": 103702,
+     "d4": 524298,
+     "kind": "rating",
+     "mask": 8,
+     "ops": [
+      {
+       "text": "[  Endurance   ]"
+      }
+     ]
+    },
+    {
+     "address": 103724,
+     "d4": 65546,
+     "kind": "rating",
+     "mask": 1,
+     "ops": [
+      {
+       "text": "[Aggressiveness]"
+      }
+     ]
+    },
+    {
+     "address": 103746,
+     "d4": 8388618,
+     "kind": "rating",
+     "mask": 128,
+     "ops": [
+      {
+       "text": "[   Checking    "
+      }
+     ]
+    }
+   ],
+   "static": [
+    {
+     "address": 35272,
+     "kind": "printz",
+     "line": 31618,
+     "note": "window (7,1): box",
+     "ops": [
+      {
+       "at": [
+        7,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "attr": 32768,
+     "h": 6,
+     "op": "framer",
+     "w": 26
+    },
+    {
+     "address": 35294,
+     "kind": "printbig",
+     "line": 31624,
+     "note": "big title",
+     "ops": [
+      {
+       "at": [
+        9,
+        4
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Team  Roster"
+      },
+      {
+       "at": [
+        14,
+        1
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      14,
+      1
+     ],
+     "op": "plate",
+     "team": "shown"
+    },
+    {
+     "address": 35338,
+     "kind": "printz2",
+     "line": 31639,
+     "note": "headers and 'A - Switch Teams'",
+     "ops": [
+      {
+       "at": [
+        2,
+        12
+       ],
+       "attr": 49152,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      },
+      {
+       "text": "Pos.^Player"
+      },
+      {
+       "x": 30
+      },
+      {
+       "y": 12
+      },
+      {
+       "text": "Rating"
+      },
+      {
+       "x": 12
+      },
+      {
+       "y": 26
+      },
+      {
+       "text": "A^-^Switch^Teams"
+      },
+      {
+       "font": 0
+      }
+     ]
+    },
+    {
+     "address": 35396,
+     "kind": "printz",
+     "line": 31660,
+     "note": "line box (1,8)",
+     "ops": [
+      {
+       "at": [
+        1,
+        8
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      1,
+      8
+     ],
+     "attr": 32768,
+     "h": 3,
+     "op": "framer",
+     "w": 18
+    },
+    {
+     "address": 35418,
+     "kind": "printz",
+     "line": 31660,
+     "note": "attribute box (21,8)",
+     "ops": [
+      {
+       "at": [
+        21,
+        8
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "at": [
+      21,
+      8
+     ],
+     "attr": 32768,
+     "h": 3,
+     "op": "framer",
+     "w": 18
+    },
+    {
+     "address": 35756,
+     "kind": "printz2",
+     "line": 31795,
+     "note": "line name at (2,9), font 1, attr $E000",
+     "ops": [
+      {
+       "at": [
+        2,
+        9
+       ],
+       "attr": 57344,
+       "plane": "W"
+      },
+      {
+       "font": 1
+      }
+     ]
+    },
+    {
+     "address": 35792,
+     "kind": "printz2",
+     "line": 31812,
+     "note": "attribute name at (22,9)",
+     "ops": [
+      {
+       "x": 22
+      },
+      {
+       "y": 9
+      }
+     ]
+    }
+   ],
+   "status": [
+    {
+     "address": 36332,
+     "text": "Ice     "
+    },
+    {
+     "address": 36342,
+     "text": "Bench   "
+    },
+    {
+     "address": 36352,
+     "text": "Injury P"
+    },
+    {
+     "address": 36362,
+     "text": "Injury G"
+    },
+    {
+     "address": 36372,
+     "text": "    "
+    },
+    {
+     "address": 36378,
+     "text": " C  "
+    }
+   ],
+   "value_formats": {
+    "energy": "energy / $28, at most 100",
+    "handed": "Righty / Lefty",
+    "rating": "CalcAttrib (L966171) + AttribAdjust (L975195)",
+    "status": "tmpdst: -1 Ice, -2 Bench, -3 Injury P, -4 Injury G; >= 0 in the box: m:ss of bits 0-11, 'Injury G' if bit 12, ' C  ' if bit 14",
+    "weight": "value * 8 + $8C, ' lb  '"
+   }
+  },
+  "timeout": {
+   "effect": "menu table becomes unk_1988C (cursor and top - 1), team $30 bit 2, sub_13098 on both teams (energy $1000), waitx($78), then the pause menu is redrawn",
+   "handler": 40314,
+   "line": 34285,
+   "screen": "pause screen",
+   "static": [
+    {
+     "address": 40342,
+     "kind": "printz",
+     "line": 34289,
+     "note": "box (5,12) 22x6",
+     "ops": [
+      {
+       "at": [
+        5,
+        12
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    },
+    {
+     "address": 40360,
+     "kind": "printz",
+     "line": 34294,
+     "note": "'Timeout' then the team city centred on x 17, row 15",
+     "ops": [
+      {
+       "at": [
+        12,
+        14
+       ],
+       "attr": 32768,
+       "plane": "W"
+      },
+      {
+       "text": "Timeout"
+      },
+      {
+       "at": [
+        17,
+        15
+       ],
+       "attr": 32768,
+       "plane": "W"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "screen": {
+  "pause": [
+   32,
+   28
+  ],
+  "stats": [
+   40,
+   28
+  ]
+ },
+ "source": "lst/nhl94.bin (CRC32 9438F5DD); docs/specs/ui_menus.md",
+ "teams": [
+  {
+   "abbr": "ANH",
+   "city": "Anaheim"
+  },
+  {
+   "abbr": "BOS",
+   "city": "Boston"
+  },
+  {
+   "abbr": "BUF",
+   "city": "Buffalo"
+  },
+  {
+   "abbr": "CGY",
+   "city": "Calgary"
+  },
+  {
+   "abbr": "CHI",
+   "city": "Chicago"
+  },
+  {
+   "abbr": "DAL",
+   "city": "Dallas"
+  },
+  {
+   "abbr": "DET",
+   "city": "Detroit"
+  },
+  {
+   "abbr": "EDM",
+   "city": "Edmonton"
+  },
+  {
+   "abbr": "FLA",
+   "city": "Florida"
+  },
+  {
+   "abbr": "HFD",
+   "city": "Hartford"
+  },
+  {
+   "abbr": "LA",
+   "city": "Los Angeles"
+  },
+  {
+   "abbr": "MTL",
+   "city": "Montreal"
+  },
+  {
+   "abbr": "NJ",
+   "city": "New Jersey"
+  },
+  {
+   "abbr": "NYI",
+   "city": "New York"
+  },
+  {
+   "abbr": "NYR",
+   "city": "New York"
+  },
+  {
+   "abbr": "OTW",
+   "city": "Ottawa"
+  },
+  {
+   "abbr": "PHI",
+   "city": "Philadelphia"
+  },
+  {
+   "abbr": "PIT",
+   "city": "Pittsburgh"
+  },
+  {
+   "abbr": "QUE",
+   "city": "Quebec"
+  },
+  {
+   "abbr": "SJ",
+   "city": "San Jose"
+  },
+  {
+   "abbr": "STL",
+   "city": "St. Louis"
+  },
+  {
+   "abbr": "TB",
+   "city": "Tampa Bay"
+  },
+  {
+   "abbr": "TOR",
+   "city": "Toronto"
+  },
+  {
+   "abbr": "VAN",
+   "city": "Vancouver"
+  },
+  {
+   "abbr": "WSH",
+   "city": "Washington"
+  },
+  {
+   "abbr": "WPG",
+   "city": "Winnipeg"
+  },
+  {
+   "abbr": "ASE",
+   "city": "All Stars East"
+  },
+  {
+   "abbr": "ASW",
+   "city": "All Stars West"
+  }
+ ]
+}

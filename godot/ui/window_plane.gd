@@ -36,6 +36,16 @@ static func _load() -> void:
 		var f := DIR + String(_data[k]["file"])
 		if ResourceLoader.exists(f):
 			_tex[k] = load(f)
+	# The stats pages' fonts and Framer (tools/extract/ui_menus.py): font 0 raw (colour 0
+	# transparent), font 1 with an opaque background, the dark-filled Framer.
+	for e in [["stats0", "font_stats_idx.png"], ["stats1", "font_stats_alt_idx.png"],
+			["framer_stats", "framer_stats_idx.png"], ["cards0", "font_cards_idx.png"]]:
+		var f := DIR + "menus/" + String(e[1])
+		if ResourceLoader.exists(f):
+			_tex[e[0]] = load(f)
+	var fj := DIR + "menus/font.json"
+	if FileAccess.file_exists(fj):
+		_data["stats_chars"] = JSON.parse_string(FileAccess.get_file_as_string(fj))["chars"]
 	var m := DIR + "messages.json"
 	if FileAccess.file_exists(m):
 		_data["messages"] = JSON.parse_string(FileAccess.get_file_as_string(m))
@@ -65,10 +75,10 @@ func _tile_rect(key: String, tile: int, per_row: int) -> Rect2:
 
 ## print: text from (col, row). '\n' goes to the next row at `col`; '@' writes a
 ## transparent cell, '^' skips one. Returns the column after the text.
-func print_at(col: int, row: int, text: String, line: int = -1) -> int:
-	if not available():
+func print_at(col: int, row: int, text: String, line: int = -1, font: String = "font") -> int:
+	if not available() or not _tex.has(font):
 		return col
-	var chars: Dictionary = _data["font"]["chars"]
+	var chars: Dictionary = _data["font"]["chars"] if font == "font" else _data["stats_chars"]
 	var x := col
 	var y := row
 	for i in text.length():
@@ -84,17 +94,17 @@ func print_at(col: int, row: int, text: String, line: int = -1) -> int:
 			cells.erase(Vector2i(x, y))
 		else:
 			var t: int = chars.get(str(c), chars.get("32", 0))
-			cells[Vector2i(x, y)] = ["font", _tile_rect("font", t, 16), line, 0]
+			cells[Vector2i(x, y)] = [font, _tile_rect(font, t, 16), line, 0]
 		x += 1
 	queue_redraw()
 	return x
 
 ## Centred on column `center` (printx -= len / 2).
-func print_centered(center: int, row: int, text: String, line: int = -1) -> void:
-	print_at(center - text.length() / 2, row, text, line)
+func print_centered(center: int, row: int, text: String, line: int = -1, font: String = "font") -> void:
+	print_at(center - text.length() / 2, row, text, line, font)
 
 ## printbig: the 2-cell-tall font, letters upper-cased. Returns the column after it.
-func print_big(col: int, row: int, text: String) -> int:
+func print_big(col: int, row: int, text: String, line: int = -1) -> int:
 	if not _tex.has("bigfont"):
 		return print_at(col, row, text)
 	var glyphs: Dictionary = _data["bigfont"]["glyphs"]
@@ -105,28 +115,28 @@ func print_big(col: int, row: int, text: String) -> int:
 			var parts: Array = g["top" if half == 0 else "bottom"]
 			for k in parts.size():
 				var p: Array = parts[k]
-				cells[Vector2i(x + k, row + half)] = ["bigfont", _tile_rect("bigfont", int(p[0]), 16), -1, int(p[1]) & 3]
+				cells[Vector2i(x + k, row + half)] = ["bigfont", _tile_rect("bigfont", int(p[0]), 16), line, int(p[1]) & 3]
 		x += int(g["w"])
 	queue_redraw()
 	return x
 
 ## Framer: a w x h box of the bevelled border and an opaque black centre.
-func frame(col: int, row: int, w: int, h: int) -> void:
-	if not _tex.has("framer"):
-		return
-	for y in h:
-		for x in w:
-			var i := (0 if y == 0 else (6 if y == h - 1 else 3)) + (0 if x == 0 else (2 if x == w - 1 else 1))
-			cells[Vector2i(col + x, row + y)] = ["framer", _tile_rect("framer", i, 3), -1, 0]
-	queue_redraw()
-
-## dobitmap of an exported picture: a w x h cell block starting at cell (sx, sy) of `key`.
-func bitmap(col: int, row: int, key: String, sx: int, sy: int, w: int, h: int) -> void:
+func frame(col: int, row: int, w: int, h: int, key: String = "framer", line: int = -1) -> void:
 	if not _tex.has(key):
 		return
 	for y in h:
 		for x in w:
-			cells[Vector2i(col + x, row + y)] = [key, Rect2((sx + x) * 8, (sy + y) * 8, 8, 8), -1, 0]
+			var i := (0 if y == 0 else (6 if y == h - 1 else 3)) + (0 if x == 0 else (2 if x == w - 1 else 1))
+			cells[Vector2i(col + x, row + y)] = [key, _tile_rect(key, i, 3), line, 0]
+	queue_redraw()
+
+## dobitmap of an exported picture: a w x h cell block starting at cell (sx, sy) of `key`.
+func bitmap(col: int, row: int, key: String, sx: int, sy: int, w: int, h: int, line: int = -1) -> void:
+	if not _tex.has(key):
+		return
+	for y in h:
+		for x in w:
+			cells[Vector2i(col + x, row + y)] = [key, Rect2((sx + x) * 8, (sy + y) * 8, 8, 8), line, 0]
 	queue_redraw()
 
 func _draw() -> void:

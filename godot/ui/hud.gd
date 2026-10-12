@@ -1,3 +1,4 @@
+class_name Hud
 extends CanvasLayer
 ## The in-game overlays as retail prints them (spec docs/specs/ui_ingame.md), on two
 ## WindowPlanes of 8 x 8 cells:
@@ -10,8 +11,8 @@ extends CanvasLayer
 ##   draw over it): the sideways penalty screen's team plates, big goals, period, clock
 ##   and penalty-box lists.
 ## The boxes come and go on retail's triggers; everything else is redrawn from the game
-## state every frame. The intermission and final banners stay Labels until the menus are
-## ported.
+## state every frame. The pause and intermission screens show the side view's
+## scoreboard here and their menu in PauseMenu.
 
 ## The penalty screen's player name replaces the call after this long (UpdatePA L46537).
 const NAME_DELAY := 60
@@ -23,9 +24,6 @@ const ROW_KEYS := ["A ", "B ", "C "]
 var game: HockeyGame
 var _a: WindowPlane
 var _b: WindowPlane
-var _banner: Label
-## The banner is the intermission's (cleared when the intermission ends).
-var _inter_banner := false
 
 ## The referee's message: [id, text, frames since SetPA], or empty.
 var _ref: Array = []
@@ -53,15 +51,6 @@ func bind(p_game: HockeyGame) -> void:
 	_b.material = game.palette_material(false)
 	game.add_child(_b)
 	_label.visible = not WindowPlane.available()
-	_banner = Label.new()
-	_banner.position = Vector2(0, 100)
-	_banner.size = Vector2(320, 24)
-	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_banner.add_theme_color_override("font_color", Color(1, 1, 0.6))
-	_banner.add_theme_color_override("font_outline_color", Color(0, 0, 0))
-	_banner.add_theme_constant_override("outline_size", 2)
-	_banner.add_theme_font_size_override("font_size", 8)
-	add_child(_banner)
 	var w := game.world
 	game.stepped.connect(_refresh)
 	w.rules.pa_set.connect(_on_pa)
@@ -70,11 +59,7 @@ func bind(p_game: HockeyGame) -> void:
 	w.ref_signal.connect(func(f: int) -> void:
 		if f == 0x40:
 			_ref = [])
-	w.rules.intermission.connect(_on_intermission)
-	w.rules.game_over.connect(_on_game_over)
-	w.rules.period_started.connect(func(_g: int) -> void:
-		if not w.intermission:
-			_banner.text = "")
+	w.rules.intermission.connect(func(_g: int) -> void: _ref = [])
 	w.rules.horizontal_changed.connect(_on_horizontal)
 	w.injury_message.connect(_on_injury)
 	w.fight.banner.connect(func(l: PackedStringArray) -> void:
@@ -120,22 +105,6 @@ func _on_injury() -> void:
 	var w := game.world
 	var fight := w.puck().flags2 & SimObject.PF2_FIGHT != 0
 	_injury = [1 if w.temp_pl_offset & 0x8000 else 0, w.temp_pl_offset & 0xFF, w.injury_game, fight]
-
-func _on_intermission(gsp: int) -> void:
-	_ref = []
-	if gsp == 0 or gsp >= 4:
-		return
-	var names := ["", "End of the 1st", "End of the 2nd", "End of regulation"]
-	_banner.text = "%s  -  Start to continue" % names[mini(gsp, 3)]
-	_inter_banner = true
-
-func _on_game_over() -> void:
-	var w := game.world
-	if w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT:
-		_banner.text = "%s  %s %d  %s %d" % [w.shootout.winner_text(), _abbr(0),
-			w.shootout_goals[0], _abbr(1), w.shootout_goals[1]]
-		return
-	_banner.text = "Final  %s %d  %s %d" % [_abbr(0), w.score(0), _abbr(1), w.score(1)]
 
 # --- names (sub_18B26, sub_18AE8, getname, d0toascii) ---------------------------------------
 
@@ -188,9 +157,6 @@ static func push_time(s: int) -> String:
 
 func _refresh() -> void:
 	var w := game.world
-	if _inter_banner and not w.intermission:
-		_inter_banner = false
-		_banner.text = ""
 	if _ref.size() > 0:
 		_ref[2] += 1
 	if _label.visible:
@@ -199,7 +165,9 @@ func _refresh() -> void:
 		return
 	_a.cells.clear()
 	_b.cells.clear()
-	if w.intermission:
+	if w.intermission or w.pause_screen:
+		# sub_7DCE / Intermission: the side view's scoreboard behind the menu.
+		_penalty_screen()
 		_a.queue_redraw()
 		_b.queue_redraw()
 		return

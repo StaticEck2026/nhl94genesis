@@ -108,6 +108,7 @@ func _initialize() -> void:
 		"test_pause_menu_actions",
 		"test_edit_lines",
 		"test_overlay_logic",
+		"test_other_games",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2490,5 +2491,30 @@ func test_overlay_logic() -> bool:
 	for i in 70:
 		w.rules.vblank_tick()
 	check(w.stats[0].player_toi[2] >= 1, "time on ice: %d" % w.stats[0].player_toi[2])
+	w.dispose()
+	return true
+
+func test_other_games() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var bos := _team("BOS")
+	var mtl := _team("MTL")
+	w.roster.setup_teams(bos, mtl)
+	w.rules.init_other_games(MatchConfig.available_teams())
+	eq(w.rules.other_games.size(), 8, "eight other games")
+	var seen := {}
+	for g in w.rules.other_games:
+		for t in g["teams"]:
+			check(t != bos and t != mtl, "the playing teams are not in the slate")
+			check(not seen.has(t), "a team plays once")
+			seen[t] = true
+	for i in 3:
+		w.rules.update_other_games()
+	var goals := 0
+	for g in w.rules.other_games:
+		eq(g["per"], 3, "three periods played")
+		goals += g["score"][0] + g["score"][1]
+	check(goals > 0, "goals were scored: %d" % goals)
+	w.rules.update_other_games()
+	eq(w.rules.other_games[0]["per"], 3, "a final game stays final")
 	w.dispose()
 	return true

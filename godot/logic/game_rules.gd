@@ -709,6 +709,59 @@ func calc_pen_time(a2: TeamStats, a3: TeamStats) -> int:
 		return d0 + d3
 	return d0
 
+# --- the other games of the night (InitScores / UpdateScores / getscore, L47726-47843) ----
+
+## sctab (L47843): weights for 0, 1, 2, 3 goals in a period, by a rating nibble.
+const SCTAB := [[43, 30, 23, 4], [39, 32, 24, 5], [35, 33, 26, 6], [30, 34, 30, 6],
+	[26, 36, 30, 8], [22, 37, 31, 10], [19, 38, 31, 12], [15, 38, 32, 15]]
+
+## The other games: {"teams": [TeamData, TeamData], "score": [a, b], "per": periods played}.
+## The slate (8 games among the other teams) stands in for retail's gsstruct, whose
+## regular-season pairing is UNRESOLVED (ui_menus.md U1).
+var other_games: Array = []
+var other_rng := RandomNumberGenerator.new()
+
+func init_other_games(teams: Array) -> void:
+	other_rng.seed = w.hv_rng.seed ^ 0x3A3A
+	other_games.clear()
+	var pool := []
+	for t in teams:
+		if t != null and t != w.stats[0].data and t != w.stats[1].data:
+			pool.append(t)
+	for i in range(pool.size() - 1, 0, -1):
+		var j := other_rng.randi_range(0, i)
+		var tmp = pool[i]
+		pool[i] = pool[j]
+		pool[j] = tmp
+	for g in mini(8, pool.size() / 2):
+		other_games.append({"teams": [pool[2 * g], pool[2 * g + 1]], "score": [0, 0], "per": 0})
+
+## UpdateScores: a period of every other game for each period here.
+func update_other_games() -> void:
+	for g in other_games:
+		if g["per"] >= 3:
+			continue
+		g["per"] += 1
+		g["score"][0] += getscore(g["teams"][0], g["teams"][1])
+		g["score"][1] += getscore(g["teams"][1], g["teams"][0])
+
+## getscore (L47815): goals in a period from the offense nibble of a and the defense
+## nibble of b, drawn by the weights (sub_10EB4).
+func getscore(a: TeamData, b: TeamData) -> int:
+	var wt := []
+	var ra: Array = SCTAB[clampi(a.sim_offense, 0, 7)]
+	var rb: Array = SCTAB[clampi(b.sim_defense, 0, 7)]
+	var total := 0
+	for k in 4:
+		wt.append(ra[k] + rb[k])
+		total += ra[k] + rb[k]
+	var r := other_rng.randi_range(0, total - 1)
+	for k in range(3, -1, -1):
+		r -= wt[k]
+		if r < 0:
+			return k
+	return 0
+
 ## sub_FF88E: the end-of-game wipe of every penalty.
 func wipe_penalties() -> void:
 	w.lines.pbnum[0] = 0
@@ -848,8 +901,11 @@ func _period_break() -> void:
 		return
 	start_per()
 
-## Intermission (L47613) without the menu: the bench reset and fresh legs.
+## Intermission (L47613) without the menu: the bench reset and fresh legs; the other
+## games move on a period (UpdateScores at PeriodOver).
 func intermission_bookkeeping() -> void:
+	if w.gsp >= 1:
+		update_other_games()
 	w.lines.reset_bench()
 	for team in 2:
 		var st := w.stats[team]

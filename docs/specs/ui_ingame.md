@@ -545,3 +545,7 @@ The existing `sprites/font_idx.png` is the **raw** font (line 1, colour 0 transp
 2. `sub_18620`'s d2 at entry and the meaning of `$136[k]` (§10).
 3. The side view's CRAM lines 2-3 during the penalty screen (§8 aside): the code says team colours. Not checked against a capture.
 4. Playoff ticker data (`$CE66` game list, `NewTicker2`): only the layout is specified here.
+
+## 15. Port status
+
+Ported in `ui/hud.gd` on `ui/window_plane.gd`: §2-§10 except the playoff ticker during play (the intermission ticker is in the menu port). Logic added: `GameRules.pa_set`, `goal_box` / `goal_box_info` (PP-goal flag from `pp_goal`, the penalty-shot flag consumed), `scores_printed`, `calc_pen_time`, `stars` / `stars_of_game`, `TeamStats.player_toi`. Port choice for UNRESOLVED 1: the goal and injury boxes go at the next face-off setup.

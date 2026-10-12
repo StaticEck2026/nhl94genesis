@@ -115,7 +115,7 @@ func _draw_arrows() -> void:
 	if game == null or not SpriteAtlas.available():
 		return
 	var w := game.world
-	if w.sflags & HockeyWorld.SF_HOR:
+	if w.side_view():
 		return
 	for k in 2:
 		if not _last.has(1 + k):

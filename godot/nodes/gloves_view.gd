@@ -22,7 +22,7 @@ func _sync() -> void:
 	if not visible:
 		return
 	var g: Vector2i = p
-	if game.world.sflags & HockeyWorld.SF_HOR:
+	if game.world.side_view():
 		position = Vector2(-g.y, 0xC5 - g.x)
 	else:
 		position = Vector2(g.x, -g.y)

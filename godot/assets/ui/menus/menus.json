@@ -1,0 +1,1088 @@
+{
+ "engine": {
+  "box": {
+   "framer_attr": 32768,
+   "h": 6,
+   "w": 22,
+   "x": 5,
+   "x_h40": 9,
+   "y": 12
+  },
+  "buttons": {
+   "A/B": "nothing",
+   "C": "run the row's handler",
+   "Start": "close (same as row 0)",
+   "down": "cursor + 1",
+   "up": "cursor - 1"
+  },
+  "clear_columns": {
+   "rows": [
+    13,
+    16
+   ],
+   "string": 32598,
+   "x": [
+    6,
+    25
+   ]
+  },
+  "down_arrow": {
+   "attr": 40960,
+   "char": "}",
+   "when": "rows remain below",
+   "x": 6,
+   "y": 16
+  },
+  "fade_in": 24,
+  "repeat": {
+   "every": 5,
+   "first_delay": 16,
+   "note": "sub_11318: a held direction repeats (counter $F, then 4)"
+  },
+  "routines": {
+   "PauseMode": 30217,
+   "sub_11318": 44487,
+   "sub_7DCE": 30277,
+   "sub_7E36": 30312,
+   "sub_7E46": 30321,
+   "sub_7E72": 30337,
+   "sub_7E88": 30347,
+   "sub_7EF2": 30393,
+   "sub_8008": 30477
+  },
+  "rows": {
+   "chars": 18,
+   "visible": 4,
+   "x": 7,
+   "x_h40": 11,
+   "y0": 13
+  },
+  "screen": "H32 window plane over the side view (sub_7DCE: $9100/$921C, SetHor, erase 32x28 with $7FF); on the H40 stats pages the same engine runs at printx 9",
+  "up_arrow": {
+   "attr": 40960,
+   "char": "{",
+   "when": "top row > 0",
+   "x": 6,
+   "y": 13
+  }
+ },
+ "goalie_toggle": {
+  "auto": {
+   "address": 32868,
+   "text": "   Auto Goalie    "
+  },
+  "char": "x",
+  "flag": "word_FFD05A (pad 1) / word_FFD05C (pad 2, sflags bit 1); non-zero = Auto",
+  "manual": {
+   "address": 32848,
+   "text": "  Manual Goalie   "
+  },
+  "note": "the row shows the current setting: Manual when the word is 0"
+ },
+ "handlers": {
+  "15464": {
+   "id": "close",
+   "line": 50812
+  },
+  "171CE": {
+   "id": "lines_set_original",
+   "line": 53754
+  },
+  "80D4": {
+   "id": "other_scores",
+   "line": 30583
+  },
+  "82DA": {
+   "id": "edit_lines",
+   "line": 30809
+  },
+  "88C8": {
+   "id": "lines_load_team",
+   "line": 31438
+  },
+  "8928": {
+   "id": "lines_save_team",
+   "line": 31535
+  },
+  "89AC": {
+   "id": "team_roster",
+   "line": 31609
+  },
+  "8EB0": {
+   "id": "scoring_summary",
+   "line": 32247
+  },
+  "9142": {
+   "id": "penalty_summary",
+   "line": 32544
+  },
+  "9428": {
+   "id": "playoff_stats",
+   "line": 33252
+  },
+  "945A": {
+   "id": "player_stats",
+   "line": 33268
+  },
+  "9A2A": {
+   "id": "crowd_meter",
+   "line": 33980
+  },
+  "9D7A": {
+   "id": "timeout",
+   "line": 34285
+  },
+  "9DE6": {
+   "id": "change_goalie",
+   "line": 34315
+  },
+  "9FD0": {
+   "id": "instant_replay",
+   "line": 34505
+  },
+  "FA07E": {
+   "id": "player_cards",
+   "line": 965326
+  },
+  "FBC14": {
+   "id": "record_holders",
+   "line": 967908
+  },
+  "FC620": {
+   "id": "shootout_setup",
+   "line": 968926
+  },
+  "FD90C": {
+   "id": "period_stats",
+   "line": 971034
+  },
+  "FDC5A": {
+   "id": "game_stats",
+   "line": 971880
+  },
+  "FE1D8": {
+   "id": "goalie_control_toggle",
+   "line": 973221
+  }
+ },
+ "intermission_index": {
+  "address": 78284,
+  "formula": "gsp + (OptPlayMode != 0 ? 5 : 0); shootout: unk_19A00",
+  "line": 47683,
+  "tables": [
+   "intermission_pregame",
+   "intermission_period",
+   "intermission_period",
+   "intermission_period",
+   "intermission_final",
+   "intermission_pregame_playoffs",
+   "intermission_period",
+   "intermission_period",
+   "intermission_period",
+   "intermission_final_playoffs"
+  ]
+ },
+ "source": "lst/nhl94.bin (CRC32 9438F5DD); docs/specs/ui_menus.md",
+ "tables": {
+  "intermission_final": {
+   "address": 105824,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 106096,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Exit Game",
+     "raw": "    Exit Game     ",
+     "toggle": false
+    },
+    {
+     "handler": 1039450,
+     "id": "game_stats",
+     "label": "Game Stats",
+     "raw": "    Game Stats    ",
+     "toggle": false
+    },
+    {
+     "handler": 37978,
+     "id": "player_stats",
+     "label": "Player Stats",
+     "raw": "   Player Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 36528,
+     "id": "scoring_summary",
+     "label": "Scoring Summary",
+     "raw": " Scoring Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 37186,
+     "id": "penalty_summary",
+     "label": "Penalty Summary",
+     "raw": " Penalty Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 39466,
+     "id": "crowd_meter",
+     "label": "Crowd Meter",
+     "raw": "   Crowd Meter    ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    },
+    {
+     "handler": 1038604,
+     "id": "period_stats",
+     "label": "Period Stats",
+     "raw": "   Period Stats   ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "unk_131CC[4]: gsp 4, OptPlayMode 0"
+  },
+  "intermission_final_playoffs": {
+   "address": 106100,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 106372,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Exit Game",
+     "raw": "    Exit Game     ",
+     "toggle": false
+    },
+    {
+     "handler": 1039450,
+     "id": "game_stats",
+     "label": "Game Stats",
+     "raw": "    Game Stats    ",
+     "toggle": false
+    },
+    {
+     "handler": 37978,
+     "id": "player_stats",
+     "label": "Player Stats",
+     "raw": "   Player Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 36528,
+     "id": "scoring_summary",
+     "label": "Scoring Summary",
+     "raw": " Scoring Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 37186,
+     "id": "penalty_summary",
+     "label": "Penalty Summary",
+     "raw": " Penalty Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 39466,
+     "id": "crowd_meter",
+     "label": "Crowd Meter",
+     "raw": "   Crowd Meter    ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    },
+    {
+     "handler": 1038604,
+     "id": "period_stats",
+     "label": "Period Stats",
+     "raw": "   Period Stats   ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "unk_131CC[9]: gsp 4, OptPlayMode != 0"
+  },
+  "intermission_period": {
+   "address": 105476,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 105820,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Resume Game",
+     "raw": "   Resume Game    ",
+     "toggle": false
+    },
+    {
+     "handler": 1039450,
+     "id": "game_stats",
+     "label": "Game Stats",
+     "raw": "    Game Stats    ",
+     "toggle": false
+    },
+    {
+     "handler": 37978,
+     "id": "player_stats",
+     "label": "Player Stats",
+     "raw": "   Player Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 36528,
+     "id": "scoring_summary",
+     "label": "Scoring Summary",
+     "raw": " Scoring Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 37186,
+     "id": "penalty_summary",
+     "label": "Penalty Summary",
+     "raw": " Penalty Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 39466,
+     "id": "crowd_meter",
+     "label": "Crowd Meter",
+     "raw": "   Crowd Meter    ",
+     "toggle": false
+    },
+    {
+     "handler": 40422,
+     "id": "change_goalie",
+     "label": "Change Goalie",
+     "raw": "  Change Goalie   ",
+     "toggle": false
+    },
+    {
+     "handler": 33498,
+     "id": "edit_lines",
+     "label": "Edit Lines",
+     "raw": "    Edit Lines    ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    },
+    {
+     "handler": 1038604,
+     "id": "period_stats",
+     "label": "Period Stats",
+     "raw": "   Period Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 1040856,
+     "id": "goalie_control_toggle",
+     "label": "Manual Goalie",
+     "raw": "x Manual Goalie   ",
+     "toggle": true
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "unk_131CC[1..3] and [6..8]: gsp 1-3"
+  },
+  "intermission_pregame": {
+   "address": 105092,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 105268,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Start Game",
+     "raw": "    Start Game    ",
+     "toggle": false
+    },
+    {
+     "handler": 40422,
+     "id": "change_goalie",
+     "label": "Change Goalie",
+     "raw": "  Change Goalie   ",
+     "toggle": false
+    },
+    {
+     "handler": 33498,
+     "id": "edit_lines",
+     "label": "Edit Lines",
+     "raw": "    Edit Lines    ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "unk_131CC[0]: gsp 0, OptPlayMode 0"
+  },
+  "intermission_pregame_playoffs": {
+   "address": 105272,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 105472,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Start Game",
+     "raw": "    Start Game    ",
+     "toggle": false
+    },
+    {
+     "handler": 40422,
+     "id": "change_goalie",
+     "label": "Change Goalie",
+     "raw": "  Change Goalie   ",
+     "toggle": false
+    },
+    {
+     "handler": 33498,
+     "id": "edit_lines",
+     "label": "Edit Lines",
+     "raw": "    Edit Lines    ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 37928,
+     "id": "playoff_stats",
+     "label": "Playoff Stats",
+     "raw": "  Playoff Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "unk_131CC[5]: gsp 0, OptPlayMode != 0"
+  },
+  "intermission_shootout": {
+   "address": 104960,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 105088,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Start Shootout",
+     "raw": "  Start Shootout  ",
+     "toggle": false
+    },
+    {
+     "handler": 1033760,
+     "id": "shootout_setup",
+     "label": "Shootout SetUp",
+     "raw": "  Shootout SetUp  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "Intermission L47638: word_FFC2FA bit 0"
+  },
+  "line_editor_exit": {
+   "address": 106376,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    },
+    {
+     "font": 1
+    }
+   ],
+   "end": 106484,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Exit",
+     "raw": "       Exit       ",
+     "toggle": false
+    },
+    {
+     "handler": 94670,
+     "id": "lines_set_original",
+     "label": "Set Original lines",
+     "raw": "Set Original lines",
+     "toggle": false
+    },
+    {
+     "handler": 35112,
+     "id": "lines_save_team",
+     "label": "Save Team Line",
+     "raw": "  Save Team Line  ",
+     "toggle": false
+    },
+    {
+     "handler": 35016,
+     "id": "lines_load_team",
+     "label": "Load Team Line",
+     "raw": "  Load Team Line  ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 49152
+    },
+    {
+     "font": 1
+    }
+   ],
+   "used": "Edit Lines $8812 (L31383): a saved line set exists for this team"
+  },
+  "line_editor_exit_nosave": {
+   "address": 106488,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    },
+    {
+     "font": 1
+    }
+   ],
+   "end": 106572,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Exit",
+     "raw": "       Exit       ",
+     "toggle": false
+    },
+    {
+     "handler": 94670,
+     "id": "lines_set_original",
+     "label": "Set Original lines",
+     "raw": "Set Original lines",
+     "toggle": false
+    },
+    {
+     "handler": 35112,
+     "id": "lines_save_team",
+     "label": "Save Team Line",
+     "raw": "  Save Team Line  ",
+     "toggle": false
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 49152
+    },
+    {
+     "font": 1
+    }
+   ],
+   "used": "Edit Lines $8812: no saved set (byte $FFD076 != team + 1)"
+  },
+  "pause": {
+   "address": 104192,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 104584,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Resume Game",
+     "raw": "   Resume Game    ",
+     "toggle": false
+    },
+    {
+     "handler": 40912,
+     "id": "instant_replay",
+     "label": "Instant Replay",
+     "raw": "  Instant Replay  ",
+     "toggle": false
+    },
+    {
+     "handler": 40422,
+     "id": "change_goalie",
+     "label": "Change Goalie",
+     "raw": "  Change Goalie   ",
+     "toggle": false
+    },
+    {
+     "handler": 33498,
+     "id": "edit_lines",
+     "label": "Edit Lines",
+     "raw": "    Edit Lines    ",
+     "toggle": false
+    },
+    {
+     "handler": 1039450,
+     "id": "game_stats",
+     "label": "Game Stats",
+     "raw": "    Game Stats    ",
+     "toggle": false
+    },
+    {
+     "handler": 37978,
+     "id": "player_stats",
+     "label": "Player Stats",
+     "raw": "   Player Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 36528,
+     "id": "scoring_summary",
+     "label": "Scoring Summary",
+     "raw": " Scoring Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 37186,
+     "id": "penalty_summary",
+     "label": "Penalty Summary",
+     "raw": " Penalty Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 39466,
+     "id": "crowd_meter",
+     "label": "Crowd Meter",
+     "raw": "   Crowd Meter    ",
+     "toggle": false
+    },
+    {
+     "handler": 40314,
+     "id": "timeout",
+     "label": "Timeout",
+     "raw": "     Timeout      ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    },
+    {
+     "handler": 1038604,
+     "id": "period_stats",
+     "label": "Period Stats",
+     "raw": "   Period Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 1040856,
+     "id": "goalie_control_toggle",
+     "label": "Manual Goalie",
+     "raw": "x Manual Goalie   ",
+     "toggle": true
+    }
+   ],
+   "line": 58935,
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "PauseMode L30217: normal"
+  },
+  "pause_shootout": {
+   "address": 104036,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 104188,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Resume Game",
+     "raw": "   Resume Game    ",
+     "toggle": false
+    },
+    {
+     "handler": 40912,
+     "id": "instant_replay",
+     "label": "Instant Replay",
+     "raw": "  Instant Replay  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    },
+    {
+     "handler": 1040856,
+     "id": "goalie_control_toggle",
+     "label": "Manual Goalie",
+     "raw": "x Manual Goalie   ",
+     "toggle": true
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "PauseMode L30229: word_FFC2FA bit 0 (shootout mode)"
+  },
+  "pause_timeout_used": {
+   "address": 104588,
+   "cursor_attr": [
+    {
+     "attr": 32768
+    }
+   ],
+   "end": 104956,
+   "items": [
+    {
+     "handler": 87140,
+     "id": "close",
+     "label": "Resume Game",
+     "raw": "   Resume Game    ",
+     "toggle": false
+    },
+    {
+     "handler": 40912,
+     "id": "instant_replay",
+     "label": "Instant Replay",
+     "raw": "  Instant Replay  ",
+     "toggle": false
+    },
+    {
+     "handler": 40422,
+     "id": "change_goalie",
+     "label": "Change Goalie",
+     "raw": "  Change Goalie   ",
+     "toggle": false
+    },
+    {
+     "handler": 33498,
+     "id": "edit_lines",
+     "label": "Edit Lines",
+     "raw": "    Edit Lines    ",
+     "toggle": false
+    },
+    {
+     "handler": 1039450,
+     "id": "game_stats",
+     "label": "Game Stats",
+     "raw": "    Game Stats    ",
+     "toggle": false
+    },
+    {
+     "handler": 37978,
+     "id": "player_stats",
+     "label": "Player Stats",
+     "raw": "   Player Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 36528,
+     "id": "scoring_summary",
+     "label": "Scoring Summary",
+     "raw": " Scoring Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 37186,
+     "id": "penalty_summary",
+     "label": "Penalty Summary",
+     "raw": " Penalty Summary  ",
+     "toggle": false
+    },
+    {
+     "handler": 35244,
+     "id": "team_roster",
+     "label": "Team Roster",
+     "raw": "   Team Roster    ",
+     "toggle": false
+    },
+    {
+     "handler": 32980,
+     "id": "other_scores",
+     "label": "Other Scores",
+     "raw": "   Other Scores   ",
+     "toggle": false
+    },
+    {
+     "handler": 39466,
+     "id": "crowd_meter",
+     "label": "Crowd Meter",
+     "raw": "   Crowd Meter    ",
+     "toggle": false
+    },
+    {
+     "handler": 1024126,
+     "id": "player_cards",
+     "label": "Player Cards",
+     "raw": "   Player Cards   ",
+     "toggle": false
+    },
+    {
+     "handler": 1031188,
+     "id": "record_holders",
+     "label": "Record Holders",
+     "raw": "  Record Holders  ",
+     "toggle": false
+    },
+    {
+     "handler": 1038604,
+     "id": "period_stats",
+     "label": "Period Stats",
+     "raw": "   Period Stats   ",
+     "toggle": false
+    },
+    {
+     "handler": 1040856,
+     "id": "goalie_control_toggle",
+     "label": "Manual Goalie",
+     "raw": "x Manual Goalie   ",
+     "toggle": true
+    }
+   ],
+   "row_attr": [
+    {
+     "attr": 40960
+    }
+   ],
+   "used": "PauseMode L30235: the pausing team's $30 bit 2 is set"
+  }
+ }
+}

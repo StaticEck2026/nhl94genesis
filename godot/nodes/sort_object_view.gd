@@ -42,7 +42,7 @@ static func z_for(o: SimObject, at: Vector2) -> int:
 ## find3d without the height: where the object stands, in Godot axes (Y down). The
 ## sideways penalty view swaps the axes: (x, y) -> (-y, $C5 - x).
 static func project_ground(w: HockeyWorld, o: SimObject) -> Vector2:
-	if w.sflags & HockeyWorld.SF_HOR:
+	if w.side_view():
 		return Vector2(-o.y(), 0xC5 - o.x())
 	return Vector2(o.x(), -o.y())
 

@@ -13,6 +13,7 @@ const CPU_INTERMISSION_FRAMES := 480
 var skaters: Array[Skater2D] = []
 var _hold_frames := 0
 var _over := false
+var _quitting := false
 
 func _enter_tree() -> void:
 	auto_place = false
@@ -49,10 +50,12 @@ func _ready() -> void:
 	world.rules.game_over.connect(_on_game_over)
 	($Hud as Node).call("bind", self)
 	($PauseMenu as Node).connect("quit_requested", _quit)
+	($PauseMenu as Node).connect("intermission_closed", _release)
 	if m.shootout:
 		# GameSetUp with OptPlayMode 4: the shootout flag and sub_FC47C.
 		world.f_c2fa |= HockeyWorld.C2FA_SHOOTOUT
 		world.shootout.init_shootout()
+	world.rules.init_other_games(MatchConfig.available_teams(m.edition))
 	world.rules.start_game()
 	world.stats[0].line = clampi(m.home_line, 0, 6)
 	world.stats[1].line = clampi(m.away_line, 0, 6)
@@ -67,41 +70,46 @@ func _take_pad(driver: MatchConfig.Driver, team: int) -> void:
 func _human() -> bool:
 	return world.cont_team[0] != 0 or world.cont_team[1] != 0
 
-## Intermission: the sim holds until Start (or a while, with no human playing).
+## Intermission (L47614), the pre-game one included: the side view and the menu for
+## this point of the game; the sim holds until row 0 or Start (or a while, with no human
+## playing).
 func _on_intermission(gsp: int) -> void:
-	if gsp == 0:
-		return
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
 	world.begin_intermission()
+	($PauseMenu as Node).call("open_intermission", gsp)
 
+## The end of the game: the final intermission ("Exit Game" goes back to the setup).
 func _on_game_over() -> void:
 	_over = true
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
 	if not world.intermission:
 		world.begin_intermission()
+	($PauseMenu as Node).call("open_intermission", 4, true)
 
 func _physics_process(delta: float) -> void:
 	if hold and not _human():
 		_hold_frames -= 1
 		if _hold_frames <= 0:
+			($PauseMenu as Node).call("close")
 			_release()
+	if _quitting:
+		return
 	super._physics_process(delta)
 
-func _unhandled_input(event: InputEvent) -> void:
+func _release() -> void:
 	if not hold:
 		return
-	if event.is_action_pressed("p1_start") or event.is_action_pressed("p2_start"):
-		get_viewport().set_input_as_handled()
-		_release()
-
-func _release() -> void:
 	if _over:
+		hold = false
 		_quit()
 		return
 	world.end_intermission()
 	hold = false
 
 func _quit() -> void:
+	if _quitting or not is_inside_tree():
+		return
+	_quitting = true
 	get_tree().change_scene_to_file(SETUP_SCENE)

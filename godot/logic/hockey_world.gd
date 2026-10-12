@@ -169,6 +169,8 @@ const MARK_HIDDEN := 0xF
 var zamx: int = -1
 ## The intermission screen is up (begin_intermission).
 var intermission: bool = false
+## The pause screen is up (PauseMode's sub_7DCE: SetHor, the side view).
+var pause_screen: bool = false
 var marks: PackedInt32Array = PackedInt32Array([0xF, 0xF, 0xF, 0xF, 0xF, 0xF])
 ## OptFight (the fight patch's menu option, $FFDF00): 0 off (retail), 1 on, 2 on, Arcade.
 var opt_fight: int = 0
@@ -1108,7 +1110,7 @@ func intermission_vblank() -> void:
 
 ## The screen shows the side view: the penalty screen (sflags bit 7) or the intermission.
 func side_view() -> bool:
-	return intermission or sflags & SF_HOR != 0
+	return intermission or pause_screen or sflags & SF_HOR != 0
 
 # --- the pause menu -------------------------------------------------------------------
 
