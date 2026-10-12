@@ -108,6 +108,7 @@ func _initialize() -> void:
 		"test_pause_menu_actions",
 		"test_edit_lines",
 		"test_crowd_frames",
+		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
 		"test_arena_anim_hooks",
 		"test_intermission_zamboni",
@@ -2422,4 +2423,23 @@ func test_edit_lines() -> bool:
 	eq(w.lines.line_name(0), "Off", "line changes off: RAM line 0 is the Off line")
 	eq(w.lines.line_name(1), "Sc2", "then Sc2")
 	w.dispose()
+	return true
+
+## The arena sheets hold assembled figures (tools/extract/arena.py), not hardware pieces.
+func test_arena_sheets_assembled() -> bool:
+	for n in ["crowd", "bganim", "zamboni"]:
+		var d: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://assets/arena/%s.json" % n))
+		check(d is Dictionary and d.has("sprites") and not d.has("pieces"), "%s: a figure sheet" % n)
+		var frames: Dictionary = d["frames"] if d.has("frames") else {}
+		if n == "bganim":
+			for k in d["files"]:
+				frames.merge(d["files"][k]["frames"])
+		var bad := 0
+		for k in frames:
+			if not frames[k].has("parts") or frames[k].has("sprites"):
+				bad += 1
+		eq(bad, 0, "%s: every frame lists assembled parts" % n)
+	var z: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/arena/zamboni.json"))
+	for k in z["frames"]:
+		eq(z["frames"][k]["parts"].size(), 1, "zamboni frame %s is one image" % k)
 	return true

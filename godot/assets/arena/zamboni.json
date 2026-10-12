@@ -1,297 +1,99 @@
 {
  "source": "ZamFrameList $A8922 (showzam L52076, SetSframe L52164), 125 raw tiles at $A892C loaded to ExtraChars by Intermission",
  "space": "pixels relative to the zamboni origin; the origin is at side-view screen pixel ((zamx >> 2) - 128, $12A - 128 = 170)",
- "order": "sprites[0] is in front (VDP link order): draw from the last to the first; showzam links frame 1 (body), then 2-4 (wheels), then 5-8 (driver)",
+ "order": "each frame is one assembled image; showzam links frame 1 (body), then 2-4 (wheels), then 5-8 (driver): the body is in front",
  "atlas": [
   256,
   64
  ],
- "pieces": [
-  {
-   "rect": [
-    58,
-    0,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 21,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    176,
-    25,
-    8,
-    16
-   ],
-   "file": "A8922",
-   "tile": 113,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    42,
-    16,
-    8
-   ],
-   "file": "A8922",
-   "tile": 123,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
+ "sprites": [
   {
    "rect": [
     0,
     0,
-    32,
+    88,
     24
    ],
-   "file": "A8922",
-   "tile": 0,
-   "line": 0,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0
+   ]
   },
   {
    "rect": [
-    33,
+    89,
+    25,
+    88,
+    16
+   ],
+   "lines": [
+    0
+   ]
+  },
+  {
+   "rect": [
     0,
-    24,
+    25,
+    88,
+    21
+   ],
+   "lines": [
+    0
+   ]
+  },
+  {
+   "rect": [
+    89,
+    0,
+    88,
     24
    ],
-   "file": "A8922",
-   "tile": 12,
-   "line": 0,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0
+   ]
   },
   {
    "rect": [
-    185,
-    25,
-    8,
-    16
-   ],
-   "file": "A8922",
-   "tile": 111,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    17,
-    42,
-    16,
-    8
-   ],
-   "file": "A8922",
-   "tile": 121,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    91,
-    0,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 69,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    124,
-    0,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 61,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    33,
-    25,
-    24,
-    16
-   ],
-   "file": "A8922",
-   "tile": 89,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    157,
-    0,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 53,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    190,
-    0,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 45,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    58,
-    25,
-    24,
-    16
-   ],
-   "file": "A8922",
-   "tile": 83,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    194,
-    25,
-    24,
-    8
-   ],
-   "file": "A8922",
-   "tile": 118,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    223,
-    0,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 37,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    25,
-    32,
-    16
-   ],
-   "file": "A8922",
-   "tile": 29,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    83,
-    25,
-    24,
-    16
-   ],
-   "file": "A8922",
-   "tile": 77,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    219,
-    25,
-    24,
-    8
-   ],
-   "file": "A8922",
-   "tile": 115,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    108,
+    178,
     25,
     16,
     16
    ],
-   "file": "A8922",
-   "tile": 107,
-   "line": 0,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0
+   ]
   },
   {
    "rect": [
-    125,
+    195,
     25,
     16,
     16
    ],
-   "file": "A8922",
-   "tile": 103,
-   "line": 0,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0
+   ]
   },
   {
    "rect": [
-    142,
+    212,
     25,
     16,
     16
    ],
-   "file": "A8922",
-   "tile": 99,
-   "line": 0,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0
+   ]
   },
   {
    "rect": [
-    159,
+    229,
     25,
     16,
     16
    ],
-   "file": "A8922",
-   "tile": 95,
-   "line": 0,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0
+   ]
   }
  ],
  "zamx_start": 320,
@@ -336,41 +138,11 @@
    "lines": [
     0
    ],
-   "sprites": [
-    [
-     -12,
-     -8,
-     0
-    ],
+   "parts": [
     [
      -51,
-     -15,
-     1
-    ],
-    [
-     -43,
-     -8,
-     2
-    ],
-    [
-     -27,
      -16,
-     3
-    ],
-    [
-     5,
-     -16,
-     4
-    ],
-    [
-     29,
-     -8,
-     5
-    ],
-    [
-     -43,
-     0,
-     6
+     0
     ]
    ]
   },
@@ -384,21 +156,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -50,
      8,
-     7
-    ],
-    [
-     -18,
-     8,
-     8
-    ],
-    [
-     14,
-     8,
-     9
+     1
     ]
    ]
   },
@@ -412,26 +174,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -50,
      8,
-     10
-    ],
-    [
-     -18,
-     8,
-     11
-    ],
-    [
-     14,
-     8,
-     12
-    ],
-    [
-     -10,
-     21,
-     13
+     2
     ]
    ]
   },
@@ -445,26 +192,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -49,
      8,
-     14
-    ],
-    [
-     -17,
-     8,
-     15
-    ],
-    [
-     15,
-     8,
-     16
-    ],
-    [
-     -20,
-     24,
-     17
+     3
     ]
    ]
   },
@@ -478,11 +210,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -43,
      -24,
-     18
+     4
     ]
    ]
   },
@@ -496,11 +228,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -43,
      -24,
-     19
+     5
     ]
    ]
   },
@@ -514,11 +246,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -43,
      -24,
-     20
+     6
     ]
    ]
   },
@@ -532,11 +264,11 @@
    "lines": [
     0
    ],
-   "sprites": [
+   "parts": [
     [
      -43,
      -24,
-     21
+     7
     ]
    ]
   }

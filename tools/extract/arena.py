@@ -27,19 +27,21 @@ File layout (all five bganim files, the crowd and the zamboni share it):
 The game draws each piece as one hardware sprite with attribute (word6 & $F800) + tile +
 VRAM base; nothing is XORed in (no object flip, no away-palette swap).
 
-Writes, index textures as in assets.py (R = colour index * 17, G = palette line * 85,
-A = 255 where drawn, colour 0 transparent):
-  crowd_idx.png + crowd.json       pieces of CrowdFrameList, the _cd0 table, frame groups
-  bganim_idx.png + bganim.json     pieces of the 5 bganim files, per-id scripts and triggers
-  zamboni_idx.png + zamboni.json   pieces of ZamFrameList, the unk_1615E wave table
+Writes assembled character sheets, index textures as in assets.py (R = colour index * 17,
+G = palette line * 85, A = 255 where drawn, colour 0 transparent):
+  crowd_idx.png + crowd.json       the crowd's figures, the _cd0 table, frame groups
+  bganim_idx.png + bganim.json     the figures of the 5 bganim files, per-id scripts and triggers
+  zamboni_idx.png + zamboni.json   the zamboni's 8 frames, the unk_1615E wave table
 
-JSON: "pieces" lists every distinct piece image once (atlas rect, flips baked in, "blank"
-when it has no pixels: a few frames carry an empty placeholder piece at 0,0); each frame
-lists its sprites as [x, y, piece id] in the game's VDP link order: the FIRST entry is in
-front, so draw from the last entry to the first. x, y is the top-left of the piece in the
-file's native space ("space"); "bbox" is the frame's extent there (blank pieces left out).
-The arena-wide crowd frames would be mostly empty as whole images, hence pieces. Output is
-deterministic (stable packing order, fixed JSON key order).
+The hardware pieces are assembled offline: each frame's pieces are composited in the game's
+VDP link order (the first piece is in front) into figures, one per group of touching pieces
+(a fan, a camera flash, a seated player, a hat; the zamboni frames whole). Identical figures
+are stored once. JSON: "sprites" lists each figure's sheet rect; each frame lists its
+figures as "parts" [x, y, sprite id], x, y the figure's top-left in the file's native space
+("space"). Figures of one frame never overlap, so their order does not matter. "bbox" is
+the frame's extent. The arena-wide crowd frames would be mostly empty as single images,
+hence one figure per group. Output is deterministic (stable packing order, fixed JSON key
+order).
 """
 import json
 import os
@@ -180,6 +182,86 @@ class PieceSet:
         return atlas, meta
 
 
+class FigureSet:
+    """Assembled figures of one or more files: each frame's pieces composited, in VDP link
+    order, into one image per group of touching pieces (or the whole frame), deduplicated."""
+
+    def __init__(self, whole=False):
+        self.whole = whole
+        self.keys = {}
+        self.items = []
+        self.pieces = PieceSet()
+
+    def _groups(self, rects):
+        parent = list(range(len(rects)))
+
+        def find(i):
+            while parent[i] != i:
+                parent[i] = parent[parent[i]]
+                i = parent[i]
+            return i
+        for i, a in enumerate(rects):
+            for j in range(i):
+                b = rects[j]
+                if self.whole or (a[0] <= b[2] and b[0] <= a[2] and a[1] <= b[3] and b[1] <= a[3]):
+                    parent[find(i)] = find(j)
+        groups = {}
+        for i in range(len(rects)):
+            groups.setdefault(find(i), []).append(i)
+        return sorted(groups.values(), key=lambda g: (rects[g[0]][1], rects[g[0]][0]))
+
+    def _add(self, canvas):
+        key = (canvas.w, canvas.h, bytes(canvas.px))
+        if key not in self.keys:
+            self.keys[key] = len(self.items)
+            self.items.append({"canvas": canvas})
+        return self.keys[key]
+
+    def frames(self, src):
+        out = {}
+        for f, pieces in enumerate(src["frames"], 1):
+            drawn = []
+            for p in pieces:
+                pid = self.pieces.add(src, p)
+                if not self.pieces.items[pid]["blank"]:
+                    drawn.append((p, self.pieces.items[pid]["canvas"]))
+            # Touching counts: rects are inclusive of their right/bottom edge here.
+            rects = [(p["x"], p["y"], p["x"] + 8 * p["w"], p["y"] + 8 * p["h"]) for p, _ in drawn]
+            parts = []
+            for g in self._groups(rects):
+                x0 = min(rects[i][0] for i in g)
+                y0 = min(rects[i][1] for i in g)
+                x1 = max(rects[i][2] for i in g)
+                y1 = max(rects[i][3] for i in g)
+                c = Canvas(x1 - x0, y1 - y0)
+                # Link order: the first piece is in front, so it is painted last.
+                for i in sorted(g, reverse=True):
+                    p, pc = drawn[i]
+                    for yy in range(pc.h):
+                        for xx in range(pc.w):
+                            o = (yy * pc.w + xx) * 4
+                            if pc.px[o + 3]:
+                                d = ((p["y"] - y0 + yy) * c.w + (p["x"] - x0 + xx)) * 4
+                                c.px[d:d + 4] = pc.px[o:o + 4]
+                parts.append([x0, y0, self._add(c)])
+            bx0 = min(r[0] for r in rects)
+            by0 = min(r[1] for r in rects)
+            out[str(f)] = {"bbox": [bx0, by0, max(r[2] for r in rects) - bx0,
+                                    max(r[3] for r in rects) - by0],
+                           "lines": sorted({p["pal"] for p, _ in drawn}),
+                           "parts": parts}
+        return out
+
+    def atlas(self, width):
+        atlas = pack(self.items, width)
+        meta = []
+        for it in self.items:
+            c = it["canvas"]
+            lines = sorted({c.px[o + 1] // 85 for o in range(0, len(c.px), 4) if c.px[o + 3]})
+            meta.append({"rect": [it["atlas"][0], it["atlas"][1], c.w, c.h], "lines": lines})
+        return atlas, meta
+
+
 def write_json(path, obj):
     with open(path, "w") as f:
         json.dump(obj, f, indent=1, sort_keys=False)
@@ -189,9 +271,9 @@ def write_json(path, obj):
 def crowd(rom, out):
     src = anim_file(rom, CROWD)
     assert src["count"] == CROWD_TILES and len(src["frames"]) == 2 * HOR
-    ps = PieceSet()
+    ps = FigureSet()
     frames = ps.frames(src)
-    atlas, pieces = ps.atlas(256)
+    atlas, pieces = ps.atlas(512)
     atlas.save(os.path.join(out, "crowd_idx.png"))
     cd0 = [[[rom.u8(CD0 + 32 * r + 2 * k), rom.u8(CD0 + 32 * r + 2 * k + 1)] for k in range(16)]
            for r in range(4)]
@@ -199,14 +281,14 @@ def crowd(rom, out):
         "source": "CrowdFrameList $A4B54 (showcrowd L52175, sub_16246 L52223), %d raw tiles" % src["count"],
         "space": {"1-31": "rink map pixels (rink/map.json; map_px = rink_x + 192, 368 - rink_y)",
                   "32-62": "screen pixels of the 256x224 side view (horizontal mode, sflags bit 7)"},
-        "order": "sprites[0] is in front (VDP link order): draw from the last to the first",
+        "order": "parts are assembled figures (pieces composited in VDP link order); they do not overlap",
         "atlas": [atlas.w, atlas.h],
-        "pieces": pieces,
+        "sprites": pieces,
         "groups": {"crowd": list(range(1, 0x13)), "flash": list(range(0x13, 0x1A)),
                    "box_away": [0x1A, 0x1B, 0x1C], "box_home": [0x1D, 0x1E, 0x1F]},
         "group_notes": {
             "crowd": "crowdframe low byte: fans over the stands all round the rink; 1-13 small "
-                     "moves (22-33 sprites), 14-18 many fans standing (76-80 sprites)",
+                     "moves (22-33 hardware sprites), 14-18 many fans standing (76-80)",
             "flash": "crowdframe high byte: camera flashes (2x2-tile stars, line 0) at scattered seats",
             "box_away": "PBnum low nibble n: frames $1A..$1A+n-1, one seated player each "
                         "(right-hand box, map y 286-338; jersey line 3, legs line 2)",
@@ -220,7 +302,7 @@ def crowd(rom, out):
 
 
 def bganim(rom, out):
-    ps = PieceSet()
+    ps = FigureSet()
     files = {}
     srcs = {}
     ids = []
@@ -245,7 +327,7 @@ def bganim(rom, out):
         src = srcs[file_a]
         assert src["count"] <= 0x32, "more tiles than the $32 reserved at word_FFD6AC"
         files["%05X" % file_a] = {"tiles": src["count"], "frames": ps.frames(src)}
-    atlas, pieces = ps.atlas(256)
+    atlas, pieces = ps.atlas(512)
     atlas.save(os.path.join(out, "bganim_idx.png"))
     fo = []
     a = FO_IDS
@@ -256,9 +338,9 @@ def bganim(rom, out):
         "source": "unk_FE364 (sub_FE2C8 L973464, sub_FE326, sub_FD78A L970856); tiles at file + 8 "
                   "loaded to word_FFD6AC ($32 tiles reserved)",
         "space": "rink map pixels (rink/map.json; map_px = rink_x + 192, 368 - rink_y)",
-        "order": "sprites[0] is in front (VDP link order): draw from the last to the first",
+        "order": "parts are assembled figures (pieces composited in VDP link order); they do not overlap",
         "atlas": [atlas.w, atlas.h],
-        "pieces": pieces,
+        "sprites": pieces,
         "faceoff_ids": fo,
         "faceoff_left_low_id": 6,
         "ids": ids,
@@ -269,7 +351,7 @@ def bganim(rom, out):
 def zamboni(rom, out):
     src = anim_file(rom, ZAM)
     assert src["count"] == ZAM_TILES and len(src["frames"]) == 8
-    ps = PieceSet()
+    ps = FigureSet(whole=True)
     frames = ps.frames(src)
     atlas, pieces = ps.atlas(256)
     atlas.save(os.path.join(out, "zamboni_idx.png"))
@@ -279,10 +361,10 @@ def zamboni(rom, out):
                   "loaded to ExtraChars by Intermission" % src["count"],
         "space": "pixels relative to the zamboni origin; the origin is at side-view screen pixel "
                  "((zamx >> 2) - 128, $12A - 128 = 170)",
-        "order": "sprites[0] is in front (VDP link order): draw from the last to the first; "
-                 "showzam links frame 1 (body), then 2-4 (wheels), then 5-8 (driver)",
+        "order": "each frame is one assembled image; showzam links frame 1 (body), then 2-4 "
+                 "(wheels), then 5-8 (driver): the body is in front",
         "atlas": [atlas.w, atlas.h],
-        "pieces": pieces,
+        "sprites": pieces,
         "zamx_start": 0x140, "zamx_last": 0x709, "y": 0x12A,
         "body": 1, "wheels": [2, 3, 4], "driver": [5, 6, 7, 8],
         "wave": wave,
@@ -303,8 +385,8 @@ def main():
     _, cf, cp = crowd(rom, out)
     _, bf, ids, bp = bganim(rom, out)
     _, zf, zp = zamboni(rom, out)
-    print("wrote crowd (%d frames, %d pieces), bganim (%d ids, %d files, %d pieces), zamboni (%d frames, "
-          "%d pieces) to %s" % (len(cf), len(cp), len(ids), len(bf), len(bp), len(zf), len(zp), out))
+    print("wrote crowd (%d frames, %d figures), bganim (%d ids, %d files, %d figures), zamboni (%d frames, "
+          "%d figures) to %s" % (len(cf), len(cp), len(ids), len(bf), len(bp), len(zf), len(zp), out))
 
 
 if __name__ == "__main__":

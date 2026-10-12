@@ -21,9 +21,9 @@ The data formats below were checked by decoding the ROM. The renders listed in �
 
 | File | Source | Contents |
 |---|---|---|
-| `crowd_idx.png`, `crowd.json` | CrowdFrameList `$A4B54`, `$76` raw tiles | 62 frames. 127 distinct pieces in a 256x128 atlas. Also the `_cd0` table (`$18CFC`) and the frame groups. |
-| `bganim_idx.png`, `bganim.json` | table `unk_FE364` (`$FE364`) and frame files `$EA2EC`, `$EAB10`, `$EB816`, `$EC284`, `$ED1B0` | 8 ids, each with its script, end type, length, contents and trigger. The 5 files' frames. 234 pieces in a 256x128 atlas. The faceoff id table `unk_FECE6`. |
-| `zamboni_idx.png`, `zamboni.json` | ZamFrameList `$A8922`, `$7D` raw tiles | 8 frames. 22 pieces in a 256x64 atlas. The wave table `unk_1615E`. |
+| `crowd_idx.png`, `crowd.json` | CrowdFrameList `$A4B54`, `$76` raw tiles | 62 frames. 152 assembled figures in a 512x128 sheet. Also the `_cd0` table (`$18CFC`) and the frame groups. |
+| `bganim_idx.png`, `bganim.json` | table `unk_FE364` (`$FE364`) and frame files `$EA2EC`, `$EAB10`, `$EB816`, `$EC284`, `$ED1B0` | 8 ids, each with its script, end type, length, contents and trigger. The 5 files' frames. 166 assembled figures in a 512x256 sheet. The faceoff id table `unk_FECE6`. |
+| `zamboni_idx.png`, `zamboni.json` | ZamFrameList `$A8922`, `$7D` raw tiles | 8 frames, each one assembled image in a 256x64 sheet. The wave table `unk_1615E`. |
 
 The index textures use the same encoding as `assets.py`:
 - R = colour index × 17
@@ -51,15 +51,13 @@ piece: +0 s16 x, +2 s16 y (top-left, +y down), +4 u16 first tile (column-major),
        bits 7-0 = VDP size byte (w = ((s >> 2) & 3) + 1, h = (s & 3) + 1 tiles)
 ```
 
-The JSON files describe frames as pieces:
-- `pieces[id]` holds `rect` (the atlas rect, with the piece's own flips already baked in), `file`, `tile`, `line`, `hf`, `vf`, and `blank` for an all-transparent piece.
-- `frames[f].sprites` is a list of `[x, y, piece id]` in **VDP link order**. The first entry is in front, so draw from the last entry to the first.
-- `bbox` is the frame's extent in its native space. Blank pieces are left out of it.
-- `lines` lists the palette lines the frame uses.
+The JSON files hold **assembled character sheets**, not hardware pieces:
+- The extractor composites each frame's pieces in VDP link order (the first piece in front) into figures: one image per group of touching pieces (a fan, a camera flash, a seated player, a hat, a bench player), or the whole frame for the zamboni. Identical figures are stored once.
+- `sprites[id]` holds a figure's sheet `rect` and the palette `lines` it uses.
+- `frames[f].parts` is a list of `[x, y, sprite id]`: the figure's top-left in the frame's native space. Figures of one frame never overlap, so draw order inside a frame does not matter.
+- `bbox` is the frame's extent in its native space. `lines` lists the palette lines the frame uses.
 
-Why pieces instead of whole frame images:
-- crowd frames 1-18 and the flash frames spread their pieces over the whole 384x680 arena, so a whole-frame image would be almost empty;
-- retail culls piece by piece (§0.4).
+Why figures instead of whole frames: crowd frames 1-18 and the flash frames spread over the whole 384x680 arena, so a whole-frame image would be almost empty. The renders are pixel-identical to compositing the pieces at runtime (checked against the earlier piece-based view). Retail's piece-by-piece cull (§0.4) is not reproduced; the port clips by figure.
 
 Other notes on the data:
 - No piece in any of these files has the priority bit (bit 15) set (checked by the export).
@@ -126,7 +124,7 @@ The side view has no priority cells.
 Port placement:
 - Put a single view under HockeyGame at `z_index = Rink2D.Z_LOGO + 1` with `z_as_relative = false`, the same z as GlovesView.
 - Add it **before** GlovesView in `add_object_views()`, so that tree order puts the gloves over it.
-- Inside the view, draw back to front: crowd, flash, home box, away box, bganim, zamboni. Each frame's pieces go from last to first.
+- Inside the view, draw back to front: crowd, flash, home box, away box, bganim, zamboni. A frame's figures do not overlap.
 
 Everything then stays under `Rink2D.Z_FRONT` (4000), so RinkFront covers it the way the VDP does. It also stays under every sort object.
 

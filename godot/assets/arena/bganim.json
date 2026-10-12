@@ -1,3055 +1,1870 @@
 {
  "source": "unk_FE364 (sub_FE2C8 L973464, sub_FE326, sub_FD78A L970856); tiles at file + 8 loaded to word_FFD6AC ($32 tiles reserved)",
  "space": "rink map pixels (rink/map.json; map_px = rink_x + 192, 368 - rink_y)",
- "order": "sprites[0] is in front (VDP link order): draw from the last to the first",
+ "order": "parts are assembled figures (pieces composited in VDP link order); they do not overlap",
  "atlas": [
-  256,
-  128
+  512,
+  256
  ],
- "pieces": [
+ "sprites": [
   {
    "rect": [
-    18,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 8,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    35,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 8,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    52,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 4,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    69,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 4,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    204,
-    69,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 30,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    86,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 12,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    213,
-    69,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 23,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    222,
-    69,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 23,
-   "line": 1,
-   "hf": true,
-   "vf": true
-  },
-  {
-   "rect": [
-    103,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 0,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    120,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 0,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    42,
-    16,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 20,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    231,
-    69,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 25,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    119,
-    25,
-    8,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 16,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    240,
-    69,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 29,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 24,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    9,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 28,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    17,
-    42,
-    16,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 18,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    18,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 27,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    27,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 26,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    36,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 23,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    45,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 30,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    137,
-    0,
-    16,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 12,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    54,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 24,
-   "line": 1,
-   "hf": true,
-   "vf": true
-  },
-  {
-   "rect": [
-    63,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 23,
-   "line": 1,
-   "hf": false,
-   "vf": true
-  },
-  {
-   "rect": [
-    72,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 24,
-   "line": 1,
-   "hf": false,
-   "vf": true
-  },
-  {
-   "rect": [
-    34,
-    42,
-    16,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 20,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    128,
-    25,
-    8,
-    16
-   ],
-   "file": "EA2EC",
-   "tile": 16,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    81,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 24,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    90,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 28,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    51,
-    42,
-    16,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 18,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    99,
-    78,
-    8,
-    8
-   ],
-   "file": "EA2EC",
-   "tile": 22,
-   "line": 1,
-   "hf": false,
-   "vf": false,
-   "blank": true
-  },
-  {
-   "rect": [
-    108,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 13,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    117,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 35,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    126,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 34,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    68,
-    42,
-    16,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 11,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    135,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 33,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    144,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 32,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    153,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 31,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    85,
-    42,
-    16,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 9,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    162,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 30,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    171,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 29,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    180,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 34,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    102,
-    42,
-    16,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 11,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    189,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 33,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    198,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 32,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    207,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 28,
-   "line": 0,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    216,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 27,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    225,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 26,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    234,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 25,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    243,
-    78,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 24,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 23,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    9,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 22,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    18,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 21,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    27,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 20,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    36,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 23,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    45,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 19,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    54,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 18,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    137,
-    25,
-    8,
-    16
-   ],
-   "file": "EAB10",
-   "tile": 3,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    63,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 17,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    119,
-    42,
-    16,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 7,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    72,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 16,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    81,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 17,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
+    185,
     136,
-    42,
     16,
-    8
+    16
    ],
-   "file": "EAB10",
-   "tile": 7,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    90,
-    87,
-    8,
-    8
+    202,
+    136,
+    16,
+    16
    ],
-   "file": "EAB10",
-   "tile": 16,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    0,
-    0,
-    8,
+    219,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    236,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    18,
+    111,
+    16,
     24
    ],
-   "file": "EAB10",
-   "tile": 0,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    99,
-    87,
-    8,
-    8
+    381,
+    111,
+    19,
+    19
    ],
-   "file": "EAB10",
-   "tile": 15,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    153,
-    42,
+    347,
+    111,
     16,
-    8
+    20
    ],
-   "file": "EAB10",
-   "tile": 5,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    108,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 14,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    117,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 35,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    126,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 31,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    170,
-    42,
-    16,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 9,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    135,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 30,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    144,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 29,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    153,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 28,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    162,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 27,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    171,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 26,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    180,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 25,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    189,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 24,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    198,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 22,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    207,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 21,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    216,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 20,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    225,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 19,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    234,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 18,
-   "line": 1,
-   "hf": true,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     146,
-    25,
-    8,
-    16
-   ],
-   "file": "EAB10",
-   "tile": 3,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    9,
-    0,
-    8,
+    84,
+    24,
     24
    ],
-   "file": "EAB10",
-   "tile": 0,
-   "line": 1,
-   "hf": true,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    243,
-    87,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 15,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    187,
-    42,
-    16,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 5,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    96,
-    8,
-    8
-   ],
-   "file": "EAB10",
-   "tile": 14,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    154,
-    0,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 24,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    9,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 49,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    18,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 48,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    27,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 47,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    36,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 48,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    45,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 46,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    54,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 47,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    171,
-    0,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 24,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    204,
-    42,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 38,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    188,
-    0,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 20,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    205,
-    0,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 16,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
+    324,
     155,
-    25,
-    8,
-    16
-   ],
-   "file": "EB816",
-   "tile": 30,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    63,
-    96,
     8,
     8
    ],
-   "file": "EB816",
-   "tile": 49,
-   "line": 1,
-   "hf": true,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    164,
-    25,
+    35,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    262,
+    0,
+    19,
+    33
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    333,
+    155,
     8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    52,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    115,
+    84,
+    30,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    0,
+    84,
+    18,
+    26
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    62,
+    84,
+    16,
+    25
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    342,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    364,
+    111,
+    16,
+    20
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    351,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    291,
+    51,
+    17,
+    30
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    210,
+    155,
+    11,
+    12
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    46,
+    136,
+    16,
+    18
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    360,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    369,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    378,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    206,
+    51,
+    16,
+    31
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    387,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    396,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    218,
+    0,
+    21,
+    39
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    94,
+    0,
+    19,
+    47
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    50,
+    0,
+    21,
+    50
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    69,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    401,
+    111,
+    22,
+    18
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    424,
+    111,
+    22,
+    18
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    447,
+    111,
+    22,
+    18
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    81,
+    155,
+    13,
     16
    ],
-   "file": "EB816",
-   "tile": 28,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    0,
+    0,
+    24,
+    50
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    134,
+    0,
+    17,
+    47
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    170,
+    0,
+    23,
+    39
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    309,
+    51,
+    16,
+    30
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    343,
+    51,
+    22,
+    28
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    240,
+    0,
+    21,
+    39
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    114,
+    0,
+    19,
+    47
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    72,
+    0,
+    21,
+    50
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    86,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    470,
+    111,
+    22,
+    18
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    0,
+    136,
+    22,
+    18
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    23,
+    136,
+    22,
+    18
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    109,
+    155,
+    12,
+    16
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    25,
+    0,
+    24,
+    50
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    152,
+    0,
+    17,
+    47
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    194,
+    0,
+    23,
+    39
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    326,
+    51,
+    16,
+    30
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    366,
+    51,
+    22,
+    28
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    253,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    270,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    405,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     222,
-    0,
+    155,
+    16,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    414,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    51,
+    155,
+    14,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    66,
+    155,
+    14,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    287,
+    136,
     16,
     16
    ],
-   "file": "EB816",
-   "tile": 12,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    304,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    321,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    423,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    338,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    432,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    355,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    155,
+    155,
+    8,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    372,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    164,
+    155,
+    8,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    389,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    82,
+    51,
+    21,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    441,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    450,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    459,
+    155,
+    8,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    406,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    423,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     239,
-    0,
+    155,
     16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 8,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    25,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 12,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    72,
-    96,
-    8,
     8
    ],
-   "file": "EB816",
-   "tile": 45,
-   "line": 1,
-   "hf": true,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    17,
-    25,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 20,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    34,
-    25,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 4,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    81,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 45,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    90,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 44,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    99,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 43,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    108,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 42,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
+    28,
     51,
-    25,
+    26,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    440,
+    136,
     16,
     16
    ],
-   "file": "EB816",
-   "tile": 16,
-   "line": 1,
-   "hf": true,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    221,
-    42,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 36,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    238,
-    42,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 34,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    51,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 32,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    117,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 41,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    126,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 41,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    17,
-    51,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 32,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    68,
-    25,
-    16,
+    162,
+    136,
+    22,
     16
    ],
-   "file": "EB816",
-   "tile": 0,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    55,
+    51,
+    26,
+    32
+   ],
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     173,
-    25,
+    155,
     8,
     16
    ],
-   "file": "EB816",
-   "tile": 28,
-   "line": 1,
-   "hf": true,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     182,
-    25,
+    155,
     8,
     16
    ],
-   "file": "EB816",
-   "tile": 30,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    135,
-    96,
+    468,
+    155,
     8,
     8
    ],
-   "file": "EB816",
-   "tile": 42,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    34,
-    51,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 36,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    85,
-    25,
-    16,
-    16
-   ],
-   "file": "EB816",
-   "tile": 8,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    51,
-    51,
-    16,
-    8
-   ],
-   "file": "EB816",
-   "tile": 34,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    144,
-    96,
-    8,
-    8
-   ],
-   "file": "EB816",
-   "tile": 40,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    153,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 26,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    162,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 25,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    171,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 27,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    102,
-    25,
-    16,
-    16
-   ],
-   "file": "EC284",
-   "tile": 0,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    180,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 42,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    189,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 41,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    198,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 40,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    207,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 39,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    216,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 38,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    225,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 37,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    234,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 34,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    243,
-    96,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 33,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 32,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    9,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 23,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    18,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 31,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    27,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 30,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    68,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 6,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    36,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 38,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    45,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 31,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    85,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 14,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    102,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 12,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    119,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 10,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    136,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 8,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    153,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 14,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    54,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 36,
-   "line": 1,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     63,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 35,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    170,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 12,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    187,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 8,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    204,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 10,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    72,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 22,
-   "line": 0,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    81,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 20,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    90,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 19,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    99,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 18,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    108,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 17,
-   "line": 1,
-   "hf": true,
-   "vf": false
-  },
-  {
-   "rect": [
-    117,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 29,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    126,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 28,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    221,
-    51,
-    16,
-    8
-   ],
-   "file": "EC284",
-   "tile": 4,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    135,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 21,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    144,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 24,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    153,
-    105,
-    8,
-    8
-   ],
-   "file": "EC284",
-   "tile": 16,
-   "line": 1,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    162,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 49,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    171,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 48,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    238,
-    51,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 29,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    180,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 47,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    189,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 46,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 27,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    198,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 45,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    207,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 44,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    216,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 43,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    225,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 42,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    17,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 25,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    34,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 23,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    234,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 41,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    243,
-    105,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 40,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    51,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 21,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    68,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 19,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 39,
-   "line": 3,
-   "hf": false,
-   "vf": false,
-   "blank": true
-  },
-  {
-   "rect": [
-    85,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 17,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    102,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 15,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    9,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 38,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    18,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 37,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    27,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 36,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    36,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 45,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    45,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 46,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    119,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 29,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    54,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 47,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
     136,
-    60,
-    16,
-    8
+    32,
+    17
    ],
-   "file": "ED1B0",
-   "tile": 25,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    63,
-    114,
+    480,
+    0,
+    27,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    282,
+    0,
+    32,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    457,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    256,
+    155,
+    16,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    315,
+    0,
+    32,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    0,
+    51,
+    27,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    273,
+    155,
+    16,
+    8
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    474,
+    136,
+    16,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    477,
+    155,
     8,
     8
    ],
-   "file": "ED1B0",
-   "tile": 49,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    153,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 23,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    72,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 41,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    170,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 3,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    187,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 13,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    81,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 35,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    90,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 34,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    204,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 21,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    221,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 27,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    238,
-    60,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 11,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     191,
-    25,
-    24,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 0,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    99,
-    114,
+    155,
     8,
-    8
+    16
    ],
-   "file": "ED1B0",
-   "tile": 33,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    108,
-    114,
-    8,
-    8
+    186,
+    111,
+    10,
+    24
    ],
-   "file": "ED1B0",
-   "tile": 32,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    117,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 40,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    126,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 37,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    0,
-    69,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 9,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     135,
-    114,
+    155,
+    9,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    486,
+    155,
     8,
     8
    ],
-   "file": "ED1B0",
-   "tile": 31,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    17,
-    69,
+    217,
+    111,
+    8,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    326,
+    111,
+    20,
+    21
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    145,
+    155,
+    9,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    200,
+    155,
+    9,
+    15
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    292,
+    111,
     16,
+    23
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    434,
+    84,
+    19,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    122,
+    155,
+    12,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    371,
+    84,
+    20,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    95,
+    155,
+    13,
+    16
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    103,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    120,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    137,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    197,
+    111,
+    9,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    154,
+    111,
+    16,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    309,
+    111,
+    16,
+    23
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    79,
+    84,
+    35,
+    24
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    495,
+    155,
+    8,
     8
    ],
-   "file": "ED1B0",
-   "tile": 7,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    34,
-    69,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 5,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
+    445,
     51,
-    69,
+    21,
+    26
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    104,
+    51,
     16,
-    8
+    32
    ],
-   "file": "ED1B0",
-   "tile": 15,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    144,
-    114,
-    8,
-    8
+    36,
+    84,
+    25,
+    25
    ],
-   "file": "ED1B0",
-   "tile": 38,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    153,
-    114,
-    8,
-    8
+    467,
+    51,
+    21,
+    26
    ],
-   "file": "ED1B0",
-   "tile": 36,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    68,
-    69,
+    223,
+    51,
     16,
-    8
+    31
    ],
-   "file": "ED1B0",
-   "tile": 17,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    162,
-    114,
-    8,
-    8
+    389,
+    51,
+    28,
+    26
    ],
-   "file": "ED1B0",
-   "tile": 43,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    121,
+    51,
+    16,
+    32
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    240,
+    51,
+    16,
+    31
+   ],
+   "lines": [
+    1
+   ]
+  },
+  {
+   "rect": [
+    138,
+    51,
+    16,
+    32
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    257,
+    51,
+    16,
+    31
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    155,
+    51,
+    16,
+    32
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    274,
+    51,
+    16,
+    31
+   ],
+   "lines": [
+    0,
+    1
+   ]
+  },
+  {
+   "rect": [
+    494,
+    84,
+    17,
+    24
+   ],
+   "lines": [
+    0,
+    1
+   ]
   },
   {
    "rect": [
     171,
-    114,
-    8,
-    8
+    111,
+    14,
+    24
    ],
-   "file": "ED1B0",
-   "tile": 48,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0,
+    1
+   ]
   },
   {
    "rect": [
-    180,
-    114,
-    8,
-    8
+    0,
+    111,
+    17,
+    24
    ],
-   "file": "ED1B0",
-   "tile": 42,
-   "line": 3,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    85,
-    69,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 13,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    189,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 35,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    198,
-    114,
-    8,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 34,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    102,
-    69,
-    16,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 11,
-   "line": 2,
-   "hf": false,
-   "vf": false
-  },
-  {
-   "rect": [
-    216,
-    25,
-    24,
-    8
-   ],
-   "file": "ED1B0",
-   "tile": 0,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
     207,
-    114,
-    8,
-    8
+    111,
+    9,
+    24
    ],
-   "file": "ED1B0",
-   "tile": 33,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    1
+   ]
   },
   {
    "rect": [
-    216,
-    114,
-    8,
-    8
+    418,
+    51,
+    26,
+    26
    ],
-   "file": "ED1B0",
-   "tile": 32,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0,
+    1
+   ]
   },
   {
    "rect": [
-    119,
-    69,
+    19,
+    84,
     16,
-    8
+    26
    ],
-   "file": "ED1B0",
-   "tile": 19,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0,
+    1
+   ]
   },
   {
    "rect": [
-    225,
-    114,
-    8,
-    8
+    489,
+    51,
+    20,
+    26
    ],
-   "file": "ED1B0",
-   "tile": 44,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    0,
+    1
+   ]
   },
   {
    "rect": [
+    348,
+    0,
+    32,
+    32
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    454,
+    84,
+    19,
+    24
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    171,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    172,
+    51,
+    16,
+    32
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    474,
+    84,
+    19,
+    24
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    196,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    381,
+    0,
+    32,
+    32
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    491,
     136,
-    69,
     16,
-    8
+    16
    ],
-   "file": "ED1B0",
-   "tile": 5,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    3
+   ]
   },
   {
    "rect": [
-    153,
-    69,
+    0,
+    155,
     16,
-    8
+    16
    ],
-   "file": "ED1B0",
-   "tile": 7,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    3
+   ]
   },
   {
    "rect": [
-    234,
-    114,
+    221,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    246,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    96,
+    136,
+    32,
+    16
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    290,
+    155,
+    16,
+    8
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    271,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    392,
+    84,
+    20,
+    24
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    226,
+    111,
+    32,
+    23
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    504,
+    155,
     8,
     8
    ],
-   "file": "ED1B0",
-   "tile": 31,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    3
+   ]
   },
   {
    "rect": [
-    170,
-    69,
-    16,
-    8
+    259,
+    111,
+    32,
+    23
    ],
-   "file": "ED1B0",
-   "tile": 9,
-   "line": 2,
-   "hf": false,
-   "vf": false
+   "lines": [
+    3
+   ]
   },
   {
    "rect": [
-    187,
-    69,
+    189,
+    51,
+    16,
+    32
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    296,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    414,
+    0,
+    32,
+    32
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    17,
+    155,
+    16,
+    16
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    34,
+    155,
+    16,
+    16
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    321,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    447,
+    0,
+    32,
+    32
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    346,
+    84,
+    24,
+    24
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    413,
+    84,
+    20,
+    24
+   ],
+   "lines": [
+    2
+   ]
+  },
+  {
+   "rect": [
+    129,
+    136,
+    32,
+    16
+   ],
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    307,
+    155,
     16,
     8
    ],
-   "file": "ED1B0",
-   "tile": 3,
-   "line": 3,
-   "hf": false,
-   "vf": false
+   "lines": [
+    3
+   ]
+  },
+  {
+   "rect": [
+    0,
+    172,
+    8,
+    8
+   ],
+   "lines": [
+    2
+   ]
   }
  ],
  "faceoff_ids": [
@@ -3823,14 +2638,14 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       245,
+       123,
        -1,
        0
       ],
       [
-       123,
+       245,
        -1,
        1
       ]
@@ -3846,14 +2661,14 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       249,
+       119,
        0,
        2
       ],
       [
-       119,
+       249,
        0,
        3
       ],
@@ -3861,11 +2676,6 @@
        176,
        8,
        4
-      ],
-      [
-       176,
-       16,
-       5
       ]
      ]
     },
@@ -3879,51 +2689,31 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       256,
-       12,
-       6
-      ],
-      [
-       128,
-       11,
-       7
+       117,
+       0,
+       5
       ],
       [
        251,
        0,
-       8
-      ],
-      [
-       117,
-       0,
-       9
+       6
       ],
       [
        168,
        14,
-       10
-      ],
-      [
-       184,
-       24,
-       11
-      ],
-      [
-       176,
-       22,
-       12
+       7
       ],
       [
        211,
        15,
-       1
+       0
       ],
       [
        212,
        33,
-       13
+       8
       ]
      ]
     },
@@ -3937,71 +2727,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       257,
-       18,
-       14
-      ],
-      [
-       131,
-       17,
-       14
-      ],
-      [
-       180,
-       27,
-       14
-      ],
+     "parts": [
       [
        245,
        -1,
-       0
-      ],
-      [
-       120,
-       8,
-       4
-      ],
-      [
-       120,
-       16,
-       5
-      ],
-      [
-       177,
-       15,
-       15
-      ],
-      [
-       176,
-       23,
-       16
-      ],
-      [
-       176,
-       31,
-       17
+       1
       ],
       [
        207,
-       16,
-       3
+       8,
+       9
       ],
       [
-       214,
-       8,
-       18
+       120,
+       -1,
+       10
+      ],
+      [
+       257,
+       18,
+       11
+      ],
+      [
+       176,
+       15,
+       12
       ],
       [
        212,
        33,
-       13
-      ],
-      [
-       123,
-       -1,
-       1
+       8
       ]
      ]
     },
@@ -4015,71 +2770,31 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       258,
-       26,
-       7
-      ],
-      [
-       134,
-       25,
-       6
-      ],
-      [
-       210,
-       27,
-       19
-      ],
-      [
-       182,
-       37,
-       6
-      ],
-      [
-       256,
-       8,
-       20
-      ],
-      [
-       248,
-       16,
-       21
-      ],
-      [
-       112,
-       14,
-       10
-      ],
-      [
-       128,
-       24,
-       11
-      ],
-      [
-       120,
-       22,
-       12
-      ],
+     "parts": [
       [
        176,
        8,
        4
       ],
       [
-       176,
-       16,
-       5
+       112,
+       14,
+       13
+      ],
+      [
+       248,
+       8,
+       14
       ],
       [
        205,
        16,
-       9
+       15
       ],
       [
-       212,
-       33,
-       13
+       182,
+       37,
+       16
       ]
      ]
     },
@@ -4093,66 +2808,36 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       260,
-       36,
-       22
+       211,
+       15,
+       0
+      ],
+      [
+       120,
+       15,
+       17
       ],
       [
        137,
        35,
-       22
+       18
       ],
       [
-       121,
-       27,
-       23
+       255,
+       14,
+       19
       ],
       [
        209,
-       37,
-       24
+       33,
+       20
       ],
       [
        184,
        47,
-       22
-      ],
-      [
-       256,
-       14,
-       25
-      ],
-      [
-       255,
-       24,
-       11
-      ],
-      [
-       256,
-       22,
-       26
-      ],
-      [
-       121,
-       15,
-       15
-      ],
-      [
-       120,
-       23,
-       16
-      ],
-      [
-       211,
-       15,
-       1
-      ],
-      [
-       212,
-       33,
-       13
+       18
       ]
      ]
     },
@@ -4166,56 +2851,41 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       262,
-       46,
-       6
-      ],
-      [
-       249,
-       25,
-       27
-      ],
-      [
-       140,
-       45,
-       7
-      ],
-      [
-       121,
-       33,
-       24
-      ],
-      [
-       208,
-       47,
-       23
-      ],
-      [
-       186,
-       57,
-       7
-      ],
-      [
-       255,
-       15,
-       28
-      ],
-      [
-       248,
-       23,
-       29
-      ],
+     "parts": [
       [
        120,
        8,
        4
       ],
       [
-       120,
-       16,
-       5
+       248,
+       15,
+       21
+      ],
+      [
+       121,
+       33,
+       22
+      ],
+      [
+       140,
+       45,
+       23
+      ],
+      [
+       262,
+       46,
+       16
+      ],
+      [
+       208,
+       47,
+       24
+      ],
+      [
+       186,
+       57,
+       23
       ]
      ]
     },
@@ -4229,26 +2899,26 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       264,
-       56,
-       14
-      ],
+     "parts": [
       [
        248,
-       31,
-       23
-      ],
-      [
-       142,
-       55,
-       14
+       8,
+       25
       ],
       [
        121,
        41,
-       19
+       26
+      ],
+      [
+       142,
+       55,
+       11
+      ],
+      [
+       264,
+       56,
+       11
       ],
       [
        207,
@@ -4258,17 +2928,7 @@
       [
        188,
        67,
-       14
-      ],
-      [
-       256,
-       8,
-       20
-      ],
-      [
-       248,
-       16,
-       21
+       11
       ]
      ]
     },
@@ -4282,21 +2942,11 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       266,
-       66,
-       7
-      ],
+     "parts": [
       [
        247,
        39,
-       24
-      ],
-      [
-       144,
-       65,
-       6
+       22
       ],
       [
        121,
@@ -4304,14 +2954,24 @@
        27
       ],
       [
+       144,
+       65,
+       16
+      ],
+      [
+       266,
+       66,
+       23
+      ],
+      [
        206,
        67,
-       19
+       26
       ],
       [
        190,
        77,
-       6
+       16
       ]
      ]
     },
@@ -4325,36 +2985,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       268,
-       76,
-       22
-      ],
+     "parts": [
       [
        246,
        49,
-       19
-      ],
-      [
-       145,
-       75,
-       22
+       26
       ],
       [
        121,
        61,
-       23
+       24
+      ],
+      [
+       145,
+       75,
+       18
+      ],
+      [
+       268,
+       76,
+       18
       ],
       [
        205,
        77,
-       24
+       22
       ],
       [
        191,
        82,
-       22
+       18
       ]
      ]
     },
@@ -4368,36 +3028,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       270,
-       86,
-       6
-      ],
+     "parts": [
       [
        245,
        59,
        27
       ],
       [
-       146,
-       85,
-       7
-      ],
-      [
        121,
        71,
-       24
+       22
       ],
       [
        205,
        77,
-       24
+       22
       ],
       [
        191,
        82,
-       22
+       18
+      ],
+      [
+       146,
+       85,
+       23
+      ],
+      [
+       270,
+       86,
+       16
       ]
      ]
     },
@@ -4411,36 +3071,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       271,
-       94,
-       14
-      ],
+     "parts": [
       [
        244,
        69,
-       23
-      ],
-      [
-       146,
-       90,
-       14
-      ],
-      [
-       121,
-       81,
-       19
+       24
       ],
       [
        205,
        77,
-       24
+       22
+      ],
+      [
+       121,
+       81,
+       26
       ],
       [
        191,
        82,
-       22
+       18
+      ],
+      [
+       146,
+       90,
+       11
+      ],
+      [
+       271,
+       94,
+       11
       ]
      ]
     },
@@ -4454,21 +3114,21 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       271,
-       94,
-       14
+       205,
+       77,
+       22
       ],
       [
        243,
        79,
-       24
+       22
       ],
       [
-       146,
-       90,
-       14
+       191,
+       82,
+       18
       ],
       [
        121,
@@ -4476,14 +3136,14 @@
        27
       ],
       [
-       205,
-       77,
-       24
+       146,
+       90,
+       11
       ],
       [
-       191,
-       82,
-       22
+       271,
+       94,
+       11
       ]
      ]
     },
@@ -4497,11 +3157,21 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
+      [
+       205,
+       77,
+       22
+      ],
       [
        191,
        82,
-       22
+       18
+      ],
+      [
+       242,
+       84,
+       26
       ],
       [
        121,
@@ -4509,29 +3179,14 @@
        27
       ],
       [
-       271,
-       94,
-       14
-      ],
-      [
        146,
        90,
-       14
+       11
       ],
       [
-       205,
-       77,
-       24
-      ],
-      [
-       242,
-       84,
-       19
-      ],
-      [
-       0,
-       0,
-       30
+       271,
+       94,
+       11
       ]
      ]
     },
@@ -4545,11 +3200,21 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
+      [
+       205,
+       77,
+       22
+      ],
       [
        191,
        82,
-       22
+       18
+      ],
+      [
+       242,
+       84,
+       26
       ],
       [
        121,
@@ -4557,29 +3222,14 @@
        27
       ],
       [
-       271,
-       94,
-       14
-      ],
-      [
        146,
        90,
-       14
+       11
       ],
       [
-       205,
-       77,
-       24
-      ],
-      [
-       242,
-       84,
-       19
-      ],
-      [
-       0,
-       0,
-       30
+       271,
+       94,
+       11
       ]
      ]
     }
@@ -4599,56 +3249,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       32,
-       31
-      ],
-      [
-       122,
-       29,
-       32
-      ],
-      [
-       120,
-       29,
-       32
-      ],
-      [
-       120,
-       23,
-       33
-      ],
+     "parts": [
       [
        115,
-       31,
-       34
-      ],
-      [
-       120,
-       39,
-       35
-      ],
-      [
-       120,
-       47,
-       36
-      ],
-      [
-       120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       28
       ]
      ]
     },
@@ -4663,56 +3268,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       40,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       29,
-       32
-      ],
-      [
-       120,
-       31,
-       41
-      ],
+     "parts": [
       [
        117,
-       39,
-       42
-      ],
-      [
-       120,
-       47,
-       43
-      ],
-      [
-       120,
-       55,
-       44
-      ],
-      [
-       120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       29
       ]
      ]
     },
@@ -4727,56 +3287,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       43,
-       31
-      ],
-      [
-       120,
-       58,
-       45
-      ],
-      [
-       122,
-       45,
-       40
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       39,
-       33
-      ],
+     "parts": [
       [
        115,
-       47,
-       34
-      ],
-      [
-       120,
-       55,
-       35
-      ],
-      [
-       120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       30
       ]
      ]
     },
@@ -4791,51 +3306,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       49,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       55,
-       46
-      ],
-      [
-       113,
-       48,
-       47
-      ],
-      [
-       127,
-       48,
-       48
-      ],
-      [
-       120,
-       47,
-       49
-      ],
+     "parts": [
       [
        120,
        16,
-       37
+       31
       ],
       [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       113,
+       45,
+       32
       ]
      ]
     },
@@ -4850,51 +3330,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       49,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       55,
-       50
-      ],
-      [
-       121,
-       47,
-       51
-      ],
-      [
-       113,
-       47,
-       52
-      ],
-      [
-       127,
-       47,
-       53
-      ],
+     "parts": [
       [
        120,
        16,
-       37
+       31
       ],
       [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       113,
+       45,
+       33
       ]
      ]
     },
@@ -4909,51 +3354,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       49,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       55,
-       46
-      ],
-      [
-       113,
-       48,
-       47
-      ],
-      [
-       127,
-       48,
-       48
-      ],
-      [
-       120,
-       47,
-       49
-      ],
+     "parts": [
       [
        120,
        16,
-       37
+       31
       ],
       [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       113,
+       45,
+       32
       ]
      ]
     },
@@ -4968,51 +3378,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       49,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       55,
-       54
-      ],
-      [
-       127,
-       47,
-       55
-      ],
-      [
-       113,
-       48,
-       47
-      ],
-      [
-       119,
-       47,
-       56
-      ],
+     "parts": [
       [
        120,
        16,
-       37
+       31
       ],
       [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       113,
+       45,
+       34
       ]
      ]
     },
@@ -5027,51 +3402,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       49,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       55,
-       46
-      ],
-      [
-       113,
-       48,
-       47
-      ],
-      [
-       127,
-       48,
-       48
-      ],
-      [
-       120,
-       47,
-       49
-      ],
+     "parts": [
       [
        120,
        16,
-       37
+       31
       ],
       [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       113,
+       45,
+       32
       ]
      ]
     },
@@ -5086,36 +3426,16 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       125,
-       49,
+       120,
+       16,
        31
       ],
       [
        120,
        45,
-       40
-      ],
-      [
-       121,
-       45,
-       57
-      ],
-      [
-       120,
-       16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       35
       ]
      ]
     },
@@ -5130,51 +3450,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       120,
-       58,
-       45
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       119,
-       45,
-       40
-      ],
-      [
-       120,
-       39,
-       58
-      ],
+     "parts": [
       [
        112,
-       47,
-       59
-      ],
-      [
-       120,
-       55,
-       60
-      ],
-      [
-       120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       36
       ]
      ]
     },
@@ -5189,56 +3469,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       40,
-       31
-      ],
-      [
-       120,
-       45,
-       40
-      ],
-      [
-       120,
-       29,
-       32
-      ],
+     "parts": [
       [
        119,
-       31,
-       61
-      ],
-      [
-       119,
-       39,
-       62
-      ],
-      [
-       119,
-       47,
-       63
-      ],
-      [
-       120,
-       55,
-       44
-      ],
-      [
-       120,
        16,
        37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
       ]
      ]
     },
@@ -5253,56 +3488,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       32,
-       31
-      ],
-      [
-       118,
-       29,
-       32
-      ],
-      [
-       121,
-       29,
-       32
-      ],
-      [
-       121,
-       23,
-       58
-      ],
+     "parts": [
       [
        113,
-       31,
-       59
-      ],
-      [
-       121,
-       39,
-       60
-      ],
-      [
-       120,
-       47,
-       36
-      ],
-      [
-       120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
        38
-      ],
-      [
-       120,
-       32,
-       39
       ]
      ]
     },
@@ -5317,35 +3507,10 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       32,
-       31
-      ],
-      [
-       121,
-       29,
-       32
-      ],
-      [
-       122,
-       22,
-       64
-      ],
+     "parts": [
       [
        120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
        39
       ]
      ]
@@ -5361,46 +3526,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       125,
-       33,
-       31
-      ],
-      [
-       120,
-       29,
-       32
-      ],
-      [
-       122,
-       20,
-       65
-      ],
+     "parts": [
       [
        114,
-       28,
-       66
-      ],
-      [
-       122,
-       36,
-       67
-      ],
-      [
-       120,
        16,
-       37
-      ],
-      [
-       120,
-       24,
-       38
-      ],
-      [
-       120,
-       32,
-       39
+       40
       ]
      ]
     },
@@ -5415,56 +3545,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       32,
-       31
-      ],
-      [
-       254,
-       29,
-       68
-      ],
-      [
-       256,
-       29,
-       68
-      ],
-      [
-       256,
-       23,
-       41
-      ],
-      [
-       253,
-       31,
-       42
-      ],
-      [
-       256,
-       39,
-       43
-      ],
-      [
-       256,
-       47,
-       44
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       41
       ]
      ]
     },
@@ -5479,56 +3564,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       40,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       29,
-       68
-      ],
-      [
-       256,
-       31,
-       33
-      ],
-      [
-       251,
-       39,
-       34
-      ],
-      [
-       256,
-       47,
-       35
-      ],
-      [
-       256,
-       55,
-       36
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       42
       ]
      ]
     },
@@ -5543,56 +3583,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       43,
-       31
-      ],
-      [
-       256,
-       58,
-       73
-      ],
-      [
-       254,
-       45,
-       72
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       39,
-       41
-      ],
-      [
-       253,
-       47,
-       42
-      ],
-      [
-       256,
-       55,
-       43
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       43
       ]
      ]
     },
@@ -5607,51 +3602,16 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       252,
-       48,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       55,
-       74
-      ],
-      [
-       263,
-       48,
-       75
+       248,
+       16,
+       44
       ],
       [
        249,
-       48,
-       76
-      ],
-      [
-       256,
-       47,
-       77
-      ],
-      [
-       256,
-       16,
-       69
-      ],
-      [
-       248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       45,
+       45
       ]
      ]
     },
@@ -5666,51 +3626,16 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       252,
-       48,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       55,
-       54
-      ],
-      [
-       255,
-       47,
-       78
-      ],
-      [
-       263,
-       47,
-       79
+       248,
+       16,
+       44
       ],
       [
        249,
-       47,
-       80
-      ],
-      [
-       256,
-       16,
-       69
-      ],
-      [
-       248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       45,
+       46
       ]
      ]
     },
@@ -5725,51 +3650,16 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       252,
-       48,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       55,
-       74
-      ],
-      [
-       263,
-       48,
-       75
+       248,
+       16,
+       44
       ],
       [
        249,
-       48,
-       76
-      ],
-      [
-       256,
-       47,
-       77
-      ],
-      [
-       256,
-       16,
-       69
-      ],
-      [
-       248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       45,
+       45
       ]
      ]
     },
@@ -5784,51 +3674,16 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       252,
-       48,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       55,
-       50
+       248,
+       16,
+       44
       ],
       [
        249,
-       47,
-       81
-      ],
-      [
-       263,
-       48,
-       75
-      ],
-      [
-       257,
-       47,
-       82
-      ],
-      [
-       256,
-       16,
-       69
-      ],
-      [
-       248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       45,
+       47
       ]
      ]
     },
@@ -5843,51 +3698,16 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       252,
-       48,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       55,
-       74
-      ],
-      [
-       263,
-       48,
-       75
+       248,
+       16,
+       44
       ],
       [
        249,
-       48,
-       76
-      ],
-      [
-       256,
-       47,
-       77
-      ],
-      [
-       256,
-       16,
-       69
-      ],
-      [
-       248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       45,
+       45
       ]
      ]
     },
@@ -5902,36 +3722,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       48,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       255,
-       45,
-       83
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
+       16,
+       44
       ],
       [
-       256,
-       32,
-       71
+       252,
+       45,
+       48
       ]
      ]
     },
@@ -5946,51 +3746,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       256,
-       58,
-       73
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       257,
-       45,
-       72
-      ],
-      [
-       256,
-       39,
-       61
-      ],
-      [
-       256,
-       47,
-       62
-      ],
-      [
-       256,
-       55,
-       63
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       49
       ]
      ]
     },
@@ -6005,56 +3765,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       41,
-       31
-      ],
-      [
-       256,
-       45,
-       72
-      ],
-      [
-       256,
-       29,
-       68
-      ],
-      [
-       257,
-       31,
-       58
-      ],
-      [
-       249,
-       39,
-       59
-      ],
-      [
-       257,
-       47,
-       60
-      ],
-      [
-       256,
-       55,
-       36
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       50
       ]
      ]
     },
@@ -6069,56 +3784,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       32,
-       31
-      ],
-      [
-       258,
-       29,
-       68
-      ],
-      [
-       255,
-       29,
-       68
-      ],
-      [
-       255,
-       23,
-       61
-      ],
-      [
-       255,
-       31,
-       62
-      ],
-      [
-       255,
-       39,
-       63
-      ],
-      [
-       256,
-       47,
-       44
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       51
       ]
      ]
     },
@@ -6133,36 +3803,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       32,
-       31
-      ],
-      [
-       255,
-       29,
-       68
-      ],
-      [
-       254,
-       22,
-       84
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       52
       ]
      ]
     },
@@ -6177,46 +3822,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       252,
-       32,
-       31
-      ],
-      [
-       255,
-       29,
-       68
-      ],
-      [
-       254,
-       20,
-       85
-      ],
-      [
-       254,
-       28,
-       86
-      ],
-      [
-       254,
-       36,
-       87
-      ],
-      [
-       256,
-       16,
-       69
-      ],
+     "parts": [
       [
        248,
-       24,
-       70
-      ],
-      [
-       256,
-       32,
-       71
+       16,
+       53
       ]
      ]
     }
@@ -6235,51 +3845,41 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
+      [
+       189,
+       0,
+       54
+      ],
       [
        283,
        0,
-       88
-      ],
-      [
-       42,
-       31,
-       89
-      ],
-      [
-       15,
-       128,
-       90
-      ],
-      [
-       21,
-       136,
-       91
-      ],
-      [
-       352,
-       64,
-       92
+       55
       ],
       [
        140,
        7,
-       93
-      ],
-      [
-       346,
-       72,
-       94
-      ],
-      [
-       189,
-       0,
-       95
+       56
       ],
       [
        157,
        21,
-       96
+       57
+      ],
+      [
+       42,
+       31,
+       58
+      ],
+      [
+       346,
+       64,
+       59
+      ],
+      [
+       15,
+       128,
+       60
       ]
      ]
     },
@@ -6293,66 +3893,66 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       283,
+       85,
        0,
-       97
-      ],
-      [
-       40,
-       32,
-       98
-      ],
-      [
-       358,
-       95,
-       99
-      ],
-      [
-       334,
-       31,
-       100
-      ],
-      [
-       34,
-       55,
-       101
-      ],
-      [
-       16,
-       129,
-       102
+       61
       ],
       [
        133,
        0,
-       103
-      ],
-      [
-       343,
-       65,
-       104
+       62
       ],
       [
        189,
        0,
-       95
+       54
+      ],
+      [
+       283,
+       0,
+       63
       ],
       [
        168,
        5,
-       105
-      ],
-      [
-       85,
-       0,
-       106
+       64
       ],
       [
        158,
        16,
-       107
+       65
+      ],
+      [
+       334,
+       31,
+       66
+      ],
+      [
+       40,
+       32,
+       67
+      ],
+      [
+       34,
+       55,
+       68
+      ],
+      [
+       343,
+       65,
+       69
+      ],
+      [
+       358,
+       95,
+       70
+      ],
+      [
+       16,
+       129,
+       71
       ]
      ]
     },
@@ -6366,101 +3966,81 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       264,
-       5,
-       108
-      ],
-      [
-       283,
+       85,
        0,
-       97
-      ],
-      [
-       196,
-       24,
-       109
-      ],
-      [
-       187,
-       21,
-       110
-      ],
-      [
-       40,
-       32,
-       98
-      ],
-      [
-       33,
-       64,
-       111
-      ],
-      [
-       361,
-       128,
-       92
-      ],
-      [
-       328,
-       32,
-       112
-      ],
-      [
-       355,
-       136,
-       94
-      ],
-      [
-       32,
-       56,
-       113
-      ],
-      [
-       16,
-       129,
-       102
-      ],
-      [
-       343,
-       65,
-       104
-      ],
-      [
-       189,
-       0,
-       106
+       61
       ],
       [
        133,
        0,
-       103
+       62
       ],
       [
-       85,
+       158,
        0,
-       106
+       72
+      ],
+      [
+       189,
+       0,
+       61
+      ],
+      [
+       283,
+       0,
+       63
+      ],
+      [
+       264,
+       5,
+       73
+      ],
+      [
+       187,
+       21,
+       74
+      ],
+      [
+       196,
+       24,
+       75
+      ],
+      [
+       40,
+       32,
+       67
+      ],
+      [
+       328,
+       32,
+       76
+      ],
+      [
+       32,
+       56,
+       77
+      ],
+      [
+       343,
+       65,
+       69
       ],
       [
        352,
        96,
-       114
+       78
       ],
       [
-       163,
-       0,
-       115
+       355,
+       128,
+       59
       ],
       [
-       171,
-       8,
-       116
-      ],
-      [
-       158,
        16,
-       107
+       129,
+       71
       ]
      ]
     },
@@ -6474,111 +4054,86 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       261,
-       8,
-       117
+       85,
+       0,
+       61
       ],
       [
-       261,
+       158,
        0,
-       118
+       72
+      ],
+      [
+       189,
+       0,
+       61
       ],
       [
        283,
        0,
-       88
-      ],
-      [
-       189,
-       17,
-       119
-      ],
-      [
-       42,
-       31,
-       89
-      ],
-      [
-       33,
-       64,
-       111
-      ],
-      [
-       32,
-       56,
-       113
-      ],
-      [
-       366,
-       7,
-       100
-      ],
-      [
-       328,
-       32,
-       112
-      ],
-      [
-       16,
-       129,
-       102
-      ],
-      [
-       352,
-       129,
-       104
-      ],
-      [
-       140,
-       7,
-       93
-      ],
-      [
-       189,
-       0,
-       106
-      ],
-      [
-       85,
-       0,
-       106
-      ],
-      [
-       352,
-       96,
-       114
-      ],
-      [
-       163,
-       0,
-       115
-      ],
-      [
-       171,
-       8,
-       116
-      ],
-      [
-       117,
-       16,
-       95
-      ],
-      [
-       158,
-       16,
-       107
-      ],
-      [
-       251,
-       16,
-       88
+       55
       ],
       [
        10,
        7,
-       89
+       58
+      ],
+      [
+       140,
+       7,
+       56
+      ],
+      [
+       366,
+       7,
+       66
+      ],
+      [
+       251,
+       0,
+       79
+      ],
+      [
+       117,
+       16,
+       54
+      ],
+      [
+       189,
+       17,
+       80
+      ],
+      [
+       42,
+       31,
+       58
+      ],
+      [
+       328,
+       32,
+       76
+      ],
+      [
+       32,
+       56,
+       77
+      ],
+      [
+       352,
+       96,
+       78
+      ],
+      [
+       16,
+       129,
+       71
+      ],
+      [
+       352,
+       129,
+       69
       ]
      ]
     },
@@ -6592,106 +4147,91 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       261,
-       8,
-       117
-      ],
-      [
-       261,
-       0,
-       118
-      ],
+     "parts": [
       [
        189,
-       17,
-       119
+       0,
+       81
       ],
       [
        112,
        5,
-       105
-      ],
-      [
-       34,
-       55,
-       101
-      ],
-      [
-       334,
-       31,
-       100
-      ],
-      [
-       342,
-       55,
-       120
-      ],
-      [
-       15,
-       128,
-       90
-      ],
-      [
-       360,
-       8,
-       112
-      ],
-      [
-       352,
-       129,
-       104
-      ],
-      [
-       189,
-       0,
-       106
+       64
       ],
       [
        168,
        5,
-       105
+       64
       ],
       [
-       203,
-       5,
-       110
+       8,
+       8,
+       67
       ],
       [
        212,
        8,
-       109
+       75
+      ],
+      [
+       251,
+       0,
+       82
+      ],
+      [
+       360,
+       8,
+       76
       ],
       [
        117,
        16,
-       106
+       61
+      ],
+      [
+       189,
+       17,
+       80
       ],
       [
        157,
        21,
-       96
+       57
       ],
       [
-       352,
-       96,
-       114
+       334,
+       31,
+       66
       ],
       [
-       251,
-       16,
-       97
+       34,
+       55,
+       68
+      ],
+      [
+       342,
+       55,
+       83
       ],
       [
        17,
        95,
-       121
+       84
       ],
       [
-       8,
-       8,
-       98
+       352,
+       96,
+       78
+      ],
+      [
+       15,
+       128,
+       85
+      ],
+      [
+       352,
+       129,
+       69
       ]
      ]
     },
@@ -6705,91 +4245,61 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
+      [
+       189,
+       0,
+       86
+      ],
       [
        264,
        5,
-       108
+       73
       ],
       [
-       187,
-       21,
-       110
-      ],
-      [
-       114,
        8,
-       116
+       8,
+       67
       ],
       [
        106,
        0,
-       115
-      ],
-      [
-       251,
-       16,
-       97
-      ],
-      [
-       358,
-       95,
-       99
-      ],
-      [
-       361,
-       128,
-       92
-      ],
-      [
-       342,
-       64,
-       122
-      ],
-      [
-       355,
-       136,
-       94
+       87
       ],
       [
        360,
        8,
-       112
-      ],
-      [
-       336,
-       56,
-       123
-      ],
-      [
-       189,
-       0,
-       95
-      ],
-      [
-       205,
-       1,
-       119
-      ],
-      [
-       117,
-       16,
-       106
+       76
       ],
       [
        235,
        0,
-       124
+       88
+      ],
+      [
+       187,
+       21,
+       74
+      ],
+      [
+       336,
+       56,
+       89
+      ],
+      [
+       358,
+       95,
+       70
       ],
       [
        15,
        96,
-       125
+       90
       ],
       [
-       8,
-       8,
-       98
+       355,
+       128,
+       59
       ]
      ]
     },
@@ -6803,56 +4313,41 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       114,
-       8,
-       116
-      ],
-      [
-       106,
-       0,
-       115
-      ],
-      [
-       15,
-       96,
-       125
-      ],
+     "parts": [
       [
        235,
        0,
-       124
-      ],
-      [
-       251,
-       16,
-       88
-      ],
-      [
-       366,
-       7,
-       100
-      ],
-      [
-       117,
-       16,
-       95
-      ],
-      [
-       336,
-       56,
-       123
+       91
       ],
       [
        205,
        1,
-       119
+       80
+      ],
+      [
+       366,
+       7,
+       66
       ],
       [
        8,
        8,
-       98
+       67
+      ],
+      [
+       106,
+       0,
+       92
+      ],
+      [
+       336,
+       56,
+       93
+      ],
+      [
+       15,
+       96,
+       90
       ]
      ]
     },
@@ -6866,36 +4361,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       112,
-       5,
-       105
-      ],
-      [
-       17,
-       95,
-       121
-      ],
+     "parts": [
       [
        235,
        0,
-       124
+       94
       ],
       [
-       212,
-       8,
-       109
+       112,
+       5,
+       64
       ],
       [
        203,
        5,
-       126
+       95
       ],
       [
        10,
        7,
-       89
+       58
+      ],
+      [
+       212,
+       8,
+       75
+      ],
+      [
+       17,
+       95,
+       84
       ]
      ]
     }
@@ -6914,96 +4409,41 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       135,
-       7,
-       127
+       145,
+       -5,
+       96
       ],
       [
-       256,
-       24,
-       127
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       134,
-       8,
-       131
+       229,
+       -5,
+       96
       ],
       [
        134,
        0,
-       132
-      ],
-      [
-       136,
-       16,
-       133
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       145,
-       -5,
-       135
-      ],
-      [
-       145,
-       3,
-       136
-      ],
-      [
-       229,
-       3,
-       136
-      ],
-      [
-       -2,
-       56,
-       137
-      ],
-      [
-       -2,
-       64,
-       138
-      ],
-      [
-       -2,
-       72,
-       139
-      ],
-      [
-       229,
-       -5,
-       135
+       97
       ],
       [
        255,
-       24,
-       131
+       16,
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       -2,
+       56,
+       100
+      ],
+      [
+       21,
+       64,
+       101
       ]
      ]
     },
@@ -7017,101 +4457,41 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
        144,
-       -4,
-       141
+       -5,
+       102
       ],
       [
        228,
        -4,
-       141
-      ],
-      [
-       256,
-       24,
-       127
-      ],
-      [
-       1,
-       67,
-       142
-      ],
-      [
-       -7,
-       74,
-       143
-      ],
-      [
-       1,
-       59,
-       137
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       145,
-       3,
-       136
-      ],
-      [
-       229,
-       3,
-       136
-      ],
-      [
-       145,
-       -5,
-       127
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       135,
-       7,
-       127
+       103
       ],
       [
        134,
        0,
-       132
-      ],
-      [
-       136,
-       16,
-       133
+       97
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       -7,
+       59,
+       104
+      ],
+      [
+       21,
+       64,
+       101
       ]
      ]
     },
@@ -7125,96 +4505,36 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       3,
-       59,
-       137
-      ],
-      [
-       3,
-       67,
-       138
-      ],
-      [
-       3,
-       75,
-       139
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       145,
+       134,
        0,
-       144
-      ],
-      [
-       229,
-       0,
-       144
-      ],
-      [
-       141,
-       8,
-       136
+       105
       ],
       [
        225,
-       8,
-       136
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       135,
-       7,
-       127
-      ],
-      [
-       134,
        0,
-       132
-      ],
-      [
-       136,
-       16,
-       133
+       106
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       3,
+       59,
+       100
+      ],
+      [
+       21,
+       64,
+       101
       ]
      ]
     },
@@ -7228,101 +4548,36 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       7,
-       61,
-       137
-      ],
-      [
-       7,
-       69,
-       142
-      ],
-      [
-       -1,
-       77,
-       143
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       146,
+       134,
        0,
-       145
-      ],
-      [
-       230,
-       0,
-       145
-      ],
-      [
-       141,
-       8,
-       136
+       107
       ],
       [
        225,
-       8,
-       136
-      ],
-      [
-       138,
-       3,
-       127
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       135,
-       7,
-       127
-      ],
-      [
-       134,
        0,
-       132
-      ],
-      [
-       136,
-       16,
-       133
+       108
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       -1,
+       61,
+       109
+      ],
+      [
+       21,
+       64,
+       101
       ]
      ]
     },
@@ -7336,106 +4591,41 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       10,
-       62,
-       137
-      ],
-      [
-       145,
-       5,
-       135
-      ],
-      [
-       229,
-       5,
-       135
-      ],
-      [
-       9,
-       78,
-       139
-      ],
-      [
-       10,
-       70,
-       138
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       145,
-       13,
-       136
-      ],
-      [
-       229,
-       13,
-       136
-      ],
+     "parts": [
       [
        143,
        -3,
-       146
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       135,
-       7,
-       127
+       110
       ],
       [
        227,
        -3,
-       147
+       111
       ],
       [
        134,
        0,
-       132
-      ],
-      [
-       136,
-       16,
-       133
+       97
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       9,
+       62,
+       112
+      ],
+      [
+       21,
+       64,
+       101
       ]
      ]
     },
@@ -7449,111 +4639,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       6,
-       80,
-       143
-      ],
+     "parts": [
       [
        143,
        -3,
-       148
-      ],
-      [
-       14,
-       64,
-       137
+       113
       ],
       [
        227,
        -2,
-       149
-      ],
-      [
-       14,
-       72,
-       142
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       144,
-       5,
-       141
-      ],
-      [
-       228,
-       6,
-       141
-      ],
-      [
-       145,
-       13,
-       136
-      ],
-      [
-       229,
-       13,
-       136
-      ],
-      [
-       145,
-       7,
-       127
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       135,
-       7,
-       127
+       114
       ],
       [
        134,
        0,
-       132
-      ],
-      [
-       136,
-       16,
-       133
+       97
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       6,
+       64,
+       115
       ]
      ]
     },
@@ -7567,116 +4682,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       16,
-       73,
-       138
-      ],
-      [
-       16,
-       81,
-       139
-      ],
-      [
-       145,
-       10,
-       144
-      ],
-      [
-       229,
-       10,
-       144
-      ],
-      [
-       16,
-       65,
-       137
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       21,
-       72,
-       129
-      ],
-      [
-       141,
-       18,
-       136
-      ],
-      [
-       225,
-       18,
-       136
-      ],
-      [
-       139,
-       2,
-       150
-      ],
+     "parts": [
       [
        145,
        -7,
-       151
-      ],
-      [
-       229,
-       -6,
-       152
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       135,
-       7,
-       127
-      ],
-      [
-       223,
-       2,
-       153
+       116
       ],
       [
        134,
        0,
-       132
+       117
       ],
       [
-       136,
-       16,
-       133
+       223,
+       -6,
+       118
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       16,
+       64,
+       119
       ]
      ]
     },
@@ -7690,111 +4725,36 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       21,
-       66,
-       137
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       134,
-       8,
-       131
-      ],
-      [
-       141,
-       18,
-       136
-      ],
-      [
-       225,
-       18,
-       136
-      ],
-      [
-       223,
-       3,
-       154
-      ],
-      [
-       21,
-       74,
-       142
-      ],
-      [
-       13,
-       82,
-       143
-      ],
-      [
-       25,
-       69,
-       130
-      ],
-      [
-       25,
-       64,
-       128
-      ],
-      [
-       146,
-       10,
-       145
-      ],
-      [
-       230,
-       11,
-       145
-      ],
-      [
-       139,
-       2,
-       155
-      ],
+     "parts": [
       [
        145,
        -7,
-       151
-      ],
-      [
-       230,
-       -5,
-       152
-      ],
-      [
-       135,
-       7,
-       127
+       116
       ],
       [
        134,
        0,
-       132
+       120
       ],
       [
-       136,
+       223,
+       -5,
+       121
+      ],
+      [
+       255,
        16,
-       133
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       13,
+       64,
+       122
       ]
      ]
     },
@@ -7808,46 +4768,21 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
        227,
-       7,
-       147
-      ],
-      [
-       229,
-       23,
-       136
-      ],
-      [
-       229,
-       15,
-       135
-      ],
-      [
-       229,
        -1,
-       152
+       123
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -7861,46 +4796,21 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       229,
-       0,
-       152
-      ],
+     "parts": [
       [
        227,
-       8,
-       149
-      ],
-      [
-       228,
-       16,
-       141
-      ],
-      [
-       229,
-       23,
-       136
+       0,
+       124
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -7914,46 +4824,21 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       225,
-       28,
-       136
-      ],
-      [
-       229,
-       4,
-       152
+       255,
+       16,
+       98
       ],
       [
        223,
-       12,
-       153
-      ],
-      [
-       229,
-       20,
-       144
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       4,
+       118
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -7967,46 +4852,21 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       230,
-       21,
-       145
-      ],
+     "parts": [
       [
        223,
-       13,
-       154
-      ],
-      [
-       230,
        5,
-       152
-      ],
-      [
-       225,
-       28,
-       136
+       121
       ],
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       98
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8021,51 +4881,21 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       232,
-       32,
-       156
-      ],
-      [
-       229,
-       33,
-       157
-      ],
-      [
-       229,
-       25,
-       135
+       255,
+       16,
+       98
       ],
       [
        227,
-       17,
-       147
-      ],
-      [
-       229,
        9,
-       152
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       125
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8080,56 +4910,21 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       233,
-       32,
-       156
-      ],
-      [
-       228,
-       32,
-       156
-      ],
-      [
-       229,
-       10,
-       152
-      ],
-      [
-       228,
-       26,
-       158
-      ],
-      [
-       229,
-       33,
-       157
+       255,
+       16,
+       98
       ],
       [
        227,
-       18,
-       149
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       10,
+       126
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8144,56 +4939,21 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       230,
-       32,
-       156
-      ],
-      [
-       228,
-       32,
-       156
+       255,
+       16,
+       98
       ],
       [
        223,
-       22,
-       153
-      ],
-      [
-       229,
        14,
-       152
-      ],
-      [
-       225,
-       38,
-       157
-      ],
-      [
-       229,
-       30,
-       159
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
        127
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8208,56 +4968,21 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       231,
-       32,
-       156
-      ],
-      [
-       228,
-       32,
-       156
+       255,
+       16,
+       98
       ],
       [
        223,
-       23,
-       154
-      ],
-      [
-       230,
-       31,
-       160
-      ],
-      [
-       230,
        15,
-       152
-      ],
-      [
-       225,
-       38,
-       157
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       128
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8272,51 +4997,21 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       233,
-       32,
-       156
-      ],
-      [
-       232,
-       32,
-       156
-      ],
-      [
-       233,
-       18,
-       161
-      ],
-      [
-       232,
-       26,
-       162
+       255,
+       16,
+       98
       ],
       [
        224,
-       34,
-       163
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       18,
+       129
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8331,51 +5026,21 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       239,
-       32,
-       164
+       255,
+       16,
+       98
       ],
       [
        233,
-       32,
-       156
-      ],
-      [
-       234,
-       26,
-       165
-      ],
-      [
-       235,
        18,
-       161
-      ],
-      [
-       234,
-       34,
-       166
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
+       130
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8389,51 +5054,21 @@
      "lines": [
       1
      ],
-     "sprites": [
+     "parts": [
       [
-       240,
-       32,
-       164
-      ],
-      [
-       239,
-       32,
-       164
-      ],
-      [
-       239,
-       26,
-       162
+       255,
+       16,
+       98
       ],
       [
        231,
-       34,
-       163
-      ],
-      [
-       240,
        18,
-       161
-      ],
-      [
-       255,
-       24,
        131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8447,46 +5082,21 @@
      "lines": [
       1
      ],
-     "sprites": [
-      [
-       241,
-       32,
-       164
-      ],
-      [
-       242,
-       18,
-       161
-      ],
-      [
-       241,
-       34,
-       166
-      ],
-      [
-       241,
-       26,
-       165
-      ],
+     "parts": [
       [
        255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
+       98
       ],
       [
-       256,
-       24,
-       127
+       241,
+       18,
+       132
       ],
       [
        255,
        33,
-       140
+       99
       ]
      ]
     },
@@ -8501,46 +5111,16 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       238,
-       34,
-       163
-      ],
-      [
-       246,
-       32,
-       156
-      ],
-      [
-       247,
-       18,
-       161
-      ],
-      [
-       246,
-       26,
-       162
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
-       16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
-      ],
+     "parts": [
       [
        255,
        33,
-       140
+       99
+      ],
+      [
+       238,
+       16,
+       133
       ]
      ]
     },
@@ -8555,46 +5135,11 @@
       0,
       1
      ],
-     "sprites": [
+     "parts": [
       [
        248,
-       32,
-       156
-      ],
-      [
-       249,
-       26,
-       165
-      ],
-      [
-       249,
-       34,
-       166
-      ],
-      [
-       250,
-       18,
-       161
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
        134
-      ],
-      [
-       256,
-       24,
-       127
-      ],
-      [
-       255,
-       33,
-       140
       ]
      ]
     },
@@ -8609,56 +5154,11 @@
       0,
       1
      ],
-     "sprites": [
-      [
-       248,
-       32,
-       127
-      ],
-      [
-       255,
-       32,
-       164
-      ],
-      [
-       248,
-       32,
-       156
-      ],
-      [
-       253,
-       18,
-       161
-      ],
-      [
-       252,
-       26,
-       162
-      ],
+     "parts": [
       [
        244,
-       34,
-       163
-      ],
-      [
-       255,
-       24,
-       131
-      ],
-      [
-       256,
        16,
-       134
-      ],
-      [
-       256,
-       24,
-       127
-      ],
-      [
-       255,
-       33,
-       140
+       135
       ]
      ]
     }
@@ -8677,91 +5177,21 @@
      "lines": [
       2
      ],
-     "sprites": [
-      [
-       32,
-       448,
-       167
-      ],
+     "parts": [
       [
        25,
-       384,
-       168
-      ],
-      [
-       32,
-       420,
-       169
-      ],
-      [
-       32,
-       428,
-       170
-      ],
-      [
-       37,
-       412,
-       171
-      ],
-      [
-       34,
-       400,
-       172
-      ],
-      [
-       43,
-       428,
-       173
-      ],
-      [
-       40,
-       384,
-       174
-      ],
-      [
-       49,
        376,
-       175
+       136
       ],
       [
-       42,
-       384,
-       176
+       32,
+       412,
+       137
       ],
       [
        32,
        440,
-       177
-      ],
-      [
-       40,
-       448,
-       178
-      ],
-      [
-       32,
-       456,
-       179
-      ],
-      [
-       42,
-       446,
-       180
-      ],
-      [
-       34,
-       392,
-       181
-      ],
-      [
-       33,
-       376,
-       182
-      ],
-      [
-       0,
-       0,
-       183
+       138
       ]
      ]
     },
@@ -8776,96 +5206,26 @@
       2,
       3
      ],
-     "sprites": [
-      [
-       25,
-       384,
-       168
-      ],
-      [
-       49,
-       376,
-       175
-      ],
-      [
-       34,
-       392,
-       181
-      ],
-      [
-       33,
-       376,
-       184
-      ],
-      [
-       42,
-       384,
-       176
-      ],
-      [
-       34,
-       400,
-       172
-      ],
+     "parts": [
       [
        34,
        239,
-       185
+       139
       ],
       [
-       34,
-       247,
-       186
-      ],
-      [
-       36,
-       255,
-       187
-      ],
-      [
-       36,
-       263,
-       188
-      ],
-      [
-       43,
-       292,
-       189
-      ],
-      [
-       37,
+       32,
        276,
-       190
-      ],
-      [
-       32,
-       284,
-       191
-      ],
-      [
-       32,
-       292,
-       192
+       140
       ],
       [
        32,
        304,
-       193
+       141
       ],
       [
-       32,
-       312,
-       194
-      ],
-      [
-       40,
-       312,
-       195
-      ],
-      [
-       32,
-       320,
-       196
+       25,
+       376,
+       142
       ]
      ]
     },
@@ -8880,101 +5240,36 @@
       2,
       3
      ],
-     "sprites": [
-      [
-       42,
-       384,
-       176
-      ],
-      [
-       33,
-       376,
-       184
-      ],
-      [
-       49,
-       376,
-       175
-      ],
-      [
-       25,
-       384,
-       168
-      ],
-      [
-       35,
-       416,
-       197
-      ],
+     "parts": [
       [
        34,
        239,
-       198
-      ],
-      [
-       34,
-       247,
-       199
-      ],
-      [
-       42,
-       247,
-       200
+       143
       ],
       [
        34,
        256,
-       201
+       144
       ],
       [
-       34,
-       264,
-       202
-      ],
-      [
-       37,
+       32,
        274,
-       203
-      ],
-      [
-       32,
-       282,
-       204
-      ],
-      [
-       32,
-       290,
-       205
-      ],
-      [
-       43,
-       290,
-       206
-      ],
-      [
-       32,
-       312,
-       194
-      ],
-      [
-       40,
-       312,
-       195
-      ],
-      [
-       32,
-       320,
-       196
+       145
       ],
       [
        32,
        304,
-       193
+       146
       ],
       [
-       42,
-       310,
-       207
+       25,
+       376,
+       147
+      ],
+      [
+       35,
+       416,
+       148
       ]
      ]
     },
@@ -8989,91 +5284,31 @@
       2,
       3
      ],
-     "sprites": [
+     "parts": [
       [
-       42,
-       384,
-       176
+       34,
+       256,
+       144
       ],
       [
-       33,
-       376,
-       184
+       32,
+       274,
+       149
       ],
       [
-       49,
-       376,
-       175
+       32,
+       304,
+       150
       ],
       [
        25,
-       384,
-       168
-      ],
-      [
-       36,
-       391,
-       208
+       376,
+       151
       ],
       [
        35,
        416,
-       197
-      ],
-      [
-       37,
-       274,
-       209
-      ],
-      [
-       32,
-       282,
-       204
-      ],
-      [
-       43,
-       290,
-       206
-      ],
-      [
-       32,
-       290,
-       205
-      ],
-      [
-       34,
-       256,
-       201
-      ],
-      [
-       34,
-       264,
-       202
-      ],
-      [
-       39,
-       282,
-       210
-      ],
-      [
-       32,
-       320,
-       196
-      ],
-      [
-       32,
-       312,
-       194
-      ],
-      [
-       34,
-       304,
-       211
-      ],
-      [
-       36,
-       312,
-       212
+       148
       ]
      ]
     },
@@ -9087,56 +5322,21 @@
      "lines": [
       3
      ],
-     "sprites": [
+     "parts": [
       [
        36,
        255,
-       187
+       152
       ],
       [
-       37,
+       32,
        274,
-       209
+       149
       ],
       [
        32,
-       282,
-       204
-      ],
-      [
-       43,
-       290,
-       206
-      ],
-      [
-       32,
-       290,
-       205
-      ],
-      [
-       39,
-       282,
-       210
-      ],
-      [
-       32,
-       320,
-       196
-      ],
-      [
-       32,
-       312,
-       194
-      ],
-      [
-       34,
        304,
-       211
-      ],
-      [
-       36,
-       312,
-       212
+       150
       ]
      ]
     },
@@ -9151,141 +5351,36 @@
       2,
       3
      ],
-     "sprites": [
+     "parts": [
       [
-       34,
-       375,
-       213
-      ],
-      [
-       34,
-       383,
-       214
-      ],
-      [
-       36,
-       391,
-       208
-      ],
-      [
-       36,
-       399,
-       215
-      ],
-      [
-       43,
-       428,
-       173
-      ],
-      [
-       37,
-       412,
-       171
-      ],
-      [
-       32,
-       420,
-       169
-      ],
-      [
-       32,
-       428,
-       170
-      ],
-      [
-       32,
-       440,
-       177
-      ],
-      [
-       32,
-       448,
-       167
-      ],
-      [
-       40,
-       448,
-       178
-      ],
-      [
-       32,
-       456,
-       179
-      ],
-      [
-       33,
+       25,
        240,
-       216
-      ],
-      [
-       42,
-       310,
-       207
+       153
       ],
       [
        32,
-       320,
-       196
-      ],
-      [
-       40,
-       312,
-       195
+       274,
+       149
       ],
       [
        32,
        304,
-       193
+       146
       ],
       [
-       36,
-       255,
-       187
-      ],
-      [
-       37,
-       274,
-       209
+       34,
+       375,
+       154
       ],
       [
        32,
-       282,
-       204
-      ],
-      [
-       43,
-       290,
-       206
+       412,
+       137
       ],
       [
        32,
-       290,
-       205
-      ],
-      [
-       49,
-       240,
-       217
-      ],
-      [
-       39,
-       282,
-       210
-      ],
-      [
-       32,
-       312,
-       194
-      ],
-      [
-       25,
-       248,
-       218
-      ],
-      [
-       42,
-       248,
-       219
+       440,
+       155
       ]
      ]
     },
@@ -9300,156 +5395,41 @@
       2,
       3
      ],
-     "sprites": [
+     "parts": [
       [
-       34,
-       375,
-       220
-      ],
-      [
-       34,
-       383,
-       221
-      ],
-      [
-       42,
-       383,
-       222
-      ],
-      [
-       34,
-       392,
-       181
-      ],
-      [
-       34,
-       400,
-       172
-      ],
-      [
-       37,
-       410,
-       223
-      ],
-      [
-       32,
-       418,
-       224
-      ],
-      [
-       32,
-       426,
-       225
-      ],
-      [
-       43,
-       426,
-       226
-      ],
-      [
-       32,
-       448,
-       167
-      ],
-      [
-       40,
-       448,
-       178
-      ],
-      [
-       32,
-       456,
-       179
-      ],
-      [
-       32,
-       440,
-       177
-      ],
-      [
-       42,
-       446,
-       180
-      ],
-      [
-       33,
+       25,
        240,
-       227
-      ],
-      [
-       34,
-       256,
-       201
-      ],
-      [
-       42,
-       310,
-       207
+       156
       ],
       [
        32,
-       320,
-       196
-      ],
-      [
-       40,
-       312,
-       195
+       276,
+       140
       ],
       [
        32,
        304,
-       193
-      ],
-      [
-       42,
-       248,
-       219
-      ],
-      [
-       49,
-       240,
-       217
-      ],
-      [
-       40,
-       248,
-       228
-      ],
-      [
-       43,
-       292,
-       189
+       146
       ],
       [
        34,
-       264,
-       202
+       375,
+       157
       ],
       [
-       37,
-       276,
-       190
-      ],
-      [
-       32,
-       292,
-       192
+       34,
+       392,
+       158
       ],
       [
        32,
-       284,
-       191
-      ],
-      [
-       25,
-       248,
-       218
+       410,
+       159
       ],
       [
        32,
-       312,
-       194
+       440,
+       138
       ]
      ]
     },
@@ -9464,91 +5444,26 @@
       2,
       3
      ],
-     "sprites": [
+     "parts": [
       [
-       36,
-       448,
-       229
-      ],
-      [
-       34,
-       440,
-       230
-      ],
-      [
-       32,
-       448,
-       167
-      ],
-      [
-       32,
-       456,
-       179
-      ],
-      [
-       39,
-       418,
-       231
-      ],
-      [
-       34,
-       400,
-       172
+       25,
+       240,
+       160
       ],
       [
        34,
        392,
-       181
+       158
       ],
       [
        32,
-       426,
-       225
-      ],
-      [
-       43,
-       426,
-       226
-      ],
-      [
-       32,
-       418,
-       224
-      ],
-      [
-       37,
        410,
-       232
+       161
       ],
       [
-       34,
-       264,
-       202
-      ],
-      [
-       42,
-       248,
-       219
-      ],
-      [
-       33,
-       240,
-       216
-      ],
-      [
-       34,
-       256,
-       201
-      ],
-      [
-       49,
-       240,
-       217
-      ],
-      [
-       25,
-       248,
-       218
+       32,
+       440,
+       162
       ]
      ]
     },
@@ -9563,81 +5478,31 @@
       2,
       3
      ],
-     "sprites": [
+     "parts": [
       [
-       32,
-       426,
-       225
-      ],
-      [
-       36,
-       448,
-       229
-      ],
-      [
-       34,
-       440,
-       230
-      ],
-      [
-       32,
-       448,
-       167
-      ],
-      [
-       32,
-       456,
-       179
-      ],
-      [
-       39,
-       418,
-       231
-      ],
-      [
-       43,
-       426,
-       226
-      ],
-      [
-       32,
-       418,
-       224
-      ],
-      [
-       37,
-       410,
-       232
-      ],
-      [
-       36,
-       391,
-       208
+       25,
+       240,
+       163
       ],
       [
        35,
        280,
-       233
+       164
       ],
       [
-       25,
-       248,
-       218
+       36,
+       391,
+       165
       ],
       [
-       49,
-       240,
-       217
+       32,
+       410,
+       161
       ],
       [
-       33,
-       240,
-       216
-      ],
-      [
-       42,
-       248,
-       219
+       32,
+       440,
+       162
       ]
      ]
     },
@@ -9652,111 +5517,31 @@
       2,
       3
      ],
-     "sprites": [
-      [
-       42,
-       384,
-       176
-      ],
+     "parts": [
       [
        25,
-       384,
-       168
-      ],
-      [
-       32,
-       448,
-       167
-      ],
-      [
-       39,
-       418,
-       231
-      ],
-      [
-       49,
-       376,
-       175
-      ],
-      [
-       32,
-       426,
-       225
-      ],
-      [
-       43,
-       426,
-       226
-      ],
-      [
-       32,
-       418,
-       224
-      ],
-      [
-       37,
-       410,
-       232
-      ],
-      [
-       36,
-       391,
-       208
-      ],
-      [
-       32,
-       440,
-       177
-      ],
-      [
-       40,
-       448,
-       178
-      ],
-      [
-       32,
-       456,
-       179
-      ],
-      [
-       42,
-       446,
-       180
-      ],
-      [
-       33,
-       376,
-       184
+       240,
+       153
       ],
       [
        35,
        280,
-       233
-      ],
-      [
-       36,
-       255,
-       187
+       164
       ],
       [
        25,
-       248,
-       218
+       376,
+       151
       ],
       [
-       49,
-       240,
-       217
+       32,
+       410,
+       161
       ],
       [
-       33,
-       240,
-       216
-      ],
-      [
-       42,
-       248,
-       219
+       32,
+       440,
+       138
       ]
      ]
     }
