@@ -4,7 +4,7 @@ extends HockeyGame
 ## plays the first two teams with the setup screen's default controls.
 
 const SKATER_SCENE := preload("res://scenes/skater.tscn")
-const SETUP_SCENE := "res://ui/setup_screen.tscn"
+const SETUP_SCENE := "res://ui/game_setup.tscn"
 ## OptPerlen by period length in minutes (ClockLength _timetab: 5, 10, 20 minutes).
 const PERLEN := {5: 0, 10: 1, 20: 2}
 ## A CPU-only intermission waits this long (Intermission's waitxsr(480)).
@@ -37,7 +37,10 @@ func _ready() -> void:
 		add_child(sk)
 		skaters.append(sk)
 	add_object_views()
-	world.opt_perlen = PERLEN.get(m.period_minutes, 0)
+	world.opt_perlen = m.perlen if m.perlen >= 0 else PERLEN.get(m.period_minutes, 0)
+	# The menus' music stops: the game opens with AllSndOff and the intermission song.
+	if Sim.menu_sfx:
+		Sim.menu_sfx.stop_all()
 	world.opt_pen = m.penalties
 	world.opt_offsides = m.offsides
 	world.opt_line_on = m.line_changes
@@ -56,6 +59,8 @@ func _ready() -> void:
 		world.f_c2fa |= HockeyWorld.C2FA_SHOOTOUT
 		world.shootout.init_shootout()
 	world.rules.init_other_games(MatchConfig.available_teams(m.edition))
+	if m.form.size() == 2:
+		world.roster.preset_form = m.form
 	world.rules.start_game()
 	world.stats[0].line = clampi(m.home_line, 0, 6)
 	world.stats[1].line = clampi(m.away_line, 0, 6)

@@ -109,8 +109,14 @@ func rom_bytes() -> PackedByteArray:
 	a[7] = (nibble_of(glove_right if g else pass_accuracy) << 4) | nibble_of(glove_left if g else aggressiveness)
 	return a
 
-## The retail Overall rating with hot/cold 0 (CalcAttrib with the Overall weight lists).
-func overall() -> int:
+## CalcAttrib's nibble numbers of the Overall attributes (the form byte is 15 - n).
+const OVERALL_NIBBLES := [12, 11, 10, 9, 8, 7, 5, 4, 3, 1]
+const OVERALL_NIBBLES_GOALIE := [12, 9, 8, 3, 2, 1, 0]
+
+## The retail Overall rating (CalcAttrib with the Overall weight lists, then AttribAdjust).
+## `form` is the slot's 16 hot/cold bytes: the truncated mean of the bytes of the rated
+## attributes is added (OvrDivisor / OvrDividend). Without it the form is 0.
+func overall(form: PackedInt32Array = PackedInt32Array()) -> int:
 	var raw: int
 	if is_goalie():
 		raw = (9 * nibble_of(agility)) / 2 + (9 * nibble_of(defensive_awareness)) / 2 \
@@ -121,6 +127,12 @@ func overall() -> int:
 				+ 2 * nibble_of(defensive_awareness) + nibble_of(shot_power) + 2 * nibble_of(checking) \
 				+ 3 * nibble_of(stick_handling) + 2 * nibble_of(shot_accuracy) + nibble_of(endurance) \
 				+ nibble_of(pass_accuracy)
+	if form.size() >= 16:
+		var ns: Array = OVERALL_NIBBLES_GOALIE if is_goalie() else OVERALL_NIBBLES
+		var sum := 0
+		for n in ns:
+			sum += form[15 - n]
+		raw += int(sum / float(ns.size())) if sum >= 0 else -int(-sum / float(ns.size()))
 	if raw >= 100:
 		return 99
 	if raw < 50:

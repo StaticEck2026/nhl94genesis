@@ -577,6 +577,20 @@ The setup screen comes back with the same settings: OptLine and OptPlayMode are 
 
 ## 10. Port checklist
 
+**Port status (2026-10-16).** Both screens are built from the exported art: `ui/game_setup.gd` and `ui/matchups.gd`. The Game Setup default screen, a showcase card and Matchups page 0 match the emulator shots pixel for pixel; the only difference is the colour scale (the port maps 3-bit CRAM to 255/7 steps, the emulator to 36).
+- Flow: title → Game Setup → Matchups (not in Shootout) → game. "Exit Game" and the demo exit return to Game Setup with the options kept (`Sim.options`).
+- Music: `Sim.menu_sfx` carries `$78` from the title into Game Setup; Matchups plays `$7A`.
+- Players uses the 4 Way Play list (the port always has pads 3 and 4), mapped through `MatchConfig.players` / `NOPLIST`.
+- Matchups makes the game's form table (`RosterLogic.make_form`), which `MatchConfig.form` hands to `new_game_form`. Its ratings use `PlayerData.overall(form)`.
+- The A + C + Start cheat sets `MatchConfig.perlen = 3`.
+- The demo follows retail: Penalties On, Line Changes On, the teams on screen, re-rolled on the way back.
+- Not done:
+  - the playoff modes (Play Mode 1-3 are skipped for now);
+  - User Records / Name Entry;
+  - the showcase's SRAM record lines;
+  - the palette fades (`palcount`).
+- Port-only: B opens a box with the edition (retail or the fight patch) and the patch's Fighting option.
+
 1. **Flow.** Replace `ui/setup_screen.tscn` with a retail **GameSetup** scene, then a **Matchups** scene:
    - flow: title → GameSetup → (Shootout ? skip : Matchups) → game;
    - "Exit Game" → GameSetup (not the title), keeping the MatchConfig;

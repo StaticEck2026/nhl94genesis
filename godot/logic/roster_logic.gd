@@ -53,10 +53,31 @@ func copy_lines(team: int) -> void:
 ## Create_HotCold_Table: 416 form bytes per team, uniform -9..+8, filled from the top
 ## down (home first). Only byte 0 of each slot's 16 is read in play (AttributeCalc).
 func new_game_form() -> void:
+	# The Matchups screen made this game's table already (sub_FCC76).
+	if preset_form.size() == 2:
+		for team in 2:
+			w.stats[team].hotcold = PackedInt32Array(preset_form[team])
+		preset_form = []
+		return
 	for team in 2:
 		var hc := w.stats[team].hotcold
 		for i in range(0x19F, -1, -1):
 			hc[i] = w.rng.signed(9)
+
+## A form table made before the game (Matchups), used once by new_game_form.
+var preset_form: Array = []
+
+## Create_HotCold_Table with its own RNG, for a screen before the game exists: 416 bytes
+## per team, home first.
+static func make_form(rng: RetailRng) -> Array:
+	var out := []
+	for team in 2:
+		var hc := PackedInt32Array()
+		hc.resize(TeamStats.ROSTER * 16)
+		for i in range(0x19F, -1, -1):
+			hc[i] = rng.signed(9)
+		out.append(hc)
+	return out
 
 ## ClockLength: the period length in seconds from OptPerlen.
 func clock_length() -> int:

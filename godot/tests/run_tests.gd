@@ -114,6 +114,7 @@ func _initialize() -> void:
 		"test_four_way_mash_game",
 		"test_choose_song",
 		"test_sound_rules",
+		"test_frontend_mapping",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2717,4 +2718,33 @@ func test_sound_rules() -> bool:
 	if s79:
 		check(s79.loop_offset > 0.0, "from its loop start")
 	b.queue_free()
+	return true
+
+## Game Setup's Players row (FigureJoy _noplist with the 4 Way Play rows) and the Overall
+## rating with the game's form (CalcAttrib: the truncated mean of the rated bytes).
+func test_frontend_mapping() -> bool:
+	eq(MatchConfig.players_pads(0), PackedInt32Array([0, 0, 0, 0]), "Demo: CPU against CPU")
+	eq(MatchConfig.players_pads(2), PackedInt32Array([2, 0, 0, 0]), "One - Visitor: pad 1 away")
+	eq(MatchConfig.players_pads(3), PackedInt32Array([1, 1, 0, 0]), "Two - Teammates")
+	eq(MatchConfig.players_pads(6), PackedInt32Array([1, 2, 1, 2]), "Four")
+	var m := MatchConfig.new()
+	m.players = 5
+	eq(m.pad_teams(), PackedInt32Array([1, 2, 1, 0]), "Three: pad 3 with pad 1")
+	var t := _team("MTL")
+	var p := t.player(0)
+	var base := p.overall()
+	var form := PackedInt32Array()
+	form.resize(16)
+	eq(p.overall(form), base, "a zero form changes nothing")
+	form.fill(7)
+	check(p.overall(form) == mini(base + 7, 99) or base < 50, "+7 everywhere adds 7 (%d -> %d)" % [base, p.overall(form)])
+	form.fill(0)
+	# Only the rated attributes' bytes count: the jersey bytes (15, 14) do not.
+	form[0] = 8
+	form[1] = 8
+	eq(p.overall(form), base, "unrated bytes are ignored")
+	var a := RosterLogic.make_form(RetailRng.new(5))
+	var b := RosterLogic.make_form(RetailRng.new(5))
+	eq(a, b, "the Matchups form table is reproducible from its seed")
+	eq(a[0].size(), 416, "416 bytes a team")
 	return true

@@ -20,6 +20,7 @@ var cells := {}
 
 static var _data := {}
 static var _tex := {}
+static var _fonts := {}
 
 func _init() -> void:
 	_load()
@@ -50,9 +51,22 @@ static func _load() -> void:
 	if FileAccess.file_exists(m):
 		_data["messages"] = JSON.parse_string(FileAccess.get_file_as_string(m))
 
+## Another screen's art: a texture key, and for a font its char -> tile map (16 a row).
+static func register(key: String, path: String, chars: Dictionary = {}) -> void:
+	_load()
+	if ResourceLoader.exists(path):
+		_tex[key] = load(path)
+	if not chars.is_empty():
+		_fonts[key] = chars
+
 static func available() -> bool:
 	_load()
 	return _tex.has("font")
+
+## The stats fonts' char -> tile map (menus/font.json).
+static func stats_chars() -> Dictionary:
+	_load()
+	return _data.get("stats_chars", {})
 
 ## messages.json (penalty list texts, period labels, line names...).
 static func messages() -> Dictionary:
@@ -78,7 +92,7 @@ func _tile_rect(key: String, tile: int, per_row: int) -> Rect2:
 func print_at(col: int, row: int, text: String, line: int = -1, font: String = "font") -> int:
 	if not available() or not _tex.has(font):
 		return col
-	var chars: Dictionary = _data["font"]["chars"] if font == "font" else _data["stats_chars"]
+	var chars: Dictionary = _data["font"]["chars"] if font == "font" else _fonts.get(font, _data["stats_chars"])
 	var x := col
 	var y := row
 	for i in text.length():
@@ -121,11 +135,13 @@ func print_big(col: int, row: int, text: String, line: int = -1) -> int:
 	return x
 
 ## Framer: a w x h box of the bevelled border and an opaque black centre.
-func frame(col: int, row: int, w: int, h: int, key: String = "framer", line: int = -1) -> void:
+func frame(col: int, row: int, w: int, h: int, key: String = "framer", line: int = -1, centre: bool = true) -> void:
 	if not _tex.has(key):
 		return
 	for y in h:
 		for x in w:
+			if not centre and x > 0 and x < w - 1 and y > 0 and y < h - 1:
+				continue
 			var i := (0 if y == 0 else (6 if y == h - 1 else 3)) + (0 if x == 0 else (2 if x == w - 1 else 1))
 			cells[Vector2i(col + x, row + y)] = [key, _tile_rect(key, i, 3), line, 0]
 	queue_redraw()

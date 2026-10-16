@@ -12,7 +12,7 @@ extends Control
 
 const DIRS := {MatchConfig.Edition.RETAIL: "res://assets/title/retail/",
 	MatchConfig.Edition.FIGHT: "res://assets/title/fight/"}
-const NEXT_SCENE := "res://ui/setup_screen.tscn"
+const NEXT_SCENE := "res://ui/game_setup.tscn"
 const W := 256
 const H := 224
 ## The window plane covers lines 0-183; plane A (the credits) shows below it.
@@ -97,8 +97,11 @@ func _ready() -> void:
 	_screen.material = PaletteBank.material(_pal_tex)
 	_screen.draw.connect(_draw_screen)
 	add_child(_screen)
-	_sfx = SfxBank.new()
-	add_child(_sfx)
+	# The menus' player: song $78 plays on into Game Setup.
+	_sfx = Sim.menu_sfx
+	if _sfx == null:
+		_sfx = SfxBank.new()
+		add_child(_sfx)
 	# Before the interrupts: the first block (©, licence) at Vscroll 0, then +$20.
 	_print_block(_meta["credits_first"])
 	_vscroll = 0x20

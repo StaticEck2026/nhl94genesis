@@ -22,6 +22,15 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 @export var away_control: Driver = Driver.CPU
 ## Period length in minutes. Retail options are 5, 10 and 20 (ClockLength _timetab).
 @export_range(1, 20, 1) var period_minutes: int = 5
+## OptPerlen when set (0-3: 5, 10, 20 minutes, 30 seconds); -1 uses period_minutes. The
+## 30-second periods are the Matchups screen's A + C + Start (StartGame L29756).
+@export var perlen: int = -1
+## The game's form tables (home, away), made on the Matchups screen; empty: StartGame makes
+## them (Shootout, or no Matchups).
+@export var form: Array = []
+## Retail's Players row (OptNOP, the 4 Way Play list): when set it decides the pads
+## instead of home_control / away_control.
+@export var players: int = -1
 @export var penalties: bool = true
 @export var offsides: bool = true
 @export var line_changes: bool = true
@@ -41,11 +50,22 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 
 ## Each pad's team (cont1team-cont4team: 0 none, 1 home, 2 away) from the two drivers.
 func pad_teams() -> PackedInt32Array:
+	if players >= 0:
+		return players_pads(players)
 	var out := PackedInt32Array([0, 0, 0, 0])
 	for side in [[home_control, 1], [away_control, 2]]:
 		for k in DRIVER_PADS[side[0]]:
 			out[k] = side[1]
 	return out
+
+## FigureJoy's _noplist (L55157) with the 4 Way Play rows: OptNOP -> cont1team-cont4team.
+## 0 Demo, 1 One - Home, 2 One - Visitor, 3 Two - Teammates, 4 Two - Head to Head,
+## 5 Three (pad 3 with pad 1), 6 Four (pads 1 + 3 against 2 + 4).
+const NOPLIST := [[0, 0, 0, 0], [1, 0, 0, 0], [2, 0, 0, 0], [1, 1, 0, 0], [1, 2, 0, 0],
+	[1, 2, 1, 0], [1, 2, 1, 2]]
+
+static func players_pads(nop: int) -> PackedInt32Array:
+	return PackedInt32Array(NOPLIST[clampi(nop, 0, NOPLIST.size() - 1)])
 
 const DRIVER_PADS := {Driver.CPU: [], Driver.PAD1: [0], Driver.PAD2: [1], Driver.PADS12: [0, 1],
 	Driver.PADS13: [0, 2], Driver.PADS24: [1, 3]}
