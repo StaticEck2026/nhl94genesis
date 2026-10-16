@@ -1,0 +1,2738 @@
+{
+ "source": "lst/nhl94.bin (CRC32 9438F5DD); spec docs/specs/ui_frontend.md",
+ "index_textures": "R = colour * 17, G = line * 85, A = 255 where drawn; images keep their map lines",
+ "flow": [
+  {
+   "step": "Begin",
+   "line": "L29715",
+   "what": "RAM clear, EASportsScreen, InitSaveRAM, HiScoreScreen, LoadDefMenuOptions (defmenuoptions L54847), jmp Opening"
+  },
+  {
+   "step": "Opening",
+   "line": "L53865",
+   "what": "KillCrowd; newTitleScreen (title_screen.md); song $78"
+  },
+  {
+   "step": "Opening2",
+   "line": "L53868",
+   "what": "KillCrowd; clear RAM $FFB000-$FFD03E (the options at $FFD048 survive); GameSetUp"
+  },
+  {
+   "step": "GameSetUp",
+   "line": "L960187",
+   "what": "the Game Setup menu until Start (or the 6-minute demo timeout)"
+  },
+  {
+   "step": "start",
+   "line": "L962423",
+   "what": "goalie flags, pojoy, RNG seed; OptLine 2 -> 0 + byte_FFC2FC bit 4; Shootout: OptPlayMode 0 + word_FFC2FA bit 0 + sub_FC47C; MakeTree (FigureJoy: pads)"
+  },
+  {
+   "step": "sub_FBB88",
+   "line": "L967859",
+   "what": "User Records On: Name Entry for each human pad (loc_FB018), SRAM"
+  },
+  {
+   "step": "PlayoffScreen",
+   "line": "L53888",
+   "what": "playoffs only: the bracket"
+  },
+  {
+   "step": "sub_FCC76",
+   "line": "L969615",
+   "what": "Matchups (not in Shootout); Start leaves"
+  },
+  {
+   "step": "StartGame",
+   "line": "L29748",
+   "what": "A+C+Start held: 30 s periods; OptPen 1 -> offsides; clear stats; setupice; song $79; Intermission (gsp 0: 'Start Game' menu, ui_menus.md)"
+  },
+  {
+   "step": "game",
+   "what": "... PeriodOver/Intermission (ui_menus.md)"
+  },
+  {
+   "step": "Exit Game",
+   "line": "L53851",
+   "what": "GameOver: playoff bookkeeping, Playoff Stats, PlayoffScreen; song $78; Opening2 (no title); GameSetUp restores OptLine from TmpOptLine2 and OptPlayMode from TempOptPlayMode, so the menu shows the last settings"
+  }
+ ],
+ "setup": {
+  "routines": {
+   "Opening2": "L53868 $172FA",
+   "GameSetUp": "L960187 $F739E",
+   "setoptions": "L962234 $F8168",
+   "GameSetUp_2 (input loop)": "L962336 $F82EE",
+   "sub_F76D4 (move cursor)": "L960512 $F76D4",
+   "GameSetUp_3 (change value)": "L960788 $F7942",
+   "sub_F78A2 (redraw)": "L960715 $F78A2",
+   "sub_F7B20 / GameSetUp_4 (print rows)": "L960958 / L960985",
+   "sub_F8070 (labels)": "L962050",
+   "sub_17AF4 (plates)": "L54595",
+   "sub_F85B0 / sub_F8608 (logos)": "L962531 / L962557",
+   "sub_F87EA / sub_F8868 (player showcase)": "L962807 / L962842",
+   "FigureJoy": "L55005 $17E42",
+   "LoadDefMenuOptions": "L54836",
+   "start (loc_F843E)": "L962423 $F843E",
+   "demo (loc_F8418)": "L962415 $F8418"
+  },
+  "screen": {
+   "mode": "H40",
+   "size": [
+    320,
+    224
+   ],
+   "plane_a": "$E000 64x32",
+   "plane_b": "$C000 64x32",
+   "window": "off",
+   "sprites": "$B400 (unused here)",
+   "music": "song $78 keeps playing from the title (GameOver plays $78 again before Opening2)"
+  },
+  "vram_tiles": {
+   "plates_home": 2,
+   "plates_visitor": "$190 (word_FFD43A)",
+   "framer": "$31E (framercset)",
+   "font0": "$327 (word_FFB012, $AAC5A remap 0F C0 45 67..: not seen on screen)",
+   "font_alt": "$385 (word_FFBF52, $BE26A raw)",
+   "bg": "$3E3",
+   "logo_visitor": "$4D3 (word_FFD432, 36 tiles)",
+   "header": "$4F7",
+   "panel": "$514 (word_FFD426)",
+   "logo_home": "$51D (word_FFD430, 36 tiles)",
+   "frame_home": "$541 (word_FFD436)",
+   "frame_visitor": "$547 (word_FFD438)"
+  },
+  "layers": [
+   {
+    "what": "background",
+    "image": "setup_bg_idx.png",
+    "plane": "B",
+    "at": [
+     0,
+     0
+    ],
+    "cells": [
+     40,
+     28
+    ],
+    "note": "palette lines 0, 2, 3 of $4B7A0 (line 2 is then replaced by the visitor logo)"
+   },
+   {
+    "what": "header",
+    "image": "setup_header_idx.png",
+    "plane": "A",
+    "at": [
+     0,
+     0
+    ],
+    "cells": [
+     40,
+     4
+    ]
+   },
+   {
+    "what": "visitor plate",
+    "image": "team_plates_visitor_idx.png",
+    "plane": "A",
+    "at": [
+     7,
+     1
+    ],
+    "cells": [
+     11,
+     2
+    ],
+    "src_row": "2*VisTeam",
+    "line": 1,
+    "priority": true
+   },
+   {
+    "what": "home plate",
+    "image": "team_plates_home_idx.png",
+    "plane": "A",
+    "at": [
+     22,
+     1
+    ],
+    "cells": [
+     11,
+     2
+    ],
+    "src_row": "2*HomeTeam",
+    "line": 1,
+    "priority": true
+   },
+   {
+    "what": "visitor logo frame",
+    "image": "logo_frame_visitor_idx.png",
+    "plane": "A",
+    "at": [
+     8,
+     5
+    ],
+    "cells": [
+     8,
+     8
+    ]
+   },
+   {
+    "what": "home logo frame",
+    "image": "logo_frame_home_idx.png",
+    "plane": "A",
+    "at": [
+     24,
+     5
+    ],
+    "cells": [
+     8,
+     8
+    ]
+   },
+   {
+    "what": "visitor logo",
+    "image": "../menus/team_logos_idx.png",
+    "plane": "A",
+    "at": [
+     9,
+     6
+    ],
+    "cells": [
+     6,
+     6
+    ],
+    "line": 2,
+    "palette": "team_logos[VisTeam] -> line 2 (dobitmap mask 4); the cells show line 2 on the emulator"
+   },
+   {
+    "what": "home logo",
+    "image": "../menus/team_logos_idx.png",
+    "plane": "A",
+    "at": [
+     25,
+     6
+    ],
+    "cells": [
+     6,
+     6
+    ],
+    "line": 1,
+    "palette": "team_logos[HomeTeam] -> line 1, then colours 1-5 overwritten (see palette.line1)"
+   },
+   {
+    "what": "panel",
+    "image": "setup_panel_idx.png",
+    "plane": "A",
+    "at": [
+     1,
+     14
+    ],
+    "cells": [
+     38,
+     13
+    ]
+   },
+   {
+    "what": "labels",
+    "font": "font_setup_idx.png",
+    "plane": "A",
+    "x": 3,
+    "y": "15 + 2*(row - top)",
+    "attr": "$0000 (line 0)",
+    "width": 13
+   },
+   {
+    "what": "values",
+    "font": "font_setup_idx.png",
+    "plane": "A",
+    "x": 17,
+    "y": "15 + 2*(row - top)",
+    "attr": "$8000 (line 0, priority)",
+    "width": 20
+   },
+   {
+    "what": "scroll arrows",
+    "plane": "A",
+    "at_up": [
+     2,
+     15
+    ],
+    "at_down": [
+     2,
+     25
+    ],
+    "glyphs": {
+     "up": "{",
+     "down": "}",
+     "none": " "
+    },
+    "rule": "'{' when top > 0; '}' when top < 3 and not shootout; sub_F7BFA L961028"
+   },
+   {
+    "what": "cursor box",
+    "image": "setup_framer_idx.png",
+    "plane": "A",
+    "at": [
+     16,
+     "14 + 2*(row - top)"
+    ],
+    "cells": [
+     23,
+     3
+    ],
+    "attr": "printa $6000 + map line 1 = line 0 with priority",
+    "playoffs_team1": "23x5 (covers Team 1 and Team 2) when 2 <= OptPlayMode <= 3 and row == Team 1",
+    "restore": "the old box area is redrawn from setup_panel ($BEFB8) before the new box"
+   }
+  ],
+  "rows": [
+   {
+    "row": 0,
+    "label": "Play Mode",
+    "ram": "$FFD048",
+    "name": "OptPlayMode",
+    "values": "play_mode",
+    "values_offset": "$12",
+    "count": 5,
+    "count_4way": 5,
+    "default": 0
+   },
+   {
+    "row": 1,
+    "label": "Players",
+    "ram": "$FFD04A",
+    "name": "OptNOP",
+    "values": "players",
+    "values_offset": "$80",
+    "count": 8,
+    "count_4way": 12,
+    "default": 1
+   },
+   {
+    "row": 2,
+    "label": "Team 1",
+    "ram": "$FFD04C",
+    "name": "Opt1Team",
+    "values": "teams",
+    "values_offset": "$2FE",
+    "count": 28,
+    "count_4way": 28,
+    "default": 11
+   },
+   {
+    "row": 3,
+    "label": "Team 2",
+    "ram": "$FFD04E",
+    "name": "Opt2Team",
+    "values": "teams",
+    "values_offset": "$2FE",
+    "count": 28,
+    "count_4way": 28,
+    "default": 10
+   },
+   {
+    "row": 4,
+    "label": "Per. Length",
+    "ram": "$FFD050",
+    "name": "OptPerLen",
+    "values": "period_length",
+    "values_offset": "$238",
+    "count": 3,
+    "count_4way": 3,
+    "default": 1
+   },
+   {
+    "row": 5,
+    "label": "Goalies",
+    "ram": "$FFD052",
+    "name": "OptGoalie",
+    "values": "goalies",
+    "values_offset": "$290",
+    "count": 2,
+    "count_4way": 2,
+    "default": 0
+   },
+   {
+    "row": 6,
+    "label": "User Records",
+    "ram": "$FFD054",
+    "name": "OptUserRec",
+    "values": "user_records",
+    "values_offset": "$2FE",
+    "count": 2,
+    "count_4way": 2,
+    "default": 1
+   },
+   {
+    "row": 7,
+    "label": "Penalties",
+    "ram": "$FFD056",
+    "name": "OptPen",
+    "values": "penalties",
+    "values_offset": "$2BC",
+    "count": 3,
+    "count_4way": 3,
+    "default": 0
+   },
+   {
+    "row": 8,
+    "label": "Line Changes",
+    "ram": "$FFD058",
+    "name": "OptLine",
+    "values": "line_changes",
+    "values_offset": "$32A",
+    "count": 3,
+    "count_4way": 3,
+    "default": 1
+   }
+  ],
+  "visible_rows": 6,
+  "top_max": 3,
+  "row_pitch": 2,
+  "value_lists": {
+   "play_mode": [
+    "Regular Season",
+    "Continue Playoffs",
+    "New Playoffs",
+    "New Playoffs/7 game",
+    "Shootout",
+    "Demo"
+   ],
+   "players": [
+    "Demo",
+    "One - Home",
+    "One - Visitor",
+    "Two - Teammates",
+    "Two - Head to Head",
+    "Two - Head to Head",
+    "Two - Teammates",
+    "One"
+   ],
+   "players_4way": [
+    "Demo",
+    "One - Home",
+    "One - Visitor",
+    "Two - Teammates",
+    "Two - Head to Head",
+    "Three",
+    "Four",
+    "Two - Head to Head",
+    "Two - Teammates",
+    "Three",
+    "Four",
+    "One"
+   ],
+   "period_length": [
+    "5 Minutes",
+    "10 Minutes",
+    "20 Minutes",
+    "30 Seconds"
+   ],
+   "goalies": [
+    "Manual Control",
+    "Auto Control"
+   ],
+   "penalties": [
+    "Off",
+    "On",
+    "On, Except Off-sides"
+   ],
+   "user_records": [
+    "On",
+    "Off"
+   ],
+   "line_changes": [
+    "On",
+    "Off",
+    "Auto"
+   ]
+  },
+  "value_notes": {
+   "play_mode": "count 5: Regular Season, Continue Playoffs (only selectable while a playoff is in progress: gamelevel|bosgames != 0 after sub_17CA0), New Playoffs, New Playoffs/7 game, Shootout; entry 5 'Demo' is never selectable",
+   "players": "2 pads: OptNOP 0-4 in Regular Season (Demo, One - Home, One - Visitor, Two - Teammates, Two - Head to Head), 5-7 in playoffs (Two - Head to Head, Two - Teammates, One), Shootout: 0-4 without 3 (Two - Teammates). 4 Way Play (FourWayPlay $FFD046): list players_4way, regular 0-6 adds Three, Four; playoffs 7-11 without 9-10",
+   "period_length": "count 3; entry 3 '30 Seconds' only through the StartGame cheat (hold A+C+Start on pad 1: OptPerlen = 3, L29756); Shootout prints 'N/A' and skips the row",
+   "teams": "28 teams, the ROM team order (0 Anaheim .. 25 Winnipeg, 26 All Stars East, 27 All Stars West); city string, except 13/14 'New York Islanders'/'New York Rangers'; New Playoffs allow 26 (no All-Stars) for Team 1 and fix Team 2 (opponent from the bracket)",
+   "goalies": "forced to Auto Control (and word_FFD05A/C = 1) while Players = Demo",
+   "user_records": "0 = On, 1 = Off; forced Off for Demo and Shootout; skipped by the cursor unless ValidSRAM >= 0",
+   "penalties": "0 Off, 1 On, 2 On, Except Off-sides; Shootout forces Off",
+   "line_changes": "0 On, 1 Off, 2 Auto; Shootout forces Off"
+  },
+  "special_strings": {
+   "na": "N/A",
+   "ny_islanders": "New York Islanders",
+   "ny_rangers": "New York Rangers"
+  },
+  "players_to_pads": {
+   "noplist": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ],
+   "noplist_note": "_noplist: OptNOP -> [cont1team, cont2team] (0 CPU, 1 home team, 2 visitor); 4 Way Play: OptNOP 5 'Three' also cont3team = cont1team; 6 'Four' cont3 = cont1, cont4 = cont2",
+   "pojoylist": [
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     1,
+     2
+    ]
+   ],
+   "pojoylist2": [
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2
+    ]
+   ],
+   "pojoy_note": "playoffs: pojoy = 7 - OptNOP (11 - OptNOP with 4 Way Play, sub_17AC8); index = pojoy + (0 when the user's team is home in its pairing, else 4 (5))"
+  },
+  "controls": {
+   "up/down": "move the cursor (sub_F76D4); rows that do not apply are skipped (skip_rules); auto-repeat sub_11318 (16 frames, then every 5)",
+   "left/right": "previous/next value with wrap-around (GameSetUp_3, sub_F7B0A)",
+   "C": "speeds up the player showcase (word_FFD43C = $53); nothing else",
+   "A/B": "nothing",
+   "Start": "start (loc_F843E)",
+   "pads": "pads 1 and 2 (3 and 4 with 4 Way Play) all drive the menu",
+   "idle": "$5460 frames (6 min) with no press -> demo game (loc_F8418)"
+  },
+  "skip_rules": [
+   "down from Per. Length: +2 rows (skip Goalies) when Players = Demo; +3 (skip Goalies and User Records) when also not Shootout",
+   "down from Team 2 in Shootout: skip Per. Length (or stop when Players = Demo)",
+   "down from Goalies: stop in Shootout; skip User Records when ValidSRAM < 0",
+   "up mirrors these (L960261-960298)",
+   "Continue Playoffs: rows 1-3 (Players, Team 1, Team 2) are skipped",
+   "New Playoffs (/7): Team 2 is skipped"
+  ],
+  "showcase": {
+   "start": "word_FFD440 = $B4 (180 frames) after a logo is drawn; then the logos give way to cards",
+   "card": "alternating visitor / home every $AA frames ($53 with C): a Framer 25x8 (attr $6000) and an 8x8 logo frame with the player photo (6x6, photo palette line 1)",
+   "visitor_card": {
+    "photo": [
+     4,
+     6
+    ],
+    "frame": [
+     3,
+     5
+    ],
+    "box": [
+     11,
+     5
+    ],
+    "name": [
+     12,
+     6
+    ]
+   },
+   "home_card": {
+    "photo": [
+     29,
+     6
+    ],
+    "frame": [
+     28,
+     5
+    ],
+    "box": [
+     3,
+     5
+    ],
+    "name": [
+     4,
+     6
+    ]
+   },
+   "name": "'NN First Last' (d0toascii + full name) through print2 / font_setup, line 0",
+   "player": "photos.json teams[team][k], k = word_FFD43E: +1 on each visitor card, wraps at 6",
+   "records": "with ValidSRAM >= 0 and a record: up to 3 SRAM record lines below the name (sub_F98C6, sub_F9A64, sub_F9AAC)",
+   "stop": "a team change erases the card (sub_F84FC) and redraws both logos"
+  },
+  "palette": {
+   "bg": [
+    [
+     3784,
+     3822,
+     3818,
+     3276,
+     0,
+     2730,
+     1638,
+     1092,
+     2732,
+     2190,
+     1612,
+     3206,
+     684,
+     3752,
+     546,
+     3784
+    ],
+    [
+     3784,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3784,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3784,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816,
+     3816
+    ]
+   ],
+   "line0": "bg line 0",
+   "line1": "team_logos[HomeTeam]; colours 1-2 = teams[HomeTeam].colours[0][1..2], colours 3-4 = teams[VisTeam].colours[1][3..4], colour 5 = $EEE (sub_17AF4)",
+   "line2": "team_logos[VisTeam] (sub_F8608)",
+   "line3": "bg line 3",
+   "fade": "palcount $64 after a logo or plate change"
+  }
+ },
+ "matchups": {
+  "routines": {
+   "sub_FCC76": "L969615 $FCC76",
+   "sub_FD46C (pick players)": "L970396",
+   "sub_FD084 (logos/photos)": "L970006",
+   "sub_FD1FE (labels, ratings, names)": "L970128",
+   "sub_FD4CA (arrows)": "L970443",
+   "sub_FD89A (names)": "L970971",
+   "sub_17718 / sub_17730 (commentary)": "L54250 / L54260",
+   "$F7318 'Lately' check (labelled EASportsScreen in the listing)": "L960137",
+   "sub_F71A2 / sub_F71F0 (hot/cold)": "L959993 / L960015",
+   "sub_FF8DE (HOT/COLD badge)": "L976589"
+  },
+  "when": "Opening2 after GameSetUp, sub_FBB88 and PlayoffScreen, unless word_FFC2FA bit 0 (Shootout)",
+  "music": "song $7A",
+  "screen": {
+   "mode": "H40",
+   "vbint": "loc_15E4C",
+   "vram_tiles": {
+    "home_pic": 2,
+    "visitor_pic": "$26",
+    "bigfont": "$4A (word_FFB010)",
+    "font0": "$CE (word_FFB012, $AAC5A raw)",
+    "font1": "$12C (word_FFB014)",
+    "framer": "$18A",
+    "hot": "word_FFDEE4",
+    "cold": "word_FFDEE6"
+   }
+  },
+  "layers": [
+   {
+    "what": "background",
+    "image": "../menus/stats_bg_idx.png",
+    "plane": "B",
+    "at": [
+     0,
+     0
+    ],
+    "palette": "$54E24 lines 0-1 (mask 3)"
+   },
+   {
+    "what": "text box",
+    "framer": "framer_matchups_idx.png",
+    "plane": "B",
+    "at": [
+     6,
+     3
+    ],
+    "cells": [
+     33,
+     9
+    ],
+    "attr": "$4000 (map line 1 + 2 = line 3)"
+   },
+   {
+    "what": "visitor frame",
+    "framer": "framer_matchups_idx.png",
+    "plane": "B",
+    "at": [
+     1,
+     14
+    ],
+    "cells": [
+     8,
+     8
+    ],
+    "attr": "$4000"
+   },
+   {
+    "what": "home frame",
+    "framer": "framer_matchups_idx.png",
+    "plane": "B",
+    "at": [
+     31,
+     14
+    ],
+    "cells": [
+     8,
+     8
+    ],
+    "attr": "$4000"
+   },
+   {
+    "what": "Ron Barr",
+    "image": "ron_barr_idx.png",
+    "plane": "A",
+    "at": [
+     1,
+     1
+    ],
+    "cells": [
+     8,
+     9
+    ],
+    "palette": "$B389C lines 2-3 (mask $C)"
+   },
+   {
+    "what": "title",
+    "image": "matchups_title_idx.png",
+    "plane": "A",
+    "at": [
+     12,
+     13
+    ],
+    "attr": "$4000 added to map line 1 -> line 3",
+    "text": "MATCHUPS"
+   },
+   {
+    "what": "ADVANTAGE:",
+    "plane": "A",
+    "at": [
+     16,
+     17
+    ],
+    "font": "font 0 (raw $AAC5A)",
+    "attr": 0
+   },
+   {
+    "what": "page label",
+    "plane": "A",
+    "at": [
+     13,
+     19
+    ],
+    "font": "font 1",
+    "width": 16,
+    "note": "page 0 'Overall' centred at x 22 - len/2 (13); pages 1-6 the position label at 13"
+   },
+   {
+    "what": "visitor picture",
+    "plane": "A",
+    "at": [
+     2,
+     15
+    ],
+    "cells": [
+     6,
+     6
+    ],
+    "page0": "team logo, palette line 2 (dobitmap mask 4, printa $6000 XOR map line 1)",
+    "pages1_6": "photo, photo palette line 1"
+   },
+   {
+    "what": "home picture",
+    "plane": "A",
+    "at": [
+     32,
+     15
+    ],
+    "cells": [
+     6,
+     6
+    ],
+    "page0": "team logo, palette line 1",
+    "pages1_6": "photo (palette already in line 1)"
+   },
+   {
+    "what": "visitor rating",
+    "plane": "A",
+    "at": [
+     4,
+     22
+    ],
+    "font": "font 1",
+    "digits": 2
+   },
+   {
+    "what": "home rating",
+    "plane": "A",
+    "at": [
+     34,
+     22
+    ],
+    "font": "font 1",
+    "digits": 2
+   },
+   {
+    "what": "arrows",
+    "plane": "A",
+    "at": [
+     19,
+     22
+    ],
+    "font": "font 1",
+    "width": 3
+   },
+   {
+    "what": "names row",
+    "plane": "A",
+    "row": 23,
+    "font": "font 0",
+    "visitor": "x 0",
+    "home": "x 35, moved left so the name ends by column 39 (sub_FD89A)",
+    "form": "'NN Lastname' (sub_18B26)",
+    "page0": "row cleared"
+   },
+   {
+    "what": "HOT / COLD badge",
+    "plane": "A",
+    "visitor_at": [
+     2,
+     25
+    ],
+    "home_at": [
+     32,
+     25
+    ],
+    "images": [
+     "hot_idx.png (6x2)",
+     "cold_idx.png (6x3)"
+    ],
+    "rule": "shown when the page's player is his team's hot (best form) or cold (worst) starter; else the 8x3 area is erased"
+   },
+   {
+    "what": "commentary",
+    "plane": "A",
+    "at": [
+     9,
+     4
+    ],
+    "lines": 7,
+    "wrap": 29,
+    "font": "font 0",
+    "note": "typewriter, one word every 10 frames (+40 after ',' or '.'); the 7-line window scrolls up (sub_179D2)"
+   }
+  ],
+  "pages": {
+   "count": 7,
+   "labels": [
+    "Overall",
+    "center",
+    "left forward",
+    "right forward",
+    "left defenseman",
+    "right defenseman",
+    "goalie"
+   ],
+   "label_strings": {
+    "page0_list": [
+     "Shooting",
+     "Skating",
+     "Passing",
+     "Defense",
+     "Checking",
+     "Fighting",
+     "Goalkeeping",
+     "Power Play Adv.",
+     "-    Home Team Adv.    ",
+     "    Overall     "
+    ],
+    "positions": [
+     "     center     ",
+     " left forward   ",
+     " right forward  ",
+     "left defenseman ",
+     "right defenseman",
+     "     goalie     "
+    ]
+   },
+   "slot_byte": [
+    0,
+    4,
+    3,
+    5,
+    1,
+    2,
+    0
+   ],
+   "slot_note": "page k shows byte slot_byte[k] of each team's starting line (team record + 6: G, LD, RD, LW, C, RW), roster slot = byte - 1",
+   "rating_page0": "teams[t].rating (sub_FE172, $FE18E)",
+   "rating_pages": "CalcAttrib with the Overall weights (dword_19420 skaters, dword_19582 goalies) * 100 / d1, then AttribAdjust (includes the hot/cold form)"
+  },
+  "arrows": {
+   "home_higher": [
+    "   ",
+    "]  ",
+    "]] ",
+    "]]]",
+    "]]]",
+    "]]]"
+   ],
+   "visitor_higher": [
+    "   ",
+    "  [",
+    " [[",
+    "[[[",
+    "[[[",
+    "[[["
+   ],
+   "even": "   ",
+   "glyphs": {
+    "]": "right arrow (towards the home side)",
+    "[": "left arrow"
+   },
+   "timing": "step every 7 frames: 0, 1, 2, 3 arrows, then stays at 3; restarts on a page change"
+  },
+  "script": {
+   "order": [
+    "1B",
+    "1D",
+    "1A",
+    "1D",
+    "22|23 if $F7318 >= 0",
+    "1D (with it)",
+    "1E",
+    "1D",
+    "1F if HomeTeam != VisTeam",
+    "1D",
+    "20",
+    "1D",
+    "21"
+   ],
+   "messages": {
+    "1A": "Welcome to a sold out ^.  Tonight's National Hockey League game features the + *% and _ =#.",
+    "1B": "Hi, I'm Ron Barr for EA Sports.",
+    "1C": "And in goal tonight, [ for { and ] for }.",
+    "1E": "For { < is on a hot streak, but | is off his game.",
+    "1F": "For } > is on a hot streak, but \\ is off his game.",
+    "20": "The ^ crowd record is @ dB.",
+    "21": "Hit the start button to begin.  Use the A and C buttons to cycle through matchups.",
+    "22": "Lately $ has been playing well.",
+    "23": "Lately $ has been playing extremely well."
+   },
+   "tokens": {
+    "^": "home arena (team string 4)",
+    ";": "visitor arena",
+    "_": "home city",
+    "{": "home city",
+    "+": "visitor city",
+    "}": "visitor city",
+    "=": "home nickname (team string 3; 'Home' if empty)",
+    "*": "visitor nickname ('Visitors' if empty)",
+    "#": "home user name (User Records, word_FFD042)",
+    "%": "visitor user name",
+    "[": "home goalie (getname of slot $26)",
+    "]": "visitor goalie",
+    "<": "home hot player",
+    ">": "visitor hot player",
+    "|": "home cold player",
+    "\\": "visitor cold player",
+    "@": "home arena crowd record in dB (SRAM, $50 when 0)",
+    "$": "city of the team with the better form"
+   },
+   "empty_nickname": {
+    "home": "Home",
+    "visitor": "Visitors"
+   },
+   "lately": "$F7318: |sum(visitor form) - sum(home form)| >= $5E -> message 22, >= $BD -> 23, else none; '$' = the team with the higher sum",
+   "end": "when the script ends: word_FFD5B6 = $1E0 (480 frames); then exit if Players = Demo, else wait for Start"
+  },
+  "controls": {
+   "Start": "begin the game (StartGame); holding A+C with it = 30-second periods",
+   "C": "next page",
+   "A": "previous page",
+   "down (held)": "text at full speed (asv)",
+   "auto": "next page every $10E (270) frames; a press of A/C resets the timers"
+  },
+  "form": {
+   "table": "Create_HotCold_Table for both teams at sub_FCC76 entry (StartGame does it only for Shootout)",
+   "score": "per starter (6): sum of the form bytes 3..15 of his 16, skipping 9 and 13 (sub_F71F0)",
+   "hot": "the highest score",
+   "cold": "the lowest"
+  }
+ },
+ "playoffs": {
+  "routine": "PlayoffScreen L53888 $17336 (returns at once when OptPlayMode = 0)",
+  "when": [
+   "Opening2 after GameSetUp and sub_FBB88, before the Matchups",
+   "GameOver after Playoff Stats"
+  ],
+  "music": "song $79",
+  "headings": [
+   "Playoffs",
+   "Quarterfinals",
+   "Semifinals",
+   "Finals",
+   "Champions"
+  ],
+  "page_hint": "Press [ or ] to page",
+  "background": "$54E24 on plane B (XOR $6000), the cup ($F3098) and the 16 team plates; the user's team flashes (word_FFBD6A ^= $EE every $18 frames)",
+  "controls": {
+   "Start (held, pad 1 or 2)": "leave",
+   "left/right": "scroll to the later rounds (gamelevel * $70 px)"
+  },
+  "port": "not applicable (no playoffs in MatchConfig)"
+ },
+ "name_entry": {
+  "routine": "sub_FBB88 L967859 -> loc_FB018 L966784",
+  "when": "OptUserRec = 0 (On): once for cont1team, once for cont2team if different",
+  "port": "not applicable (SRAM user records)"
+ },
+ "fonts": {
+  "setup": {
+   "image": "font_setup_idx.png",
+   "address": "$BE26A",
+   "per_row": 16,
+   "chars": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 1,
+    "19": 2,
+    "20": 3,
+    "21": 0,
+    "22": 4,
+    "23": 5,
+    "24": 6,
+    "25": 7,
+    "26": 0,
+    "27": 0,
+    "28": 0,
+    "29": 0,
+    "30": 0,
+    "31": 0,
+    "32": 0,
+    "33": 8,
+    "34": 9,
+    "35": 10,
+    "36": 11,
+    "37": 12,
+    "38": 0,
+    "39": 13,
+    "40": 14,
+    "41": 15,
+    "42": 16,
+    "43": 17,
+    "44": 18,
+    "45": 19,
+    "46": 20,
+    "47": 21,
+    "48": 22,
+    "49": 23,
+    "50": 24,
+    "51": 25,
+    "52": 26,
+    "53": 27,
+    "54": 28,
+    "55": 29,
+    "56": 30,
+    "57": 31,
+    "58": 32,
+    "59": 33,
+    "60": 34,
+    "61": 35,
+    "62": 0,
+    "63": 36,
+    "64": 37,
+    "65": 38,
+    "66": 39,
+    "67": 40,
+    "68": 41,
+    "69": 42,
+    "70": 43,
+    "71": 44,
+    "72": 45,
+    "73": 46,
+    "74": 47,
+    "75": 48,
+    "76": 49,
+    "77": 50,
+    "78": 51,
+    "79": 22,
+    "80": 52,
+    "81": 53,
+    "82": 54,
+    "83": 55,
+    "84": 56,
+    "85": 57,
+    "86": 58,
+    "87": 59,
+    "88": 60,
+    "89": 61,
+    "90": 62,
+    "91": 63,
+    "92": 0,
+    "93": 64,
+    "94": 0,
+    "95": 65,
+    "96": 0,
+    "97": 66,
+    "98": 67,
+    "99": 68,
+    "100": 69,
+    "101": 70,
+    "102": 71,
+    "103": 72,
+    "104": 73,
+    "105": 74,
+    "106": 75,
+    "107": 76,
+    "108": 77,
+    "109": 78,
+    "110": 79,
+    "111": 80,
+    "112": 81,
+    "113": 82,
+    "114": 83,
+    "115": 84,
+    "116": 85,
+    "117": 86,
+    "118": 87,
+    "119": 88,
+    "120": 89,
+    "121": 90,
+    "122": 91,
+    "123": 92,
+    "124": 0,
+    "125": 93,
+    "126": 0,
+    "127": 0
+   },
+   "note": "differs from $AAC52 in '(' ')' / '{' '}' (swapped tiles) and in style"
+  },
+  "matchups_font0": {
+   "image": "../menus/font_stats_idx.png",
+   "address": "$AAC52 raw"
+  },
+  "matchups_font1": {
+   "image": "font_matchups_alt_idx.png",
+   "remap": "0a23456789abcdef",
+   "chars": "same map as ../menus/font.json"
+  }
+ },
+ "framers": {
+  "map": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "map_line": 1,
+  "order": "TL T TR / L C R / BL B BR (24x24 images)",
+  "setup": {
+   "image": "setup_framer_idx.png",
+   "tiles": "$BF54A",
+   "remap": "0356756489abcdef",
+   "attr": "$6000 -> line 0 + priority"
+  },
+  "matchups": {
+   "image": "framer_matchups_idx.png",
+   "tiles": "$55B86",
+   "remap": "0542256189abcdef",
+   "attr": "$4000 -> line 3"
+  }
+ },
+ "images": {
+  "setup_bg_idx.png": {
+   "address": "$4B7A0",
+   "cells": [
+    40,
+    28
+   ]
+  },
+  "setup_header_idx.png": {
+   "address": "$4DEEE",
+   "cells": [
+    40,
+    4
+   ]
+  },
+  "setup_panel_idx.png": {
+   "address": "$BEFB8",
+   "cells": [
+    38,
+    13
+   ]
+  },
+  "logo_frame_home_idx.png": {
+   "address": "$BF702",
+   "cells": [
+    8,
+    8
+   ]
+  },
+  "logo_frame_visitor_idx.png": {
+   "address": "$BF702",
+   "remap": "0341456789abcdef"
+  },
+  "team_plates_home_idx.png": {
+   "address": "$AFE12",
+   "cells": [
+    11,
+    56
+   ],
+   "team_rows": 2
+  },
+  "team_plates_visitor_idx.png": {
+   "address": "$AFE12",
+   "remap": "0341256789abcdef"
+  },
+  "ron_barr_idx.png": {
+   "address": "$B389C",
+   "cells": [
+    8,
+    9
+   ],
+   "palette": [
+    [
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062
+    ],
+    [
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062
+    ],
+    [
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062,
+     2062
+    ],
+    [
+     2062,
+     0,
+     1092,
+     1638,
+     2730,
+     3276,
+     3822,
+     2112,
+     4,
+     6,
+     8,
+     42,
+     588,
+     1676,
+     2222,
+     2766
+    ]
+   ]
+  },
+  "matchups_title_idx.png": {
+   "text": "MATCHUPS",
+   "cells": [
+    16,
+    2
+   ],
+   "remap": "0543156779abcdef",
+   "map_line": 1
+  },
+  "hot_idx.png": {
+   "address": "$F5AF6",
+   "cells": [
+    6,
+    2
+   ],
+   "palette_line3": [
+    2062,
+    0,
+    1092,
+    1638,
+    2730,
+    3748,
+    3822,
+    2624,
+    4,
+    6,
+    8,
+    42,
+    588,
+    1676,
+    2222,
+    2766
+   ]
+  },
+  "cold_idx.png": {
+   "address": "$F5D1C",
+   "cells": [
+    6,
+    3
+   ],
+   "palette_line3": [
+    2062,
+    0,
+    1092,
+    1638,
+    2730,
+    3748,
+    3822,
+    2624,
+    4,
+    6,
+    8,
+    42,
+    588,
+    1676,
+    2222,
+    2766
+   ]
+  }
+ },
+ "teams": [
+  {
+   "id": 0,
+   "city": "Anaheim",
+   "abbr": "ANH",
+   "nickname": "Mighty Ducks",
+   "arena": "Pond",
+   "rating": 51,
+   "colours": [
+    [
+     3818,
+     0,
+     66,
+     3818,
+     3818,
+     3822,
+     0,
+     2184,
+     2730,
+     104,
+     138,
+     206,
+     608,
+     64,
+     1636,
+     3726
+    ],
+    [
+     3818,
+     3818,
+     3818,
+     0,
+     66,
+     3822,
+     0,
+     2184,
+     2730,
+     104,
+     138,
+     206,
+     608,
+     64,
+     1636,
+     3726
+    ]
+   ]
+  },
+  {
+   "id": 1,
+   "city": "Boston",
+   "abbr": "BOS",
+   "nickname": "Bruins",
+   "arena": "Boston Garden",
+   "rating": 76,
+   "colours": [
+    [
+     3816,
+     0,
+     140,
+     3816,
+     3816,
+     3822,
+     0,
+     3212,
+     140,
+     2184,
+     104,
+     2118,
+     68,
+     1058,
+     2254,
+     686
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     140,
+     3822,
+     0,
+     3212,
+     140,
+     2184,
+     104,
+     2118,
+     68,
+     1058,
+     2254,
+     686
+    ]
+   ]
+  },
+  {
+   "id": 2,
+   "city": "Buffalo",
+   "abbr": "BUF",
+   "nickname": "Sabres",
+   "arena": "Memorial Auditorium",
+   "rating": 73,
+   "colours": [
+    [
+     3816,
+     2082,
+     140,
+     3816,
+     3816,
+     3822,
+     0,
+     3784,
+     1164,
+     3208,
+     108,
+     2150,
+     616,
+     548,
+     1568,
+     206
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     2082,
+     140,
+     3822,
+     0,
+     3784,
+     1164,
+     3208,
+     108,
+     2150,
+     616,
+     548,
+     1568,
+     206
+    ]
+   ]
+  },
+  {
+   "id": 3,
+   "city": "Calgary",
+   "abbr": "CGY",
+   "nickname": "Flames",
+   "arena": "Olympic Saddledome",
+   "rating": 75,
+   "colours": [
+    [
+     3816,
+     6,
+     140,
+     3816,
+     3816,
+     3822,
+     0,
+     2286,
+     718,
+     686,
+     622,
+     12,
+     3816,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     6,
+     140,
+     3822,
+     0,
+     2286,
+     718,
+     686,
+     622,
+     12,
+     3816,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 4,
+   "city": "Chicago",
+   "abbr": "CHI",
+   "nickname": "Blackhawks",
+   "arena": "Chicago Stadium",
+   "rating": 78,
+   "colours": [
+    [
+     3816,
+     0,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     2286,
+     2702,
+     1196,
+     2696,
+     1132,
+     550,
+     1604,
+     558,
+     610
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     6,
+     3822,
+     0,
+     2286,
+     2702,
+     1196,
+     2696,
+     1132,
+     550,
+     1604,
+     558,
+     610
+    ]
+   ]
+  },
+  {
+   "id": 5,
+   "city": "Dallas",
+   "abbr": "DAL",
+   "nickname": "Stars",
+   "arena": "Reunion Arena",
+   "rating": 67,
+   "colours": [
+    [
+     3816,
+     0,
+     66,
+     3816,
+     3816,
+     3822,
+     0,
+     2218,
+     1672,
+     1160,
+     1126,
+     580,
+     608,
+     32,
+     2764,
+     0
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     66,
+     3822,
+     0,
+     2218,
+     1672,
+     1160,
+     1126,
+     580,
+     608,
+     32,
+     2764,
+     0
+    ]
+   ]
+  },
+  {
+   "id": 6,
+   "city": "Detroit",
+   "abbr": "DET",
+   "nickname": "Red Wings",
+   "arena": "Joe Louis Sports Arena",
+   "rating": 75,
+   "colours": [
+    [
+     3816,
+     6,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     3214,
+     2158,
+     1102,
+     2094,
+     526,
+     3816,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     6,
+     6,
+     3822,
+     0,
+     3214,
+     2158,
+     1102,
+     2094,
+     526,
+     3816,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 7,
+   "city": "Edmonton",
+   "abbr": "EDM",
+   "nickname": "Oilers",
+   "arena": "Northlands Coliseum",
+   "rating": 67,
+   "colours": [
+    [
+     3816,
+     1536,
+     74,
+     3816,
+     3816,
+     3822,
+     0,
+     3306,
+     2702,
+     2216,
+     1102,
+     1160,
+     46,
+     1088,
+     1024,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     1536,
+     74,
+     3822,
+     0,
+     3306,
+     2702,
+     2216,
+     1102,
+     1160,
+     46,
+     1088,
+     1024,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 8,
+   "city": "Florida",
+   "abbr": "FLA",
+   "nickname": "Panthers",
+   "arena": "Miami Arena",
+   "rating": 52,
+   "colours": [
+    [
+     3818,
+     74,
+     1536,
+     3818,
+     3818,
+     3822,
+     0,
+     10,
+     4,
+     70,
+     142,
+     3310,
+     1126,
+     1090,
+     3782,
+     512
+    ],
+    [
+     3818,
+     3818,
+     3818,
+     74,
+     1536,
+     3822,
+     0,
+     10,
+     4,
+     70,
+     142,
+     3310,
+     1126,
+     1090,
+     3782,
+     512
+    ]
+   ]
+  },
+  {
+   "id": 9,
+   "city": "Hartford",
+   "abbr": "HFD",
+   "nickname": "Whalers",
+   "arena": "Hartford Civic Center",
+   "rating": 66,
+   "colours": [
+    [
+     3816,
+     66,
+     2082,
+     3816,
+     3816,
+     3822,
+     0,
+     232,
+     1220,
+     2698,
+     162,
+     1126,
+     1536,
+     548,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     66,
+     2082,
+     3822,
+     0,
+     232,
+     1220,
+     2698,
+     162,
+     1126,
+     1536,
+     548,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 10,
+   "city": "Los Angeles",
+   "abbr": "LA",
+   "nickname": "Kings",
+   "arena": "Great Western Forum",
+   "rating": 74,
+   "colours": [
+    [
+     3816,
+     0,
+     0,
+     3816,
+     3816,
+     3822,
+     0,
+     2730,
+     2184,
+     1638,
+     1092,
+     546,
+     3276,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     0,
+     3822,
+     0,
+     2730,
+     2184,
+     1638,
+     1092,
+     546,
+     3276,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 11,
+   "city": "Montreal",
+   "abbr": "MTL",
+   "nickname": "Canadiens",
+   "arena": "Montreal Forum",
+   "rating": 73,
+   "colours": [
+    [
+     3816,
+     1536,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     2190,
+     622,
+     3176,
+     46,
+     2596,
+     3754,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     1536,
+     6,
+     3822,
+     0,
+     2190,
+     622,
+     3176,
+     46,
+     2596,
+     3754,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 12,
+   "city": "New Jersey",
+   "abbr": "NJ",
+   "nickname": "Devils",
+   "arena": "Byrne Meadowlands Arena",
+   "rating": 68,
+   "colours": [
+    [
+     3816,
+     32,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     2730,
+     10,
+     2184,
+     12,
+     34,
+     6,
+     3276,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     32,
+     6,
+     3822,
+     0,
+     2730,
+     10,
+     2184,
+     12,
+     34,
+     6,
+     3276,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 13,
+   "city": "New York",
+   "abbr": "NYI",
+   "nickname": "Islanders",
+   "arena": "Nassau Coliseum",
+   "rating": 66,
+   "colours": [
+    [
+     3816,
+     2082,
+     74,
+     3816,
+     3816,
+     3822,
+     0,
+     2728,
+     1646,
+     2148,
+     556,
+     1578,
+     8,
+     1570,
+     546,
+     2702
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     2082,
+     74,
+     3822,
+     0,
+     2728,
+     1646,
+     2148,
+     556,
+     1578,
+     8,
+     1570,
+     546,
+     2702
+    ]
+   ]
+  },
+  {
+   "id": 14,
+   "city": "New York",
+   "abbr": "NYR",
+   "nickname": "Rangers",
+   "arena": "Madison Square Garden",
+   "rating": 74,
+   "colours": [
+    [
+     3816,
+     1536,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     2730,
+     3206,
+     46,
+     3168,
+     2116,
+     1092,
+     2112,
+     8,
+     3784
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     1536,
+     6,
+     3822,
+     0,
+     2730,
+     3206,
+     46,
+     3168,
+     2116,
+     1092,
+     2112,
+     8,
+     3784
+    ]
+   ]
+  },
+  {
+   "id": 15,
+   "city": "Ottawa",
+   "abbr": "OTW",
+   "nickname": "Senators",
+   "arena": "Ottawa Civic Center",
+   "rating": 55,
+   "colours": [
+    [
+     3816,
+     6,
+     106,
+     3816,
+     3816,
+     3822,
+     0,
+     1674,
+     1672,
+     1126,
+     580,
+     556,
+     552,
+     8,
+     2730,
+     4
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     6,
+     106,
+     3822,
+     0,
+     1674,
+     1672,
+     1126,
+     580,
+     556,
+     552,
+     8,
+     2730,
+     4
+    ]
+   ]
+  },
+  {
+   "id": 16,
+   "city": "Philadelphia",
+   "abbr": "PHI",
+   "nickname": "Flyers",
+   "arena": "Spectrum",
+   "rating": 69,
+   "colours": [
+    [
+     3816,
+     0,
+     74,
+     3816,
+     3816,
+     3822,
+     0,
+     3276,
+     2190,
+     2730,
+     1134,
+     110,
+     2184,
+     1638,
+     46,
+     1092
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     74,
+     3822,
+     0,
+     3276,
+     2190,
+     2730,
+     1134,
+     110,
+     2184,
+     1638,
+     46,
+     1092
+    ]
+   ]
+  },
+  {
+   "id": 17,
+   "city": "Pittsburgh",
+   "abbr": "PIT",
+   "nickname": "Penguins",
+   "arena": "Civic Arena",
+   "rating": 75,
+   "colours": [
+    [
+     3816,
+     0,
+     140,
+     3816,
+     3816,
+     3822,
+     0,
+     2730,
+     2186,
+     1642,
+     1262,
+     1124,
+     1088,
+     718,
+     580,
+     2798
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     140,
+     3822,
+     0,
+     2730,
+     2186,
+     1642,
+     1262,
+     1124,
+     1088,
+     718,
+     580,
+     2798
+    ]
+   ]
+  },
+  {
+   "id": 18,
+   "city": "Quebec",
+   "abbr": "QUE",
+   "nickname": "Nordiques",
+   "arena": "Colisee de Quebec",
+   "rating": 71,
+   "colours": [
+    [
+     3816,
+     1536,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     3072,
+     14,
+     3652,
+     3790,
+     3712,
+     2190,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     1536,
+     6,
+     3822,
+     0,
+     3072,
+     14,
+     3652,
+     3790,
+     3712,
+     2190,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 19,
+   "city": "San Jose",
+   "abbr": "SJ",
+   "nickname": "Sharks",
+   "arena": "San Jose Arena",
+   "rating": 56,
+   "colours": [
+    [
+     3816,
+     0,
+     2144,
+     3816,
+     3816,
+     3822,
+     0,
+     2144,
+     1602,
+     2184,
+     3240,
+     2764,
+     686,
+     110,
+     72,
+     1130
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     2144,
+     3822,
+     0,
+     2144,
+     1602,
+     2184,
+     3240,
+     2764,
+     686,
+     110,
+     72,
+     1130
+    ]
+   ]
+  },
+  {
+   "id": 20,
+   "city": "St. Louis",
+   "abbr": "STL",
+   "nickname": "Blues",
+   "arena": "St. Louis Arena",
+   "rating": 69,
+   "colours": [
+    [
+     3816,
+     2082,
+     106,
+     3816,
+     3816,
+     3822,
+     0,
+     1538,
+     588,
+     2,
+     38,
+     104,
+     1064,
+     2158,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     2082,
+     106,
+     3822,
+     0,
+     1538,
+     588,
+     2,
+     38,
+     104,
+     1064,
+     2158,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 21,
+   "city": "Tampa Bay",
+   "abbr": "TB",
+   "nickname": "Lightning",
+   "arena": "Fairgrounds Expo Hall",
+   "rating": 56,
+   "colours": [
+    [
+     3816,
+     0,
+     1536,
+     3816,
+     3816,
+     3822,
+     0,
+     3206,
+     3716,
+     2692,
+     3140,
+     2082,
+     3616,
+     1536,
+     2560,
+     3752
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     1536,
+     3822,
+     0,
+     3206,
+     3716,
+     2692,
+     3140,
+     2082,
+     3616,
+     1536,
+     2560,
+     3752
+    ]
+   ]
+  },
+  {
+   "id": 22,
+   "city": "Toronto",
+   "abbr": "TOR",
+   "nickname": "Maple Leafs",
+   "arena": "Maple Leaf Gardens",
+   "rating": 72,
+   "colours": [
+    [
+     3816,
+     1536,
+     1536,
+     3816,
+     3816,
+     3822,
+     0,
+     3786,
+     2730,
+     3174,
+     2082,
+     3276,
+     3816,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     1536,
+     1536,
+     3822,
+     0,
+     3786,
+     2730,
+     3174,
+     2082,
+     3276,
+     3816,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 23,
+   "city": "Vancouver",
+   "abbr": "VAN",
+   "nickname": "Canucks",
+   "arena": "Pacific Coliseum",
+   "rating": 71,
+   "colours": [
+    [
+     3816,
+     0,
+     140,
+     3816,
+     3816,
+     3822,
+     0,
+     206,
+     106,
+     78,
+     40,
+     34,
+     32,
+     142,
+     2184,
+     1742
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     140,
+     3822,
+     0,
+     206,
+     106,
+     78,
+     40,
+     34,
+     32,
+     142,
+     2184,
+     1742
+    ]
+   ]
+  },
+  {
+   "id": 24,
+   "city": "Washington",
+   "abbr": "WSH",
+   "nickname": "Capitals",
+   "arena": "Capital Centre",
+   "rating": 72,
+   "colours": [
+    [
+     3816,
+     6,
+     1536,
+     3816,
+     3816,
+     3822,
+     0,
+     556,
+     3206,
+     3752,
+     2190,
+     2114,
+     3816,
+     3816,
+     3816,
+     3816
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     6,
+     1536,
+     3822,
+     0,
+     556,
+     3206,
+     3752,
+     2190,
+     2114,
+     3816,
+     3816,
+     3816,
+     3816
+    ]
+   ]
+  },
+  {
+   "id": 25,
+   "city": "Winnipeg",
+   "abbr": "WPG",
+   "nickname": "Jets",
+   "arena": "Winnipeg Arena",
+   "rating": 70,
+   "colours": [
+    [
+     3816,
+     1536,
+     6,
+     3816,
+     3816,
+     3822,
+     0,
+     556,
+     1058,
+     2732,
+     1638,
+     3242,
+     1092,
+     1646,
+     2254,
+     550
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     1536,
+     6,
+     3822,
+     0,
+     556,
+     1058,
+     2732,
+     1638,
+     3242,
+     1092,
+     1646,
+     2254,
+     550
+    ]
+   ]
+  },
+  {
+   "id": 26,
+   "city": "All Stars East",
+   "abbr": "ASE",
+   "nickname": "",
+   "arena": "Madison Square Garden",
+   "rating": 91,
+   "colours": [
+    [
+     3816,
+     0,
+     74,
+     3816,
+     3816,
+     3822,
+     0,
+     1672,
+     1124,
+     580,
+     546,
+     78,
+     10,
+     34,
+     2730,
+     0
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     74,
+     3822,
+     0,
+     1672,
+     1124,
+     580,
+     546,
+     78,
+     10,
+     34,
+     2730,
+     0
+    ]
+   ]
+  },
+  {
+   "id": 27,
+   "city": "All Stars West",
+   "abbr": "ASW",
+   "nickname": "",
+   "arena": "Madison Square Garden",
+   "rating": 89,
+   "colours": [
+    [
+     3816,
+     0,
+     74,
+     3816,
+     3816,
+     3822,
+     0,
+     1672,
+     1124,
+     580,
+     546,
+     78,
+     10,
+     34,
+     2730,
+     0
+    ],
+    [
+     3816,
+     3816,
+     3816,
+     0,
+     74,
+     3822,
+     0,
+     1672,
+     1124,
+     580,
+     546,
+     78,
+     10,
+     34,
+     2730,
+     0
+    ]
+   ]
+  }
+ ]
+}
