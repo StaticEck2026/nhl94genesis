@@ -89,7 +89,20 @@ func _physics_process(delta: float) -> void:
 			_release()
 	if _quitting:
 		return
+	if not hold and not _human() and _demoread():
+		return
 	super._physics_process(delta)
+
+## demoread (L30159), each loop of a game nobody plays (the demo, or CPU against CPU):
+## Start on any pad pauses (PauseMenu), any other new press goes back to the menus
+## (loc_172E4: Opening2; the menus start song $78).
+func _demoread() -> bool:
+	for k in 4:
+		for b in ["up", "down", "left", "right", "a", "b", "c"]:
+			if Input.is_action_just_pressed("p%d_%s" % [k + 1, b]):
+				_quit()
+				return true
+	return false
 
 func _release() -> void:
 	if not hold:

@@ -6,6 +6,9 @@ extends Control
 ## column shows in each line's tooltip.
 
 const GAME_SCENE := "res://scenes/game.tscn"
+## GameSetUp_2 (L962366): with no new press on any pad for $5460 vblanks (six minutes)
+## the menu gives up and a demo game starts (loc_F8418, GameSetUp L960200).
+const DEMO_IDLE := 0x5460
 
 @onready var _home: OptionButton = %HomeTeam
 @onready var _away: OptionButton = %AwayTeam
@@ -28,6 +31,7 @@ const GAME_SCENE := "res://scenes/game.tscn"
 @onready var _status: Label = %Status
 
 var _teams: Array[TeamData] = []
+var _idle := 0
 
 func _ready() -> void:
 	_edition.add_item("Retail '94")
@@ -120,6 +124,30 @@ func _line_tooltip(t: TeamData, ln: PackedInt32Array) -> String:
 			row += "  Fgt %d" % PlayerData.fight_display(PlayerData.fight_nibble_of(p.fighting))
 		rows.append(row)
 	return "\n".join(rows)
+
+func _input(event: InputEvent) -> void:
+	if event.is_pressed():
+		_idle = 0
+
+func _physics_process(_delta: float) -> void:
+	_idle += 1
+	if _idle >= DEMO_IDLE:
+		_idle = 0
+		_demo()
+
+## The demo: random teams (randomd0 $1C for each, so both can be the same team), CPU
+## against CPU (OptNOP 0), a regular game (OptPlayMode 0), the other options as they are.
+func _demo() -> void:
+	if _teams.is_empty():
+		return
+	_home.select(randi() % _teams.size())
+	_away.select(randi() % _teams.size())
+	_home_ctrl.select(MatchConfig.Driver.CPU)
+	_away_ctrl.select(MatchConfig.Driver.CPU)
+	_play_mode.select(0)
+	_fill_lines(_home, _home_lines)
+	_fill_lines(_away, _away_lines)
+	_on_start()
 
 func _on_start() -> void:
 	var m := MatchConfig.new()

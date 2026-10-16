@@ -133,7 +133,7 @@ Where it belongs: GameRules (crowd: CurCrowdMeter, the loud state, `word_FFC304`
 
 - Not ported:
   - `updatereplay` (L35236), `SetRCords` (L35038), Instant Replay and the reverse angle. `GM_HL` is never set in the port, so the `GM_HL` branches stay inert, as they do in retail live play.
-  - The demo: `GameSetUp` random teams (L960200-960209) and `demoread` (L30159).
+  - ~~The demo: `GameSetUp` random teams (L960200-960209) and `demoread` (L30159).~~ Ported 2026-10-16. After `$5460` idle vblanks the setup screen starts a CPU game with random teams (`setup_screen.gd` `_demo`). In any game nobody plays, `demoread` (`game.gd` `_demoread`) pauses on Start and returns to the menus on any other new press.
 - CPU against CPU is still playable from the setup screen.
 
 ## 3. Minor deviations (all verified against the listing)
@@ -199,7 +199,7 @@ These port additions differ from retail only when changed from their defaults: `
 | G6b Goalie control | done | setup screen "Goalie: Manual/Auto Control" → `auto_goalie`; pause toggle `HockeyWorld.toggle_goalie_control` (the pausing pad's word, both when the pads share a team) |
 | G6c Edit Lines | done (port layout) | pause menu → `LineLogic.edit_line`: line, slot, roster player; a player already on the line trades places. Retail's screen layout was not decoded. |
 | G7 multitap | done | `HockeyWorld.swap_pad`, four pads, setup drivers PADS12 / PADS13 / PADS24, actions `p3_*` / `p4_*` |
-| G8 replay, demo | not applicable | no replay buffer or attract mode; CPU against CPU is playable from the setup screen |
+| G8 replay, demo | done | Instant Replay (`ReplayRecorder`, `ReplayView`); the demo after the setup screen idles, and `demoread` in CPU-only games. The reverse angle is pending. |
 | M1 assbench stay-on path | done | `LineLogic._nobench2` (no setplayer) |
 | M2 injured slide | done | `_integrate` skips SPA `$145C` / `$1AF4` |
 | M3 passdir | done | written before the lane check |
