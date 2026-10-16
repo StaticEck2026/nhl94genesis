@@ -68,6 +68,11 @@ func _ready() -> void:
 		world.rules.opt_play_mode = m.play_mode
 		world.rules.gamelevel = Sim.league.gamelevel
 	else:
+		# The quirk of a saved playoff (playoffs_records.md §2.4): GetShifter, InitScores,
+		# UpdateScores and StartPer's CwdExciteLvl use the global gamelevel, which is
+		# whatever the menus last decoded or played (0 after a power-on).
+		world.rules.gamelevel = Sim.league.gamelevel
+		world.rules.league.gamelevel = Sim.league.gamelevel
 		world.rules.init_other_games(MatchConfig.available_teams(m.edition))
 	# LoadCrowdRec (L959665): the home arena's record from the save RAM, $50 without one.
 	if Sim.sram and world.stats[0].team_index >= 0:

@@ -161,11 +161,12 @@ func _new_po() -> void:
 	Sim.league.new_po(Sim.menu_rng, _opt(TEAM1), _opt(PLAY_MODE))
 	_playoff_teams()
 
-## sub_17CA0: the saved playoff, its user's team and opponent, and OptNOP = 7 - pojoy.
+## sub_17CA0: the saved playoff, its user's team and opponent, and OptNOP = 11 - pojoy
+## (7 - pojoy without 4 Way Play).
 func _continue() -> bool:
 	if not Sim.league.continue_from(Sim.sram.playoff_state()):
 		return false
-	Sim.options[PLAYERS] = 7 - Sim.league.pojoy
+	Sim.options[PLAYERS] = League.nop_base() - Sim.league.pojoy
 	_playoff_teams()
 	return true
 
@@ -176,8 +177,11 @@ func _playoff_teams() -> void:
 		Sim.options[TEAM2] = fj["opponent"]
 
 ## A saved playoff to continue (sub_17CA0 on a copy).
+## GameSetUp_3+192: the cursor on Continue Playoffs runs sub_17CA0, which decodes the
+## saved state into the globals even when there is nothing to continue (gamelevel and
+## bosgames then 0) and the value is skipped. A later regular-season game keeps them.
 func _can_continue() -> bool:
-	return League.new().continue_from(Sim.sram.playoff_state())
+	return Sim.league.continue_from(Sim.sram.playoff_state())
 
 ## The plates' and logos' teams: HomeTeam and VisTeam (FigureJoy's in the playoffs).
 func _home_team() -> int:
@@ -199,7 +203,8 @@ func _range(r: int) -> Vector2i:
 	match r:
 		PLAYERS:
 			if _playoffs():
-				return Vector2i(5, 8)
+				# 4 Way Play: 7-11, with 9-10 (Three, Four) skipped.
+				return Vector2i(7, 12) if League.four_way else Vector2i(5, 8)
 			return Vector2i(0, 5) if _shootout() else Vector2i(0, COUNTS[PLAYERS])
 		TEAM1:
 			return Vector2i(0, 26) if _new_playoffs() else Vector2i(0, 28)
@@ -242,6 +247,12 @@ func _change(r: int, d: int) -> void:
 	v = _wrap(v + d, rg)
 	while _skip_value(r, v):
 		v = _wrap(v + (d if d != 0 else 1), rg)
+	# L960891-960915: in the playoffs with 4 Way Play, 9 and 10 go to 11, or to 8 going up.
+	if r == PLAYERS and _playoffs() and League.four_way:
+		if d < 0 and v == 10:
+			v = 8
+		elif v == 9 or v == 10:
+			v = 11
 	Sim.options[r] = v
 	if r == TEAM1 and d != 0 and _new_playoffs():
 		_new_po()
@@ -271,7 +282,7 @@ func _value_text(r: int) -> String:
 		PLAY_MODE:
 			return _values["play_mode"][v]
 		PLAYERS:
-			return _values["players"][v] if _playoffs() else _values["players_4way"][v]
+			return _values["players"][v] if _playoffs() and not League.four_way else _values["players_4way"][v]
 		TEAM1, TEAM2:
 			if v == 13:
 				return _fe["setup"]["special_strings"]["ny_islanders"]
@@ -579,9 +590,10 @@ func _start() -> void:
 	m.shootout = _shootout()
 	m.user_records = _opt(USER_RECORDS) == 0
 	if _playoffs():
-		# sub_17AC8: pojoy = 7 - OptNOP for a new playoff; FigureJoy's teams and pads.
+		# sub_17AC8: pojoy = 11 - OptNOP (7 without 4 Way Play) for a new playoff;
+		# FigureJoy's teams and pads.
 		if _new_playoffs():
-			Sim.league.pojoy = 7 - _opt(PLAYERS)
+			Sim.league.pojoy = League.nop_base() - _opt(PLAYERS)
 		var fj := Sim.league.figure_joy()
 		if not fj.is_empty():
 			m.home_team = _teams[fj["home"]]

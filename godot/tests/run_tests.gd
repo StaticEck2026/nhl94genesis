@@ -2574,6 +2574,19 @@ func test_playoffs() -> bool:
 	eq(back.user_team(), 11, "the same user")
 	eq(back.gamelevel, 1, "the same round")
 	eq(back.bits, lg.bits, "the same bracket")
+	# 4 Way Play: pojoy = 11 - OptNOP; _pojoylist2 by side (0 home, 5 visitor).
+	for row in [[11, [1, 0], [2, 0]], [8, [1, 1], [2, 2]], [7, [1, 2], [2, 1]]]:
+		lg.pojoy = League.nop_base() - int(row[0])
+		var f4 := lg.figure_joy()
+		var want: Array = row[1] if f4["home"] == 11 else row[2]
+		eq(f4["pads"], PackedInt32Array([want[0], want[1], 0, 0]), "4 Way playoff pads for OptNOP %d" % row[0])
+	# A two-pad save (pojoy 1, Two - Teammates) continues as 3 on 4 Way Play.
+	lg.pojoy = 1
+	var old := League.new()
+	old.set_teams(MatchConfig.available_teams())
+	check(old.continue_from(lg.encode()), "an old save continues")
+	eq(old.pojoy, 3, "Two - Teammates stays Two - Teammates")
+	lg.pojoy = 0
 	# Best of seven: four wins end the series, the others are flipped to 4 wins.
 	var b7 := League.new()
 	b7.set_teams(MatchConfig.available_teams())
@@ -2599,6 +2612,13 @@ func test_playoffs() -> bool:
 	var st2 := ram.playoff_stats()
 	eq(st2[0], 5, "a stat is saved")
 	eq(st2[1], 1023, "clamped to its 10-bit width")
+	# AddPOStats' layout: bit b in the big-endian word at block offset $FC - 2 * (b >> 4).
+	# Entry 0 (10 bits) at bits 0-9, entry 1 at bits 10-19, across $FFD172 and $FFD170.
+	var blk := Sram.BLOCK
+	eq(ram.bytes[blk + 0xFD], 5, "entry 0 in the low byte of $FFD172")
+	eq(ram.bytes[blk + 0xFC] >> 2, 1023 & 0x3F, "entry 1's low bits at the top of $FFD172")
+	eq(ram.bytes[blk + 0xFB] & 0x0F, 1023 >> 6, "entry 1's high bits in $FFD170")
+	eq(ram.bytes[blk + 0x66], 0, "the bits past the last entry untouched")
 	return true
 
 func test_replay_buffer() -> bool:

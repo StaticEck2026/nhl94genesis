@@ -159,6 +159,11 @@ _fjnpo: {cont1team, cont2team} = _noplist[OptNOP] (+ four-way copies); then sub_
   - user home: pojoy 0 = (1,0) One; 1 = (1,1) Teammates; 2 = (1,2) Head to Head;
   - user away: 0 = (2,0); 1 = (2,2); 2 = (2,1).
 - `_noplist` (`$17FE6`): (0,0) Demo, (1,0), (2,0), (1,1), (1,2), (1,2), (1,2).
+- `_pojoylist2` (`$17F72`, 4 Way Play), indexed by side (0 home, 5 visitor) + pojoy (= 11 - OptNOP):
+  - home: 0 (1,0) One; 1 (1,2) Four; 2 (1,2) Three; 3 (1,1) Two - Teammates; 4 (1,2) Two - Head to Head;
+  - visitor: 5 (2,0); 6 (2,1); 7 (2,1); 8 (2,2); 9 (2,1);
+  - index 1 or 6: cont3team = cont1team, cont4team = cont2team; index 2 or 7: cont3team = cont1team, cont4team = 0.
+  - `GameSetUp_3` skips Players 9-10 (Three, Four) in the playoffs, so indexes 1-2 and 6-7 are never reached. The playoff Players row is 7 Two - Head to Head, 8 Two - Teammates, 11 One. Each gives the same pads as its two-pad value (5, 6, 7).
 - **U1 resolved — the regular-season slate** (`sub_18002` L55173): `gamenum = $FFxx`. d3 = a 32-bit mask with bits HomeTeam and VisTeam set. For each of the 8 entries: team1 = `OptionRNG`, team2 = `OptionRNG`, where `OptionRNG` (L55194) draws `randomd0(26)` until the bit is free and sets it. So the slate is 8 games between 16 distinct random real teams (0-25), never the two playing teams nor an All-Star team. It runs on every `FigureJoy`, also in playoffs, but then only the series entries are used.
 - **Quirk (regular season while a playoff is saved):** `UpdateScores`, `InitScores`, Other Scores, the ticker and the highlights all count games with `GetShifter`, which uses the **decoded `gamelevel`**. A regular-season game played while a playoff is saved at round 2 shows only 4 other games (seen: `gamelevel` 1, entries 4-7 never advanced). `CwdExciteLvl` also starts at `gamelevel << 4`.
 
@@ -638,9 +643,9 @@ The highlights (§5.3) are done:
 - The port has to set the puck's stalled counter to `$78`. Retail keeps it from the held game's RAM.
 
 Items still open or simplified:
-- The four-way playoff pads (`_pojoylist2`) are not used; the playoff Players row uses the two-pad values.
-- The regular-season quirk of a saved playoff's `gamelevel` is not reproduced.
-- The Playoff Stats bit packing in the save file uses the retail widths but not its exact bit order.
+- Done: 4 Way Play in the playoffs. The port always has pads 3 and 4 (`League.four_way`). So the playoff Players row is retail's 4 Way Play row: 7, 8 and 11, with 9-10 skipped. `pojoy = 11 - OptNOP`, and FigureJoy uses `_pojoylist2` with its pad 3/4 rules. A saved two-pad pojoy of 1 or 2 continues as 3 or 4, as `sub_17CA0` does.
+- Done: the regular-season quirk of a saved playoff's `gamelevel`. `Sim.league` plays retail's globals. It is decoded whenever Game Setup's cursor passes Continue Playoffs (`sub_17CA0`, saved or not), and it advances with the playoff. A regular-season game takes its `gamelevel` for the slate size (GetShifter), InitScores / UpdateScores and `CwdExciteLvl`.
+- Done: the Playoff Stats in the save file in AddPOStats' exact layout (`Sram._pack_stats`). Bit b is bit b & 15 of the big-endian word at `$FFD172 - 2 * (b >> 4)`, so the stats fill `$D0DC-$D173` from the top, and the spare bits are left alone. A playoff saved by an older port build reads back with scrambled stats.
 
 Items 11-12 (records and saved lines) are done too:
 - **Records:** `Records.update` runs at the final intermission when User Records is On.

@@ -6,7 +6,7 @@ extends RefCounted
 ## - $0B60 team records (16 bytes a team), $0D20 user records (16 bytes, users 0-7);
 ## - $0DA0 user names (12 bytes, ids 1-7);
 ## - $1EF6 the 256-byte $FFD076 block: the saved line, the playoff state (+$12, 5 words)
-##   and the packed Playoff Stats (+$66);
+##   and the packed Playoff Stats (+$66-$FD, filled from the top);
 ## - $1FFE / $1FFF the checksum.
 ## A file that fails the checksum is cleared as InitSaveRAM does (ClearSRAM).
 
@@ -21,6 +21,9 @@ const BLOCK_SIZE := 0x100
 const STATE := 0x12
 const STATS := 0x66
 const STAT_BYTES := 0x98
+## The packed stats' first word: $FFD172, block offset $FC (AddPOStats' longs at
+## $FFD170 - 2 * (bit >> 4)).
+const STATS_TOP := 0xFC
 
 var bytes := PackedByteArray()
 var path := ""
@@ -90,20 +93,24 @@ func playoff_state() -> PackedInt32Array:
 		out.append((bytes[BLOCK + STATE + 2 * i] << 8) | bytes[BLOCK + STATE + 2 * i + 1])
 	return out
 
-## The 104 Playoff Stats entries, packed at their widths (League.STAT_WIDTHS).
+## The 104 Playoff Stats entries, packed as AddPOStats (L55445) does: entry i at its width
+## (League.STAT_WIDTHS), from bit 0 on. Bit b is bit b & 15 of the big-endian word at
+## block offset $FC - 2 * (b >> 4) ($FFD172 down), so the stats fill $D0DC-$D173 from
+## the top. Only the fields are written; the 4 spare bits keep their value.
 func _pack_stats(stats: PackedInt32Array) -> void:
 	var bit := 0
-	for i in STAT_BYTES:
-		bytes[BLOCK + STATS + i] = 0
-	for i in mini(stats.size(), 104):
+	for i in 104:
 		var w: int = League.STAT_WIDTHS[(103 - i) & 3]
-		var v := clampi(stats[i], 0, (1 << w) - 1)
+		var v := clampi(stats[i] if i < stats.size() else 0, 0, (1 << w) - 1)
 		for k in w:
+			var at := _stat_bit(bit + k)
 			if v & (1 << k):
-				var at := BLOCK + STATS + ((bit + k) >> 3)
-				bytes[at] |= 1 << ((bit + k) & 7)
+				bytes[at.x] |= at.y
+			else:
+				bytes[at.x] &= ~at.y & 0xFF
 		bit += w
 
+## sub_1833A: the 104 entries back.
 func playoff_stats() -> PackedInt32Array:
 	var out := PackedInt32Array()
 	var bit := 0
@@ -111,12 +118,18 @@ func playoff_stats() -> PackedInt32Array:
 		var w: int = League.STAT_WIDTHS[(103 - i) & 3]
 		var v := 0
 		for k in w:
-			var at := BLOCK + STATS + ((bit + k) >> 3)
-			if bytes[at] & (1 << ((bit + k) & 7)):
+			var at := _stat_bit(bit + k)
+			if bytes[at.x] & at.y:
 				v |= 1 << k
 		out.append(v)
 		bit += w
 	return out
+
+## Bit b of the packed stats: (byte index, mask).
+static func _stat_bit(b: int) -> Vector2i:
+	var word := BLOCK + STATS_TOP - 2 * (b >> 4)
+	var bit := b & 15
+	return Vector2i(word + (0 if bit >= 8 else 1), 1 << (bit & 7))
 
 ## The Save Team Line slot: team + 1 (0 none) and its 33 nibbles (sub_8928), up to the
 ## playoff state at +$12.

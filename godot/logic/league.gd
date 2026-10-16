@@ -33,6 +33,17 @@ const SCTAB := [[43, 30, 23, 4], [39, 32, 24, 5], [35, 33, 26, 6], [30, 34, 30, 
 	[26, 36, 30, 8], [22, 37, 31, 10], [19, 38, 31, 12], [15, 38, 32, 15]]
 ## _pojoylist (L55091): {cont1team, cont2team} by (user home ? 0 : 4) + pojoy.
 const POJOYLIST := [[1, 0], [1, 1], [1, 2], [2, 1], [2, 0], [2, 2], [2, 1], [1, 2]]
+## _pojoylist2 (L55108), with 4 Way Play: the user's side 0 (home) or 5 (visitor), plus
+## pojoy = 11 - OptNOP (0 One, 1 Four, 2 Three, 3 Two - Teammates, 4 Two - Head to Head).
+const POJOYLIST2 := [[1, 0], [1, 2], [1, 2], [1, 1], [1, 2],
+	[2, 0], [2, 1], [2, 1], [2, 2], [2, 1]]
+## FourWayPlay ($FFD046). The port always has pads 3 and 4, so the 4 Way Play rules hold:
+## the Players list, its playoff values and _pojoylist2.
+static var four_way := true
+
+## sub_17AC8 / sub_17CA0: pojoy = base - OptNOP.
+static func nop_base() -> int:
+	return 11 if four_way else 7
 ## The save state's fields and radices, in encoding order (sub_18192).
 const RADICES := [32, 8, 4, 16, 8, 0x4000]
 ## AddPOStats' packed widths by (103 - i) & 3.
@@ -279,13 +290,23 @@ func figure_joy() -> Dictionary:
 		if g["team1"] == user:
 			side = 0
 		elif g["team2"] == user:
-			side = 4
+			side = 5 if four_way else 4
 		if side < 0:
 			continue
 		gamenum = i
-		var p: Array = POJOYLIST[clampi(side + pojoy, 0, POJOYLIST.size() - 1)]
+		var list: Array = POJOYLIST2 if four_way else POJOYLIST
+		var k := clampi(side + pojoy, 0, list.size() - 1)
+		var p: Array = list[k]
+		var pads := PackedInt32Array([p[0], p[1], 0, 0])
+		# loc_17F1E / loc_17F42: Four (1, 6) gives pad 3 pad 1's team and pad 4 pad 2's;
+		# Three (2, 7) pad 3 pad 1's. The Game Setup skips both values in the playoffs.
+		if four_way and (k == 1 or k == 6):
+			pads[2] = p[0]
+			pads[3] = p[1]
+		elif four_way and (k == 2 or k == 7):
+			pads[2] = p[0]
 		return {"home": g["team1"], "visitor": g["team2"], "opponent": g["team2"] if side == 0 else g["team1"],
-			"pads": PackedInt32Array([p[0], p[1], 0, 0])}
+			"pads": pads}
 	return {}
 
 # --- after a playoff game ----------------------------------------------------------------------
@@ -374,8 +395,9 @@ func encode() -> PackedInt32Array:
 		_muladd(n, 5, mini(g["wins"][1], 4))
 	return n
 
-## sub_1803E: the fields peeled off in reverse. With two pads a pojoy of 1 or 2 comes
-## back as 4 (sub_17CA0 then makes it 2: Two - Teammates continues as Head to Head).
+## sub_1803E: the fields peeled off in reverse. With two pads (no 4 Way Play) a pojoy of 1
+## or 2 comes back as 4 (sub_17CA0 then makes it 2: Two - Teammates continues as Head to
+## Head).
 func decode(n: PackedInt32Array) -> void:
 	var v := n.duplicate()
 	for i in range(SERIES - 1, -1, -1):
@@ -389,7 +411,7 @@ func decode(n: PackedInt32Array) -> void:
 			g["flags"] &= ~F_OVER
 	bits = _divmod(v, 0x4000)
 	pojoy = _divmod(v, 8)
-	if pojoy == 1 or pojoy == 2:
+	if not four_way and (pojoy == 1 or pojoy == 2):
 		pojoy = 4
 	potreeteam = _divmod(v, 16)
 	gamelevel = _divmod(v, 4)
@@ -406,7 +428,14 @@ func continue_from(n: PackedInt32Array) -> bool:
 	if not in_progress():
 		return false
 	make_tree()
-	if pojoy >= 2:
+	# sub_17CA0: a two-pad value continues on 4 Way Play as the same choice (1 Two -
+	# Teammates -> 3, 2 Head to Head -> 4); without it, 3 and 4 become 1 and 2.
+	if four_way:
+		if pojoy == 1:
+			pojoy = 3
+		elif pojoy == 2:
+			pojoy = 4
+	elif pojoy >= 2:
 		pojoy -= 2
 	return true
 

@@ -216,8 +216,8 @@ Spec: `docs/specs/fight_patch.md` (and `fight_patch_retail_hooks.md`). The setup
 
 - [x] Stale docs: the reverse angle and the other-games ticker are ported; the audits' Stanley Cup and clock rows; the front-end "Not done" list
 - [x] Front-end palette fades (`palcount` / `cramfade`) between Game Setup, Matchups, the playoff screens and the other menus: `CramFade` (ui/cram_fade.gd), on every scene change and on the pause / intermission menus and stats pages
-- [ ] Playoff pads with 4 Way Play (`_pojoylist2`, cont3/cont4, L55064-55089)
-- [ ] Playoff Stats in the save file in retail's exact bit order; the saved playoff's `gamelevel` quirk in a regular-season game
+- [x] Playoff pads with 4 Way Play (`_pojoylist2`, cont3/cont4, L55064-55089): the playoff Players row is 7, 8, 11; `League.four_way`
+- [x] Playoff Stats in the save file in retail's exact bit order; the saved playoff's `gamelevel` quirk in a regular-season game
 - [ ] Name Entry's edit screen (`loc_FB018`, `sub_FB9D4`): the field bar, the grid and its cursor as retail draws them
 
 ## Log
