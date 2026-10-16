@@ -1,0 +1,203 @@
+{
+ "crowd": {
+  "arena_record": "LoadCrowdRec (L959665): team record +8 of HomeTeam, 0 -> $50",
+  "league_record": "sub_FEC5E (L974860): the largest team record +8 of the 28 teams (0 -> $50), first team from 27 down on ties"
+ },
+ "player_cards": {
+  "empty": "nothing when the value is 0",
+  "format": [
+   "'<n> Goals by' ('Goal' when n = 1; no 'by' with user 0)",
+   "'<own user> vs.'",
+   "'<opp user> <opp team abbr>'"
+  ],
+  "player_card": "Records: Goals (skater) or Saves (goalie) from the player record",
+  "team_card": "Records: Goals (team +0), Saves (+4), ' dB Crowd Level' (+8)"
+ },
+ "player_record": {
+  "bytes": [
+   "best (skater: goals in a game; goalie: saves = shots against - goals against)",
+   "own user id",
+   "opponent team",
+   "opponent user id"
+  ],
+  "update": "sub_F9F50 (L965216): strictly greater replaces; any result"
+ },
+ "record_holders": {
+  "clear": "A+C on page 0: sub_FE6D2 zeroes bytes 8-11 (wins, games) of the 8 user records and writes them back; ties (12-13) are kept",
+  "page0": {
+   "cols": {
+    "losses": [
+     31,
+     4
+    ],
+    "ties": [
+     36,
+     3
+    ],
+    "win_pct": [
+     19,
+     3
+    ],
+    "wins": [
+     26,
+     4
+    ]
+   },
+   "sort": "win% = wins*100/games (0 without games) desc, then ties desc, then games desc (bubble sort, sub_FC184)"
+  },
+  "page1": {
+   "cols": {
+    "goals": [
+     18,
+     3
+    ],
+    "teams": [
+     25,
+     null
+    ]
+   },
+   "sort": "byte 0 desc (sub_FC282)",
+   "text": "'by <own abbr> vs. <opp abbr>'"
+  },
+  "page2": {
+   "cols": {
+    "saves": [
+     18,
+     3
+    ],
+    "teams": [
+     25,
+     null
+    ]
+   },
+   "sort": "byte 4 desc"
+  },
+  "rows": "plane B y = 10, 12 .. 22, x = 2: '<rank>. <name>'; users 1-7 sorted; a row with no games (page 0) or a zero record (pages 1-2) prints blank"
+ },
+ "roster_base": [
+  0,
+  26,
+  52,
+  78,
+  104,
+  130,
+  156,
+  182,
+  208,
+  234,
+  260,
+  286,
+  312,
+  338,
+  364,
+  390,
+  416,
+  442,
+  468,
+  494,
+  520,
+  546,
+  572,
+  598,
+  624,
+  650,
+  676,
+  702,
+  728
+ ],
+ "source": "lst/nhl94.bin (CRC32 9438F5DD); docs/specs/playoffs_records.md",
+ "sram": {
+  "boot": "InitSaveRAM (L61322): read 8 KB to $FF0000, validate; invalid -> ClearSRAM (zero, $1FFE = $FF, byte 0 = 1, checksum) and validate again",
+  "bus": "byte k at $200001 + 2k (odd bytes; WriteSRAM/ReadSRAM L61470/L61513)",
+  "map": [
+   {
+    "at": 0,
+    "size": 2912,
+    "what": "player best games, 4 bytes, index roster_base[team] + roster slot"
+   },
+   {
+    "at": 2912,
+    "size": 448,
+    "what": "team records, 16 bytes a team"
+   },
+   {
+    "at": 3360,
+    "size": 128,
+    "what": "user records, 16 bytes, users 0-7"
+   },
+   {
+    "at": 3488,
+    "size": 128,
+    "what": "user names: RAM $FFD45A, 12 bytes a user at 12 * id (id 1-7; 0 = no name)"
+   },
+   {
+    "at": 7926,
+    "size": 256,
+    "what": "RAM $FFD076..$FFD175 (saved line, playoff state, packed playoff stats)"
+   },
+   {
+    "at": 8190,
+    "size": 2,
+    "what": "checksum"
+   }
+  ],
+  "size": 8192,
+  "valid": "ValidateSRAM (L61391): byte $1FFF = sum of bytes 0..$1FFD (mod 256), byte $1FFE = its complement; ValidSRAM ($FFD458) = 0 valid, $FF.. invalid"
+ },
+ "strings": {
+  "card_by": "by ",
+  "card_goal": " goal",
+  "card_goals": " goals",
+  "card_record": "Record ",
+  "card_save": " save",
+  "card_saves": " saves",
+  "card_vs": "vs. ",
+  "crowd_suffix": " dB Crowd Level",
+  "goal_": " Goal ",
+  "goal_by": " Goal by",
+  "goals_": " Goals ",
+  "goals_by": " Goals by",
+  "holders_by": "by ",
+  "holders_vs": " vs. ",
+  "save_": " Save ",
+  "save_by": " Save by",
+  "saves_": " Saves ",
+  "saves_by": " Saves by",
+  "vs": " vs."
+ },
+ "team_record": {
+  "bytes": {
+   "0": "most goals by the team in a game",
+   "1": "own user",
+   "10": "opponent team",
+   "11": "opponent user",
+   "12-15": "unused",
+   "2": "opponent team",
+   "3": "opponent user",
+   "4": "most saves by one of its goalies",
+   "5": "own user",
+   "6": "opponent team",
+   "7": "opponent user",
+   "8": "crowd record dB (home games only; 0 reads as $50)",
+   "9": "own user"
+  },
+  "update": "sub_F9EAA (L965158): strictly greater replaces; any result"
+ },
+ "user_record": {
+  "bytes": {
+   "0": "most goals in a won game",
+   "1": "own team",
+   "10-11": "games (word, stops at 9000)",
+   "12-13": "ties (word)",
+   "14-15": "unused",
+   "2": "opponent team",
+   "3": "opponent user",
+   "4": "most saves (opponent shots - goals) in a won game",
+   "5": "own team",
+   "6": "opponent team",
+   "7": "opponent user",
+   "8-9": "wins (word)"
+  },
+  "update": "sub_F9DDA (L965084): games += 1 unless >= 9000, then wins or ties; goals/saves records only when the user's team won"
+ }
+}

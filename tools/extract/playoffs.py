@@ -41,7 +41,7 @@ import sys
 import zlib
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from assets import ROM_CRC, BytesRom, Canvas, Rom  # noqa: E402
+from assets import ROM_CRC, BytesRom, Canvas, Rom, decompress  # noqa: E402
 
 SEEDINGS = 0x5576          # NewPO (L54908): 32 x 16 team bytes
 PO_LAYOUT = 0x1928E        # PlayoffScreen (L53953): word offsets by gamelevel 0..4
@@ -173,7 +173,12 @@ def cup_sprite(rom):
 def bracket(rom):
     mo = rom.u32(BRACKET + 4)
     n = rom.u16(BRACKET + 8)
-    tiles = BytesRom(rom.b[BRACKET + 10:BRACKET + 10 + 32 * (n & 0x7FFF)])
+    if n & 0x8000:                                  # compressed (sub_1177A)
+        raw = decompress(rom, BRACKET + 8)
+    else:
+        raw = rom.b[BRACKET + 10:BRACKET + 10 + 32 * n]
+    n = len(raw) // 32
+    tiles = BytesRom(raw)
     m = BRACKET + mo
     w, h = rom.u16(m), rom.u16(m + 2)
     cells = [rom.u16(m + 4 + 2 * i) for i in range(w * h)]
@@ -182,10 +187,10 @@ def bracket(rom):
         for k in range(w):
             v = cells[r * w + k]
             t = v & 0x7FF
-            if t >= (n & 0x7FFF):
+            if t >= n:
                 continue
             c.tile(tiles, 32 * t, 8 * k, 8 * r, (v >> 13) & 3, bool(v & 0x800), bool(v & 0x1000))
-    return c, {"file": "bracket_idx.png", "cells": [w, h], "line": 1, "tiles": n & 0x7FFF,
+    return c, {"file": "bracket_idx.png", "cells": [w, h], "line": 1, "tiles": n, "compressed": True,
                "note": "sub_17626: dobitmap of columns src_col, src_col+1 (2 x 23 cells) to "
                        "plane A (x, 2); the cells carry their own flips; tiles loaded to ExtraChars"}
 
@@ -388,7 +393,7 @@ def preview(rom, out, names, levels):
     """RGB render of plane A's used part (columns 0..127, rows 0..27) for each gamelevel with
     seeding 0 and every first-listed team winning: strips, plates, scores '0-0', no label
     font. For checking positions against the emulator."""
-    from assets import decompress, png
+    from assets import png
     from ui_overlay import PLATES, blob, jim_map
     br, _ = bracket(rom)
     pl_tiles = BytesRom(blob(rom, PLATES))

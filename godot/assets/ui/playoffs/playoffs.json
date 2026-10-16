@@ -1,0 +1,2476 @@
+{
+ "figurejoy": {
+  "noplist": [
+   [
+    0,
+    0
+   ],
+   [
+    1,
+    0
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    1,
+    2
+   ]
+  ],
+  "note": "index = (user is team1 ? 0 : 4 (5 four-way)) + pojoy; {cont1team, cont2team}: 1 = home, 2 = away, 0 = none. _noplist by OptNOP outside playoffs",
+  "pojoylist": [
+   [
+    1,
+    0
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    1
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    1
+   ],
+   [
+    1,
+    2
+   ]
+  ],
+  "pojoylist4": [
+   [
+    1,
+    0
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    2,
+    1
+   ],
+   [
+    2,
+    1
+   ]
+  ]
+ },
+ "menus": {
+  "intermission_final_playoffs": "the same rows as intermission_final",
+  "intermission_pregame_playoffs": "ui/menus/menus.json table of that name (adds Playoff Stats)"
+ },
+ "playoff_stats": {
+  "entry_width_by_i_mod_4": [
+   10,
+   10,
+   14,
+   12
+  ],
+  "packed": "$FFD0DC..$FFD173 (inside the saved $FFD076 block): entry i = 0..103 in order, width widths[(103 - i) & 3] bits, values clamped to 2^width - 1",
+  "ram": "$FFCD96 + 2*(26*category + slot): words, categories goals, assists, SOG, PIM (team struct bytes $B4, $CE, $E8, $102)",
+  "widths": [
+   12,
+   14,
+   10,
+   10
+  ]
+ },
+ "save_state": {
+  "decode": "sub_1803E (L55206): reverse order, value = N mod radix, N /= radix; a series with 4 wins gets flags bit 2 (series over); pojoy 1/2 become 4 with 2 pads",
+  "encode": "sub_18192 (L55309): N = 0; for (value, radix) in order: N = N * radix + value",
+  "order": [
+   [
+    "postarts",
+    32
+   ],
+   [
+    "bosgames",
+    8
+   ],
+   [
+    "gamelevel",
+    4
+   ],
+   [
+    "potreeteam",
+    16
+   ],
+   [
+    "pojoy",
+    8
+   ],
+   [
+    "bracket_bits $CEF2",
+    16384
+   ],
+   [
+    "series 0 wins +4",
+    5
+   ],
+   [
+    "series 0 wins +6",
+    5
+   ],
+   [
+    "series 1 wins +4",
+    5
+   ],
+   [
+    "series 1 wins +6",
+    5
+   ],
+   [
+    "series 2 wins +4",
+    5
+   ],
+   [
+    "series 2 wins +6",
+    5
+   ],
+   [
+    "series 3 wins +4",
+    5
+   ],
+   [
+    "series 3 wins +6",
+    5
+   ],
+   [
+    "series 4 wins +4",
+    5
+   ],
+   [
+    "series 4 wins +6",
+    5
+   ],
+   [
+    "series 5 wins +4",
+    5
+   ],
+   [
+    "series 5 wins +6",
+    5
+   ],
+   [
+    "series 6 wins +4",
+    5
+   ],
+   [
+    "series 6 wins +6",
+    5
+   ],
+   [
+    "series 7 wins +4",
+    5
+   ],
+   [
+    "series 7 wins +6",
+    5
+   ]
+  ],
+  "ram": "$FFD088, 5 words, one 80-bit big-endian integer"
+ },
+ "screen": {
+  "bracket": {
+   "cells": [
+    12,
+    23
+   ],
+   "compressed": true,
+   "file": "bracket_idx.png",
+   "line": 1,
+   "note": "sub_17626: dobitmap of columns src_col, src_col+1 (2 x 23 cells) to plane A (x, 2); the cells carry their own flips; tiles loaded to ExtraChars",
+   "tiles": 6
+  },
+  "cram": {
+   "flash": "sub_175D8: every 24 frames line 2 colour 1 ^= $0EE (the user's plates; $CCC <-> $C22)",
+   "line0": [
+    1536,
+    3822,
+    3788,
+    3276,
+    3242,
+    2730,
+    2696,
+    2184,
+    2150,
+    1638,
+    1604,
+    1092,
+    1058,
+    546,
+    512,
+    0
+   ],
+   "line1": [
+    1024,
+    3276,
+    2184,
+    1092,
+    546,
+    140,
+    106,
+    0,
+    2082,
+    1536,
+    66,
+    32,
+    74,
+    6,
+    1642,
+    582
+   ],
+   "line2": [
+    1024,
+    3276,
+    2184,
+    1092,
+    546,
+    140,
+    106,
+    0,
+    2082,
+    1536,
+    66,
+    32,
+    74,
+    6,
+    1642,
+    582
+   ],
+   "line3": [
+    1024,
+    3810,
+    0,
+    546,
+    1092,
+    1638,
+    2184,
+    2730,
+    3276,
+    3822,
+    238,
+    3584,
+    3072,
+    2560,
+    2048,
+    1536
+   ]
+  },
+  "cup": {
+   "file": "cup_idx.png",
+   "line": 0,
+   "note": "sub_FED2A (L974956) draws frame 1 every frame with SetSframe at sprite x = word_FFB8AE, y = word_FFB8B0 ($A0): x = $100 + DispAttribCtr while that is within $40..$200, else hidden (sub_17572)",
+   "origin": [
+    0,
+    0
+   ],
+   "pieces": 10,
+   "priority": true,
+   "screen_px": [
+    128,
+    32
+   ],
+   "size": [
+    64,
+    144
+   ],
+   "tiles": 144
+  },
+  "hscroll_A": "$FEA0 + DispAttribCtr (view starts at plane column 44 when 0)",
+  "levels": [
+   {
+    "gamelevel": 0,
+    "plates": [
+     [
+      46,
+      2
+     ],
+     [
+      46,
+      5
+     ],
+     [
+      46,
+      8
+     ],
+     [
+      46,
+      11
+     ],
+     [
+      46,
+      14
+     ],
+     [
+      46,
+      17
+     ],
+     [
+      46,
+      20
+     ],
+     [
+      46,
+      23
+     ],
+     [
+      71,
+      2
+     ],
+     [
+      71,
+      5
+     ],
+     [
+      71,
+      8
+     ],
+     [
+      71,
+      11
+     ],
+     [
+      71,
+      14
+     ],
+     [
+      71,
+      17
+     ],
+     [
+      71,
+      20
+     ],
+     [
+      71,
+      23
+     ]
+    ],
+    "series_scores": [
+     [
+      50,
+      4
+     ],
+     [
+      50,
+      10
+     ],
+     [
+      50,
+      16
+     ],
+     [
+      50,
+      22
+     ],
+     [
+      75,
+      4
+     ],
+     [
+      75,
+      10
+     ],
+     [
+      75,
+      16
+     ],
+     [
+      75,
+      22
+     ]
+    ],
+    "strips": [
+     {
+      "src_col": 0,
+      "x": 57
+     },
+     {
+      "src_col": 10,
+      "x": 69
+     }
+    ]
+   },
+   {
+    "gamelevel": 1,
+    "plates": [
+     [
+      32,
+      2
+     ],
+     [
+      32,
+      5
+     ],
+     [
+      32,
+      8
+     ],
+     [
+      32,
+      11
+     ],
+     [
+      32,
+      14
+     ],
+     [
+      32,
+      17
+     ],
+     [
+      32,
+      20
+     ],
+     [
+      32,
+      23
+     ],
+     [
+      85,
+      2
+     ],
+     [
+      85,
+      5
+     ],
+     [
+      85,
+      8
+     ],
+     [
+      85,
+      11
+     ],
+     [
+      85,
+      14
+     ],
+     [
+      85,
+      17
+     ],
+     [
+      85,
+      20
+     ],
+     [
+      85,
+      23
+     ],
+     [
+      46,
+      4
+     ],
+     [
+      46,
+      10
+     ],
+     [
+      46,
+      15
+     ],
+     [
+      46,
+      21
+     ],
+     [
+      71,
+      4
+     ],
+     [
+      71,
+      10
+     ],
+     [
+      71,
+      15
+     ],
+     [
+      71,
+      21
+     ]
+    ],
+    "series_scores": [
+     [
+      50,
+      8
+     ],
+     [
+      50,
+      18
+     ],
+     [
+      75,
+      8
+     ],
+     [
+      75,
+      18
+     ]
+    ],
+    "strips": [
+     {
+      "src_col": 0,
+      "x": 43
+     },
+     {
+      "src_col": 2,
+      "x": 57
+     },
+     {
+      "src_col": 8,
+      "x": 69
+     },
+     {
+      "src_col": 10,
+      "x": 83
+     }
+    ]
+   },
+   {
+    "gamelevel": 2,
+    "plates": [
+     [
+      18,
+      2
+     ],
+     [
+      18,
+      5
+     ],
+     [
+      18,
+      8
+     ],
+     [
+      18,
+      11
+     ],
+     [
+      18,
+      14
+     ],
+     [
+      18,
+      17
+     ],
+     [
+      18,
+      20
+     ],
+     [
+      18,
+      23
+     ],
+     [
+      99,
+      2
+     ],
+     [
+      99,
+      5
+     ],
+     [
+      99,
+      8
+     ],
+     [
+      99,
+      11
+     ],
+     [
+      99,
+      14
+     ],
+     [
+      99,
+      17
+     ],
+     [
+      99,
+      20
+     ],
+     [
+      99,
+      23
+     ],
+     [
+      32,
+      4
+     ],
+     [
+      32,
+      10
+     ],
+     [
+      32,
+      15
+     ],
+     [
+      32,
+      21
+     ],
+     [
+      85,
+      4
+     ],
+     [
+      85,
+      10
+     ],
+     [
+      85,
+      15
+     ],
+     [
+      85,
+      21
+     ],
+     [
+      46,
+      7
+     ],
+     [
+      46,
+      18
+     ],
+     [
+      71,
+      7
+     ],
+     [
+      71,
+      18
+     ]
+    ],
+    "series_scores": [
+     [
+      50,
+      13
+     ],
+     [
+      75,
+      13
+     ]
+    ],
+    "strips": [
+     {
+      "src_col": 0,
+      "x": 29
+     },
+     {
+      "src_col": 2,
+      "x": 43
+     },
+     {
+      "src_col": 4,
+      "x": 57
+     },
+     {
+      "src_col": 6,
+      "x": 69
+     },
+     {
+      "src_col": 8,
+      "x": 83
+     },
+     {
+      "src_col": 10,
+      "x": 97
+     }
+    ]
+   },
+   {
+    "gamelevel": 3,
+    "plates": [
+     [
+      4,
+      2
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      4,
+      11
+     ],
+     [
+      4,
+      14
+     ],
+     [
+      4,
+      17
+     ],
+     [
+      4,
+      20
+     ],
+     [
+      4,
+      23
+     ],
+     [
+      113,
+      2
+     ],
+     [
+      113,
+      5
+     ],
+     [
+      113,
+      8
+     ],
+     [
+      113,
+      11
+     ],
+     [
+      113,
+      14
+     ],
+     [
+      113,
+      17
+     ],
+     [
+      113,
+      20
+     ],
+     [
+      113,
+      23
+     ],
+     [
+      18,
+      4
+     ],
+     [
+      18,
+      10
+     ],
+     [
+      18,
+      15
+     ],
+     [
+      18,
+      21
+     ],
+     [
+      99,
+      4
+     ],
+     [
+      99,
+      10
+     ],
+     [
+      99,
+      15
+     ],
+     [
+      99,
+      21
+     ],
+     [
+      32,
+      7
+     ],
+     [
+      32,
+      18
+     ],
+     [
+      85,
+      7
+     ],
+     [
+      85,
+      18
+     ],
+     [
+      46,
+      12
+     ],
+     [
+      71,
+      12
+     ]
+    ],
+    "series_scores": [
+     [
+      63,
+      23
+     ]
+    ],
+    "strips": [
+     {
+      "src_col": 0,
+      "x": 15
+     },
+     {
+      "src_col": 2,
+      "x": 29
+     },
+     {
+      "src_col": 4,
+      "x": 43
+     },
+     {
+      "src_col": 6,
+      "x": 83
+     },
+     {
+      "src_col": 8,
+      "x": 97
+     },
+     {
+      "src_col": 10,
+      "x": 111
+     }
+    ]
+   },
+   {
+    "gamelevel": 4,
+    "plates": [
+     [
+      4,
+      2
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      4,
+      11
+     ],
+     [
+      4,
+      14
+     ],
+     [
+      4,
+      17
+     ],
+     [
+      4,
+      20
+     ],
+     [
+      4,
+      23
+     ],
+     [
+      113,
+      2
+     ],
+     [
+      113,
+      5
+     ],
+     [
+      113,
+      8
+     ],
+     [
+      113,
+      11
+     ],
+     [
+      113,
+      14
+     ],
+     [
+      113,
+      17
+     ],
+     [
+      113,
+      20
+     ],
+     [
+      113,
+      23
+     ],
+     [
+      18,
+      4
+     ],
+     [
+      18,
+      10
+     ],
+     [
+      18,
+      15
+     ],
+     [
+      18,
+      21
+     ],
+     [
+      99,
+      4
+     ],
+     [
+      99,
+      10
+     ],
+     [
+      99,
+      15
+     ],
+     [
+      99,
+      21
+     ],
+     [
+      32,
+      7
+     ],
+     [
+      32,
+      18
+     ],
+     [
+      85,
+      7
+     ],
+     [
+      85,
+      18
+     ],
+     [
+      46,
+      12
+     ],
+     [
+      71,
+      12
+     ],
+     [
+      58,
+      23
+     ]
+    ],
+    "series_scores": [],
+    "strips": [
+     {
+      "src_col": 0,
+      "x": 15
+     },
+     {
+      "src_col": 2,
+      "x": 29
+     },
+     {
+      "src_col": 4,
+      "x": 43
+     },
+     {
+      "src_col": 6,
+      "x": 83
+     },
+     {
+      "src_col": 8,
+      "x": 97
+     },
+     {
+      "src_col": 10,
+      "x": 111
+     }
+    ]
+   }
+  ],
+  "line": 53890,
+  "pad": "right: DispAttribCtr -= 2 a frame until a multiple of $70; left: += 2; Start (pad 1 or 2): exit",
+  "page_step_px": 112,
+  "page_text": {
+   "at": [
+    10,
+    1
+   ],
+   "attr": "$6000",
+   "glyphs": "'[' and ']' are the arrow glyphs",
+   "plane": "window",
+   "text": "Press [ or ] to page",
+   "when": "gamelevel != 0"
+  },
+  "planes": {
+   "A": "$E000, 128 x 32 cells (VDP reg 16 = $03): plates, strips, scores, round label; horizontally scrolled",
+   "B": "$C000: stats background $54E24 (ui/menus/stats_bg_idx.png) at (0,0)",
+   "window": "rows 0-1 ($9202): the 'Press [ or ] to page' line"
+  },
+  "plate": {
+   "cells": [
+    11,
+    2
+   ],
+   "image": "ui/team_plates_idx.png",
+   "line_other": 1,
+   "line_user": 2,
+   "note": "sub_17652: plate of tree byte k at (x, y); a plate whose team is the user's (tree[potreeteam]) is drawn with printa $6000 and lands in line 2"
+  },
+  "plate_order": "plate i shows tree byte i of $FFCEF4 (MakeTree): 0-15 seeds, 16-23 round-1 winners, 24-27 QF winners, 28-29 SF winners, 30 champion",
+  "round_label": {
+   "attr": "$2000 (printz2 amxy 1,1)",
+   "index": "gamelevel",
+   "plane": "A",
+   "strings": [
+    "Playoffs",
+    "Quarterfinals",
+    "Semifinals",
+    "Finals",
+    "Champions"
+   ],
+   "x_centre": 65,
+   "y": 26
+  },
+  "routine": "PlayoffScreen",
+  "scroll_limit_px": "+-$70 * min(gamelevel, 3)",
+  "scroll_px_per_frame": 2,
+  "series_score": "sub_175FC: '<+4>-<+6>' of gsstruct series i (first-listed team's wins first) printed at the spot in attr $2000; skipped when bosgames == 7",
+  "song": 121,
+  "view_col0": 44
+ },
+ "seedings": {
+  "address": 21878,
+  "line": 54908,
+  "list": [
+   {
+    "abbr": [
+     "BUF",
+     "BOS",
+     "MTL",
+     "QUE",
+     "NYI",
+     "WSH",
+     "NJ",
+     "PIT",
+     "TOR",
+     "DET",
+     "STL",
+     "CHI",
+     "LA",
+     "CGY",
+     "WPG",
+     "VAN"
+    ],
+    "teams": [
+     2,
+     1,
+     11,
+     18,
+     13,
+     24,
+     12,
+     17,
+     22,
+     6,
+     20,
+     4,
+     10,
+     3,
+     25,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "NYI",
+     "BUF",
+     "TB",
+     "MTL",
+     "QUE",
+     "PIT",
+     "NYR",
+     "BOS",
+     "CGY",
+     "TOR",
+     "LA",
+     "VAN",
+     "STL",
+     "DET",
+     "DAL",
+     "CHI"
+    ],
+    "teams": [
+     13,
+     2,
+     21,
+     11,
+     18,
+     17,
+     14,
+     1,
+     3,
+     22,
+     10,
+     23,
+     20,
+     6,
+     5,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "NJ",
+     "PIT",
+     "PHI",
+     "BUF",
+     "HFD",
+     "MTL",
+     "WSH",
+     "BOS",
+     "DAL",
+     "TOR",
+     "EDM",
+     "CHI",
+     "SJ",
+     "VAN",
+     "LA",
+     "DET"
+    ],
+    "teams": [
+     12,
+     17,
+     16,
+     2,
+     9,
+     11,
+     24,
+     1,
+     5,
+     22,
+     7,
+     4,
+     19,
+     23,
+     10,
+     6
+    ]
+   },
+   {
+    "abbr": [
+     "HFD",
+     "PIT",
+     "QUE",
+     "MTL",
+     "WSH",
+     "BOS",
+     "NJ",
+     "BUF",
+     "LA",
+     "TOR",
+     "EDM",
+     "DET",
+     "DAL",
+     "CHI",
+     "CGY",
+     "VAN"
+    ],
+    "teams": [
+     9,
+     17,
+     18,
+     11,
+     24,
+     1,
+     12,
+     2,
+     10,
+     22,
+     7,
+     6,
+     5,
+     4,
+     3,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "QUE",
+     "BUF",
+     "NJ",
+     "PIT",
+     "HFD",
+     "MTL",
+     "PHI",
+     "BOS",
+     "CGY",
+     "DET",
+     "SJ",
+     "TOR",
+     "DAL",
+     "VAN",
+     "EDM",
+     "CHI"
+    ],
+    "teams": [
+     18,
+     2,
+     12,
+     17,
+     9,
+     11,
+     16,
+     1,
+     3,
+     6,
+     19,
+     22,
+     5,
+     23,
+     7,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "OTW",
+     "BOS",
+     "HFD",
+     "MTL",
+     "NYI",
+     "PIT",
+     "NYR",
+     "BUF",
+     "SJ",
+     "VAN",
+     "CGY",
+     "DET",
+     "DAL",
+     "CHI",
+     "EDM",
+     "TOR"
+    ],
+    "teams": [
+     15,
+     1,
+     9,
+     11,
+     13,
+     17,
+     14,
+     2,
+     19,
+     23,
+     3,
+     6,
+     5,
+     4,
+     7,
+     22
+    ]
+   },
+   {
+    "abbr": [
+     "PHI",
+     "MTL",
+     "OTW",
+     "PIT",
+     "TB",
+     "BUF",
+     "NYI",
+     "BOS",
+     "STL",
+     "DET",
+     "WPG",
+     "CHI",
+     "ANH",
+     "VAN",
+     "CGY",
+     "TOR"
+    ],
+    "teams": [
+     16,
+     11,
+     15,
+     17,
+     21,
+     2,
+     13,
+     1,
+     20,
+     6,
+     25,
+     4,
+     0,
+     23,
+     3,
+     22
+    ]
+   },
+   {
+    "abbr": [
+     "NJ",
+     "BOS",
+     "QUE",
+     "PIT",
+     "PHI",
+     "MTL",
+     "NYI",
+     "BUF",
+     "ANH",
+     "DET",
+     "CGY",
+     "CHI",
+     "DAL",
+     "VAN",
+     "LA",
+     "TOR"
+    ],
+    "teams": [
+     12,
+     1,
+     18,
+     17,
+     16,
+     11,
+     13,
+     2,
+     0,
+     6,
+     3,
+     4,
+     5,
+     23,
+     10,
+     22
+    ]
+   },
+   {
+    "abbr": [
+     "OTW",
+     "PIT",
+     "HFD",
+     "BOS",
+     "FLA",
+     "MTL",
+     "WSH",
+     "BUF",
+     "CGY",
+     "TOR",
+     "DAL",
+     "VAN",
+     "WPG",
+     "CHI",
+     "LA",
+     "DET"
+    ],
+    "teams": [
+     15,
+     17,
+     9,
+     1,
+     8,
+     11,
+     24,
+     2,
+     3,
+     22,
+     5,
+     23,
+     25,
+     4,
+     10,
+     6
+    ]
+   },
+   {
+    "abbr": [
+     "NYR",
+     "BUF",
+     "PHI",
+     "BOS",
+     "QUE",
+     "MTL",
+     "HFD",
+     "PIT",
+     "WPG",
+     "CHI",
+     "SJ",
+     "DET",
+     "STL",
+     "VAN",
+     "CGY",
+     "TOR"
+    ],
+    "teams": [
+     14,
+     2,
+     16,
+     1,
+     18,
+     11,
+     9,
+     17,
+     25,
+     4,
+     19,
+     6,
+     20,
+     23,
+     3,
+     22
+    ]
+   },
+   {
+    "abbr": [
+     "PHI",
+     "MTL",
+     "QUE",
+     "BOS",
+     "NJ",
+     "PIT",
+     "NYI",
+     "BUF",
+     "SJ",
+     "DET",
+     "WPG",
+     "TOR",
+     "LA",
+     "VAN",
+     "CGY",
+     "CHI"
+    ],
+    "teams": [
+     16,
+     11,
+     18,
+     1,
+     12,
+     17,
+     13,
+     2,
+     19,
+     6,
+     25,
+     22,
+     10,
+     23,
+     3,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "NYI",
+     "PIT",
+     "OTW",
+     "MTL",
+     "NYR",
+     "BUF",
+     "NJ",
+     "BOS",
+     "DAL",
+     "DET",
+     "LA",
+     "CHI",
+     "SJ",
+     "TOR",
+     "STL",
+     "VAN"
+    ],
+    "teams": [
+     13,
+     17,
+     15,
+     11,
+     14,
+     2,
+     12,
+     1,
+     5,
+     6,
+     10,
+     4,
+     19,
+     22,
+     20,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "QUE",
+     "BOS",
+     "NYR",
+     "BUF",
+     "OTW",
+     "MTL",
+     "PHI",
+     "PIT",
+     "DAL",
+     "VAN",
+     "SJ",
+     "TOR",
+     "EDM",
+     "CHI",
+     "CGY",
+     "DET"
+    ],
+    "teams": [
+     18,
+     1,
+     14,
+     2,
+     15,
+     11,
+     16,
+     17,
+     5,
+     23,
+     19,
+     22,
+     7,
+     4,
+     3,
+     6
+    ]
+   },
+   {
+    "abbr": [
+     "NJ",
+     "MTL",
+     "NYR",
+     "PIT",
+     "OTW",
+     "BOS",
+     "HFD",
+     "BUF",
+     "STL",
+     "TOR",
+     "SJ",
+     "CHI",
+     "DAL",
+     "DET",
+     "EDM",
+     "VAN"
+    ],
+    "teams": [
+     12,
+     11,
+     14,
+     17,
+     15,
+     1,
+     9,
+     2,
+     20,
+     22,
+     19,
+     4,
+     5,
+     6,
+     7,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "WSH",
+     "NYI",
+     "NYR",
+     "MTL",
+     "PHI",
+     "BUF",
+     "TB",
+     "PIT",
+     "TOR",
+     "STL",
+     "ANH",
+     "LA",
+     "WPG",
+     "CHI",
+     "SJ",
+     "VAN"
+    ],
+    "teams": [
+     24,
+     13,
+     14,
+     11,
+     16,
+     2,
+     21,
+     17,
+     22,
+     20,
+     0,
+     10,
+     25,
+     4,
+     19,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "QUE",
+     "BUF",
+     "TB",
+     "NYI",
+     "NJ",
+     "MTL",
+     "HFD",
+     "PIT",
+     "EDM",
+     "STL",
+     "DAL",
+     "LA",
+     "SJ",
+     "VAN",
+     "DET",
+     "CHI"
+    ],
+    "teams": [
+     18,
+     2,
+     21,
+     13,
+     12,
+     11,
+     9,
+     17,
+     7,
+     20,
+     5,
+     10,
+     19,
+     23,
+     6,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "BOS",
+     "TB",
+     "OTW",
+     "BUF",
+     "NJ",
+     "MTL",
+     "QUE",
+     "PIT",
+     "TOR",
+     "STL",
+     "SJ",
+     "LA",
+     "DAL",
+     "VAN",
+     "WPG",
+     "CHI"
+    ],
+    "teams": [
+     1,
+     21,
+     15,
+     2,
+     12,
+     11,
+     18,
+     17,
+     22,
+     20,
+     19,
+     10,
+     5,
+     23,
+     25,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "HFD",
+     "NYI",
+     "NJ",
+     "BUF",
+     "OTW",
+     "MTL",
+     "BOS",
+     "PIT",
+     "CGY",
+     "VAN",
+     "DAL",
+     "LA",
+     "TOR",
+     "CHI",
+     "EDM",
+     "STL"
+    ],
+    "teams": [
+     9,
+     13,
+     12,
+     2,
+     15,
+     11,
+     1,
+     17,
+     3,
+     23,
+     5,
+     10,
+     22,
+     4,
+     7,
+     20
+    ]
+   },
+   {
+    "abbr": [
+     "OTW",
+     "PIT",
+     "HFD",
+     "MTL",
+     "FLA",
+     "BUF",
+     "NYR",
+     "NYI",
+     "TOR",
+     "STL",
+     "WPG",
+     "CHI",
+     "DET",
+     "VAN",
+     "EDM",
+     "LA"
+    ],
+    "teams": [
+     15,
+     17,
+     9,
+     11,
+     8,
+     2,
+     14,
+     13,
+     22,
+     20,
+     25,
+     4,
+     6,
+     23,
+     7,
+     10
+    ]
+   },
+   {
+    "abbr": [
+     "WSH",
+     "NYI",
+     "NJ",
+     "PIT",
+     "NYR",
+     "BUF",
+     "BOS",
+     "MTL",
+     "DET",
+     "VAN",
+     "DAL",
+     "LA",
+     "EDM",
+     "CHI",
+     "WPG",
+     "STL"
+    ],
+    "teams": [
+     24,
+     13,
+     12,
+     17,
+     14,
+     2,
+     1,
+     11,
+     6,
+     23,
+     5,
+     10,
+     7,
+     4,
+     25,
+     20
+    ]
+   },
+   {
+    "abbr": [
+     "OTW",
+     "MTL",
+     "QUE",
+     "BUF",
+     "BOS",
+     "NYI",
+     "WSH",
+     "PIT",
+     "EDM",
+     "STL",
+     "CGY",
+     "LA",
+     "WPG",
+     "VAN",
+     "DET",
+     "CHI"
+    ],
+    "teams": [
+     15,
+     11,
+     18,
+     2,
+     1,
+     13,
+     24,
+     17,
+     7,
+     20,
+     3,
+     10,
+     25,
+     23,
+     6,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "OTW",
+     "PIT",
+     "TB",
+     "MTL",
+     "QUE",
+     "NYI",
+     "NJ",
+     "BUF",
+     "SJ",
+     "LA",
+     "CGY",
+     "CHI",
+     "WPG",
+     "STL",
+     "EDM",
+     "VAN"
+    ],
+    "teams": [
+     15,
+     17,
+     21,
+     11,
+     18,
+     13,
+     12,
+     2,
+     19,
+     10,
+     3,
+     4,
+     25,
+     20,
+     7,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "OTW",
+     "MTL",
+     "PHI",
+     "BUF",
+     "NJ",
+     "FLA",
+     "QUE",
+     "PIT",
+     "DAL",
+     "CHI",
+     "TOR",
+     "LA",
+     "WPG",
+     "STL",
+     "SJ",
+     "VAN"
+    ],
+    "teams": [
+     15,
+     11,
+     16,
+     2,
+     12,
+     8,
+     18,
+     17,
+     5,
+     4,
+     22,
+     10,
+     25,
+     20,
+     19,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "NJ",
+     "MTL",
+     "QUE",
+     "PIT",
+     "OTW",
+     "NYI",
+     "PHI",
+     "BUF",
+     "DET",
+     "VAN",
+     "SJ",
+     "LA",
+     "TOR",
+     "STL",
+     "EDM",
+     "CHI"
+    ],
+    "teams": [
+     12,
+     11,
+     18,
+     17,
+     15,
+     13,
+     16,
+     2,
+     6,
+     23,
+     19,
+     10,
+     22,
+     20,
+     7,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "HFD",
+     "PIT",
+     "QUE",
+     "NYI",
+     "OTW",
+     "MTL",
+     "BOS",
+     "BUF",
+     "DET",
+     "CHI",
+     "EDM",
+     "STL",
+     "CGY",
+     "LA",
+     "TOR",
+     "VAN"
+    ],
+    "teams": [
+     9,
+     17,
+     18,
+     13,
+     15,
+     11,
+     1,
+     2,
+     6,
+     4,
+     7,
+     20,
+     3,
+     10,
+     22,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "NYR",
+     "NYI",
+     "BOS",
+     "BUF",
+     "WSH",
+     "MTL",
+     "OTW",
+     "PIT",
+     "DET",
+     "CHI",
+     "DAL",
+     "VAN",
+     "EDM",
+     "LA",
+     "WPG",
+     "STL"
+    ],
+    "teams": [
+     14,
+     13,
+     1,
+     2,
+     24,
+     11,
+     15,
+     17,
+     6,
+     4,
+     5,
+     23,
+     7,
+     10,
+     25,
+     20
+    ]
+   },
+   {
+    "abbr": [
+     "HFD",
+     "BUF",
+     "OTW",
+     "NYI",
+     "NJ",
+     "PIT",
+     "BOS",
+     "MTL",
+     "TOR",
+     "LA",
+     "CGY",
+     "STL",
+     "DET",
+     "VAN",
+     "SJ",
+     "CHI"
+    ],
+    "teams": [
+     9,
+     2,
+     15,
+     13,
+     12,
+     17,
+     1,
+     11,
+     22,
+     10,
+     3,
+     20,
+     6,
+     23,
+     19,
+     4
+    ]
+   },
+   {
+    "abbr": [
+     "QUE",
+     "NYI",
+     "TB",
+     "BUF",
+     "BOS",
+     "MTL",
+     "FLA",
+     "PIT",
+     "EDM",
+     "LA",
+     "WPG",
+     "STL",
+     "CGY",
+     "CHI",
+     "DAL",
+     "VAN"
+    ],
+    "teams": [
+     18,
+     13,
+     21,
+     2,
+     1,
+     11,
+     8,
+     17,
+     7,
+     10,
+     25,
+     20,
+     3,
+     4,
+     5,
+     23
+    ]
+   },
+   {
+    "abbr": [
+     "HFD",
+     "MTL",
+     "NJ",
+     "NYI",
+     "WSH",
+     "BUF",
+     "QUE",
+     "PIT",
+     "SJ",
+     "STL",
+     "ANH",
+     "VAN",
+     "CGY",
+     "CHI",
+     "DET",
+     "LA"
+    ],
+    "teams": [
+     9,
+     11,
+     12,
+     13,
+     24,
+     2,
+     18,
+     17,
+     19,
+     20,
+     0,
+     23,
+     3,
+     4,
+     6,
+     10
+    ]
+   },
+   {
+    "abbr": [
+     "NYR",
+     "BUF",
+     "FLA",
+     "TB",
+     "WSH",
+     "PIT",
+     "BOS",
+     "MTL",
+     "TOR",
+     "CHI",
+     "WPG",
+     "VAN",
+     "DAL",
+     "LA",
+     "ANH",
+     "STL"
+    ],
+    "teams": [
+     14,
+     2,
+     8,
+     21,
+     24,
+     17,
+     1,
+     11,
+     22,
+     4,
+     25,
+     23,
+     5,
+     10,
+     0,
+     20
+    ]
+   },
+   {
+    "abbr": [
+     "NJ",
+     "MTL",
+     "OTW",
+     "BUF",
+     "TB",
+     "PIT",
+     "NYR",
+     "NYI",
+     "EDM",
+     "LA",
+     "SJ",
+     "CHI",
+     "ANH",
+     "VAN",
+     "DET",
+     "STL"
+    ],
+    "teams": [
+     12,
+     11,
+     15,
+     2,
+     21,
+     17,
+     14,
+     13,
+     7,
+     10,
+     19,
+     4,
+     0,
+     23,
+     6,
+     20
+    ]
+   },
+   {
+    "abbr": [
+     "WSH",
+     "FLA",
+     "NJ",
+     "PIT",
+     "BOS",
+     "MTL",
+     "TB",
+     "BUF",
+     "SJ",
+     "STL",
+     "DET",
+     "CHI",
+     "ANH",
+     "LA",
+     "WPG",
+     "VAN"
+    ],
+    "teams": [
+     24,
+     8,
+     12,
+     17,
+     1,
+     11,
+     21,
+     2,
+     19,
+     20,
+     6,
+     4,
+     0,
+     10,
+     25,
+     23
+    ]
+   }
+  ],
+  "note": "NewPO: a seeding holding Opt1Team (All-Star teams 26/27 search as 25) is picked by randomd0(32)+1 and stepping +1 (mod 32). Pairs (2k, 2k+1) meet in round 1; 0-7 East, 8-15 West; the second of a pair has home ice"
+ },
+ "setup_menu": {
+  "play_mode": [
+   "Regular Season",
+   "Continue Playoffs",
+   "New Playoffs",
+   "New Playoffs/7 game",
+   "Shootout"
+  ],
+  "play_mode_note": "OptPlayMode 0 Regular Season, 1 Continue Playoffs (offered only when a saved playoff exists), 2 New Playoffs (one game a round, bosgames = 7), 3 New Playoffs/7 game, 4 Shootout",
+  "players": [
+   "Demo",
+   "One - Home",
+   "One - Visitor",
+   "Two - Teammates",
+   "Two - Head to Head",
+   "Two - Head to Head",
+   "Two - Teammates",
+   "One",
+   "Demo",
+   "One - Home",
+   "One - Visitor",
+   "Two - Teammates"
+  ],
+  "players_playoffs": "OptNOP 7 One, 6 Two - Teammates, 5 Two - Head to Head (2 pads); pojoy = 7 - OptNOP (11 - OptNOP four-way)"
+ },
+ "source": "lst/nhl94.bin (CRC32 9438F5DD); docs/specs/playoffs_records.md",
+ "teams": [
+  {
+   "abbr": "ANH",
+   "city": "Anaheim"
+  },
+  {
+   "abbr": "BOS",
+   "city": "Boston"
+  },
+  {
+   "abbr": "BUF",
+   "city": "Buffalo"
+  },
+  {
+   "abbr": "CGY",
+   "city": "Calgary"
+  },
+  {
+   "abbr": "CHI",
+   "city": "Chicago"
+  },
+  {
+   "abbr": "DAL",
+   "city": "Dallas"
+  },
+  {
+   "abbr": "DET",
+   "city": "Detroit"
+  },
+  {
+   "abbr": "EDM",
+   "city": "Edmonton"
+  },
+  {
+   "abbr": "FLA",
+   "city": "Florida"
+  },
+  {
+   "abbr": "HFD",
+   "city": "Hartford"
+  },
+  {
+   "abbr": "LA",
+   "city": "Los Angeles"
+  },
+  {
+   "abbr": "MTL",
+   "city": "Montreal"
+  },
+  {
+   "abbr": "NJ",
+   "city": "New Jersey"
+  },
+  {
+   "abbr": "NYI",
+   "city": "New York"
+  },
+  {
+   "abbr": "NYR",
+   "city": "New York"
+  },
+  {
+   "abbr": "OTW",
+   "city": "Ottawa"
+  },
+  {
+   "abbr": "PHI",
+   "city": "Philadelphia"
+  },
+  {
+   "abbr": "PIT",
+   "city": "Pittsburgh"
+  },
+  {
+   "abbr": "QUE",
+   "city": "Quebec"
+  },
+  {
+   "abbr": "SJ",
+   "city": "San Jose"
+  },
+  {
+   "abbr": "STL",
+   "city": "St. Louis"
+  },
+  {
+   "abbr": "TB",
+   "city": "Tampa Bay"
+  },
+  {
+   "abbr": "TOR",
+   "city": "Toronto"
+  },
+  {
+   "abbr": "VAN",
+   "city": "Vancouver"
+  },
+  {
+   "abbr": "WSH",
+   "city": "Washington"
+  },
+  {
+   "abbr": "WPG",
+   "city": "Winnipeg"
+  },
+  {
+   "abbr": "ASE",
+   "city": "All Stars East"
+  },
+  {
+   "abbr": "ASW",
+   "city": "All Stars West"
+  }
+ ],
+ "ticker": {
+  "headings": [
+   "EA Hockey Night",
+   "Stanley Cup Qualifier",
+   "Quarterfinal",
+   "Stanley Cup Semifinal"
+  ],
+  "highlight_caption": "Highlight from game:",
+  "index": "OptPlayMode ? 1 + gamelevel : 0 (gamelevel 3 has no other series)",
+  "period_labels": [
+   "1\u0012",
+   "2\u0013",
+   "3\u0014",
+   "OT",
+   " F"
+  ],
+  "rows": "visitor (gsstruct +2, score +$C) first, then home (+0, score +$A)"
+ }
+}
