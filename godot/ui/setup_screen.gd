@@ -46,8 +46,8 @@ func _ready() -> void:
 	_fighting.select(MatchConfig.Fighting.ON)
 	_edition.item_selected.connect(func(_i: int) -> void: _load_teams())
 	for o in [_home_ctrl, _away_ctrl]:
-		for c in MatchConfig.Driver.keys():
-			o.add_item(c.capitalize())
+		for c in MatchConfig.Driver.values():
+			o.add_item(MatchConfig.DRIVER_NAMES[c], c)
 	_home_ctrl.select(MatchConfig.Driver.PAD1)
 	_away_ctrl.select(MatchConfig.Driver.CPU)
 	for m in [5, 10, 20]:
@@ -125,8 +125,8 @@ func _on_start() -> void:
 	var m := MatchConfig.new()
 	m.home_team = _teams[_home.selected]
 	m.away_team = _teams[_away.selected]
-	m.home_control = _home_ctrl.selected as MatchConfig.Driver
-	m.away_control = _away_ctrl.selected as MatchConfig.Driver
+	m.home_control = _home_ctrl.get_selected_id() as MatchConfig.Driver
+	m.away_control = _away_ctrl.get_selected_id() as MatchConfig.Driver
 	m.period_minutes = [5, 10, 20][_length.selected]
 	m.penalties = _penalties.button_pressed
 	m.offsides = _offsides.button_pressed

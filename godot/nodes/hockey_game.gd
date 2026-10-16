@@ -73,7 +73,7 @@ func _read_pads() -> void:
 			continue
 		if world.cont_team[k] == 0:
 			assign_pad(k, i)
-	for k in 2:
+	for k in 4:
 		if world.cont_team[k] != 0:
 			world.pads[k].held = PadInput.held_bits(k + 1)
 

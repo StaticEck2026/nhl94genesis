@@ -110,6 +110,8 @@ func _initialize() -> void:
 		"test_overlay_logic",
 		"test_other_games",
 		"test_replay_buffer",
+		"test_four_way_pads",
+		"test_four_way_mash_game",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2559,5 +2561,87 @@ func test_replay_buffer() -> bool:
 	c.set_pos(Vector2i(50, 60))
 	rp.apply(live)
 	check(c.x() != 50, "the saved state comes back")
+	w.dispose()
+	return true
+
+## Four-way play: pads 1 and 3 home, 2 and 4 away. Pads 3 and 4 get players at the
+## faceoff (setchgplayer), keep their stars (ffo 4, 5), switch with B in pad 1's / pad
+## 2's slot without taking that pad's player, pause as their own pad, and keep their
+## player when he picks up the puck.
+func test_four_way_pads() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	for i in 5:
+		w.place(1 + i, Vector2i(-80 + i * 40, -40), SimObject.POS_LD + i, false, true)
+		w.place(7 + i, Vector2i(-80 + i * 40, 40), SimObject.POS_LD + i, true, false)
+	w.drop_puck(Vector2i(0, 0))
+	w.cont_team = PackedInt32Array([1, 2, 1, 2])
+	w.faceoff.setchgplayer()
+	var cs := {}
+	for k in 4:
+		cs[w.c_player[k]] = true
+		check(w.c_player[k] >= 0 and w.objects[w.c_player[k]].joypad(), "pad %d has a player" % (k + 1))
+		eq(w.objects[w.c_player[k]].away(), k & 1 == 1, "pad %d plays its side" % (k + 1))
+	eq(cs.size(), 4, "four different players")
+	w.faceoff_grace = 0
+	w.step()
+	eq(w.marks[4], w.c_player[2], "pad 3's star")
+	eq(w.marks[5], w.c_player[3], "pad 4's star")
+	eq(w.marks[1], w.c_player[0], "pad 1's star stays")
+	# A B tap on pad 3 switches pad 3 only.
+	var c1 := w.c_player[0]
+	var c3 := w.c_player[2]
+	# The puck by the left defenceman, who nobody drives.
+	w.drop_puck(Vector2i(-80, -16))
+	w.pads[2].held = PadState.B
+	w.step()
+	w.pads[2].held = 0
+	w.step()
+	eq(w.c_player[0], c1, "pad 1 keeps his player")
+	eq(w.c_player[2], 1, "pad 3 switched to the defenceman by the puck (from %d)" % c3)
+	check(not w.objects[c3].joypad() or w.c_player[2] == c3, "the old player went back to the CPU")
+	# Start on pad 4 pauses as pad 4; its menu is the away team's.
+	var paused := [-1]
+	w.pause_requested.connect(func(k: int) -> void: paused[0] = k)
+	w.pads[3].held = PadState.START
+	w.step()
+	w.pads[3].held = 0
+	eq(paused[0], 3, "pad 4 paused")
+	eq(w.pause_team(3), 1, "as the away team")
+	eq(w.pause_team(2), 0, "pad 3 as home")
+	# The puck to pad 3's player: neither pad 1 nor the CPU takes him.
+	var o := w.objects[w.c_player[2]]
+	w.hand_control(o)
+	eq(w.c_player[2], o.index, "pad 3 keeps the carrier")
+	eq(w.c_player[0], c1, "pad 1 is not handed pad 3's player")
+	w.dispose()
+	return true
+
+## All four pads mash random buttons through a short game.
+func test_four_way_mash_game() -> bool:
+	var w := HockeyWorld.new(SimSettings.new(), 0x94)
+	w.opt_perlen = 3
+	w.roster.setup_teams(_team("PIT"), _team("CHI"))
+	w.cont_team = PackedInt32Array([1, 2, 1, 2])
+	var over := [false]
+	w.rules.game_over.connect(func() -> void: over[0] = true)
+	w.rules.start_game()
+	var r := RandomNumberGenerator.new()
+	r.seed = 4
+	var held := [0, 0, 0, 0]
+	var frames := 0
+	var clash := 0
+	while not over[0] and frames < 60000:
+		for k in 4:
+			if r.randi() % 6 == 0:
+				held[k] = r.randi() & 0x7F
+			w.pads[k].held = held[k]
+		w.step()
+		frames += 1
+		for a in 4:
+			for b in range(a + 1, 4):
+				if w.c_player[a] >= 0 and w.c_player[a] == w.c_player[b] and w.objects[w.c_player[a]].position != SimObject.POS_GOALIE:
+					clash += 1
+	check(over[0], "the game ended under random input (%d frames)" % frames)
+	eq(clash, 0, "no two pads drove the same skater")
 	w.dispose()
 	return true

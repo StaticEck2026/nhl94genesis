@@ -44,10 +44,8 @@ func _ready() -> void:
 	world.no_fatigue = m.line_changes and m.auto_lines
 	world.auto_goalie = [m.auto_goalie, m.auto_goalie]
 	world.opt_fight = m.opt_fight()
-	world.cont_team[0] = 0
-	world.cont_team[1] = 0
-	_take_pad(m.home_control, 1)
-	_take_pad(m.away_control, 2)
+	# FigureJoy: each pad's team.
+	world.cont_team = m.pad_teams()
 	world.rules.intermission.connect(_on_intermission)
 	world.rules.game_over.connect(_on_game_over)
 	($Hud as Node).call("bind", self)
@@ -62,15 +60,8 @@ func _ready() -> void:
 	world.stats[0].line = clampi(m.home_line, 0, 6)
 	world.stats[1].line = clampi(m.away_line, 0, 6)
 
-func _take_pad(driver: MatchConfig.Driver, team: int) -> void:
-	match driver:
-		MatchConfig.Driver.PAD1:
-			world.cont_team[0] = team
-		MatchConfig.Driver.PAD2:
-			world.cont_team[1] = team
-
 func _human() -> bool:
-	return world.cont_team[0] != 0 or world.cont_team[1] != 0
+	return world.cont_team != PackedInt32Array([0, 0, 0, 0])
 
 ## Intermission (L47614), the pre-game one included: the side view and the menu for
 ## this point of the game; the sim holds until row 0 or Start (or a while, with no human

@@ -118,10 +118,16 @@ Where it belongs: GameRules (crowd: CurCrowdMeter, the loud state, `word_FFC304`
 - (b) **Goalie control:** `OptGoalie` is copied to `word_FFD05A` and `word_FFD05C` (L962424-962426), and the pause "Manual Goalie" toggle points to `$FE1D8` (pointer at ROM `$19880`). The port's `HockeyWorld.auto_goalie` is fixed at `[true, true]` (hockey_world.gd:222), which equals non-zero `FFD05A` (Auto). There is no setup option and no pause toggle.
 - (c) **"Edit Lines"** (pause menu, `$82DA`) is not ported.
 
-### G7. Four-way play (multitap) not ported (LOW, human input only)
+### G7. Four-way play (multitap): ported 2026-10-16
 
-- Not ported: `cont3team`/`cont4team`, `ReadJoy3`/`ReadJoy4` and the register swaps in `updateplayers` (L35600-35660).
-- Not ported: the `TmpJoyPuckCarrier` swaps in `assonetimer` (L959109-959140).
+- `HockeyWorld.cont_team`, `c_player`, `pads`, `b_cnt` and `a_timer` hold four pads. `swap_pad(p)` is retail's register swap: pad 3 trades places with pad 1 and pad 4 with pad 2. The swap covers the team, the player, the pad words, the B and A counter words (`word_FFBF06`/`FFBF08`, `word_FFD41E`/`FFD420`) and the stars (`word_FFBE78`/`FFBE86`, ffo 1-2 against ffo 4-5).
+- `updateplayers` (L35598-35665): pads 3 and 4 run `doinput` in the borrowed slot. `joypuckcarrier` is 0 or 1, and Start pauses as pad 3 or 4 (`real_pad`).
+- `setchgplayer` (L42370): pads 3 and 4 pick their player in the borrowed slot.
+- puckstick `_setd0player` (L50710-50737): a pad 3 or 4 player keeps the pad. With either of those pads in play, a pad's goalie does too.
+- `assonetimer` (L959109-959140): `TmpJoyPuckCarrier` hands the shooter to pad 3 or 4.
+- `checksso` (L52455): the arrows for pads 3 and 4 (frames `$346`, `$349`).
+- Pause and intermission: pads 3 and 4 open the menu and drive it (`getpzjoy`, `waitxsr`). The menu is pad 1's or pad 2's team (`sub_7E0E` reads `sflags` bit 1, which `startpause3`/`startpause4` set as pad 1 or pad 2).
+- Setup: `MatchConfig.Driver` PADS12, PADS13 and PADS24 give retail's `OptNOP` combinations (`_noplist`). Pad 3 always joins pad 1's side and pad 4 pad 2's.
 
 ### G8. Replay, demo and attract mode (LOW, no effect on play)
 
@@ -192,7 +198,7 @@ These port additions differ from retail only when changed from their defaults: `
 | G6a Auto line changes | done | setup screen "Line changes: Auto" → `MatchConfig.auto_lines` → `HockeyWorld.no_fatigue` |
 | G6b Goalie control | done | setup screen "Goalie: Manual/Auto Control" → `auto_goalie`; pause toggle `HockeyWorld.toggle_goalie_control` (the pausing pad's word, both when the pads share a team) |
 | G6c Edit Lines | done (port layout) | pause menu → `LineLogic.edit_line`: line, slot, roster player; a player already on the line trades places. Retail's screen layout was not decoded. |
-| G7 multitap | not applicable | two pads only |
+| G7 multitap | done | `HockeyWorld.swap_pad`, four pads, setup drivers PADS12 / PADS13 / PADS24, actions `p3_*` / `p4_*` |
 | G8 replay, demo | not applicable | no replay buffer or attract mode; CPU against CPU is playable from the setup screen |
 | M1 assbench stay-on path | done | `LineLogic._nobench2` (no setplayer) |
 | M2 injured slide | done | `_integrate` skips SPA `$145C` / `$1AF4` |

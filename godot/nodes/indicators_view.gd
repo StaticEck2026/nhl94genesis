@@ -5,13 +5,15 @@ extends Node2D
 ##   (392), pad 1's (390) and pad 2's (391), with the player's jersey number and position
 ##   letter in the font below each. setvideo lists the stars after every sort object, so
 ##   they draw behind all of them.
-## - the off-screen arrows (384-386 pad 1, 387-389 pad 2) at the screen edge when a pad's
-##   player is out of view, in front of every sort object. None on the penalty screen.
+## - the off-screen arrows (384-386 pad 1, 387-389 pad 2, and with the multitap 838-840
+##   pad 3, 841-843 pad 4) at the screen edge when a pad's player is out of view, in front
+##   of every sort object. None on the penalty screen.
 ## The rules are retail's (116 across, 100 up and down, on the 256 x 224 H32 screen).
 ## Spec: docs/specs/indicators_and_priority.md section A.
 
 const STAR_FRAMES := {0: 392, 1: 390, 2: 391, 4: 844, 5: 845}
-const ARROW_BASE: Array[int] = [384, 387]
+## checksso: the arrow frames by star (ffo 1, 2 pads 1 and 2; ffo 4, 5 pads 3 and 4).
+const ARROW_BASE := {1: 384, 2: 387, 4: 838, 5: 841}
 const FONT_PATH := "res://assets/sprites/font_idx.png"
 const FONT_JSON := "res://assets/sprites/font.json"
 ## unk_1677A: the position letter by position code (0 goalie blank, 1-2 D, 3 L, 4 C, 5 R).
@@ -109,17 +111,23 @@ func _glyph(c: int, at: Vector2) -> void:
 
 # --- the arrows ----------------------------------------------------------------------------------
 
-## checksso / sub_164D6 for pads 1 and 2.
+## checksso / sub_164D6 for pads 1 and 2, then pad 3 while cont3team is set and pad 4
+## while cont4team is too.
 func _draw_arrows() -> void:
 	if game == null or not SpriteAtlas.available():
 		return
 	var w := game.world
 	if w.side_view():
 		return
-	for k in 2:
-		if not _last.has(1 + k):
+	var ks := [1, 2]
+	if w.cont_team[2] != 0:
+		ks.append(4)
+		if w.cont_team[3] != 0:
+			ks.append(5)
+	for k in ks:
+		if not _last.has(k):
 			continue
-		var pos: Vector2i = _last[1 + k]
+		var pos: Vector2i = _last[k]
 		if (w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT or w.ba_ps_flags & HockeyWorld.BA_LIVE) and absi(pos.x) >= 0xA6:
 			continue
 		var dx := pos.x - w.camera.x

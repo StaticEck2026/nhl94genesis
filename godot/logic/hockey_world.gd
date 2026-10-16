@@ -181,10 +181,16 @@ var opt_pen: bool = true
 var opt_offsides: bool = true
 ## OptPerlen: period length 0-3 (5, 10, 20 minutes, 30 seconds; ClockLength).
 var opt_perlen: int = 0
-## Which team each pad controls (cont1team, cont2team: 0 none, 1 home, 2 away) and the
-## object each pad drives (c1playernum, c2playernum, -1 none).
-var cont_team: PackedInt32Array = PackedInt32Array([0, 0])
-var c_player: PackedInt32Array = PackedInt32Array([-1, -1])
+## Which team each pad controls (cont1team-cont4team: 0 none, 1 home, 2 away) and the
+## object each pad drives (c1playernum-c4playernum, -1 none). Pads 3 and 4 are the
+## multitap's (four-way play); they run pad 1's and pad 2's code with their state
+## swapped into that pad's slot (swap_pad).
+var cont_team: PackedInt32Array = PackedInt32Array([0, 0, 0, 0])
+var c_player: PackedInt32Array = PackedInt32Array([-1, -1, -1, -1])
+## joypuckcarrier: -1 while pad 1 or 2 runs doinput, 0 for pad 3, 1 for pad 4; and the
+## copy assonetimer reads (TmpJoyPuckCarrier).
+var joy_puck_carrier: int = -1
+var tmp_joy_puck_carrier: int = -1
 ## DelayedPen: bit 1 home has a delayed penalty, bit 2 away has one.
 var delayed_pen: int = 0
 ## crowdlevel and CwdExciteLvl accumulators.
@@ -229,12 +235,13 @@ var flip_apex: int = 0x12
 var ps_script_dir: int = 0
 var ps_timer: int = 0
 var ps_intro: int = 0
-## Pads 1 and 2, the per-pad B and A counters (word_FFBF06, word_FFD41E bytes), the
-## faceoff grace countdown (word_FFD412), Auto Goalie per pad (word_FFD05A/C) and the
-## faceoff pull directions (fodir1 bottom, fodir2 top).
-var pads: Array[PadState] = [PadState.new(), PadState.new()]
-var b_cnt: PackedInt32Array = PackedInt32Array([0x11, 0x11])
-var a_timer: PackedInt32Array = PackedInt32Array([0, 0])
+## Pads 1-4, the per-pad B and A counters (word_FFBF06 / word_FFD41E bytes for pads 1
+## and 2, word_FFBF08 / word_FFD420 for pads 3 and 4), the faceoff grace countdown
+## (word_FFD412), Auto Goalie per pad (word_FFD05A/C; pads 3 and 4 use pad 1's and pad
+## 2's) and the faceoff pull directions (fodir1 bottom, fodir2 top).
+var pads: Array[PadState] = [PadState.new(), PadState.new(), PadState.new(), PadState.new()]
+var b_cnt: PackedInt32Array = PackedInt32Array([0x11, 0x11, 0x11, 0x11])
+var a_timer: PackedInt32Array = PackedInt32Array([0, 0, 0, 0])
 var faceoff_grace: int = 0
 var auto_goalie: Array[bool] = [true, true]
 var fodir: PackedInt32Array = PackedInt32Array([-1, -1])
@@ -701,13 +708,57 @@ func _dispatch_pads(o: SimObject, d7: int) -> void:
 		faceoff_grace -= 1
 		if faceoff_grace <= 0:
 			faceoff_grace = 0
-			b_cnt[0] = 0x11
-			b_cnt[1] = 0x11
+			b_cnt.fill(0x11)
+	joy_puck_carrier = -1
 	for k in 2:
 		if c_player[k] == o.index:
 			pads[k].read()
 			input.doinput(o, pads[k], k, d7)
-			return
+			break
+	if o.index > 11:
+		return
+	# L35598-35665: pad 3 runs as pad 1 (d4 0, joypuckcarrier 0), pad 4 as pad 2 (d4 2,
+	# joypuckcarrier 1).
+	for p in [2, 3]:
+		if cont_team[p] != 0 and c_player[p] == o.index:
+			pads[p].read()
+			var s: int = p - 2
+			joy_puck_carrier = s
+			swap_pad(p)
+			input.doinput(o, pads[s], s, d7)
+			swap_pad(p)
+
+## Pad 3 or 4 (p) trades places with pad 1 or 2: the team, the player, the pad words,
+## the B and A counter words and the star (word_FFBE78 / word_FFBE86). Called in pairs
+## around the pad 1 / pad 2 code it borrows.
+func swap_pad(p: int) -> void:
+	var s := p - 2
+	var t := cont_team[s]
+	cont_team[s] = cont_team[p]
+	cont_team[p] = t
+	t = c_player[s]
+	c_player[s] = c_player[p]
+	c_player[p] = t
+	var ps := pads[s]
+	pads[s] = pads[p]
+	pads[p] = ps
+	# The counters are whole words: both pads' bytes trade. The stars: pad 3's and pad
+	# 4's (ffo 4, 5) stand in for pad 1's and pad 2's (ffo 1, 2).
+	for i in 2:
+		t = b_cnt[i]
+		b_cnt[i] = b_cnt[i + 2]
+		b_cnt[i + 2] = t
+		t = a_timer[i]
+		a_timer[i] = a_timer[i + 2]
+		a_timer[i + 2] = t
+		t = marks[1 + i]
+		marks[1 + i] = marks[4 + i]
+		marks[4 + i] = t
+
+## The pad (0-3) a pad-slot call stands for: pad 1 or 2 itself, or the multitap pad
+## swapped into it (joypuckcarrier).
+func real_pad(k: int) -> int:
+	return k if joy_puck_carrier < 0 else 2 + joy_puck_carrier
 
 ## The assignment call: asstab[asslist[assnum]]. Skaters without an assignment but with
 ## a stick value in `joy` (tests, sandbox) skate with it.
@@ -1060,6 +1111,14 @@ func hand_control(a2: SimObject) -> void:
 	var d0 := a2.index
 	if d0 == c_player[0] or d0 == c_player[1]:
 		return
+	# L50712-50737: pads 3 and 4 keep their players; with either in play a pad's goalie
+	# keeps the pad too.
+	if cont_team[2] != 0 and d0 == c_player[2]:
+		return
+	if cont_team[3] != 0 and d0 == c_player[3]:
+		return
+	if (cont_team[2] != 0 or cont_team[3] != 0) and a2.position == SimObject.POS_GOALIE and a2.joypad():
+		return
 	var team := 1 if d0 < 6 else 2
 	if lastplayer != c_player[1] and cont_team[0] == team:
 		set_c_player(0, a2)
@@ -1120,8 +1179,9 @@ func side_view() -> bool:
 # --- the pause menu -------------------------------------------------------------------
 
 ## sub_7E0E: the team of the pad that paused (home when that pad plays home, else away).
+## Pads 3 and 4 pause as pad 1 and pad 2 (startpause3/4 leave sflags bit 1 as pad 1 / 2).
 func pause_team(k: int) -> int:
-	return 0 if cont_team[clampi(k, 0, 1)] == 1 else 1
+	return 0 if cont_team[k & 1] == 1 else 1
 
 ## Timeout ($9D7A, L34283): once a game per team; every slot of both teams is rested
 ## (sub_13098 refills all 26). False when the team has used it.
@@ -1141,7 +1201,7 @@ func toggle_goalie_control(k: int) -> void:
 		auto_goalie[0] = not auto_goalie[0]
 		auto_goalie[1] = not auto_goalie[1]
 	else:
-		auto_goalie[k] = not auto_goalie[k]
+		auto_goalie[k & 1] = not auto_goalie[k & 1]
 
 ## AddPenalty / AddPenalty2 / PenShotChk / sub_1284A (GameRules).
 func add_penalty(id: int, offender: SimObject) -> void:

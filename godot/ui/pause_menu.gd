@@ -41,7 +41,7 @@ var _pad := 0
 var _sub := ""
 var _sub_cursor := 0
 var _sub_frames := 0
-var _repeat := [0, 0]
+var _repeat := [0, 0, 0, 0]
 ## The intermission ticker (NewTicker2 / NewTicker3pt2): the other game shown and the
 ## frames left of its 150-frame showing and the 60 blank ones after it.
 var _ticker := -1
@@ -79,13 +79,21 @@ func _unhandled_input(event: InputEvent) -> void:
 	var game := _game()
 	if game == null or _mode != "" or game.hold:
 		return
-	for k in 2:
+	for k in _live_pads(game):
 		if event.is_action_pressed("p%d_start" % (k + 1)):
 			get_viewport().set_input_as_handled()
 			open_pause(k)
 			return
 
-## PauseMode: the pausing pad's team picks the table.
+## Pads 1 and 2, and the multitap's pads 3 and 4 when they play (waitxsr, getpzjoy).
+func _live_pads(game: HockeyGame) -> Array:
+	var out := [0, 1]
+	for k in [2, 3]:
+		if game.world.cont_team[k] != 0:
+			out.append(k)
+	return out
+
+## PauseMode: the pausing pad's team picks the table (pads 3 and 4 as pads 1 and 2).
 func open_pause(pad: int) -> void:
 	var game := _game()
 	if game == null:
@@ -181,7 +189,7 @@ func _process(_delta: float) -> void:
 			_sub = ""
 			_draw()
 		return
-	var pads := [_pad] if _mode == "pause" else [0, 1]
+	var pads := [_pad] if _mode == "pause" else _live_pads(_game())
 	for k in pads:
 		var p := "p%d_" % (k + 1)
 		var step := _repeat_step(k, p)
@@ -327,7 +335,7 @@ func _draw_menu() -> void:
 		var it: Dictionary = _items[row]
 		var text: String = it["raw"]
 		if it["id"] == "goalie_control_toggle":
-			var auto: bool = game.world.auto_goalie[_pad]
+			var auto: bool = game.world.auto_goalie[_pad & 1]
 			var g: Dictionary = _menus.get("goalie_toggle", {})
 			text = g.get("auto" if auto else "manual", {}).get("text", "Auto Goalie" if auto else "Manual Goalie")
 		_plane.print_at(ROWS_X, ROWS_Y + i, text, 0 if row == _cursor else 1)

@@ -582,7 +582,14 @@ func assonetimer(a3: SimObject, d7: int) -> void:
 			w.passplayer = -1
 			w.onetimerplayer = a3.index
 			if not a3.joypad() and w.inputjoy >= 0:
-				w.set_c_player(0 if w.inputjoy == 0 else 1, a3)
+				# Pad 3's or pad 4's pass (TmpJoyPuckCarrier) hands that pad the shooter.
+				var k := 0 if w.inputjoy == 0 else 1
+				var multitap := w.tmp_joy_puck_carrier == k
+				if multitap:
+					w.swap_pad(k + 2)
+				w.set_c_player(k, a3)
+				if multitap:
+					w.swap_pad(k + 2)
 			var anim := onetimer_anim(a3)
 			a3.spa_num = 0
 			a3.set_spa(anim)

@@ -47,7 +47,7 @@ func doinput(a3: SimObject, pad: PadState, k: int, d7: int) -> void:
 	var raw_dir := d0 & 0xF
 	# 4. Start pauses.
 	if d1 & PadState.START:
-		w.pause_requested.emit(k)
+		w.pause_requested.emit(w.real_pad(k))
 		return
 	# 5. Horizontal mode rotates the stick (raw_dir keeps the unrotated value).
 	if w.sflags & HockeyWorld.SF_HOR and d0 & 8 == 0:
@@ -105,6 +105,7 @@ func _passer_onetimer(a3: SimObject, d1: int, k: int) -> bool:
 	if r.joypad() or r.flags3 & SimObject.PF3_ONETIMER:
 		return false
 	w.inputjoy = k
+	w.tmp_joy_puck_carrier = w.joy_puck_carrier
 	w.assreplace(r, Shooting.ASS_ONETIMER)
 	return true
 
@@ -189,6 +190,7 @@ func _skater_no_puck(a3: SimObject, d1: int, raw_dir: int, k: int, d7: int) -> v
 		w.shooting.burst(a3)
 		return
 	w.inputjoy = k
+	w.tmp_joy_puck_carrier = w.joy_puck_carrier
 	w.assreplace(a3, Shooting.ASS_ONETIMER)
 
 ## Step 18: the puck carrier.

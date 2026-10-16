@@ -2,7 +2,11 @@ class_name MatchConfig
 extends Resource
 ## What the setup screen chose. The game scene reads it from Sim.match.
 
-enum Driver { CPU, PAD1, PAD2 }
+## Who plays a side: the CPU, one pad, or two pads together. Retail's player counts
+## (OptNOP, _noplist) are the combinations: two pads on one team, head to head, and with
+## the multitap pads 1 and 3 against pad 2 (or pads 2 and 4). Pad 3 always joins pad 1's
+## side and pad 4 pad 2's.
+enum Driver { CPU, PAD1, PAD2, PADS12, PADS13, PADS24 }
 ## Retail NHL '94, or "NHL Hockey '94-Fight": Chaos81's fight patch (nhl94-patches, MIT)
 ## with its rosters, the Fighting option, its title screen and credits.
 enum Edition { RETAIL, FIGHT }
@@ -34,6 +38,20 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 ## Starting line index for each team (into TeamData.lines).
 @export var home_line: int = 0
 @export var away_line: int = 0
+
+## Each pad's team (cont1team-cont4team: 0 none, 1 home, 2 away) from the two drivers.
+func pad_teams() -> PackedInt32Array:
+	var out := PackedInt32Array([0, 0, 0, 0])
+	for side in [[home_control, 1], [away_control, 2]]:
+		for k in DRIVER_PADS[side[0]]:
+			out[k] = side[1]
+	return out
+
+const DRIVER_PADS := {Driver.CPU: [], Driver.PAD1: [0], Driver.PAD2: [1], Driver.PADS12: [0, 1],
+	Driver.PADS13: [0, 2], Driver.PADS24: [1, 3]}
+const DRIVER_NAMES := {Driver.CPU: "CPU", Driver.PAD1: "Pad 1", Driver.PAD2: "Pad 2",
+	Driver.PADS12: "Pads 1 + 2", Driver.PADS13: "Pads 1 + 3 (multitap)",
+	Driver.PADS24: "Pads 2 + 4 (multitap)"}
 
 ## OptFight for the world: the patch's option, and nothing in retail.
 func opt_fight() -> int:

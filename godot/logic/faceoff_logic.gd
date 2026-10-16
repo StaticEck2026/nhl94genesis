@@ -342,6 +342,16 @@ func setchgplayer() -> void:
 			continue
 		var first := 0 if w.cont_team[k] == 1 else 6
 		w.input.changeplayer(w.objects[first], k)
+	# Pads 3 and 4 pick in pad 1's and pad 2's slot (the others' players are taken).
+	for p in [2, 3]:
+		if w.cont_team[p] == 0:
+			continue
+		w.swap_pad(p)
+		var k: int = p - 2
+		w.c_player[k] = -1
+		var first := 0 if w.cont_team[k] == 1 else 6
+		w.input.changeplayer(w.objects[first], k)
+		w.swap_pad(p)
 
 ## updatefaceoff (L42414): the referee's hand in the close-up window.
 func updatefaceoff(p: SimObject) -> void:
