@@ -1,3 +1,4 @@
+class_name PauseMenu
 extends CanvasLayer
 ## Retail's menu engine (sub_7E36 / sub_7E46 / sub_7EF2 / sub_7E88, spec
 ## docs/specs/ui_menus.md §2) for the pause screen (PauseMode L30217) and every
@@ -342,8 +343,17 @@ func _draw_menu() -> void:
 	if _top + VISIBLE < _items.size():
 		_plane.print_at(BOX.position.x + 1, ROWS_Y + VISIBLE - 1, "}", 1)
 
+## The ticker's games: TickerNum counts down the round's series, skipping the user's,
+## the flagged ("highlight coming up") and the finished ones (NewTicker2).
+func _ticker_games() -> Array:
+	var out := []
+	for g in _game().world.rules.other_games:
+		if g["flags"] & (League.F_HILITE | League.F_OVER) == 0:
+			out.append(g)
+	return out
+
 func _step_ticker() -> void:
-	var games: Array = _game().world.rules.other_games
+	var games: Array = _ticker_games()
 	if _ticker < 0 or games.is_empty():
 		return
 	_ticker_frames -= 1
@@ -356,21 +366,28 @@ func _step_ticker() -> void:
 ## sub_134E4 / NewTicker3pt2 (ui_ingame.md §8.1): Framer 26 x 5 at (3,23), the heading and
 ## the period on row 24 in line 1, the two cities and scores on rows 25 and 26.
 func _draw_ticker() -> void:
-	var games: Array = _game().world.rules.other_games
+	var games: Array = _ticker_games()
 	if _mode != "intermission" or _ticker < 0 or games.is_empty() or _ticker_frames <= TICKER_GAP:
 		return
+	var rules := _game().world.rules
 	var g: Dictionary = games[_ticker % games.size()]
 	_plane.frame(3, 23, 26, 5)
 	_plane.print_at(4, 24, " ".repeat(24), 1)
-	_plane.print_at(4, 24, "EA Hockey Night", 1)
-	var labels := ["1\u0012", "2\u0013", "3\u0014", "OT", " F"]
-	var per: int = g["per"]
-	var lab: String = labels[4] if per >= 3 else labels[maxi(per, 1) - 1]
+	# unk_13488: "EA Hockey Night", or the playoff round.
+	var heads := ["EA Hockey Night", "Stanley Cup Qualifier", "Quarterfinal", "Stanley Cup Semifinal"]
+	_plane.print_at(4, 24, heads[clampi(1 + rules.gamelevel, 0, 3) if rules.opt_play_mode else 0], 1)
+	var lab := period_label(g["gsper"])
 	_plane.print_at(4 + 0x17 - lab.length() / 2, 24, lab, 1)
+	# The visitor (team2) first.
 	for k in 2:
-		var t: TeamData = g["teams"][k]
-		_plane.print_at(4, 25 + k, t.city)
-		_plane.print_at(25, 25 + k, "%2d" % g["score"][k])
+		var t := rules.league.team(g["team2" if k == 0 else "team1"])
+		_plane.print_at(4, 25 + k, t.city if t else "")
+		_plane.print_at(25, 25 + k, "%2d" % g["score2" if k == 0 else "score1"])
+
+## unk_191E4: "1ST" "2ND" "3RD" "OT" " F" by gsper.
+static func period_label(gsper: int) -> String:
+	var labels := ["1\u0012", "2\u0013", "3\u0014", "OT", " F"]
+	return labels[clampi(gsper, 1, 5) - 1]
 
 ## $9DE6: Framer 24 x (3 + goalies) at (4,12); row 0 "no goalie", then each goalie.
 func _draw_change_goalie() -> void:

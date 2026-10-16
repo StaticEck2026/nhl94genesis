@@ -711,56 +711,30 @@ func calc_pen_time(a2: TeamStats, a3: TeamStats) -> int:
 
 # --- the other games of the night (InitScores / UpdateScores / getscore, L47726-47843) ----
 
-## sctab (L47843): weights for 0, 1, 2, 3 goals in a period, by a rating nibble.
-const SCTAB := [[43, 30, 23, 4], [39, 32, 24, 5], [35, 33, 26, 6], [30, 34, 30, 6],
-	[26, 36, 30, 8], [22, 37, 31, 10], [19, 38, 31, 12], [15, 38, 32, 15]]
+## The rest of the league: the other games (gsstruct) and, in the playoffs, the tree
+## (League). The game scene lends the menus' League; tests and the sandbox get their own.
+var league := League.new()
 
-## The other games: {"teams": [TeamData, TeamData], "score": [a, b], "per": periods played}.
-## The slate (8 games among the other teams) stands in for retail's gsstruct, whose
-## regular-season pairing is UNRESOLVED (ui_menus.md U1).
-var other_games: Array = []
-var other_rng := RandomNumberGenerator.new()
-
+## The regular-season slate (sub_18002, run by FigureJoy at the menu's exit) for these
+## teams, on the game's RNG.
 func init_other_games(teams: Array) -> void:
-	other_rng.seed = w.hv_rng.seed ^ 0x3A3A
-	other_games.clear()
-	var pool := []
-	for t in teams:
-		if t != null and t != w.stats[0].data and t != w.stats[1].data:
-			pool.append(t)
-	for i in range(pool.size() - 1, 0, -1):
-		var j := other_rng.randi_range(0, i)
-		var tmp = pool[i]
-		pool[i] = pool[j]
-		pool[j] = tmp
-	for g in mini(8, pool.size() / 2):
-		other_games.append({"teams": [pool[2 * g], pool[2 * g + 1]], "score": [0, 0], "per": 0})
+	league.set_teams(teams)
+	league.slate(w.rng, maxi(w.stats[0].team_index, 0), maxi(w.stats[1].team_index, 0))
 
-## UpdateScores: a period of every other game for each period here.
-func update_other_games() -> void:
-	for g in other_games:
-		if g["per"] >= 3:
-			continue
-		g["per"] += 1
-		g["score"][0] += getscore(g["teams"][0], g["teams"][1])
-		g["score"][1] += getscore(g["teams"][1], g["teams"][0])
+## The games the ticker and Other Scores show.
+var other_games: Array:
+	get:
+		return league.shown_games()
 
-## getscore (L47815): goals in a period from the offense nibble of a and the defense
-## nibble of b, drawn by the weights (sub_10EB4).
-func getscore(a: TeamData, b: TeamData) -> int:
-	var wt := []
-	var ra: Array = SCTAB[clampi(a.sim_offense, 0, 7)]
-	var rb: Array = SCTAB[clampi(b.sim_defense, 0, 7)]
-	var total := 0
-	for k in 4:
-		wt.append(ra[k] + rb[k])
-		total += ra[k] + rb[k]
-	var r := other_rng.randi_range(0, total - 1)
-	for k in range(3, -1, -1):
-		r -= wt[k]
-		if r < 0:
-			return k
-	return 0
+## sub_1351C (Intermission step 6): every flagged close game is settled. The port plays
+## no live highlight: as when one is skipped (sub_1381E), a tie goes to a side by the
+## VDP counter's bit 0.
+func intermission_highlights() -> void:
+	for i in range(league.shifter().x, -1, -1):
+		var g: Dictionary = league.gs[i]
+		if g["flags"] & League.F_OVER == 0 and g["flags"] & League.F_HILITE:
+			g["flags"] &= ~League.F_HILITE
+			League.settle(g, w.vcount)
 
 ## sub_FF88E: the end-of-game wipe of every penalty.
 func wipe_penalties() -> void:
@@ -822,7 +796,7 @@ func end_of_period() -> void:
 	w.assinsert(p, PuckLogic.ASS_PUCKNORM)
 	var a3: SimObject = p
 	if w.gsp >= 2:
-		var d0 := HockeyAI.ASS_SCORE
+		var d0 := cup_assignment()
 		a3 = w.objects[0]
 		var d1 := w.stats[0].goals - w.stats[1].goals
 		if d1 != 0:
@@ -838,6 +812,23 @@ func end_of_period() -> void:
 		_eog(a3)
 		return
 	add_penalty2(PEN_EOP, a3)
+
+## clockcont L30092-30121: the game that wins the Stanley Cup (the single-game final, or
+## the fourth win of the final series) gives its first skater the cup (assstanley) and
+## takes the pads away; any other win is assscore.
+func cup_assignment() -> int:
+	if gamelevel != 3 or opt_play_mode == 0:
+		return HockeyAI.ASS_SCORE
+	if league.bosgames != League.SINGLE:
+		var g: Dictionary = league.gs[maxi(league.gamenum, 0)]
+		var d3 := 1 if g["flags"] & League.F_FLIPPED else 0
+		if w.stats[0].goals < w.stats[1].goals:
+			d3 ^= 1
+		if g["wins"][d3] != 3:
+			return HockeyAI.ASS_SCORE
+	for i in 12:
+		w.objects[i].flags &= ~SimObject.PF_JOYCON
+	return HockeyAI.ASS_STANLEY
 
 func _eog(a3: SimObject) -> void:
 	clr_pen_buf()
@@ -879,6 +870,11 @@ func start_game() -> void:
 		st.on_ice = 6
 		for j in TeamStats.ROSTER:
 			st.tmpdst[j] = TeamStats.TMPDST_BENCH
+	# InitScores (L29773), and the first game of a new playoff clears the Playoff Stats
+	# (sub_77E4).
+	league.init_scores(w.rng)
+	if opt_play_mode > 1:
+		league.po_stats.fill(0)
 	w.setupice()
 	_period_break()
 
@@ -905,6 +901,13 @@ func _period_break() -> void:
 	# joins here).
 	w.sound_off.emit()
 	w.song.emit(SONG_INTERMISSION)
+	# UpdateScores, then AddPOStats after the last period.
+	league.update_scores(w.rng)
+	if w.gsp == 4 and opt_play_mode >= 1:
+		for st in w.stats:
+			if st.team_index == league.user_team():
+				league.add_po_stats(st)
+				break
 	intermission_bookkeeping()
 	intermission.emit(w.gsp)
 	if w.gsp == 4:
@@ -916,8 +919,6 @@ func _period_break() -> void:
 ## Intermission (L47613) without the menu: the bench reset and fresh legs; the other
 ## games move on a period (UpdateScores at PeriodOver).
 func intermission_bookkeeping() -> void:
-	if w.gsp >= 1:
-		update_other_games()
 	w.lines.reset_bench()
 	for team in 2:
 		var st := w.stats[team]

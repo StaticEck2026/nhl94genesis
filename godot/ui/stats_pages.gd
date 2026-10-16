@@ -610,17 +610,17 @@ func _period_stats() -> void:
 func _other_scores() -> void:
 	_setup(6, 26, 6)
 	_run(_page("other_scores").get("static", []))
-	var labels := ["1\u0012", "2\u0013", "3\u0014", "OT", " F"]
-	var games: Array = _game.world.rules.other_games
+	var rules := _game.world.rules
+	var games: Array = rules.other_games
 	for i in games.size():
 		var g: Dictionary = games[i]
 		var row := 3 * i
+		# The visitor (team2) first.
 		for k in 2:
-			var t: TeamData = g["teams"][1 - k]
-			_t(_b, 6, row + k, t.city)
-			_t(_b, 24, row + k, "%2d" % g["score"][1 - k])
-		var per: int = g["per"]
-		_t(_b, 28, row + 1, labels[4] if per >= 3 else labels[maxi(per, 1) - 1])
+			var t := rules.league.team(g["team2" if k == 0 else "team1"])
+			_t(_b, 6, row + k, t.city if t else "")
+			_t(_b, 24, row + k, "%2d" % g["score2" if k == 0 else "score1"])
+		_t(_b, 28, row + 1, PauseMenu.period_label(g["gsper"]))
 	_max = maxi(3 * games.size() - 0x15, 0) * 8
 	_step = 24
 	if _scroll > 0:

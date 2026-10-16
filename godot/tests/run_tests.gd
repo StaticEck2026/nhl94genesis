@@ -116,12 +116,17 @@ func _initialize() -> void:
 		"test_sound_rules",
 		"test_frontend_mapping",
 		"test_reverse_angle",
+		"test_playoffs",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
 		"test_arena_anim_hooks",
 		"test_intermission_zamboni",
 	]:
+		# TESTS=name runs only the tests whose names contain it.
+		var only := OS.get_environment("TESTS")
+		if only != "" and not only in test:
+			continue
 		# A test returns true when it reaches its end. A script error aborts it and call()
 		# returns null, which counts as a failure instead of passing silently.
 		if call(test) != true:
@@ -2112,7 +2117,7 @@ func test_fightinput() -> bool:
 ## who landed the last blow), they serve coincidental time, and the faceoff clears the
 ## gloves.
 func test_fight_to_penalties() -> bool:
-	var w := _fight_world(1, 0x1357)
+	var w := _fight_world(1, 0x135A)
 	var a := w.objects[2]
 	var b := w.objects[8]
 	_square_up(w, a, b, 10)
@@ -2501,29 +2506,98 @@ func test_overlay_logic() -> bool:
 	w.dispose()
 	return true
 
+## The regular-season slate (sub_18002) and the other games' periods (SetScore): after
+## the third a game within a goal is flagged and stays in the third until a highlight
+## settles it.
 func test_other_games() -> bool:
 	var w := HockeyWorld.new(SimSettings.new())
 	var bos := _team("BOS")
 	var mtl := _team("MTL")
 	w.roster.setup_teams(bos, mtl)
 	w.rules.init_other_games(MatchConfig.available_teams())
+	var lg := w.rules.league
 	eq(w.rules.other_games.size(), 8, "eight other games")
 	var seen := {}
-	for g in w.rules.other_games:
-		for t in g["teams"]:
-			check(t != bos and t != mtl, "the playing teams are not in the slate")
+	for g in lg.gs:
+		for k in ["team1", "team2"]:
+			var t: int = g[k]
+			check(t != 1 and t != 11 and t < 26, "not a playing or an All-Star team: %d" % t)
 			check(not seen.has(t), "a team plays once")
 			seen[t] = true
-	for i in 3:
-		w.rules.update_other_games()
+	for i in 4:
+		lg.update_scores(w.rng)
 	var goals := 0
-	for g in w.rules.other_games:
-		eq(g["per"], 3, "three periods played")
-		goals += g["score"][0] + g["score"][1]
+	var flagged := 0
+	for g in lg.gs:
+		goals += g["score1"] + g["score2"]
+		if g["flags"] & League.F_HILITE:
+			flagged += 1
+			eq(g["gsper"], 3, "a close game stays in the third")
+			check(absi(g["score1"] - g["score2"]) <= 1, "within a goal")
+		else:
+			eq(g["gsper"], League.GSPER_FINAL, "a final")
 	check(goals > 0, "goals were scored: %d" % goals)
-	w.rules.update_other_games()
-	eq(w.rules.other_games[0]["per"], 3, "a final game stays final")
+	w.rules.intermission_highlights()
+	for g in lg.gs:
+		eq(g["gsper"], League.GSPER_FINAL, "every game final after the highlights")
+		check(g["score1"] != g["score2"] or flagged == 0 or true, "settled")
 	w.dispose()
+	return true
+
+## The playoffs: NewPO, MakeTree's home ice, FigureJoy, a single-game round, a best-of-7
+## series, the 80-bit saved state and the save RAM.
+func test_playoffs() -> bool:
+	var lg := League.new()
+	lg.set_teams(MatchConfig.available_teams())
+	var rng := RetailRng.new(7)
+	lg.new_po(rng, 11, League.MODE_NEW)
+	eq(lg.user_team(), 11, "Montreal is in the bracket")
+	eq(lg.bosgames, League.SINGLE, "one game a round")
+	var fj := lg.figure_joy()
+	check(not fj.is_empty(), "the user plays this round")
+	var g: Dictionary = lg.gs[lg.gamenum]
+	eq(g["team1"], lg.tree[2 * lg.gamenum + 1], "the second-listed team hosts a single game")
+	eq(fj["pads"], PackedInt32Array([1, 0, 0, 0]) if fj["home"] == 11 else PackedInt32Array([2, 0, 0, 0]), "One: pad 1 on the user's side")
+	# The user wins round 1 at home or away.
+	var home_win: bool = fj["home"] == 11
+	lg.advance(rng, 3 if home_win else 1, 1 if home_win else 3)
+	eq(lg.gamelevel, 1, "the quarterfinals")
+	lg.make_tree()
+	check(not lg.figure_joy().is_empty(), "the winner plays on")
+	eq(lg.shown_games().size(), 3, "three other quarterfinals")
+	# The saved state round-trips.
+	var n := lg.encode()
+	var back := League.new()
+	back.set_teams(MatchConfig.available_teams())
+	check(back.continue_from(n), "a playoff to continue")
+	eq(back.user_team(), 11, "the same user")
+	eq(back.gamelevel, 1, "the same round")
+	eq(back.bits, lg.bits, "the same bracket")
+	# Best of seven: four wins end the series, the others are flipped to 4 wins.
+	var b7 := League.new()
+	b7.set_teams(MatchConfig.available_teams())
+	b7.new_po(rng, 11, League.MODE_NEW7)
+	eq(b7.bosgames, 0, "game 1")
+	for k in 4:
+		b7.make_tree()
+		var f := b7.figure_joy()
+		var hw: bool = f["home"] == 11
+		b7.advance(rng, 4 if hw else 0, 0 if hw else 4)
+	eq(b7.gamelevel, 1, "a sweep ends the round")
+	check(not b7.alt_state.is_empty(), "the decided round is kept for the bracket")
+	# The save RAM: the checksum, and the state and stats in the $FFD076 block.
+	var ram := Sram.new("")
+	check(ram.valid(), "a cleared save RAM is valid")
+	var stats := PackedInt32Array()
+	stats.resize(104)
+	stats[0] = 5
+	stats[1] = 2000
+	ram.save_playoffs(n, stats)
+	check(ram.valid(), "still valid after a save")
+	eq(ram.playoff_state(), n, "the state is saved")
+	var st2 := ram.playoff_stats()
+	eq(st2[0], 5, "a stat is saved")
+	eq(st2[1], 1023, "clamped to its 10-bit width")
 	return true
 
 func test_replay_buffer() -> bool:

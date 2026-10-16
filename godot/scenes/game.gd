@@ -72,6 +72,7 @@ func _human() -> bool:
 ## this point of the game; the sim holds until row 0 or Start (or a while, with no human
 ## playing).
 func _on_intermission(gsp: int) -> void:
+	world.rules.intermission_highlights()
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
 	world.begin_intermission()
