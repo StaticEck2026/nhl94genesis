@@ -35,6 +35,7 @@ var _prompt_img: Sprite2D
 func _ready() -> void:
 	layer = 11
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	offset = ScreenMode.H32_OFFSET
 	_panel = _sprite("replay_panel", Vector2(32 + 2 * 8, 2 * 8))
 	_prompt_img = _sprite("replay_prompt", Vector2(32 + 2 * 8, 0))
 	visible = false

@@ -7,9 +7,8 @@ extends Node2D
 ##   they draw behind all of them.
 ## - the off-screen arrows (384-386 pad 1, 387-389 pad 2) at the screen edge when a pad's
 ##   player is out of view, in front of every sort object. None on the penalty screen.
-## Retail's screen is 256 wide; the port's view is 320, so the side arrows sit 12 px in
-## from its edges (half width - 12 = 148) where retail uses 116. The vertical rule (100)
-## is retail's. Spec: docs/specs/indicators_and_priority.md section A.
+## The rules are retail's (116 across, 100 up and down, on the 256 x 224 H32 screen).
+## Spec: docs/specs/indicators_and_priority.md section A.
 
 const STAR_FRAMES := {0: 392, 1: 390, 2: 391, 4: 844, 5: 845}
 const ARROW_BASE: Array[int] = [384, 387]
@@ -17,7 +16,7 @@ const FONT_PATH := "res://assets/sprites/font_idx.png"
 const FONT_JSON := "res://assets/sprites/font.json"
 ## unk_1677A: the position letter by position code (0 goalie blank, 1-2 D, 3 L, 4 C, 5 R).
 const LETTERS := " DDLCRX"
-const ARROW_X := 148
+const ARROW_X := 116
 const ARROW_Y := 100
 ## jdtab by the edge bits (8 right, 4 left, 1 up, 2 down): the arrow direction.
 const JDTAB := {1: 0, 9: 1, 8: 2, 10: 3, 2: 4, 6: 5, 4: 6, 5: 7}

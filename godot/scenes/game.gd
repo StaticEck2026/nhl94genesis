@@ -28,6 +28,8 @@ func _enter_tree() -> void:
 	world.roster.setup_teams(m.home_team, m.away_team)
 
 func _ready() -> void:
+	# In play the Genesis is in H32 (256 x 224).
+	ScreenMode.set_h32(get_tree(), true)
 	var m: MatchConfig = Sim.match
 	for i in 12:
 		var sk: Skater2D = SKATER_SCENE.instantiate()
@@ -107,6 +109,10 @@ func _release() -> void:
 		return
 	world.end_intermission()
 	hold = false
+
+func _exit_tree() -> void:
+	ScreenMode.restore(get_tree())
+	super._exit_tree()
 
 func _quit() -> void:
 	if _quitting or not is_inside_tree():

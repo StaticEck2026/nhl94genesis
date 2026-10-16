@@ -51,6 +51,7 @@ const TICKER_GAP := 60
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	offset = ScreenMode.H32_OFFSET
 	if FileAccess.file_exists(MENUS):
 		_menus = JSON.parse_string(FileAccess.get_file_as_string(MENUS))
 	_plane = WindowPlane.new()

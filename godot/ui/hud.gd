@@ -39,6 +39,7 @@ var _menu_linger := 0
 
 func bind(p_game: HockeyGame) -> void:
 	game = p_game
+	offset = ScreenMode.H32_OFFSET
 	_a = WindowPlane.new()
 	_a.name = "PlaneA"
 	_a.material = game.palette_material(false)

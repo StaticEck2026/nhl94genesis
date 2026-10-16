@@ -92,6 +92,8 @@ func is_open() -> bool:
 	return _id != ""
 
 func hide_page() -> void:
+	if _id != "":
+		ScreenMode.set_h32(get_tree(), true)
 	_id = ""
 	visible = false
 
@@ -165,11 +167,15 @@ func open_page(id: String, game: HockeyGame, team: int, pad: int) -> void:
 		closed.emit()
 		return
 	visible = true
+	# sub_9BD8: the stats pages are H40.
+	ScreenMode.set_h32(get_tree(), false)
 	if id == "team_roster":
 		_sel = _game.world.stats[team].line + 1
 	_build()
 
 func _close() -> void:
+	# $9CD8: back to H32.
+	ScreenMode.set_h32(get_tree(), true)
 	_id = ""
 	visible = false
 	closed.emit()
