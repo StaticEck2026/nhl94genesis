@@ -58,7 +58,14 @@ func _ready() -> void:
 		# GameSetUp with OptPlayMode 4: the shootout flag and sub_FC47C.
 		world.f_c2fa |= HockeyWorld.C2FA_SHOOTOUT
 		world.shootout.init_shootout()
-	world.rules.init_other_games(MatchConfig.available_teams(m.edition))
+	if m.play_mode >= League.MODE_CONTINUE and m.play_mode <= League.MODE_NEW7:
+		# A playoff game: the menus' League holds this round's series (MakeTree).
+		world.rules.league = Sim.league
+		world.rules.league.set_teams(MatchConfig.available_teams(m.edition))
+		world.rules.opt_play_mode = m.play_mode
+		world.rules.gamelevel = Sim.league.gamelevel
+	else:
+		world.rules.init_other_games(MatchConfig.available_teams(m.edition))
 	if m.form.size() == 2:
 		world.roster.preset_form = m.form
 	world.rules.start_game()
@@ -124,8 +131,21 @@ func _exit_tree() -> void:
 	ScreenMode.restore(get_tree())
 	super._exit_tree()
 
+const PLAYOFF_SCENE := "res://ui/playoff_screen.tscn"
+
 func _quit() -> void:
 	if _quitting or not is_inside_tree():
 		return
 	_quitting = true
+	var m: MatchConfig = Sim.match
+	if _over and world.rules.opt_play_mode >= League.MODE_CONTINUE:
+		# GameOver (L53851): sub_180FC moves the playoff on and saves it, then Playoff
+		# Stats (sub_9428) and the bracket (PlayoffScreen).
+		Sim.options[0] = Sim.league.after_game(world.rng, m.players, m.play_mode,
+			world.stats[0].goals, world.stats[1].goals, Sim.sram)
+		var pages: StatsPages = ($PauseMenu as Node).get("_pages")
+		Sim.bracket_next_matchups = false
+		pages.closed.connect(func() -> void: get_tree().change_scene_to_file(PLAYOFF_SCENE), CONNECT_ONE_SHOT)
+		pages.open_page("playoff_stats", self, PauseMenu.user_side(self), 0)
+		return
 	get_tree().change_scene_to_file(SETUP_SCENE)

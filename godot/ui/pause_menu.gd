@@ -22,7 +22,7 @@ const ROWS_X := 7
 const ROWS_Y := 13
 const VISIBLE := 4
 ## Handler ids the port leaves out.
-const DROPPED := ["playoff_stats"]
+const DROPPED := []
 ## How long the Timeout box stays up (waitx $78).
 const TIMEOUT_FRAMES := 0x78
 
@@ -118,12 +118,14 @@ func open_intermission(gsp: int, final: bool = false) -> void:
 	var w := game.world
 	var tables: Array = _menus.get("intermission_index", {}).get("tables", [])
 	var table := "intermission_final"
+	# unk_131CC[gsp + (OptPlayMode ? 5 : 0)]: the playoff tables from index 5.
+	var po := 5 if w.rules.opt_play_mode != 0 else 0
 	if final:
-		table = "intermission_final"
+		table = tables[9] if po and tables.size() > 9 else "intermission_final"
 	elif w.f_c2fa & HockeyWorld.C2FA_SHOOTOUT:
 		table = "intermission_shootout"
-	elif gsp < tables.size():
-		table = tables[gsp]
+	elif gsp + po < tables.size():
+		table = tables[gsp + po]
 	_pad = 0 if w.cont_team[0] != 0 or w.cont_team[1] == 0 else 1
 	_open("intermission", table)
 
@@ -171,6 +173,11 @@ func _redraw_game() -> void:
 	var game := _game()
 	if game:
 		game.stepped.emit()
+
+## sub_9428: Playoff Stats is the user's team's (tree[potreeteam]).
+static func user_side(game: HockeyGame) -> int:
+	var lg := game.world.rules.league
+	return 1 if game.world.stats[1].team_index == lg.user_team() else 0
 
 ## The team whose menu this is (sub_7E0E).
 func team() -> int:
@@ -282,7 +289,7 @@ func _choose() -> void:
 			return
 		_:
 			_plane.clear()
-			_pages.open_page(id, game, team(), _pad)
+			_pages.open_page(id, game, user_side(game) if id == "playoff_stats" else team(), _pad)
 			return
 	_draw()
 

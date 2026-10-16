@@ -13,12 +13,17 @@ extends Node2D
 ## Art and tables: tools/extract/ui_frontend.py (assets/ui/frontend).
 ## Port-only: B opens a box with the edition (retail '94 or the fight patch) and the
 ## patch's Fighting option. Retail does nothing with B.
-## Playoffs (Play Mode 1-3) are not offered yet.
+## Playoffs (spec docs/specs/playoffs_records.md §2): New Playoffs draws a bracket for
+## Team 1 (NewPO) on entering the menu and on every Play Mode or Team 1 change; Team 2
+## is then the first opponent. Continue Playoffs (only with a saved playoff) decodes the
+## save RAM and skips the team rows. The Players row offers Two - Head to Head,
+## Two - Teammates and One.
 
 const DIR := "res://assets/ui/frontend/"
 const MENUS := "res://assets/ui/menus/"
 const GAME_SCENE := "res://scenes/game.tscn"
 const MATCHUPS_SCENE := "res://ui/matchups.tscn"
+const PLAYOFF_SCENE := "res://ui/playoff_screen.tscn"
 
 ## The rows (d7 / 2).
 enum { PLAY_MODE, PLAYERS, TEAM1, TEAM2, PER_LENGTH, GOALIES, USER_RECORDS, PENALTIES, LINES }
@@ -26,6 +31,9 @@ const ROWS := 9
 const VISIBLE := 6
 const TOP_MAX := 3
 const MODE_REGULAR := 0
+const MODE_CONTINUE := 1
+const MODE_NEW := 2
+const MODE_NEW7 := 3
 const MODE_SHOOTOUT := 4
 const NOP_DEMO := 0
 const NOP_TEAMMATES := 3
@@ -112,6 +120,12 @@ func _ready() -> void:
 		Sim.demo_played = false
 		Sim.options[TEAM1] = randi() % 28
 		Sim.options[TEAM2] = randi() % 28
+	# L960210-960221: a new bracket on every visit, or the saved one decoded.
+	Sim.league.set_teams(MatchConfig.available_teams(Sim.match.edition))
+	if _new_playoffs():
+		_new_po()
+	elif _opt(PLAY_MODE) == MODE_CONTINUE and not _continue():
+		Sim.options[PLAY_MODE] = MODE_REGULAR
 	_clamp_all()
 	_redraw()
 	if Sim.menu_sfx and not Sim.menu_sfx.get("_music").playing:
@@ -135,11 +149,59 @@ func _shootout() -> bool:
 func _demo_players() -> bool:
 	return _opt(PLAYERS) == NOP_DEMO
 
+func _playoffs() -> bool:
+	return _opt(PLAY_MODE) >= MODE_CONTINUE and _opt(PLAY_MODE) <= MODE_NEW7
+
+func _new_playoffs() -> bool:
+	return _opt(PLAY_MODE) == MODE_NEW or _opt(PLAY_MODE) == MODE_NEW7
+
+## NewPO for Team 1, then FigureJoy's opponent in Team 2.
+func _new_po() -> void:
+	Sim.league.new_po(Sim.menu_rng, _opt(TEAM1), _opt(PLAY_MODE))
+	_playoff_teams()
+
+## sub_17CA0: the saved playoff, its user's team and opponent, and OptNOP = 7 - pojoy.
+func _continue() -> bool:
+	if not Sim.league.continue_from(Sim.sram.playoff_state()):
+		return false
+	Sim.options[PLAYERS] = 7 - Sim.league.pojoy
+	_playoff_teams()
+	return true
+
+func _playoff_teams() -> void:
+	var fj := Sim.league.figure_joy()
+	Sim.options[TEAM1] = Sim.league.user_team()
+	if not fj.is_empty():
+		Sim.options[TEAM2] = fj["opponent"]
+
+## A saved playoff to continue (sub_17CA0 on a copy).
+func _can_continue() -> bool:
+	return League.new().continue_from(Sim.sram.playoff_state())
+
+## The plates' and logos' teams: HomeTeam and VisTeam (FigureJoy's in the playoffs).
+func _home_team() -> int:
+	if _playoffs():
+		var fj := Sim.league.figure_joy()
+		if not fj.is_empty():
+			return fj["home"]
+	return _opt(TEAM1)
+
+func _vis_team() -> int:
+	if _playoffs():
+		var fj := Sim.league.figure_joy()
+		if not fj.is_empty():
+			return fj["visitor"]
+	return _opt(TEAM2)
+
 ## The value range d5 <= v < d4 for a row (GameSetUp_3, sub_F7B0A).
 func _range(r: int) -> Vector2i:
 	match r:
 		PLAYERS:
+			if _playoffs():
+				return Vector2i(5, 8)
 			return Vector2i(0, 5) if _shootout() else Vector2i(0, COUNTS[PLAYERS])
+		TEAM1:
+			return Vector2i(0, 26) if _new_playoffs() else Vector2i(0, 28)
 		_:
 			return Vector2i(0, COUNTS[r])
 
@@ -147,7 +209,7 @@ func _range(r: int) -> Vector2i:
 ## which the port does not have yet.
 func _skip_value(r: int, v: int) -> bool:
 	if r == PLAY_MODE:
-		return v >= 1 and v <= 3
+		return v == MODE_CONTINUE and not _can_continue()
 	if r == PLAYERS and _shootout():
 		return v == NOP_TEAMMATES
 	return false
@@ -169,15 +231,19 @@ func _change(r: int, d: int) -> void:
 			Sim.options[USER_RECORDS] = Sim.shootout_saved[0]
 			Sim.options[PENALTIES] = Sim.shootout_saved[1]
 			Sim.options[LINES] = Sim.shootout_saved[2]
+		if v == MODE_CONTINUE:
+			_continue()
+		elif _new_playoffs():
+			_change(TEAM1, 0)
+			_new_po()
 		return
-	if d == 0:
-		if v < rg.x or v >= rg.y:
-			v = rg.x
-	else:
-		v = _wrap(v + d, rg)
+	# sub_F7B0A: out of range at either end wraps to the other.
+	v = _wrap(v + d, rg)
 	while _skip_value(r, v):
 		v = _wrap(v + (d if d != 0 else 1), rg)
 	Sim.options[r] = v
+	if r == TEAM1 and d != 0 and _new_playoffs():
+		_new_po()
 
 static func _wrap(v: int, rg: Vector2i) -> int:
 	if v < rg.x:
@@ -204,7 +270,7 @@ func _value_text(r: int) -> String:
 		PLAY_MODE:
 			return _values["play_mode"][v]
 		PLAYERS:
-			return _values["players_4way"][v]
+			return _values["players"][v] if _playoffs() else _values["players_4way"][v]
 		TEAM1, TEAM2:
 			if v == 13:
 				return _fe["setup"]["special_strings"]["ny_islanders"]
@@ -228,6 +294,21 @@ func _value_text(r: int) -> String:
 ## sub_F76D4 with the skip rules (L960249-960345): the next row from `r` going `d` (+1 / -1),
 ## or `r` when the cursor cannot move.
 func _next_row(r: int, d: int) -> int:
+	var n := _next_row_rules(r, d)
+	# Continue Playoffs skips Players, Team 1 and Team 2; New Playoffs skips Team 2.
+	while n != r and _row_skipped(n):
+		var m := _next_row_rules(n, d)
+		if m == n:
+			return r
+		n = m
+	return n
+
+func _row_skipped(n: int) -> bool:
+	if _opt(PLAY_MODE) == MODE_CONTINUE:
+		return n >= PLAYERS and n <= TEAM2
+	return _new_playoffs() and n == TEAM2
+
+func _next_row_rules(r: int, d: int) -> int:
 	var n := r + d
 	if d > 0:
 		if r == TEAM2 and _shootout():
@@ -262,15 +343,15 @@ func _redraw() -> void:
 	_a.clear()
 	_a.bitmap(0, 0, "setup_header", 0, 0, 40, 4)
 	# sub_17AF4: the plates, visitor at (7,1), home at (22,1).
-	_a.bitmap(7, 1, "team_plates_visitor", 0, 2 * _opt(TEAM2), 11, 2)
-	_a.bitmap(22, 1, "team_plates_home", 0, 2 * _opt(TEAM1), 11, 2)
+	_a.bitmap(7, 1, "team_plates_visitor", 0, 2 * _vis_team(), 11, 2)
+	_a.bitmap(22, 1, "team_plates_home", 0, 2 * _home_team(), 11, 2)
 	if _card_up:
 		_draw_card()
 	else:
 		_a.bitmap(8, 5, "logo_frame_visitor", 0, 0, 8, 8)
 		_a.bitmap(24, 5, "logo_frame_home", 0, 0, 8, 8)
-		_logo(9, 6, _opt(TEAM2), 2)
-		_logo(25, 6, _opt(TEAM1), 1)
+		_logo(9, 6, _vis_team(), 2)
+		_logo(25, 6, _home_team(), 1)
 	_a.bitmap(1, 14, "setup_panel", 0, 0, 38, 13)
 	# sub_F8070: the labels at x 3, rows 15 + 2 (row - top).
 	for r in ROWS:
@@ -279,7 +360,8 @@ func _redraw() -> void:
 			_a.print_at(3, y, _labels[r], 0, "setup_font")
 	# sub_F7864: the cursor box, then GameSetUp_4's values over its middle row.
 	var by := 14 + 2 * (_row - _top)
-	_a.frame(16, by, 23, 3, "setup_framer", 0)
+	# The box covers Team 1 and Team 2 in New Playoffs (the bracket fixes Team 2).
+	_a.frame(16, by, 23, 5 if _new_playoffs() and _row == TEAM1 else 3, "setup_framer", 0)
 	for r in ROWS:
 		var y := 15 + 2 * (r - _top)
 		if y < 15 or y > 25:
@@ -302,8 +384,8 @@ func _logo(x: int, y: int, team: int, line: int) -> void:
 ## line 1 with the same plate colours kept.
 func _palette() -> void:
 	var bg: Array = _fe["setup"]["palette"]["bg"]
-	var home := _opt(TEAM1)
-	var vis := _opt(TEAM2)
+	var home := _home_team()
+	var vis := _vis_team()
 	var l1: Array = (_photo_pal if _card_up and not _photo_pal.is_empty() else _logo_pal[home]).duplicate()
 	var hc: Array = _fe["teams"][home]["colours"][0]
 	var vc: Array = _fe["teams"][vis]["colours"][1]
@@ -341,7 +423,7 @@ func _showcase_step() -> void:
 
 ## A card: the logo frame with the player's photo, a box, "NN First Last".
 func _draw_card() -> void:
-	var team := _opt(TEAM1) if _card_home else _opt(TEAM2)
+	var team := _home_team() if _card_home else _vis_team()
 	var c: Dictionary = _fe["setup"]["showcase"]["home_card" if _card_home else "visitor_card"]
 	var fr: Array = c["frame"]
 	var ph: Array = c["photo"]
@@ -482,9 +564,22 @@ func _start() -> void:
 	m.line_changes = _opt(LINES) != 1
 	m.auto_lines = _opt(LINES) == 2
 	m.shootout = _shootout()
+	if _playoffs():
+		# sub_17AC8: pojoy = 7 - OptNOP for a new playoff; FigureJoy's teams and pads.
+		if _new_playoffs():
+			Sim.league.pojoy = 7 - _opt(PLAYERS)
+		var fj := Sim.league.figure_joy()
+		if not fj.is_empty():
+			m.home_team = _teams[fj["home"]]
+			m.away_team = _teams[fj["visitor"]]
+			m.pads = fj["pads"]
+		m.play_mode = _opt(PLAY_MODE)
 	Sim.match = m
 	if m.shootout:
 		get_tree().change_scene_to_file(GAME_SCENE)
+	elif _playoffs():
+		Sim.bracket_next_matchups = true
+		get_tree().change_scene_to_file(PLAYOFF_SCENE)
 	else:
 		get_tree().change_scene_to_file(MATCHUPS_SCENE)
 

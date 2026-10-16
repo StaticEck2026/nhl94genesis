@@ -28,6 +28,11 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 ## The game's form tables (home, away), made on the Matchups screen; empty: StartGame makes
 ## them (Shootout, or no Matchups).
 @export var form: Array = []
+## OptPlayMode as the game sees it: 0 a regular-season game, 1-3 a playoff game (the
+## League in Sim holds the series). The Shootout mode is `shootout`.
+@export var play_mode: int = 0
+## FigureJoy's pads for a playoff game (cont1team-cont4team); empty: from the drivers.
+@export var pads: PackedInt32Array = PackedInt32Array()
 ## Retail's Players row (OptNOP, the 4 Way Play list): when set it decides the pads
 ## instead of home_control / away_control.
 @export var players: int = -1
@@ -50,6 +55,8 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 
 ## Each pad's team (cont1team-cont4team: 0 none, 1 home, 2 away) from the two drivers.
 func pad_teams() -> PackedInt32Array:
+	if pads.size() == 4:
+		return pads
 	if players >= 0:
 		return players_pads(players)
 	var out := PackedInt32Array([0, 0, 0, 0])

@@ -62,6 +62,8 @@ var _list: Array = []
 var _list_cursor := 0
 var _menu_items: Array = []
 var _menu_cursor := 0
+## The pad's Start must be let go after the page opens (the press that opened it).
+var _armed := false
 
 func _ready() -> void:
 	layer = 12
@@ -154,6 +156,7 @@ func open_page(id: String, game: HockeyGame, team: int, pad: int) -> void:
 	_team = team
 	_pad = pad
 	_id = id
+	_armed = false
 	_col = 0
 	_sel = 0
 	_mode = 0
@@ -162,7 +165,7 @@ func open_page(id: String, game: HockeyGame, team: int, pad: int) -> void:
 	_scroll = 0
 	_target = 0
 	_max = 0
-	if not _pages.get("pages", {}).has(id) and id != "edit_lines":
+	if not _pages.get("pages", {}).has(id) and not id in ["edit_lines", "playoff_stats"]:
 		_id = ""
 		closed.emit()
 		return
@@ -327,7 +330,7 @@ func _build() -> void:
 	match _id:
 		"game_stats":
 			_game_stats()
-		"player_stats":
+		"player_stats", "playoff_stats":
 			_player_stats()
 		"scoring_summary":
 			_scoring_summary()
@@ -384,11 +387,26 @@ func _game_stat(r: Dictionary, st: TeamStats) -> String:
 		return "%d/%d" % [a, b]
 	return str(a)
 
-## $945A (§6): a category box, the team's players sorted by it.
+## $945A (§6): a category box, the team's players sorted by it. Playoff Stats (sub_9428,
+## playoffs_records.md §4) is the same body over the user's playoff totals, titled
+## "Playoff  Stats" at (7,4), without the team switch.
 func _player_stats() -> void:
 	_setup(13, 22, 13)
 	var pg := _page("player_stats")
-	_run(pg.get("static", []), ["category text"])
+	var playoffs := _id == "playoff_stats"
+	var ops: Array = pg.get("static", [])
+	if playoffs:
+		ops = []
+		for e in pg.get("static", []):
+			var note := String(e.get("note", ""))
+			if note.begins_with("'A - Switch Teams'"):
+				continue
+			if note == "big title":
+				e = e.duplicate(true)
+				e["ops"][0]["at"] = [7, 4]
+				e["ops"][1]["text"] = "Playoff  Stats"
+			ops.append(e)
+	_run(ops, ["category text"])
 	var cat := _col
 	var cats: Array = pg.get("categories", [])
 	if cat + 1 < cats.size():
@@ -403,17 +421,28 @@ func _player_stats() -> void:
 	var data := st.data
 	var goalies := data.goalie_count if data else 2
 	var n := data.players.size() if data else 0
+	# The arrays: this game's, or $FFCD96's playoff totals (goals, assists, SOG, PIM).
+	var goals := st.player_goals
+	var assists := st.player_assists
+	var shots_arr := st.player_shots
+	var pim := st.player_pim
+	if playoffs:
+		var po: PackedInt32Array = _game.world.rules.league.po_stats
+		goals = po.slice(0, 26)
+		assists = po.slice(26, 52)
+		shots_arr = po.slice(52, 78)
+		pim = po.slice(78, 104)
 	var order := []
 	for slot in n:
 		if cat < 0 and slot >= goalies:
 			continue
 		var p := data.player(slot)
 		var g := slot < goalies
-		var vals := [0 if g else st.player_goals[slot], st.player_assists[slot], 0, 0 if g else st.player_shots[slot], st.player_pim[slot]]
+		var vals := [0 if g else goals[slot], assists[slot], 0, 0 if g else shots_arr[slot], pim[slot]]
 		vals[2] = vals[0] + vals[1]
 		var key := 0
 		if cat < 0:
-			key = maxi(st.player_shots[slot] - st.player_goals[slot], 0)
+			key = maxi(shots_arr[slot] - goals[slot], 0)
 		else:
 			key = vals[cat]
 		order.append([key * 256 + (255 - (p.jersey_number if p else 0)), slot, vals])
@@ -424,8 +453,8 @@ func _player_stats() -> void:
 		_t(_b, 1, row, "%2d" % (i + 1), 3)
 		_t(_b, 4, row, _short(_team, slot), 0)
 		if cat < 0:
-			var shots := st.player_shots[slot]
-			var saves := maxi(shots - st.player_goals[slot], 0)
+			var shots := shots_arr[slot]
+			var saves := maxi(shots - goals[slot], 0)
 			_t(_b, 17, row, "%5d %5d %3d%%" % [saves, shots, saves * 100 / shots if shots > 0 else 0], 2)
 		else:
 			for c in 5:
@@ -808,9 +837,12 @@ func _process(_delta: float) -> void:
 	if _scroll != _target:
 		_scroll += 2 if _target > _scroll else -2
 		_apply_scroll()
-		if _id in ["game_stats", "player_stats", "other_scores", "scoring_summary", "penalty_summary"]:
+		if _id in ["game_stats", "player_stats", "playoff_stats", "other_scores", "scoring_summary", "penalty_summary"]:
 			_build_arrows_only()
 	var p := "p%d_" % (_pad + 1)
+	if not _armed:
+		_armed = not Input.is_action_pressed(p + "start")
+		return
 	var just := func(a: String) -> bool: return Input.is_action_just_pressed(p + a)
 	var held := func(a: String) -> bool: return Input.is_action_pressed(p + a)
 	if _id == "edit_lines" or _id == "shootout_setup":
@@ -820,8 +852,8 @@ func _process(_delta: float) -> void:
 		_close()
 		return
 	match _id:
-		"player_stats":
-			if just.call("a"):
+		"player_stats", "playoff_stats":
+			if just.call("a") and _id == "player_stats":
 				_team = 1 - _team
 				_scroll = 0
 				_target = 0
@@ -860,7 +892,7 @@ func _process(_delta: float) -> void:
 				_team = 1 - _team
 				_sel = 0
 				_build()
-	if _id in ["game_stats", "player_stats", "other_scores", "scoring_summary", "penalty_summary"] \
+	if _id in ["game_stats", "player_stats", "playoff_stats", "other_scores", "scoring_summary", "penalty_summary"] \
 			and _scroll == _target:
 		if held.call("down") and _target < _max:
 			_target = mini(_target + _step, _max)

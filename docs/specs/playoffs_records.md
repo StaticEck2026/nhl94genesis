@@ -622,7 +622,23 @@ Shots: `rv_1.png` (normal), `rv_rev_3.png` (just toggled, panel up), `rv_rev_7.p
 
 ## 11. Port checklist
 
-Port status: item 13 (the reverse angle) is done (2026-10-16):
+**Port status (2026-10-16).**
+
+Items 1-10 are done:
+- `League` (logic/league.gd) holds the state, `Sram` (logic/sram.gd) saves it, and both live in the Sim autoload.
+- Game Setup offers Continue / New Playoffs / New Playoffs/7 game, with their team rows and Players values.
+- `ui/playoff_screen.gd` is the bracket. Round 1 matches the emulator shot except the plate-flash phase. The label is centred at 64 - len/2, as seen.
+- Playoff Stats is the Player Stats body over `League.po_stats`.
+- The playoff intermission tables are used. The clinch is `GameRules.cup_assignment`.
+- The ticker headings follow the round.
+
+Items still open or simplified:
+- The highlights are settled as if skipped (`sub_1381E`); the live highlight game is not played.
+- The four-way playoff pads (`_pojoylist2`) are not used; the playoff Players row uses the two-pad values.
+- The regular-season quirk of a saved playoff's `gamelevel` is not reproduced.
+- The Playoff Stats bit packing in the save file uses the retail widths but not its exact bit order.
+
+Item 13 (the reverse angle) is also done:
 - `ReplayRecorder.apply` covers the frames, flips, shadow, glass and camera;
 - `HockeyWorld.reverse_angle` holds the state; C in the replay prompt toggles it;
 - `Rink2D` draws the reverse rink with the logo rotated;
