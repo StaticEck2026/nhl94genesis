@@ -485,6 +485,8 @@ func ps_attempt_check() -> void:
 func ps_attempt_end() -> void:
 	w.freezewindow()
 	if not _so():
+		# Ten more records, then the buffer holds (word_FFDEF0).
+		w.replay.grace = 0xA
 		w.sflags2 |= SF2_NOREC
 	w.gmode |= HockeyWorld.GM_CLOCK
 	w.f_c2fa &= ~C2FA_CLOCK_LIVE

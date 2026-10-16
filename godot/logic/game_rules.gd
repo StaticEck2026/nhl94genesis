@@ -868,6 +868,9 @@ func start_game() -> void:
 	w.score_summary.clear()
 	pen_sum.clear()
 	w.arena.stop()
+	# L29878: no recording until the first drop; the buffer starts over.
+	w.sflags2 |= SF2_NOREC
+	w.replay.reset()
 	w.gsp = 0
 	w.chk_cnt = 0
 	for st in w.stats:

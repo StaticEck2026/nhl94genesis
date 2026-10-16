@@ -111,6 +111,8 @@ var rules: GameRules
 var faceoff: FaceoffLogic
 ## The arena and bench background animations (sub_FE510 / sub_FE2C8).
 var arena: ArenaAnim
+## The instant-replay buffer (updatereplay).
+var replay: ReplayRecorder
 var lines: LineLogic
 var shootout: ShootoutLogic
 var fight: FightLogic
@@ -347,6 +349,8 @@ func _init(p_settings: SimSettings = null, seed: int = 0x00500000) -> void:
 	shootout = ShootoutLogic.new(self)
 	fight = FightLogic.new(self)
 	arena = ArenaAnim.new(self)
+	replay = ReplayRecorder.new(self)
+	sound.connect(replay.on_sound)
 	background_anim.connect(arena.start)
 	ai.register(asstab)
 	goalie.register(asstab)
@@ -384,7 +388,7 @@ func _load_hotlist() -> void:
 
 ## Breaks the reference cycles between the world and its modules. Call when a match ends.
 func dispose() -> void:
-	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout, fight, arena]:
+	for m in [collisions, checking, puck_logic, shooting, input, ai, goalie, roster, rules, faceoff, lines, shootout, fight, arena, replay]:
 		if m:
 			m.w = null
 	collisions = null
@@ -464,6 +468,7 @@ func step(d7: int = 1) -> void:
 	update_players(d7)
 	ai.set_slot_bit()
 	checkwindow(d7)
+	replay.record(d7)
 	# setvideo: the crowd meter, then the sprites (addframe2 keeps the frame it drew last;
 	# chkhit tests a hit once per new frame).
 	rules.crowd_noise(d7)

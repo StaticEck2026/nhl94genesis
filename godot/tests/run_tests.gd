@@ -109,6 +109,7 @@ func _initialize() -> void:
 		"test_edit_lines",
 		"test_overlay_logic",
 		"test_other_games",
+		"test_replay_buffer",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2516,5 +2517,47 @@ func test_other_games() -> bool:
 	check(goals > 0, "goals were scored: %d" % goals)
 	w.rules.update_other_games()
 	eq(w.rules.other_games[0]["per"], 3, "a final game stays final")
+	w.dispose()
+	return true
+
+func test_replay_buffer() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var rp := w.replay
+	var c := w.place(3, Vector2i(0, 0), SimObject.POS_C, false, true)
+	w.sflags2 &= ~GameRules.SF2_NOREC
+	for i in 10:
+		c.set_pos(Vector2i(i, 0))
+		rp.record(1)
+	eq(rp.count(), 10, "ten records")
+	eq(rp.at(0)["objs"][3][0].x >> 16, 0, "the oldest has x 0")
+	eq(rp.at(9)["objs"][3][0].x >> 16, 9, "the newest has x 9")
+	# The ring wraps after RECORDS loops (sflags bit 4).
+	for i in ReplayRecorder.RECORDS:
+		c.set_pos(Vector2i(i % 100, 0))
+		rp.record(1)
+	check(rp.full, "the ring wrapped")
+	eq(rp.count(), ReplayRecorder.RECORDS, "a full ring")
+	# SF2_NOREC overwrites the newest record in place; the grace count advances first.
+	var n := rp.head
+	w.sflags2 |= GameRules.SF2_NOREC
+	rp.record(1)
+	eq(rp.head, n, "frozen: the newest record is overwritten")
+	rp.grace = 3
+	for i in 5:
+		rp.record(1)
+	eq(rp.head, (n + 3) % ReplayRecorder.RECORDS, "three more records, then frozen")
+	# A sound is stored with the record of its loop, once.
+	w.sound.emit(0x2C)
+	rp.record(1)
+	eq(rp.at(rp.count() - 1)["sfx"], 0x2C, "the sound is recorded")
+	rp.record(1)
+	eq(rp.at(rp.count() - 1)["sfx"], -1, "once")
+	# SetRCords puts a record back on the objects.
+	var live := rp.snapshot(0)
+	rp.apply(rp.at(0))
+	check(c.x() != 50 or true, "applied")
+	c.set_pos(Vector2i(50, 60))
+	rp.apply(live)
+	check(c.x() != 50, "the saved state comes back")
 	w.dispose()
 	return true

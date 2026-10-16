@@ -8,8 +8,8 @@ extends CanvasLayer
 ## down repeat after 16 frames, then every 5; C runs the row's handler; Start or row 0
 ## closes. The pause menu answers only the pad that paused; at an intermission any pad
 ## drives it, and the team of the pad that last pressed owns Change Goalie and Edit
-## Lines (sub_7E0E). Rows the port cannot serve (Instant Replay, Playoff Stats) are left
-## out; "Quit to setup" is the port's own last row on the pause menu.
+## Lines (sub_7E0E). Playoff Stats is left out (no playoffs); "Quit to setup" is the
+## port's own last row on the pause menu.
 
 signal quit_requested
 ## The intermission menu closed through row 0 or Start.
@@ -21,12 +21,13 @@ const ROWS_X := 7
 const ROWS_Y := 13
 const VISIBLE := 4
 ## Handler ids the port leaves out.
-const DROPPED := ["instant_replay", "playoff_stats"]
+const DROPPED := ["playoff_stats"]
 ## How long the Timeout box stays up (waitx $78).
 const TIMEOUT_FRAMES := 0x78
 
 var _plane: WindowPlane
 var _pages: StatsPages
+var _replay: ReplayView
 var _menus := {}
 ## "" closed, "pause" or "intermission".
 var _mode := ""
@@ -59,6 +60,10 @@ func _ready() -> void:
 	_pages.name = "Pages"
 	add_child(_pages)
 	_pages.closed.connect(_on_page_closed)
+	_replay = ReplayView.new()
+	_replay.name = "Replay"
+	add_child(_replay)
+	_replay.finished.connect(_on_replay_finished)
 	visible = false
 
 func _game() -> HockeyGame:
@@ -165,7 +170,7 @@ func team() -> int:
 # --- input --------------------------------------------------------------------------------
 
 func _process(_delta: float) -> void:
-	if _mode == "" or _pages.is_open():
+	if _mode == "" or _pages.is_open() or _replay.is_open():
 		return
 	if _mode == "intermission" and _sub == "":
 		_step_ticker()
@@ -260,6 +265,11 @@ func _choose() -> void:
 				_sub_frames = TIMEOUT_FRAMES
 		"goalie_control_toggle":
 			game.world.toggle_goalie_control(_pad)
+		"instant_replay":
+			_plane.clear()
+			game.world.pause_screen = false
+			_replay.open(game, _pad)
+			return
 		_:
 			_plane.clear()
 			_pages.open_page(id, game, team(), _pad)
@@ -267,6 +277,18 @@ func _choose() -> void:
 	_draw()
 
 func _on_page_closed() -> void:
+	_draw()
+
+## The replay's prompt: Start goes straight back to the game (cursor 0, doshot bit 1),
+## B back to the pause menu.
+func _on_replay_finished(to_game: bool) -> void:
+	var game := _game()
+	if to_game and _mode == "pause":
+		_cursor = 0
+		close()
+		return
+	game.world.pause_screen = _mode == "pause"
+	_redraw_game()
 	_draw()
 
 # --- drawing ----------------------------------------------------------------------------------

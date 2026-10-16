@@ -18,6 +18,8 @@ extends Camera2D
 var _game: HockeyGame
 
 func _ready() -> void:
+	# The pause screen and the instant replay move the camera while the game is paused.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	var n := get_parent()
 	while n != null and not (n is HockeyGame):
 		n = n.get_parent()
