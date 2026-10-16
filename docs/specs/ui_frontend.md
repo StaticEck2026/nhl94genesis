@@ -684,7 +684,7 @@ The run is deterministic (same bytes on a re-run). `--preview DIR` writes `previ
 - **F1.** 4 Way Play was not run on the emulator: the harness has no 4 Way Play adapter, so pads 3-4 cannot be read. The Three/Four rows, the playoff 9-10 skip and `_pojoylist2` come from the code only.
 - **F2.** Continue Playoffs (SRAM playoff state, `sub_17CA0`/`sub_1803E`) was not exercised. With fresh SRAM it is always skipped.
 - **F3.** The showcase's SRAM record lines (`sub_F98C6`, `sub_F9A64`, `sub_F9AAC`) were not decoded. With fresh SRAM none were printed.
-- **F4.** Name Entry (`loc_FB018`): the layout, the letter grid, the name-log handling and the SRAM writes were not decoded beyond the screenshots. The port does not need it.
+- **F4.** (Since measured on the ROM in Genesis Plus GX: playoffs_records.md §8.4.) Name Entry (`loc_FB018`): the layout, the letter grid, the name-log handling and the SRAM writes were not decoded beyond the screenshots. The port does not need it.
 - **F5.** The playoff bracket art (cup `$F3098`, plates `sub_17652`/`sub_17626`, bracket lines from `$B3648`) was not exported. Its exact layout and the scroll limits were not measured. The port does not need it.
 - **F6.** The Matchups `@` crowd record reads SRAM block byte 8 (`sub_F9BE2`) and gives `$50` = 80 dB when it is empty. With SRAM records, the value after an arena record was not checked.
 - **F7.** `asv` (down held) and the exact typewriter timing (10 frames per word, +40 after `,`/`.`) were read from the code, not measured frame by frame.

@@ -218,7 +218,7 @@ Spec: `docs/specs/fight_patch.md` (and `fight_patch_retail_hooks.md`). The setup
 - [x] Front-end palette fades (`palcount` / `cramfade`) between Game Setup, Matchups, the playoff screens and the other menus: `CramFade` (ui/cram_fade.gd), on every scene change and on the pause / intermission menus and stats pages
 - [x] Playoff pads with 4 Way Play (`_pojoylist2`, cont3/cont4, L55064-55089): the playoff Players row is 7, 8, 11; `League.four_way`
 - [x] Playoff Stats in the save file in retail's exact bit order; the saved playoff's `gamelevel` quirk in a regular-season game
-- [ ] Name Entry's edit screen (`loc_FB018`, `sub_FB9D4`): the field bar, the grid and its cursor as retail draws them
+- [x] Name Entry's edit screen (`loc_FB018`, `sub_FB9D4`): the field bar, the grid and its cursor as retail draws them, with retail's edit rules measured on the ROM (pixel-identical in eight states)
 
 ## Log
 
@@ -248,3 +248,10 @@ Spec: `docs/specs/fight_patch.md` (and `fight_patch_retail_hooks.md`). The setup
 - 2026-10-16: Battery-saved records with User Records On: Name Entry, the player/team/user records at the end of a game, Player Cards records, Record Holders (with A+C), arena and league crowd records, and the saved team line, all in the save file. 1291 checks pass.
 - 2026-10-16: Intermission highlights: a close game of the night is shown live (CPU against CPU from its third period or overtime) before the intermission menu, as retail does, with its caption and final ticker. 1291 checks pass.
 - 2026-10-16: Sound accuracy. Every sound is now rendered inside a game in progress on a cycle-timed emulator, at extraction time only (Genesis Plus GX, built from a pinned commit, never shipped). The menu songs are rendered on the Game Setup screen. In play, the console's bus contention lowers the DAC samples' pitch by about 1.6%; BlastEm independently agrees within 0.5%. The Model 1 output low-pass (3390 Hz) is applied. The crowd noise is the real PSG noise (16-bit LFSR at 4.66 kHz) at retail level against the FM: about 23 dB quieter and darker than before. 1291 checks pass.
+- 2026-10-16: Phase 13 polish.
+  - Retail's palette fades between every screen and around the pause and intermission menus and the stats pages.
+  - The playoffs on retail's 4 Way Play path: the Players row 7 / 8 / 11, and _pojoylist2.
+  - Playoff Stats saved in AddPOStats' exact layout.
+  - The saved playoff's gamelevel carries into regular-season games.
+  - Name Entry's edit screen redone from the ROM running in Genesis Plus GX: the letter under the box goes in at the current position; Start saves, picks and leaves; the edge stops, the blank cell, the bar and the open box. It is pixel-identical in eight edit states.
+  - Stale doc statuses fixed. 1300 checks pass.

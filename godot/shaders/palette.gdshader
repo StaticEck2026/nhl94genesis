@@ -32,5 +32,6 @@ void fragment() {
 		line = 3;
 	}
 	vec4 c = texelFetch(palette, ivec2(idx, line), 0);
-	COLOR = vec4(c.rgb, t.a * vcol.a);
+	// A palette colour with alpha 0 is see-through (Name Entry's box cursor).
+	COLOR = vec4(c.rgb, t.a * vcol.a * c.a);
 }

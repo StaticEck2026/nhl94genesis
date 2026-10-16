@@ -537,6 +537,18 @@ The screen (`u_sel0.png`, `u_edit0.png`, `u_edit1.png`):
 
 The names are saved to SRAM `$DA0` (`sub_F9C5E` from `sub_FB9D4`).
 
+**Edit rules.** These were measured on the ROM in Genesis Plus GX (pad-scripted runs; shots and battery-RAM dumps in `/tmp/claude-0/-home-user/ef020377-92e3-57ff-8519-5d51b4a7df4d/scratchpad/xchk/ne/`).
+- **Grid:** 5 rows of 6, `ABCDEF GHIJKL MNOPQR STUVWX YZ.12` plus a sixth cell that is a blank (space).
+  - The d-pad stops at the edges; it does not wrap.
+  - The box is the frame tiles (`framer`, line 1) around the letter's cell. Their black (line 1 colour 7) is see-through, so the background shows inside the box.
+- **Field:** 12 positions at (5,18). An empty position shows `-`. The current position has a 7 x 2-pixel bar in the text colour, at pixel row 153 (2 pixels into row 19), with a 1-pixel black shadow down and right.
+- **The letter under the box is the current position's letter**, written as the box moves. On entry the position is 0. The box goes to the name's first letter, or `A` for an empty name, which then reads `A`.
+- **C** moves to the next position and stops at the 12th; C there does nothing more. If the new position already has a letter, the box jumps to it. Otherwise the box's letter is written there.
+- **A** moves back a position in the same way. The letters after it stay.
+- **B** cancels: back to the Name Log, with the name unchanged.
+- **Start** saves the name and picks that row, as Start on the log does, and the screen moves on. Start on the log only picks.
+- **Stored:** the 12 bytes as typed, zero after the last position used. "I", space, "J" is saved as `49 20 4A 00 ...`.
+
 ### 8.5 Where records are shown
 
 - **Player Cards** (`$FA07E`, `ui_menus.md` §15.1). The "Records" box, `sub_FA7B0`, prints 3 lines when the value ≠ 0:
@@ -649,7 +661,7 @@ Items still open or simplified:
 
 Items 11-12 (records and saved lines) are done too:
 - **Records:** `Records.update` runs at the final intermission when User Records is On.
-- **Name Entry** (`ui/name_entry.gd`): the select screen matches `u_sel0.png` pixel for pixel. The edit screen's field bar and grid box cursor are approximations.
+- **Name Entry** (`ui/name_entry.gd`): the select screen matches `u_sel0.png` pixel for pixel. The edit screen follows the edit rules in §8.4 and matches the ROM pixel for pixel in eight edit states (GPGX shots, colour levels compared).
 - **Where the records show:**
   - Player Cards "Records" (`_record_lines`);
   - Record Holders (sorted pages, A+C clear);
@@ -753,7 +765,7 @@ All in `/tmp/claude-0/-home-user/ef020377-92e3-57ff-8519-5d51b4a7df4d/scratchpad
 ## 14. UNRESOLVED
 
 - **P1.** The "Players" row in playoff mode was not driven on the emulator. Its range (5-7 two-pad, 7-11 four-way?) is read from `GameSetUp_3` limits (L960873-960890) only. The four-way `pojoy` / `_pojoylist2` / cont3-4 rules (L55064-55089) were not exercised.
-- **P2.** Name Entry internals (`loc_FB018`, `sub_FB9D4`, the letter grid table and the cursor rules, the 12-character limit, editing an existing name) are described from the screen only. The grid's last row reads `Y Z . 1 2`; whether there are more symbols was not checked.
+- **P2.** Name Entry was measured on the ROM (§8.4), not decoded. The listing's inline print data is mis-decoded. Editing a name that already has letters, and A at position 0, were not driven.
 - **P3.** The Ron Barr Matchups text (`sub_FCC76`, `unk_4B5C0` script) was seen naming the arena crowd record. Whether other records (players, users) appear in its messages was not read.
 - **P4.** The setup screen's card timer (`sub_F87EA`: `$D43C` = `$AA`, the `$52` toggle of the team side, `$D42E` bits) is summarised, not decoded line by line.
 - **P5.** What RAM `$FFD17A-$FFD259` holds (cleared by `sub_77E4` at the first game of a new playoff) was not checked; it overlaps the sound driver's variables (`$FFD182`).
