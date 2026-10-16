@@ -31,6 +31,7 @@ in audio.json. Deterministic: same ROM, same bytes.
 import ctypes
 import hashlib
 import json
+import math
 import os
 import struct
 import subprocess
@@ -54,7 +55,7 @@ BANK_WAIT = 3
 # sub_1A574 retry loop spins `dbf` 100 times, about 1000 68000 cycles).
 RELEASE_RUN = 470
 # Output scale: OPN2 sum of 24 clocks of signed 9-bit pins (|x| <= 6144) -> int16.
-GAIN = 4.0
+GAIN = 6.0
 
 # 68000 entry points (checked against the ROM bytes at start-up).
 A_ALLSNDOFF = 0x1A264     # L61530
@@ -111,6 +112,7 @@ def build_core():
         "core_psg_writes": (U32, [P]),
         "core_bank_reads": (U32, [P]),
         "resample": (None, [P, U32, P, U32, ctypes.c_double, I, ctypes.c_double]),
+        "dc_block": (None, [P, U32, ctypes.c_double]),
     }
     for name, (res, args) in sig.items():
         f = getattr(lib, name)
@@ -299,16 +301,35 @@ def u32(rom, a):
     return struct.unpack(">I", rom[a:a + 4])[0]
 
 
+DAC_FREQ = 0x1A890        # unk_1A890: 12 words, the DAC step per semitone at octave 8
+DAC_TABLE = 0x1B01C       # unk_1B01C: 15 x {long address, long next}, instruments $60..$6E
+
+
+def dac_step(rom, note):
+    """sub_1A7D8 for a DAC instrument without pitch bend: the byte written to Z80 $8E."""
+    octave, semi = divmod(note, 12)
+    f = struct.unpack(">H", rom[DAC_FREQ + 2 * semi:DAC_FREQ + 2 * semi + 2])[0]
+    sh = (8 - octave) & 63
+    return (f >> sh if sh < 16 else 0) & 0xFF
+
+
+def dac_rate(step):
+    """Output rate of the Z80 loop: one sample byte per 117 + BANK_WAIT cycles x step/256."""
+    return MASTER / 15.0 / (117 + BANK_WAIT) * step / 256.0
+
+
 def scan_sequence(rom, sid, limit=200000):
-    """Walk a sequence statically: channels, instruments, notes, end kind, tick length.
-    Follows the format sub_1A5C0 implements (docs/specs/audio.md section 3)."""
+    """Walk a sequence statically: channels, instruments, notes, end kind, tick length,
+    DAC notes and FM polyphony. Follows the format sub_1A5C0 implements (docs/specs/audio.md
+    section 3). Ticks are MusicVB calls (NTSC frames); tick 0 is the first MusicVB."""
     start = u32(rom, SEQ_TABLE + 4 * sid)
     p = start
     tick = rom[p]
     instr = {}
     info = {"start": start, "fm_instruments": set(), "dac_instruments": set(),
             "channels": set(), "notes": 0, "end": None, "loop_target": None,
-            "ticks": 0, "events": 0}
+            "ticks": 0, "events": 0, "dac": [], "fm_max_voices": 0}
+    on = {}          # (ch, note) -> (tick, instr, velocity)
     first = True
     n = 0
     while n < limit:
@@ -316,7 +337,7 @@ def scan_sequence(rom, sid, limit=200000):
         if not first:
             tick += rom[p]
         first = False
-        st, d1 = rom[p + 1], rom[p + 2]
+        st, d1, d2 = rom[p + 1], rom[p + 2], rom[p + 3]
         if st == 0:
             if rom[p + 2] & 0x80:
                 info["end"] = "end"
@@ -330,11 +351,24 @@ def scan_sequence(rom, sid, limit=200000):
             info["channels"].add(ch)
         if kind == 0xC:
             instr[ch] = d1
-        elif kind == 9 and rom[p + 3]:
+        elif kind == 9 and d2:
             info["notes"] += 1
             ins = instr.get(ch, 0)
             (info["dac_instruments"] if ins >= 0x60 else info["fm_instruments"]).add(ins)
+            on[(ch, d1)] = (tick, ins, d2)
+            info["fm_max_voices"] = max(info["fm_max_voices"],
+                                        sum(1 for v in on.values() if v[1] < 0x60))
+        elif kind == 8 or (kind == 9 and not d2):
+            v = on.pop((ch, d1), None)
+            if v and v[1] >= 0x60:
+                info["dac"].append({"instr": v[1], "note": d1, "velocity": v[2],
+                                    "on_tick": v[0], "off_tick": tick})
         p += 4
+    for (ch, note), v in on.items():
+        if v[1] >= 0x60:
+            info["dac"].append({"instr": v[1], "note": note, "velocity": v[2],
+                                "on_tick": v[0], "off_tick": None})
+    info["dac"].sort(key=lambda d: d["on_tick"])
     info["ticks"] = tick
     info["events"] = n
     for k in ("fm_instruments", "dac_instruments", "channels"):
@@ -414,58 +448,46 @@ def render(lib, rom, uc_mod, mk, sid, max_frames, log_writes=False, tail_frames=
     return res
 
 
-def dc_block(x, rate, hz=5.0):
-    """One-pole DC blocker y[n] = x[n] - x[n-1] + R*y[n-1], from rest."""
-    import math
-    r = math.exp(-2.0 * math.pi * hz / rate)
-    out = [0.0] * len(x)
-    px = x[0] if x else 0.0      # at rest on the initial level: no step at the start
-    py = 0.0
-    for i, v in enumerate(x):
-        py = v - px + r * py
-        px = v
-        out[i] = py
-    return out
+DC_HZ = 5.0
+XFADE = 441                # 10 ms crossfade into the loop seam
 
 
 def to_output(lib, native, n):
-    """Native stereo int16 (53267 Hz) -> mono float list at OUT_RATE (DC-blocked)."""
-    left = native[0:2 * n:2]
-    right = native[1:2 * n:2]
-    stereo = any(a != b for a, b in zip(left, right))
-    mono = [(a + b) * 0.5 for a, b in zip(left, right)] if stereo else [float(a) for a in left]
+    """Native stereo int16 (53267 Hz) -> mono float32 at OUT_RATE, DC-blocked."""
+    import numpy as np
+    st = np.frombuffer(bytes(native), dtype=np.int16, count=2 * n).reshape(-1, 2)
+    stereo = bool(np.any(st[:, 0] != st[:, 1]))
+    mono = (st.astype(np.float32).mean(axis=1) if stereo else st[:, 0].astype(np.float32))
+    mono = np.ascontiguousarray(mono)
     ratio = YM_RATE / OUT_RATE
     n_out = int(n / ratio)
-    fin = (ctypes.c_float * max(n, 1))(*mono) if n else (ctypes.c_float * 1)()
-    fout = (ctypes.c_float * max(n_out, 1))()
+    out = np.zeros(max(n_out, 1), dtype=np.float32)
     if n_out:
-        lib.resample(fin, n, fout, n_out, ratio, 64, 0.95 * 20000.0 / (OUT_RATE / 2.0))
-    out = dc_block(list(fout[:n_out]), OUT_RATE)
-    return out, stereo
+        lib.resample(mono.ctypes.data, n, out.ctypes.data, n_out, ratio, 64,
+                     0.95 * 20000.0 / (OUT_RATE / 2.0))
+        lib.dc_block(out.ctypes.data, n_out, math.exp(-2.0 * math.pi * DC_HZ / OUT_RATE))
+    return out[:n_out], stereo
 
 
 def to_pcm16(x):
-    pcm = bytearray(2 * len(x))
-    clipped = 0
-    peak = 0
-    for i, v in enumerate(x):
-        s = int(round(v * GAIN))
-        if s > 32767:
-            s, clipped = 32767, clipped + 1
-        elif s < -32768:
-            s, clipped = -32768, clipped + 1
-        peak = max(peak, abs(s))
-        struct.pack_into("<h", pcm, 2 * i, s)
-    return bytes(pcm), clipped, peak
+    import numpy as np
+    y = np.round(x.astype(np.float64) * GAIN)
+    clipped = int(np.count_nonzero((y > 32767) | (y < -32768)))
+    y = np.clip(y, -32768, 32767).astype("<i2")
+    peak = int(np.abs(y.astype(np.int32)).max()) if len(y) else 0
+    return y.tobytes(), clipped, peak
 
 
 def write_wav(path, pcm, rate, loop=None):
     chunks = [b"fmt " + struct.pack("<IHHIIHH", 16, 1, 1, rate, rate * 2, 2, 16),
               b"data" + struct.pack("<I", len(pcm)) + pcm + (b"\0" if len(pcm) & 1 else b"")]
     if loop is not None:
-        start, end = loop      # end exclusive here; 'smpl' stores the last sample played
+        # Godot's importer (loop mode "Detect From WAV") reads dwStart/dwEnd as
+        # AudioStreamWAV.loop_begin/loop_end, and loop_end is exclusive there, so dwEnd
+        # holds the exclusive end (one past the last sample of the loop).
+        start, end = loop
         smpl = struct.pack("<IIIIIIIII", 0, 0, int(round(1e9 / rate)), 60, 0, 0, 0, 1, 0)
-        smpl += struct.pack("<IIIIII", 0, 0, start, end - 1, 0, 0)
+        smpl += struct.pack("<IIIIII", 0, 0, start, end, 0, 0)
         chunks.append(b"smpl" + struct.pack("<I", len(smpl)) + smpl)
     body = b"WAVE" + b"".join(chunks)
     with open(path, "wb") as f:
@@ -473,40 +495,91 @@ def write_wav(path, pcm, rate, loop=None):
 
 
 def trim_tail(x, thresh=1.5 / GAIN):
-    """Drop trailing samples that would quantise to silence."""
-    n = len(x)
-    while n > 0 and abs(x[n - 1]) < thresh:
-        n -= 1
-    return x[:n]
+    """Drop trailing samples that quantise to (near) silence."""
+    import numpy as np
+    loud = np.nonzero(np.abs(x) >= thresh)[0]
+    return x[:loud[-1] + 1] if len(loud) else x[:0]
 
 
-def find_loop(native, n, fs, loop_start_frame, jump_frame, max_offset_frames=180):
-    """Loop points in native samples. Pass 1 plays [S(loop_start), S(jump)); pass 2 starts
-    at S(jump) with the tails of pass 1 still ringing. Pick the first offset x (whole
-    frames) after which pass 2 matches pass 1, and loop [S(start)+x, S(jump)+x)."""
-    a0 = fs[loop_start_frame]
-    b0 = fs[jump_frame]
-    left = native[0:2 * n:2]
-    win = int(YM_RATE * 0.5)
+def spec_err(x, a, b, length, w=1024):
+    """Relative magnitude-spectrum difference of x[a:a+length] vs x[b:b+length]."""
+    import numpy as np
+    han = np.hanning(w)
+    num = den = 0.0
+    for i in range(0, length - w + 1, w // 2):
+        p = np.abs(np.fft.rfft(x[a + i:a + i + w] * han))
+        q = np.abs(np.fft.rfft(x[b + i:b + i + w] * han))
+        num += float(((p - q) ** 2).sum())
+        den += float((p ** 2).sum())
+    return (num / den) ** 0.5 if den else 0.0
+
+
+def find_loop(x, a0, b0, lo=0.25, hi=3.0, thresh=0.12):
+    """Loop points in output samples. Pass 1 plays the loop body from a0 (silence before
+    it); pass 2 starts at b0 with pass 1's last notes still ringing. Find the first offset
+    d where pass 2 sounds like pass 1 again (magnitude spectra over the next 0.25 s), then
+    loop [a0+d, b0+d): playing on from b0+d and jumping back to a0+d are the same music.
+    Returns (start, end, spectral error at the seam)."""
+    import numpy as np
+    span = int(0.25 * OUT_RATE)
+    step = int(0.01 * OUT_RATE)
     best = None
-    for xf in range(0, max_offset_frames + 1, 2):
-        x = fs[loop_start_frame + xf] - a0
-        if b0 + x + win > n:
+    d = int(lo * OUT_RATE)
+    while d <= int(hi * OUT_RATE) and b0 + d + span <= len(x):
+        e = spec_err(x, a0 + d, b0 + d, span)
+        if best is None or e < best[1]:
+            best = (d, e)
+        if e < thresh:
             break
-        d = 0
-        e = 0
-        for i in range(0, win, 4):
-            p = left[a0 + x + i]
-            q = left[b0 + x + i]
-            d += (p - q) * (p - q)
-            e += p * p
-        rel = (d / e) ** 0.5 if e else (0.0 if d == 0 else 1.0)
-        if best is None or rel < best[1]:
-            best = (x, rel)
-        if rel < 0.02:
-            best = (x, rel)
+        d += step
+    d, e = best
+    # Fine-tune within +-10 ms: the smallest waveform mismatch over the crossfade.
+    fine = None
+    for dd in range(max(XFADE, d - step), d + step + 1):
+        if b0 + dd > len(x):
             break
-    return a0 + best[0], b0 + best[0], best[1]
+        diff = x[a0 + dd - XFADE:a0 + dd] - x[b0 + dd - XFADE:b0 + dd]
+        m = float(np.abs(diff).sum())
+        if fine is None or m < fine[1]:
+            fine = (dd, m)
+    d = fine[0]
+    return a0 + d, b0 + d, e
+
+
+def seam_crossfade(x, start, end):
+    """Blend the XFADE samples before loop_end into those before loop_start, so the jump
+    from end-1 back to start continues the waveform it would have reached anyway."""
+    import numpy as np
+    t = (np.arange(XFADE, dtype=np.float32) + 0.5) / XFADE
+    y = x.copy()
+    y[end - XFADE:end] = x[end - XFADE:end] * (1 - t) + x[start - XFADE:start] * t
+    return y
+
+
+def dac_summary(rom, info, sid):
+    """DAC notes of an effect (the priority rule needs instrument and keyed time). Songs
+    get one row per distinct (instrument, note)."""
+    rows = []
+    seen = set()
+    for d in info["dac"]:
+        key = (d["instr"], d["note"])
+        if sid >= 0x30 and key in seen:
+            continue
+        seen.add(key)
+        step = dac_step(rom, d["note"])
+        smp = u32(rom, DAC_TABLE + 8 * (d["instr"] - 0x60))
+        ln = 0
+        if smp:
+            while rom[smp + ln]:
+                ln += 1
+        row = {"instr": "0x%02X" % d["instr"], "note": d["note"], "step": step,
+               "rate_hz": round(dac_rate(step)), "sample_bytes": ln,
+               "sample_seconds": round(ln / dac_rate(step), 3) if step else None}
+        if sid < 0x30:
+            row.update({"velocity": d["velocity"], "on_tick": d["on_tick"],
+                        "off_tick": d["off_tick"]})
+        rows.append(row)
+    return rows
 
 
 # ---------------------------------------------------------------------------- id table
@@ -534,11 +607,12 @@ SFX_USES = {
     0x0D: "injury (setInjuryType L49503, sfx); away goalie save (puckgoalie L50879, song)",
     0x0E: "puck over / at the glass (wallcollb2 L50115)",
     0x0F: "crowd bed when home leads after the game (song() L55725)",
-    0x10: "pass, softest (L37066)", 0x11: "pass", 0x12: "pass", 0x13: "pass, hardest",
-    0x14: "backhand shot, strength 0 (doshot L37692)", 0x15: "backhand shot, strength 1",
-    0x16: "backhand shot, strength 2", 0x17: "backhand shot, strength 3",
-    0x18: "forehand shot, strength 0", 0x19: "forehand shot, strength 1",
-    0x1A: "forehand shot, strength 2", 0x1B: "forehand shot, strength 3",
+    0x10: "pass, loudest: $10 + (($C - puckvz.b) >> 2 & 3) (passmode L37066)",
+    0x11: "pass", 0x12: "pass", 0x13: "pass, quietest",
+    0x14: "backhand shot, hardest: $14 + max(3 - speed/16, 0) (doshot L37692)",
+    0x15: "backhand shot", 0x16: "backhand shot", 0x17: "backhand shot, softest",
+    0x18: "forehand shot, hardest", 0x19: "forehand shot",
+    0x1A: "forehand shot", 0x1B: "forehand shot, softest",
     0x1C: "body check, ltack 0 (newcheck L48769); goalie frame $2C8 (L39092)",
     0x1D: "body check, ltack 1", 0x1E: "body check, ltack 2", 0x1F: "body check, ltack 3",
     0x20: "player hits the boards (L50205)", 0x21: "no call site (player hits boards variant)",
@@ -547,10 +621,11 @@ SFX_USES = {
     0x24: "puck hits a body / goalie (puckbody L50776, puckgoalie L50882)",
     0x25: "puck hits the net frame, clock stopped (checkgoal L49726)",
     0x26: "empty (points at the end event of $01)", 0x27: "empty (points at the end event of $01)",
-    0x28: "puck hits the boards +0 (wallcoll L50184)", 0x29: "puck hits the boards +1",
-    0x2A: "puck hits the boards +2", 0x2B: "puck hits the boards +3",
-    0x2C: "puck lands on the ice (updateplayers L35554), hardest", 0x2D: "puck lands on the ice",
-    0x2E: "puck lands on the ice", 0x2F: "puck lands on the ice, softest; puck drop (Endfaceoff L42447)",
+    0x28: "puck hits the boards, loudest: $28 + (d0 & 3) (wallcoll L50184)",
+    0x29: "puck hits the boards", 0x2A: "puck hits the boards",
+    0x2B: "puck hits the boards, quietest",
+    0x2C: "puck lands on the ice, loudest (updateplayers L35554)", 0x2D: "puck lands on the ice",
+    0x2E: "puck lands on the ice", 0x2F: "puck lands on the ice, quietest; puck drop (Endfaceoff L42447)",
     0x78: "title (newTitleScreen L975422) / game over (L53862)",
     0x79: "period over / intermission (PeriodOver L53840, L48340, PlayoffScreen L54022)",
     0x7A: "after the game setup screens (sub_FCC76 L969620)",
@@ -597,18 +672,17 @@ def main():
         ratio = YM_RATE / OUT_RATE
         loop = None
         loop_err = None
+        x, stereo = to_output(lib, r["native"], r["n"])
         if r["loop_frames"]:
             jf = r["loop_frames"][0]
             tgt = r["jumps"][0][2]
-            starts = [e[0] for e in r["events"] if e[2] == tgt]
+            starts = [ev[0] for ev in r["events"] if ev[2] == tgt]
             lsf = starts[0] if starts else 0
-            a, b, loop_err = find_loop(r["native"], r["n"], fs, lsf, jf)
-            loop = (a, b)
-        x, stereo = to_output(lib, r["native"], r["n"])
-        if loop:
-            la = int(round(loop[0] / ratio))
-            lb = int(round(loop[1] / ratio))
-            x = x[:lb]
+            a0 = int(round(fs[lsf] / ratio))
+            b0 = int(round(fs[jf] / ratio))
+            la, lb, loop_err = find_loop(x, a0, b0)
+            x = seam_crossfade(x, la, lb)[:lb]
+            loop = (la, lb)
         else:
             x = trim_tail(x)
         pcm, clipped, peak = to_pcm16(x)
@@ -639,7 +713,15 @@ def main():
             "fm_instruments": ["0x%02X" % i for i in info["fm_instruments"]],
             "dac_instruments": ["0x%02X" % i for i in info["dac_instruments"]],
             "voices": voice_kinds,
+            "fm_max_voices": info["fm_max_voices"],
+            "dac_notes": dac_summary(rom, info, sid),
             "stops_music": sid >= 0x30,
+            "slot_seconds": round(info["ticks"] / FRAME_HZ, 3),
+            "dac_priority": ("0x%02X" % max(d["instr"] for d in info["dac"])
+                             if info["dac"] and sid < 0x30 else None),
+            "dac_busy_seconds": (round(max((d["off_tick"] if d["off_tick"] is not None
+                                            else info["ticks"]) for d in info["dac"])
+                                       / FRAME_HZ, 3) if info["dac"] and sid < 0x30 else None),
             "samples": len(x),
             "duration": round(len(x) / OUT_RATE, 4),
             "frames_rendered": r["frames"],
@@ -661,7 +743,7 @@ def main():
         sys.stdout.flush()
     meta = {
         "format": {"rate": OUT_RATE, "bits": 16, "channels": 1, "gain": GAIN,
-                   "dc_block_hz": 5.0, "native_rate": round(YM_RATE, 3),
+                   "dc_block_hz": DC_HZ, "native_rate": round(YM_RATE, 3),
                    "frame_hz": round(FRAME_HZ, 4), "bank_wait_cycles": BANK_WAIT},
         "notes": "Rendered by tools/extract/audio.py from the retail driver (docs/specs/audio.md). "
                  "loop_start/loop_end are sample frames (end exclusive) at 'rate'.",

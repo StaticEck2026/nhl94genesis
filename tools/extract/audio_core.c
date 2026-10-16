@@ -272,3 +272,17 @@ void resample(const float *in, uint32_t n_in, float *out, uint32_t n_out,
         out[i] = (float)(wsum != 0.0 ? acc / wsum : 0.0);
     }
 }
+
+/* One-pole DC blocker in place: y[n] = x[n] - x[n-1] + r*y[n-1], starting at rest on
+ * x[0] (no step at the start). Models the console's AC-coupled output. */
+void dc_block(float *x, uint32_t n, double r)
+{
+    double px = n ? x[0] : 0.0, py = 0.0;
+    uint32_t i;
+    for (i = 0; i < n; i++) {
+        double v = x[i];
+        py = v - px + r * py;
+        px = v;
+        x[i] = (float)py;
+    }
+}
