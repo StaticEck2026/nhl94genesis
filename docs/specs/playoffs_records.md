@@ -632,8 +632,12 @@ Items 1-10 are done:
 - The playoff intermission tables are used. The clinch is `GameRules.cup_assignment`.
 - The ticker headings follow the round.
 
+The highlights (§5.3) are done:
+- `ui/highlights.gd` shows the caption and ticker, then plays the close game live in a `HighlightGame` (scenes/highlight.gd) in its own viewport. Players start from `unk_1387C`, the clock is 60-179 s, and the clip ends 180 loops after the first stoppage or on C/Start.
+- A tie leads to an overtime clip; a press during the caption skips the rest.
+- The port has to set the puck's stalled counter to `$78`. Retail keeps it from the held game's RAM.
+
 Items still open or simplified:
-- The highlights are settled as if skipped (`sub_1381E`); the live highlight game is not played.
 - The four-way playoff pads (`_pojoylist2`) are not used; the playoff Players row uses the two-pad values.
 - The regular-season quirk of a saved playoff's `gamelevel` is not reproduced.
 - The Playoff Stats bit packing in the save file uses the retail widths but not its exact bit order.

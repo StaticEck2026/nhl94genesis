@@ -14,6 +14,7 @@ var skaters: Array[Skater2D] = []
 var _hold_frames := 0
 var _over := false
 var _quitting := false
+var _highlights: Highlights
 
 func _enter_tree() -> void:
 	auto_place = false
@@ -52,6 +53,8 @@ func _ready() -> void:
 	world.rules.intermission.connect(_on_intermission)
 	world.rules.game_over.connect(_on_game_over)
 	($Hud as Node).call("bind", self)
+	_highlights = Highlights.new()
+	add_child(_highlights)
 	($PauseMenu as Node).connect("quit_requested", _quit)
 	($PauseMenu as Node).connect("intermission_closed", _release)
 	if m.shootout:
@@ -82,10 +85,13 @@ func _human() -> bool:
 ## this point of the game; the sim holds until row 0 or Start (or a while, with no human
 ## playing).
 func _on_intermission(gsp: int) -> void:
-	world.rules.intermission_highlights()
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
 	world.begin_intermission()
+	# sub_1351C: the close games' highlights first, then the menu.
+	if _highlights.start(self):
+		_highlights.done.connect(func() -> void: ($PauseMenu as Node).call("open_intermission", gsp), CONNECT_ONE_SHOT)
+		return
 	($PauseMenu as Node).call("open_intermission", gsp)
 
 ## The end of the game: the final intermission ("Exit Game" goes back to the setup).
@@ -99,10 +105,13 @@ func _on_game_over() -> void:
 	_hold_frames = CPU_INTERMISSION_FRAMES
 	if not world.intermission:
 		world.begin_intermission()
+	if _highlights.start(self):
+		_highlights.done.connect(func() -> void: ($PauseMenu as Node).call("open_intermission", 4, true), CONNECT_ONE_SHOT)
+		return
 	($PauseMenu as Node).call("open_intermission", 4, true)
 
 func _physics_process(delta: float) -> void:
-	if hold and not _human():
+	if hold and not _human() and not _highlights.busy():
 		_hold_frames -= 1
 		if _hold_frames <= 0:
 			($PauseMenu as Node).call("close")
