@@ -32,6 +32,8 @@ func _enter_tree() -> void:
 	add_child(sfx)
 	world.sound.connect(sfx.play)
 	world.song.connect(sfx.play_song)
+	world.sound_off.connect(sfx.stop_all)
+	world.music_off.connect(sfx.stop_music)
 
 func _exit_tree() -> void:
 	if world:

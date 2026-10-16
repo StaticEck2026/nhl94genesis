@@ -306,8 +306,10 @@ signal background_anim(id: int)
 signal penalty_called(id: int, offender: int)
 ## checkgoal: team 0 home / 1 away scored. rec is the ScoreSum record.
 signal goal_scored(team: int, rec: Dictionary)
-## The home goal song (ChooseSong after a home goal).
-signal goal_song
+## AllSndOff: every sound stops (StartPer).
+signal sound_off
+## sub_1A304: the music stops.
+signal music_off
 ## puckstick handed a loose puck to a one-timer shooter (onetimershot).
 signal onetimer_shot(index: int)
 ## Start pressed on pad k.
@@ -468,11 +470,22 @@ func drop_puck(at: Vector2i) -> void:
 ## One DoGameFrame with d7 vblanks elapsed: the VBlank clock ticks, then
 ## periodiceevents, updateplayers, setSlotBit, checkwindow.
 func step(d7: int = 1) -> void:
+	# StartPer (L29862, L29896): the period opens in silence with its tune.
+	if period_song != -2:
+		sound_off.emit()
+		song.emit(period_song)
+		period_song = -2
 	for i in d7:
 		rules.vblank_tick()
 		vcount += 1
 	periodic_events(d7)
 	update_players(d7)
+	# L29922-29931: the home-goal tune 120 loops after the goal, the music cut first.
+	if goal_song_timer > 0:
+		goal_song_timer -= 1
+		if goal_song_timer == 0:
+			music_off.emit()
+			song.emit(goal_song_id)
 	ai.set_slot_bit()
 	checkwindow(d7)
 	replay.record(d7)
@@ -1150,6 +1163,51 @@ func set_c_player(k: int, o: SimObject) -> void:
 			return
 		o.flags |= SimObject.PF_JOYCON
 	c_player[k] = d0
+
+# --- ChooseSong ----------------------------------------------------------------------------
+
+## unk_FE5B0: per home team (retail index 0-27) the tune for each SongIndex: 0 period
+## start, 1 home power play, 2 stoppage / shootout, 3 home goal, 4 away power play, 5 the
+## third period's late cue. 0 picks from SONG_RANDOM.
+const SONG_TABLE := [
+	[0x77, 0x75, 0x76, 0x00, 0x5A, 0x00], [0x31, 0x32, 0x30, 0x00, 0x5A, 0x31],
+	[0x34, 0x33, 0x33, 0x34, 0x5A, 0x00], [0x35, 0x37, 0x35, 0x37, 0x36, 0x36],
+	[0x38, 0x3A, 0x39, 0x38, 0x5A, 0x65], [0x4A, 0x4B, 0x4B, 0x00, 0x5A, 0x00],
+	[0x3B, 0x3C, 0x3D, 0x00, 0x5A, 0x3C], [0x3E, 0x3F, 0x3F, 0x00, 0x5A, 0x00],
+	[0x77, 0x75, 0x76, 0x00, 0x5A, 0x00], [0x40, 0x42, 0x41, 0x42, 0x5A, 0x40],
+	[0x43, 0x43, 0x45, 0x44, 0x5A, 0x46], [0x4F, 0x4E, 0x4F, 0x4D, 0x5A, 0x4C],
+	[0x50, 0x51, 0x50, 0x00, 0x5A, 0x52], [0x47, 0x48, 0x47, 0x49, 0x5A, 0x49],
+	[0x54, 0x55, 0x53, 0x00, 0x5A, 0x00], [0x77, 0x75, 0x76, 0x00, 0x5A, 0x00],
+	[0x56, 0x57, 0x56, 0x58, 0x00, 0x58], [0x59, 0x5B, 0x59, 0x5C, 0x5A, 0x5C],
+	[0x5D, 0x5E, 0x5D, 0x00, 0x5A, 0x5E], [0x5F, 0x60, 0x61, 0x63, 0x64, 0x65],
+	[0x67, 0x68, 0x68, 0x67, 0x5A, 0x69], [0x6A, 0x6B, 0x6B, 0x00, 0x5A, 0x00],
+	[0x6C, 0x6C, 0x6D, 0x00, 0x5A, 0x00], [0x6E, 0x6F, 0x70, 0x00, 0x5A, 0x00],
+	[0x71, 0x73, 0x71, 0x00, 0x5A, 0x74], [0x77, 0x75, 0x76, 0x00, 0x5A, 0x00],
+	[0x54, 0x55, 0x53, 0x00, 0x5A, 0x00], [0x54, 0x55, 0x53, 0x00, 0x5A, 0x00]]
+## unk_FE658.
+const SONG_RANDOM: Array[int] = [0x34, 0x40, 0x42, 0x49, 0x58, 0x5C, 0x65, 0x66]
+## A home goal's tune and the loops before it plays (word_FFDECE, word_FFDECC).
+var goal_song_id: int = -1
+var goal_song_timer: int = 0
+## The period's tune, waiting for the period's first loop (-2 none).
+var period_song: int = -2
+
+## ChooseSong (L973979): the home team's tune for a SongIndex, -1 in a highlight. Clears
+## byte_FFC2FE bit 6. A 0 in the table costs one RNG roll (randomd0(8)).
+func choose_song(song_index: int) -> int:
+	if gmode & GM_HL:
+		return -1
+	f_c2fe &= ~(1 << 6)
+	var t := clampi(stats[0].team_index, 0, SONG_TABLE.size() - 1)
+	var b: int = SONG_TABLE[t][song_index]
+	if b == 0:
+		b = SONG_RANDOM[rng.range_(8) & 7]
+	return b
+
+## checkgoal L49867-49871: a home goal picks its tune now; it plays $78 loops later.
+func home_goal_song() -> void:
+	goal_song_id = choose_song(3)
+	goal_song_timer = 0x78
 
 # --- the intermission ---------------------------------------------------------------
 

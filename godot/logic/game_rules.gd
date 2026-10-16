@@ -893,9 +893,16 @@ func period_over() -> void:
 			w.gsp = 4
 	_period_break()
 
+## song $79: the intermission (PeriodOver L53840).
+const SONG_INTERMISSION := 0x79
+
 ## loc_17278: clock, intermission, then the next period or the end.
 func _period_break() -> void:
 	reset_clock()
+	# L29881-29889: AllSndOff, then the intermission song (the pregame one too, StartGame
+	# joins here).
+	w.sound_off.emit()
+	w.song.emit(SONG_INTERMISSION)
 	intermission_bookkeeping()
 	intermission.emit(w.gsp)
 	if w.gsp == 4:
@@ -924,6 +931,7 @@ func intermission_bookkeeping() -> void:
 
 ## StartPer (L29853).
 func start_per() -> void:
+	w.goal_song_timer = 0
 	w.faceoff.overlay_request = -1
 	w.setupice()
 	reset_clock()
@@ -940,6 +948,11 @@ func start_per() -> void:
 	w.assreplace(w.puck(), id)
 	w.sflags2 |= SF2_NOREC
 	w.crowd_excite = gamelevel << 4
+	# StartPer's AllSndOff and the period's tune (SongIndex 0, L29892-29896). The port
+	# starts the period before the intermission hold, so both wait for its first loop
+	# (HockeyWorld.step). No team has a 0 in that column: no RNG roll, so the later
+	# moment does not change the stream.
+	w.period_song = w.choose_song(0)
 	if w.gsp < 2:
 		w.sflags3 |= HockeyWorld.SF3_MUSIC_CUE
 	period_started.emit(w.gsp)
@@ -1064,4 +1077,4 @@ func update_cwd_excite() -> void:
 func third_period_music() -> void:
 	if w.gsp == 2 and w.gmode & HockeyWorld.GM_HL == 0 and w.gameclock <= music_cue:
 		music_cue = -0x100
-		w.song.emit(5)
+		w.song.emit(w.choose_song(5))

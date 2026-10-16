@@ -156,7 +156,7 @@ func puckshootout(p: SimObject) -> void:
 			w.rules.stop4pen(-1)
 			return
 		if not _so() or (w.shootout_side == 0 and so_shooter_idx == 0):
-			w.song.emit(2)
+			w.song.emit(w.choose_song(2))
 		w.gmode |= HockeyWorld.GM_CLOCK
 		w.f_c2fa |= C2FA_ATTEMPT_CLOCK
 		p.vel = Vector2i.ZERO

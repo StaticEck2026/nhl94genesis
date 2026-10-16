@@ -111,8 +111,8 @@ func _first_call(p: SimObject) -> bool:
 		w.sflags3 &= ~HockeyWorld.SF3_MUSIC_CUE
 		if w.gmode & HockeyWorld.GM_CLOCK and w.f_c2fe & (1 << 6) == 0:
 			# ChooseSong(2); the tune plays at the end of puckfaceoff2's setup.
+			song_num = w.choose_song(2)
 			w.f_c2fe |= 1 << 4
-			song_num = 2
 	w.goalie.return_goalies()
 	p.temp[0] = -0x100
 	p.temp[1] = -0x100
@@ -273,7 +273,7 @@ func _pp_song() -> void:
 		pp = false
 	if pp:
 		return
-	song_num = 1 if d > 0 else 4
+	song_num = w.choose_song(1 if d > 0 else 4)
 	w.f_c2fe |= 1 << 6
 
 ## The line-up loop over objects 0-11.

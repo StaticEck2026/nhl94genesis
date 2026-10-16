@@ -32,6 +32,7 @@ const DEMO_IDLE := 0x5460
 
 var _teams: Array[TeamData] = []
 var _idle := 0
+var _sfx: SfxBank
 
 func _ready() -> void:
 	_edition.add_item("Retail '94")
@@ -61,6 +62,10 @@ func _ready() -> void:
 	_start.pressed.connect(_on_start)
 	_load_teams()
 	_home.grab_focus()
+	# The menus' song ($78: the title's, again after a game, loc_172E4).
+	_sfx = SfxBank.new()
+	add_child(_sfx)
+	_sfx.play_song(0x78)
 
 func _fight_edition() -> bool:
 	return _edition.selected == MatchConfig.Edition.FIGHT

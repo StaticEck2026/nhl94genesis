@@ -685,7 +685,7 @@ func goal(a3: SimObject) -> void:
 		w.f_c2fe &= ~HockeyWorld.C2FE_ONETIMER_TOUCH
 		a2.onetimer_goals += 1
 	if scorer == 0:
-		w.goal_song.emit()
+		w.home_goal_song()
 	# Scoring summary record.
 	var rec := {
 		"time": (w.gsp << 14) + (w.period_seconds - w.clock_seconds()),

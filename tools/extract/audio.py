@@ -4,8 +4,11 @@
 Offline only. The game never emulates or reads the ROM at runtime; it plays what this
 writes. Usage:
 
-    python3 tools/extract/audio.py [lst/nhl94.bin] [godot/assets/audio] [--ids 0,1,0x78]
-                                   [--verify] [--keep-native]
+    python3 tools/extract/audio.py [lst/nhl94.bin] [godot/assets/audio] [--ids=0,1,0x78]
+                                   [--verify]
+
+--ids renders only those ids and merges them into an existing audio.json. --verify also
+logs the Z80's YM writes and records PSG / direct-YM write counts per id.
 
 How: the retail sound code itself runs here. The 68000 half (p_initfx L61549, MusicVB
 L61792 and everything they call) runs in unicorn (pip install unicorn==2.1.4); the Z80
@@ -22,7 +25,8 @@ Output (docs/specs/audio.md):
                      song(); same render as the sfx file)
   audio.json         per id: duration, loop points, voices used, priority/channel info
 
-Format: 44100 Hz, 16-bit, mono (every retail patch pans centre, L == R is asserted).
+Format: 44100 Hz, 16-bit, mono (every retail patch pans centre; L == R is checked and
+recorded as "stereo" in audio.json).
 One fixed gain for every file, so relative levels are retail. A 5 Hz DC blocker models
 the console's output coupling (the DAC holds its last value between samples). Looping
 songs carry a RIFF 'smpl' loop (Godot's WAV importer reads it) and loop_start/loop_end
@@ -278,14 +282,6 @@ class Machine:
 
     def slots(self):
         return [self.r32(SLOTS + 6 * i) for i in range(8)]
-
-    def voices(self):
-        out = []
-        for i in range(6):
-            a = VOICES + 8 * i
-            raw = self.ram.raw[a & 0xFFFF:(a & 0xFFFF) + 8]
-            out.append(raw)
-        return out
 
     def samples(self, start=0):
         n = self.lib.core_samples(self.core) - start

@@ -112,6 +112,8 @@ func _initialize() -> void:
 		"test_replay_buffer",
 		"test_four_way_pads",
 		"test_four_way_mash_game",
+		"test_choose_song",
+		"test_sound_rules",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2644,4 +2646,75 @@ func test_four_way_mash_game() -> bool:
 	check(over[0], "the game ended under random input (%d frames)" % frames)
 	eq(clash, 0, "no two pads drove the same skater")
 	w.dispose()
+	return true
+
+## ChooseSong: the home team's row, the random fallback (one RNG roll), nothing in a
+## highlight; a home goal's tune 120 loops later with the music cut first; the period's
+## tune on its first loop.
+func test_choose_song() -> bool:
+	var w := HockeyWorld.new(SimSettings.new(), 0x1234)
+	w.roster.setup_teams(_team("PIT"), _team("CHI"))
+	eq(w.stats[0].team_index, 17, "Pittsburgh is retail team 17")
+	w.f_c2fe |= 1 << 6
+	eq(w.choose_song(0), 0x59, "Pittsburgh's period tune")
+	check(w.f_c2fe & (1 << 6) == 0, "ChooseSong clears byte_FFC2FE bit 6")
+	eq(w.choose_song(4), 0x5A, "the stock away power-play tune")
+	w.roster.setup_teams(_team("BOS"), _team("CHI"))
+	var b := w.choose_song(3)
+	check(b in HockeyWorld.SONG_RANDOM, "Boston's home-goal entry is 0: a random tune (%x)" % b)
+	w.gmode |= HockeyWorld.GM_HL
+	eq(w.choose_song(0), -1, "nothing in a highlight")
+	w.gmode &= ~HockeyWorld.GM_HL
+	var heard := []
+	var cut := [0]
+	w.song.connect(func(id: int) -> void: heard.append(id))
+	w.music_off.connect(func() -> void: cut[0] += 1)
+	w.home_goal_song()
+	for i in 0x77:
+		w.step()
+	check(heard.is_empty(), "nothing for 119 loops")
+	w.step()
+	eq(heard.size(), 1, "the tune at loop 120")
+	check(heard[0] in HockeyWorld.SONG_RANDOM, "Boston's random goal tune")
+	eq(cut[0], 1, "the music was cut first")
+	# The period's tune waits for the first loop.
+	heard.clear()
+	var off := [0]
+	w.sound_off.connect(func() -> void: off[0] += 1)
+	w.rules.start_per()
+	check(heard.is_empty(), "no tune while the intermission holds")
+	w.step()
+	eq(heard, [0x31], "Boston's period tune on the first loop")
+	eq(off[0], 1, "after AllSndOff")
+	w.dispose()
+	return true
+
+## SfxBank: one DAC voice by instrument priority; a song() crowd id leaves the music; the
+## whistle and the horn cut it; a long song loops from its loop start.
+func test_sound_rules() -> bool:
+	var b := SfxBank.new()
+	root.add_child(b)
+	var dac: AudioStreamPlayer = b.get("_dac")
+	var music: AudioStreamPlayer = b.get("_music")
+	b.play(0x10)
+	var first := dac.stream
+	check(first != null, "a pass takes the DAC")
+	b.play(0x18)
+	check(dac.stream != first, "a shot (instrument $63) beats a pass ($61)")
+	var shot := dac.stream
+	b.play(0x11)
+	check(dac.stream == shot, "a pass while the shot sounds is dropped")
+	b.play(0x0B)
+	check(dac.stream != shot, "the cheer ($6D) cuts the shot")
+	b.play_song(0x30)
+	var tune := music.stream
+	check(tune != null, "an organ tune is loaded")
+	b.play_song(0x0C)
+	check(music.stream == tune, "the boo leaves the music alone")
+	b.play_song(0x79)
+	var s79 := music.stream as AudioStreamOggVorbis
+	check(s79 != null and s79.loop, "the intermission song loops")
+	if s79:
+		check(s79.loop_offset > 0.0, "from its loop start")
+	b.queue_free()
 	return true

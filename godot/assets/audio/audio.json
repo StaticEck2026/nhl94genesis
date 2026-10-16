@@ -1,0 +1,6364 @@
+{
+ "format": {
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "gain": 6.0,
+  "dc_block_hz": 5.0,
+  "native_rate": 53267.039,
+  "frame_hz": 59.9227,
+  "bank_wait_cycles": 3
+ },
+ "notes": "Rendered by tools/extract/audio.py from the retail driver (docs/specs/audio.md). loop_start/loop_end are sample frames (end exclusive) at 'rate'.",
+ "mixing": {
+  "fm_voices": 5,
+  "dac_voices": 1,
+  "rules": "See docs/specs/audio.md section 6: ids >= $30 stop the current music; 8 sequence slots (a request with no free slot is dropped); FM notes take the free or oldest of 5 FM voices; every DAC instrument shares the one DAC voice and a new DAC note only replaces a sounding one with a higher instrument number."
+ },
+ "song_ids_used": [
+  "0x0B",
+  "0x0C",
+  "0x0D",
+  "0x0F",
+  "0x30",
+  "0x31",
+  "0x32",
+  "0x33",
+  "0x34",
+  "0x35",
+  "0x36",
+  "0x37",
+  "0x38",
+  "0x39",
+  "0x3A",
+  "0x3B",
+  "0x3C",
+  "0x3D",
+  "0x3E",
+  "0x3F",
+  "0x40",
+  "0x41",
+  "0x42",
+  "0x43",
+  "0x44",
+  "0x45",
+  "0x46",
+  "0x47",
+  "0x48",
+  "0x49",
+  "0x4A",
+  "0x4B",
+  "0x4C",
+  "0x4D",
+  "0x4E",
+  "0x4F",
+  "0x50",
+  "0x51",
+  "0x52",
+  "0x53",
+  "0x54",
+  "0x55",
+  "0x56",
+  "0x57",
+  "0x58",
+  "0x59",
+  "0x5A",
+  "0x5B",
+  "0x5C",
+  "0x5D",
+  "0x5E",
+  "0x5F",
+  "0x60",
+  "0x61",
+  "0x63",
+  "0x64",
+  "0x65",
+  "0x66",
+  "0x67",
+  "0x68",
+  "0x69",
+  "0x6A",
+  "0x6B",
+  "0x6C",
+  "0x6D",
+  "0x6E",
+  "0x6F",
+  "0x70",
+  "0x71",
+  "0x73",
+  "0x74",
+  "0x75",
+  "0x76",
+  "0x77",
+  "0x78",
+  "0x79",
+  "0x7A"
+ ],
+ "choose_song": {
+  "table": "unk_FE5B0 (6 bytes per HmTeam, index SongIndex 0..5; 0 = random)",
+  "random": "unk_FE658[randomd0(8) & 7]",
+  "per_team": {
+   "0": [
+    "0x77",
+    "0x75",
+    "0x76",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "1": [
+    "0x31",
+    "0x32",
+    "0x30",
+    "0x00",
+    "0x5A",
+    "0x31"
+   ],
+   "2": [
+    "0x34",
+    "0x33",
+    "0x33",
+    "0x34",
+    "0x5A",
+    "0x00"
+   ],
+   "3": [
+    "0x35",
+    "0x37",
+    "0x35",
+    "0x37",
+    "0x36",
+    "0x36"
+   ],
+   "4": [
+    "0x38",
+    "0x3A",
+    "0x39",
+    "0x38",
+    "0x5A",
+    "0x65"
+   ],
+   "5": [
+    "0x4A",
+    "0x4B",
+    "0x4B",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "6": [
+    "0x3B",
+    "0x3C",
+    "0x3D",
+    "0x00",
+    "0x5A",
+    "0x3C"
+   ],
+   "7": [
+    "0x3E",
+    "0x3F",
+    "0x3F",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "8": [
+    "0x77",
+    "0x75",
+    "0x76",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "9": [
+    "0x40",
+    "0x42",
+    "0x41",
+    "0x42",
+    "0x5A",
+    "0x40"
+   ],
+   "10": [
+    "0x43",
+    "0x43",
+    "0x45",
+    "0x44",
+    "0x5A",
+    "0x46"
+   ],
+   "11": [
+    "0x4F",
+    "0x4E",
+    "0x4F",
+    "0x4D",
+    "0x5A",
+    "0x4C"
+   ],
+   "12": [
+    "0x50",
+    "0x51",
+    "0x50",
+    "0x00",
+    "0x5A",
+    "0x52"
+   ],
+   "13": [
+    "0x47",
+    "0x48",
+    "0x47",
+    "0x49",
+    "0x5A",
+    "0x49"
+   ],
+   "14": [
+    "0x54",
+    "0x55",
+    "0x53",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "15": [
+    "0x77",
+    "0x75",
+    "0x76",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "16": [
+    "0x56",
+    "0x57",
+    "0x56",
+    "0x58",
+    "0x00",
+    "0x58"
+   ],
+   "17": [
+    "0x59",
+    "0x5B",
+    "0x59",
+    "0x5C",
+    "0x5A",
+    "0x5C"
+   ],
+   "18": [
+    "0x5D",
+    "0x5E",
+    "0x5D",
+    "0x00",
+    "0x5A",
+    "0x5E"
+   ],
+   "19": [
+    "0x5F",
+    "0x60",
+    "0x61",
+    "0x63",
+    "0x64",
+    "0x65"
+   ],
+   "20": [
+    "0x67",
+    "0x68",
+    "0x68",
+    "0x67",
+    "0x5A",
+    "0x69"
+   ],
+   "21": [
+    "0x6A",
+    "0x6B",
+    "0x6B",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "22": [
+    "0x6C",
+    "0x6C",
+    "0x6D",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "23": [
+    "0x6E",
+    "0x6F",
+    "0x70",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "24": [
+    "0x71",
+    "0x73",
+    "0x71",
+    "0x00",
+    "0x5A",
+    "0x74"
+   ],
+   "25": [
+    "0x77",
+    "0x75",
+    "0x76",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "26": [
+    "0x54",
+    "0x55",
+    "0x53",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ],
+   "27": [
+    "0x54",
+    "0x55",
+    "0x53",
+    "0x00",
+    "0x5A",
+    "0x00"
+   ]
+  },
+  "fallback": [
+   "0x34",
+   "0x40",
+   "0x42",
+   "0x49",
+   "0x58",
+   "0x5C",
+   "0x65",
+   "0x66"
+  ]
+ },
+ "ids": {
+  "0x00": {
+   "files": [
+    "sfx/sfx_00.wav"
+   ],
+   "kind": "sfx",
+   "use": "after a goal (checkgoal L49814): siren",
+   "game_uses_song": false,
+   "seq_addr": "0x2CCCA",
+   "seq_ticks": 356,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x1F"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 5.941,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 282604,
+   "duration": 6.4083,
+   "frames_rendered": 384,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8757,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 588
+   }
+  },
+  "0x01": {
+   "files": [
+    "sfx/sfx_01.wav"
+   ],
+   "kind": "sfx",
+   "use": "ding: breakaway (L39781, L39940), assnearest L40599; penalty-time tick (updatepentime L46877)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C834",
+   "seq_ticks": 20,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x1D"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.334,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 16927,
+   "duration": 0.3838,
+   "frames_rendered": 23,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 4710,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x02": {
+   "files": [
+    "sfx/sfx_02.wav"
+   ],
+   "kind": "sfx",
+   "use": "penalty over (updatepentime L46877); one minute left (L51797)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C844",
+   "seq_ticks": 20,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x1D"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.334,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 16927,
+   "duration": 0.3838,
+   "frames_rendered": 23,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 4728,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x03": {
+   "files": [
+    "sfx/sfx_03.wav"
+   ],
+   "kind": "sfx",
+   "use": "whistle (Stop4Pen L46476)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CA40",
+   "seq_ticks": 110,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x1E"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 1.836,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 48060,
+   "duration": 1.0898,
+   "frames_rendered": 112,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 4681,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 212
+   }
+  },
+  "0x04": {
+   "files": [
+    "sfx/sfx_04.wav"
+   ],
+   "kind": "sfx",
+   "use": "horn, end of period (clockcont L30082)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C854",
+   "seq_ticks": 110,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x1A"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 2,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 1.836,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 148661,
+   "duration": 3.371,
+   "frames_rendered": 202,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 12803,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 204
+   }
+  },
+  "0x05": {
+   "files": [
+    "sfx/sfx_05.wav"
+   ],
+   "kind": "sfx",
+   "use": "shot wiff (doshot); puck contact (checkpuckcoll L50528)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CADE",
+   "seq_ticks": 20,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x1C"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.334,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 12514,
+   "duration": 0.2838,
+   "frames_rendered": 22,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8990,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x06": {
+   "files": [
+    "sfx/sfx_06.wav"
+   ],
+   "kind": "sfx",
+   "use": "stick deflection (puckstick L50608)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C8D0",
+   "seq_ticks": 20,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x19",
+    "0x1B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 2,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.334,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 16927,
+   "duration": 0.3838,
+   "frames_rendered": 23,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3600,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 148
+   }
+  },
+  "0x07": {
+   "files": [
+    "sfx/sfx_07.wav"
+   ],
+   "kind": "sfx",
+   "use": "no call site found",
+   "game_uses_song": false,
+   "seq_addr": "0x2C8EC",
+   "seq_ticks": 10,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x17"
+   ],
+   "dac_instruments": [
+    "0x60"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [
+    {
+     "instr": "0x60",
+     "note": 74,
+     "step": 91,
+     "rate_hz": 10603,
+     "sample_bytes": 604,
+     "sample_seconds": 0.057,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 10
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.167,
+   "dac_priority": "0x60",
+   "dac_busy_seconds": 0.167,
+   "samples": 8832,
+   "duration": 0.2003,
+   "frames_rendered": 12,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3815,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 82
+   }
+  },
+  "0x08": {
+   "files": [
+    "sfx/sfx_08.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits the net frame, play live (checkgoal L49726)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C964",
+   "seq_ticks": 152,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x16"
+   ],
+   "dac_instruments": [
+    "0x6C"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [
+    {
+     "instr": "0x6C",
+     "note": 70,
+     "step": 72,
+     "rate_hz": 8390,
+     "sample_bytes": 12864,
+     "sample_seconds": 1.533,
+     "velocity": 127,
+     "on_tick": 6,
+     "off_tick": 152
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 2.537,
+   "dac_priority": "0x6C",
+   "dac_busy_seconds": 2.537,
+   "samples": 77531,
+   "duration": 1.7581,
+   "frames_rendered": 154,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8649,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 80
+   }
+  },
+  "0x09": {
+   "files": [
+    "sfx/sfx_09.wav"
+   ],
+   "kind": "sfx",
+   "use": "no retail call site (fight patch: punch, high)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CC26",
+   "seq_ticks": 30,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x67"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x67",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 30
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.501,
+   "dac_priority": "0x67",
+   "dac_busy_seconds": 0.501,
+   "samples": 18386,
+   "duration": 0.4169,
+   "frames_rendered": 32,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5684,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x0A": {
+   "files": [
+    "sfx/sfx_0a.wav"
+   ],
+   "kind": "sfx",
+   "use": "no retail call site (fight patch: punch, low)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CC36",
+   "seq_ticks": 30,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x67"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x67",
+     "note": 65,
+     "step": 54,
+     "rate_hz": 6292,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.216,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 30
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.501,
+   "dac_priority": "0x67",
+   "dac_busy_seconds": 0.501,
+   "samples": 15049,
+   "duration": 0.3412,
+   "frames_rendered": 32,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5656,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x0B": {
+   "files": [
+    "sfx/sfx_0b.wav",
+    "music/song_0b.wav"
+   ],
+   "kind": "sfx",
+   "use": "crowd cheer: song() from AddPenalty L45970, FallDown L49489, puckstick L50690, puckgoalie L50879",
+   "game_uses_song": true,
+   "seq_addr": "0x2CC7E",
+   "seq_ticks": 240,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x6D"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x6D",
+     "note": 67,
+     "step": 61,
+     "rate_hz": 7108,
+     "sample_bytes": 26971,
+     "sample_seconds": 3.795,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 240
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 4.005,
+   "dac_priority": "0x6D",
+   "dac_busy_seconds": 4.005,
+   "samples": 172170,
+   "duration": 3.9041,
+   "frames_rendered": 242,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 6061,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x0C": {
+   "files": [
+    "sfx/sfx_0c.wav",
+    "music/song_0c.wav"
+   ],
+   "kind": "sfx",
+   "use": "crowd boo: song() from AddPenalty, FallDown",
+   "game_uses_song": true,
+   "seq_addr": "0x2CC8E",
+   "seq_ticks": 90,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x6B"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x6B",
+     "note": 65,
+     "step": 54,
+     "rate_hz": 6292,
+     "sample_bytes": 9545,
+     "sample_seconds": 1.517,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 90
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 1.502,
+   "dac_priority": "0x6B",
+   "dac_busy_seconds": 1.502,
+   "samples": 68443,
+   "duration": 1.552,
+   "frames_rendered": 93,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5287,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x0D": {
+   "files": [
+    "sfx/sfx_0d.wav",
+    "music/song_0d.wav"
+   ],
+   "kind": "sfx",
+   "use": "injury (setInjuryType L49503, sfx); away goalie save (puckgoalie L50879, song)",
+   "game_uses_song": true,
+   "seq_addr": "0x2CCBA",
+   "seq_ticks": 100,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x6C"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x6C",
+     "note": 70,
+     "step": 72,
+     "rate_hz": 8390,
+     "sample_bytes": 12864,
+     "sample_seconds": 1.533,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 100
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 1.669,
+   "dac_priority": "0x6C",
+   "dac_busy_seconds": 1.669,
+   "samples": 73109,
+   "duration": 1.6578,
+   "frames_rendered": 102,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 4945,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x0E": {
+   "files": [
+    "sfx/sfx_0e.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck over / at the glass (wallcollb2 L50115)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CC9E",
+   "seq_ticks": 110,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x6C",
+    "0x6E"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x6E",
+     "note": 91,
+     "step": 244,
+     "rate_hz": 28431,
+     "sample_bytes": 14971,
+     "sample_seconds": 0.527,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 30
+    },
+    {
+     "instr": "0x6C",
+     "note": 72,
+     "step": 81,
+     "rate_hz": 9438,
+     "sample_bytes": 12864,
+     "sample_seconds": 1.363,
+     "velocity": 127,
+     "on_tick": 30,
+     "off_tick": 110
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 1.836,
+   "dac_priority": "0x6E",
+   "dac_busy_seconds": 1.836,
+   "samples": 83162,
+   "duration": 1.8858,
+   "frames_rendered": 113,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5836,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 12
+   }
+  },
+  "0x0F": {
+   "files": [
+    "sfx/sfx_0f.wav",
+    "music/song_0f.wav"
+   ],
+   "kind": "sfx",
+   "use": "crowd bed when home leads after the game (song() L55725)",
+   "game_uses_song": true,
+   "seq_addr": "0x2CC46",
+   "seq_ticks": 1080,
+   "seq_end": "end",
+   "notes": 6,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x6D"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x6D",
+     "note": 69,
+     "step": 68,
+     "rate_hz": 7923,
+     "sample_bytes": 26971,
+     "sample_seconds": 3.404,
+     "velocity": 90,
+     "on_tick": 0,
+     "off_tick": 180
+    },
+    {
+     "instr": "0x6D",
+     "note": 66,
+     "step": 57,
+     "rate_hz": 6642,
+     "sample_bytes": 26971,
+     "sample_seconds": 4.061,
+     "velocity": 127,
+     "on_tick": 180,
+     "off_tick": 360
+    },
+    {
+     "instr": "0x6D",
+     "note": 67,
+     "step": 61,
+     "rate_hz": 7108,
+     "sample_bytes": 26971,
+     "sample_seconds": 3.795,
+     "velocity": 127,
+     "on_tick": 360,
+     "off_tick": 520
+    },
+    {
+     "instr": "0x6D",
+     "note": 68,
+     "step": 64,
+     "rate_hz": 7457,
+     "sample_bytes": 26971,
+     "sample_seconds": 3.617,
+     "velocity": 127,
+     "on_tick": 520,
+     "off_tick": 660
+    },
+    {
+     "instr": "0x6D",
+     "note": 66,
+     "step": 57,
+     "rate_hz": 6642,
+     "sample_bytes": 26971,
+     "sample_seconds": 4.061,
+     "velocity": 127,
+     "on_tick": 660,
+     "off_tick": 880
+    },
+    {
+     "instr": "0x6D",
+     "note": 67,
+     "step": 61,
+     "rate_hz": 7108,
+     "sample_bytes": 26971,
+     "sample_seconds": 3.795,
+     "velocity": 127,
+     "on_tick": 880,
+     "off_tick": 1080
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 18.023,
+   "dac_priority": "0x6D",
+   "dac_busy_seconds": 18.023,
+   "samples": 797031,
+   "duration": 18.0733,
+   "frames_rendered": 1083,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 6211,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 28
+   }
+  },
+  "0x10": {
+   "files": [
+    "sfx/sfx_10.wav"
+   ],
+   "kind": "sfx",
+   "use": "pass, loudest: $10 + (($C - puckvz.b) >> 2 & 3) (passmode L37066)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB66",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x61"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x61",
+     "note": 70,
+     "step": 72,
+     "rate_hz": 8390,
+     "sample_bytes": 3369,
+     "sample_seconds": 0.402,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x61",
+   "dac_busy_seconds": 0.417,
+   "samples": 19871,
+   "duration": 0.4506,
+   "frames_rendered": 27,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 6027,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x11": {
+   "files": [
+    "sfx/sfx_11.wav"
+   ],
+   "kind": "sfx",
+   "use": "pass",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB76",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x61"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x61",
+     "note": 69,
+     "step": 68,
+     "rate_hz": 7923,
+     "sample_bytes": 3369,
+     "sample_seconds": 0.425,
+     "velocity": 95,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x61",
+   "dac_busy_seconds": 0.417,
+   "samples": 20607,
+   "duration": 0.4673,
+   "frames_rendered": 28,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3287,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x12": {
+   "files": [
+    "sfx/sfx_12.wav"
+   ],
+   "kind": "sfx",
+   "use": "pass",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB86",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x61"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x61",
+     "note": 68,
+     "step": 64,
+     "rate_hz": 7457,
+     "sample_bytes": 3369,
+     "sample_seconds": 0.452,
+     "velocity": 55,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x61",
+   "dac_busy_seconds": 0.417,
+   "samples": 20607,
+   "duration": 0.4673,
+   "frames_rendered": 28,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1942,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x13": {
+   "files": [
+    "sfx/sfx_13.wav"
+   ],
+   "kind": "sfx",
+   "use": "pass, quietest",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB96",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x61"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x61",
+     "note": 68,
+     "step": 64,
+     "rate_hz": 7457,
+     "sample_bytes": 3369,
+     "sample_seconds": 0.452,
+     "velocity": 1,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x61",
+   "dac_busy_seconds": 0.417,
+   "samples": 20607,
+   "duration": 0.4673,
+   "frames_rendered": 28,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1418,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x14": {
+   "files": [
+    "sfx/sfx_14.wav"
+   ],
+   "kind": "sfx",
+   "use": "backhand shot, hardest: $14 + max(3 - speed/16, 0) (doshot L37692)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CBA6",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x62"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x62",
+     "note": 74,
+     "step": 91,
+     "rate_hz": 10603,
+     "sample_bytes": 3869,
+     "sample_seconds": 0.365,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x62",
+   "dac_busy_seconds": 0.417,
+   "samples": 19871,
+   "duration": 0.4506,
+   "frames_rendered": 27,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 6746,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x15": {
+   "files": [
+    "sfx/sfx_15.wav"
+   ],
+   "kind": "sfx",
+   "use": "backhand shot",
+   "game_uses_song": false,
+   "seq_addr": "0x2CBB6",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x62"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x62",
+     "note": 73,
+     "step": 86,
+     "rate_hz": 10021,
+     "sample_bytes": 3869,
+     "sample_seconds": 0.386,
+     "velocity": 95,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x62",
+   "dac_busy_seconds": 0.417,
+   "samples": 19871,
+   "duration": 0.4506,
+   "frames_rendered": 27,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3166,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x16": {
+   "files": [
+    "sfx/sfx_16.wav"
+   ],
+   "kind": "sfx",
+   "use": "backhand shot",
+   "game_uses_song": false,
+   "seq_addr": "0x2CBC6",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x62"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x62",
+     "note": 72,
+     "step": 81,
+     "rate_hz": 9438,
+     "sample_bytes": 3869,
+     "sample_seconds": 0.41,
+     "velocity": 55,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x62",
+   "dac_busy_seconds": 0.417,
+   "samples": 19870,
+   "duration": 0.4506,
+   "frames_rendered": 27,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 2204,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x17": {
+   "files": [
+    "sfx/sfx_17.wav"
+   ],
+   "kind": "sfx",
+   "use": "backhand shot, softest",
+   "game_uses_song": false,
+   "seq_addr": "0x2CBD6",
+   "seq_ticks": 25,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x62"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x62",
+     "note": 72,
+     "step": 81,
+     "rate_hz": 9438,
+     "sample_bytes": 3869,
+     "sample_seconds": 0.41,
+     "velocity": 1,
+     "on_tick": 0,
+     "off_tick": 25
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.417,
+   "dac_priority": "0x62",
+   "dac_busy_seconds": 0.417,
+   "samples": 19870,
+   "duration": 0.4506,
+   "frames_rendered": 27,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1661,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x18": {
+   "files": [
+    "sfx/sfx_18.wav"
+   ],
+   "kind": "sfx",
+   "use": "forehand shot, hardest",
+   "game_uses_song": false,
+   "seq_addr": "0x2CBE6",
+   "seq_ticks": 30,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x63"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x63",
+     "note": 74,
+     "step": 91,
+     "rate_hz": 10603,
+     "sample_bytes": 3604,
+     "sample_seconds": 0.34,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 30
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.501,
+   "dac_priority": "0x63",
+   "dac_busy_seconds": 0.501,
+   "samples": 21404,
+   "duration": 0.4854,
+   "frames_rendered": 32,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 6071,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x19": {
+   "files": [
+    "sfx/sfx_19.wav"
+   ],
+   "kind": "sfx",
+   "use": "forehand shot",
+   "game_uses_song": false,
+   "seq_addr": "0x2CBF6",
+   "seq_ticks": 30,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x63"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x63",
+     "note": 73,
+     "step": 86,
+     "rate_hz": 10021,
+     "sample_bytes": 3604,
+     "sample_seconds": 0.36,
+     "velocity": 95,
+     "on_tick": 0,
+     "off_tick": 30
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.501,
+   "dac_priority": "0x63",
+   "dac_busy_seconds": 0.501,
+   "samples": 21677,
+   "duration": 0.4915,
+   "frames_rendered": 32,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3413,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x1A": {
+   "files": [
+    "sfx/sfx_1a.wav"
+   ],
+   "kind": "sfx",
+   "use": "forehand shot",
+   "game_uses_song": false,
+   "seq_addr": "0x2CC06",
+   "seq_ticks": 30,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x63"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x63",
+     "note": 72,
+     "step": 81,
+     "rate_hz": 9438,
+     "sample_bytes": 3604,
+     "sample_seconds": 0.382,
+     "velocity": 55,
+     "on_tick": 0,
+     "off_tick": 30
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.501,
+   "dac_priority": "0x63",
+   "dac_busy_seconds": 0.501,
+   "samples": 21740,
+   "duration": 0.493,
+   "frames_rendered": 32,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1931,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x1B": {
+   "files": [
+    "sfx/sfx_1b.wav"
+   ],
+   "kind": "sfx",
+   "use": "forehand shot, softest",
+   "game_uses_song": false,
+   "seq_addr": "0x2CC16",
+   "seq_ticks": 30,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x63"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x63",
+     "note": 72,
+     "step": 81,
+     "rate_hz": 9438,
+     "sample_bytes": 3604,
+     "sample_seconds": 0.382,
+     "velocity": 1,
+     "on_tick": 0,
+     "off_tick": 30
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.501,
+   "dac_priority": "0x63",
+   "dac_busy_seconds": 0.501,
+   "samples": 21499,
+   "duration": 0.4875,
+   "frames_rendered": 32,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1426,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 8
+   }
+  },
+  "0x1C": {
+   "files": [
+    "sfx/sfx_1c.wav"
+   ],
+   "kind": "sfx",
+   "use": "body check, ltack 0 (newcheck L48769); goalie frame $2C8 (L39092)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CAEE",
+   "seq_ticks": 44,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x65",
+    "0x67"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x67",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 4
+    },
+    {
+     "instr": "0x65",
+     "note": 74,
+     "step": 91,
+     "rate_hz": 10603,
+     "sample_bytes": 8014,
+     "sample_seconds": 0.756,
+     "velocity": 127,
+     "on_tick": 4,
+     "off_tick": 44
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.734,
+   "dac_priority": "0x67",
+   "dac_busy_seconds": 0.734,
+   "samples": 34589,
+   "duration": 0.7843,
+   "frames_rendered": 47,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5870,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 12
+   }
+  },
+  "0x1D": {
+   "files": [
+    "sfx/sfx_1d.wav"
+   ],
+   "kind": "sfx",
+   "use": "body check, ltack 1",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB0A",
+   "seq_ticks": 50,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x64",
+    "0x67"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x67",
+     "note": 50,
+     "step": 22,
+     "rate_hz": 2563,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.531,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 10
+    },
+    {
+     "instr": "0x64",
+     "note": 66,
+     "step": 57,
+     "rate_hz": 6642,
+     "sample_bytes": 2603,
+     "sample_seconds": 0.392,
+     "velocity": 127,
+     "on_tick": 10,
+     "off_tick": 50
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.834,
+   "dac_priority": "0x67",
+   "dac_busy_seconds": 0.834,
+   "samples": 29914,
+   "duration": 0.6783,
+   "frames_rendered": 52,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5932,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 12
+   }
+  },
+  "0x1E": {
+   "files": [
+    "sfx/sfx_1e.wav"
+   ],
+   "kind": "sfx",
+   "use": "body check, ltack 2",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB26",
+   "seq_ticks": 54,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x65",
+    "0x67"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x67",
+     "note": 55,
+     "step": 30,
+     "rate_hz": 3496,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.39,
+     "velocity": 95,
+     "on_tick": 0,
+     "off_tick": 4
+    },
+    {
+     "instr": "0x65",
+     "note": 70,
+     "step": 72,
+     "rate_hz": 8390,
+     "sample_bytes": 8014,
+     "sample_seconds": 0.955,
+     "velocity": 95,
+     "on_tick": 4,
+     "off_tick": 54
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.901,
+   "dac_priority": "0x67",
+   "dac_busy_seconds": 0.901,
+   "samples": 41949,
+   "duration": 0.9512,
+   "frames_rendered": 57,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 2956,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 12
+   }
+  },
+  "0x1F": {
+   "files": [
+    "sfx/sfx_1f.wav"
+   ],
+   "kind": "sfx",
+   "use": "body check, ltack 3",
+   "game_uses_song": false,
+   "seq_addr": "0x2CB42",
+   "seq_ticks": 39,
+   "seq_end": "end",
+   "notes": 3,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [],
+   "dac_instruments": [
+    "0x64",
+    "0x67"
+   ],
+   "voices": [
+    "dac"
+   ],
+   "fm_max_voices": 0,
+   "dac_notes": [
+    {
+     "instr": "0x67",
+     "note": 45,
+     "step": 17,
+     "rate_hz": 1981,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.688,
+     "velocity": 95,
+     "on_tick": 0,
+     "off_tick": 6
+    },
+    {
+     "instr": "0x67",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292,
+     "velocity": 95,
+     "on_tick": 6,
+     "off_tick": 9
+    },
+    {
+     "instr": "0x64",
+     "note": 65,
+     "step": 54,
+     "rate_hz": 6292,
+     "sample_bytes": 2603,
+     "sample_seconds": 0.414,
+     "velocity": 95,
+     "on_tick": 9,
+     "off_tick": 39
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.651,
+   "dac_priority": "0x67",
+   "dac_busy_seconds": 0.651,
+   "samples": 30138,
+   "duration": 0.6834,
+   "frames_rendered": 41,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3464,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 16
+   }
+  },
+  "0x20": {
+   "files": [
+    "sfx/sfx_20.wav"
+   ],
+   "kind": "sfx",
+   "use": "player hits the boards (L50205)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C990",
+   "seq_ticks": 32,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [
+    "0x66"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [
+    {
+     "instr": "0x66",
+     "note": 67,
+     "step": 61,
+     "rate_hz": 7108,
+     "sample_bytes": 3803,
+     "sample_seconds": 0.535,
+     "velocity": 127,
+     "on_tick": 0,
+     "off_tick": 32
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.534,
+   "dac_priority": "0x66",
+   "dac_busy_seconds": 0.534,
+   "samples": 43421,
+   "duration": 0.9846,
+   "frames_rendered": 59,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 7516,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 80
+   }
+  },
+  "0x21": {
+   "files": [
+    "sfx/sfx_21.wav"
+   ],
+   "kind": "sfx",
+   "use": "no call site (player hits boards variant)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C9AC",
+   "seq_ticks": 32,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [
+    "0x66"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [
+    {
+     "instr": "0x66",
+     "note": 67,
+     "step": 61,
+     "rate_hz": 7108,
+     "sample_bytes": 3803,
+     "sample_seconds": 0.535,
+     "velocity": 105,
+     "on_tick": 0,
+     "off_tick": 32
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.534,
+   "dac_priority": "0x66",
+   "dac_busy_seconds": 0.534,
+   "samples": 42685,
+   "duration": 0.9679,
+   "frames_rendered": 58,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5244,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 80
+   }
+  },
+  "0x22": {
+   "files": [
+    "sfx/sfx_22.wav"
+   ],
+   "kind": "sfx",
+   "use": "no call site (player hits boards variant)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C9C8",
+   "seq_ticks": 32,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [
+    "0x66"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [
+    {
+     "instr": "0x66",
+     "note": 66,
+     "step": 57,
+     "rate_hz": 6642,
+     "sample_bytes": 3803,
+     "sample_seconds": 0.573,
+     "velocity": 80,
+     "on_tick": 0,
+     "off_tick": 32
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.534,
+   "dac_priority": "0x66",
+   "dac_busy_seconds": 0.534,
+   "samples": 41949,
+   "duration": 0.9512,
+   "frames_rendered": 57,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3776,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 80
+   }
+  },
+  "0x23": {
+   "files": [
+    "sfx/sfx_23.wav"
+   ],
+   "kind": "sfx",
+   "use": "no call site (player hits boards variant)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C9E4",
+   "seq_ticks": 32,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [
+    "0x66"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [
+    {
+     "instr": "0x66",
+     "note": 66,
+     "step": 57,
+     "rate_hz": 6642,
+     "sample_bytes": 3803,
+     "sample_seconds": 0.573,
+     "velocity": 60,
+     "on_tick": 0,
+     "off_tick": 32
+    }
+   ],
+   "stops_music": false,
+   "slot_seconds": 0.534,
+   "dac_priority": "0x66",
+   "dac_busy_seconds": 0.534,
+   "samples": 41213,
+   "duration": 0.9345,
+   "frames_rendered": 56,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3110,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 80
+   }
+  },
+  "0x24": {
+   "files": [
+    "sfx/sfx_24.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits a body / goalie (puckbody L50776, puckgoalie L50882)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C948",
+   "seq_ticks": 20,
+   "seq_end": "end",
+   "notes": 2,
+   "channels": [
+    0,
+    1
+   ],
+   "fm_instruments": [
+    "0x19",
+    "0x1B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 2,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.334,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 16927,
+   "duration": 0.3838,
+   "frames_rendered": 23,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 2622,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 148
+   }
+  },
+  "0x25": {
+   "files": [
+    "sfx/sfx_25.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits the net frame, clock stopped (checkgoal L49726)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C980",
+   "seq_ticks": 6,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x16"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.1,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 8096,
+   "duration": 0.1836,
+   "frames_rendered": 11,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8649,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x26": {
+   "files": [],
+   "kind": "sfx",
+   "use": "empty (points at the end event of $01)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C840",
+   "seq_ticks": 0,
+   "seq_end": "end",
+   "notes": 0,
+   "channels": [],
+   "fm_instruments": [],
+   "dac_instruments": [],
+   "voices": [],
+   "fm_max_voices": 0,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.0,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 0,
+   "duration": 0.0,
+   "frames_rendered": 2,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 0,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4
+   }
+  },
+  "0x27": {
+   "files": [],
+   "kind": "sfx",
+   "use": "empty (points at the end event of $01)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C840",
+   "seq_ticks": 0,
+   "seq_end": "end",
+   "notes": 0,
+   "channels": [],
+   "fm_instruments": [],
+   "dac_instruments": [],
+   "voices": [],
+   "fm_max_voices": 0,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.0,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 0,
+   "duration": 0.0,
+   "frames_rendered": 2,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 0,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4
+   }
+  },
+  "0x28": {
+   "files": [
+    "sfx/sfx_28.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits the boards, loudest: $28 + (d0 & 3) (wallcoll L50184)",
+   "game_uses_song": false,
+   "seq_addr": "0x2CA00",
+   "seq_ticks": 4,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.067,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 41949,
+   "duration": 0.9512,
+   "frames_rendered": 57,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8724,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x29": {
+   "files": [
+    "sfx/sfx_29.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits the boards",
+   "game_uses_song": false,
+   "seq_addr": "0x2CA10",
+   "seq_ticks": 3,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.05,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 39741,
+   "duration": 0.9012,
+   "frames_rendered": 54,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 6195,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x2A": {
+   "files": [
+    "sfx/sfx_2a.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits the boards",
+   "game_uses_song": false,
+   "seq_addr": "0x2CA20",
+   "seq_ticks": 2,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.033,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 36061,
+   "duration": 0.8177,
+   "frames_rendered": 49,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 3147,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x2B": {
+   "files": [
+    "sfx/sfx_2b.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck hits the boards, quietest",
+   "game_uses_song": false,
+   "seq_addr": "0x2CA30",
+   "seq_ticks": 1,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x18"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.017,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 33117,
+   "duration": 0.751,
+   "frames_rendered": 45,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1620,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 76
+   }
+  },
+  "0x2C": {
+   "files": [
+    "sfx/sfx_2c.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck lands on the ice, loudest (updateplayers L35554)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C908",
+   "seq_ticks": 2,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x17"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.033,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3680,
+   "duration": 0.0834,
+   "frames_rendered": 5,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 2968,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 78
+   }
+  },
+  "0x2D": {
+   "files": [
+    "sfx/sfx_2d.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck lands on the ice",
+   "game_uses_song": false,
+   "seq_addr": "0x2C918",
+   "seq_ticks": 2,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x17"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.033,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3680,
+   "duration": 0.0834,
+   "frames_rendered": 5,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1994,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 78
+   }
+  },
+  "0x2E": {
+   "files": [
+    "sfx/sfx_2e.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck lands on the ice",
+   "game_uses_song": false,
+   "seq_addr": "0x2C928",
+   "seq_ticks": 2,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x17"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.033,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3680,
+   "duration": 0.0834,
+   "frames_rendered": 5,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1475,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 78
+   }
+  },
+  "0x2F": {
+   "files": [
+    "sfx/sfx_2f.wav"
+   ],
+   "kind": "sfx",
+   "use": "puck lands on the ice, quietest; puck drop (Endfaceoff L42447)",
+   "game_uses_song": false,
+   "seq_addr": "0x2C938",
+   "seq_ticks": 2,
+   "seq_end": "end",
+   "notes": 1,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x17"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 1,
+   "dac_notes": [],
+   "stops_music": false,
+   "slot_seconds": 0.033,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3680,
+   "duration": 0.0834,
+   "frames_rendered": 5,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 1225,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 78
+   }
+  },
+  "0x30": {
+   "files": [
+    "music/song_30.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2CEF2",
+   "seq_ticks": 1217,
+   "seq_end": "end",
+   "notes": 116,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 20.309,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 959675,
+   "duration": 21.7613,
+   "frames_rendered": 1304,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10563,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2106
+   }
+  },
+  "0x31": {
+   "files": [
+    "music/song_31.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2D29E",
+   "seq_ticks": 1121,
+   "seq_end": "end",
+   "notes": 132,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 18.707,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 886816,
+   "duration": 20.1092,
+   "frames_rendered": 1205,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9388,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2384
+   }
+  },
+  "0x32": {
+   "files": [
+    "music/song_32.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2D6CA",
+   "seq_ticks": 1369,
+   "seq_end": "end",
+   "notes": 82,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 22.846,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1071539,
+   "duration": 24.2979,
+   "frames_rendered": 1456,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8260,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1612
+   }
+  },
+  "0x33": {
+   "files": [
+    "music/song_33.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2D966",
+   "seq_ticks": 826,
+   "seq_end": "end",
+   "notes": 120,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 13.784,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 610100,
+   "duration": 13.8345,
+   "frames_rendered": 829,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10399,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1984
+   }
+  },
+  "0x34": {
+   "files": [
+    "music/song_34.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2DD36",
+   "seq_ticks": 1454,
+   "seq_end": "end",
+   "notes": 311,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 24.265,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1134095,
+   "duration": 25.7164,
+   "frames_rendered": 1541,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9989,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 5238
+   }
+  },
+  "0x35": {
+   "files": [
+    "music/song_35.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2E6FA",
+   "seq_ticks": 1029,
+   "seq_end": "end",
+   "notes": 151,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 17.172,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 820582,
+   "duration": 18.6073,
+   "frames_rendered": 1115,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11849,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2350
+   }
+  },
+  "0x36": {
+   "files": [
+    "music/song_36.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2EBBE",
+   "seq_ticks": 1174,
+   "seq_end": "end",
+   "notes": 203,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 19.592,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 928029,
+   "duration": 21.0437,
+   "frames_rendered": 1261,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10505,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3442
+   }
+  },
+  "0x37": {
+   "files": [
+    "music/song_37.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2F222",
+   "seq_ticks": 1171,
+   "seq_end": "end",
+   "notes": 161,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 19.542,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 925822,
+   "duration": 20.9937,
+   "frames_rendered": 1258,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10550,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2626
+   }
+  },
+  "0x38": {
+   "files": [
+    "music/song_38.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2F73A",
+   "seq_ticks": 1175,
+   "seq_end": "end",
+   "notes": 197,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 19.609,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 928766,
+   "duration": 21.0605,
+   "frames_rendered": 1262,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10747,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3436
+   }
+  },
+  "0x39": {
+   "files": [
+    "music/song_39.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x2FD6E",
+   "seq_ticks": 855,
+   "seq_end": "end",
+   "notes": 168,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.268,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 685903,
+   "duration": 15.5534,
+   "frames_rendered": 932,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11551,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2684
+   }
+  },
+  "0x3A": {
+   "files": [
+    "music/song_3a.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x302BA",
+   "seq_ticks": 723,
+   "seq_end": "end",
+   "notes": 122,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 12.066,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 588758,
+   "duration": 13.3505,
+   "frames_rendered": 800,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10314,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2220
+   }
+  },
+  "0x3B": {
+   "files": [
+    "music/song_3b.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x30696",
+   "seq_ticks": 1236,
+   "seq_end": "end",
+   "notes": 173,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 20.627,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 973659,
+   "duration": 22.0784,
+   "frames_rendered": 1323,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9782,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3024
+   }
+  },
+  "0x3C": {
+   "files": [
+    "music/song_3c.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x30C0A",
+   "seq_ticks": 1393,
+   "seq_end": "end",
+   "notes": 140,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 23.247,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1081842,
+   "duration": 24.5316,
+   "frames_rendered": 1470,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11971,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2522
+   }
+  },
+  "0x3D": {
+   "files": [
+    "music/song_3d.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x31076",
+   "seq_ticks": 660,
+   "seq_end": "end",
+   "notes": 105,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 11.014,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 548281,
+   "duration": 12.4327,
+   "frames_rendered": 745,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9572,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1982
+   }
+  },
+  "0x3E": {
+   "files": [
+    "music/song_3e.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x313CA",
+   "seq_ticks": 1023,
+   "seq_end": "end",
+   "notes": 143,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 17.072,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 816166,
+   "duration": 18.5072,
+   "frames_rendered": 1109,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10641,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2576
+   }
+  },
+  "0x3F": {
+   "files": [
+    "music/song_3f.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3184E",
+   "seq_ticks": 1096,
+   "seq_end": "end",
+   "notes": 106,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 4,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 18.29,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 870626,
+   "duration": 19.7421,
+   "frames_rendered": 1183,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 7319,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1936
+   }
+  },
+  "0x40": {
+   "files": [
+    "music/song_40.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x31BAA",
+   "seq_ticks": 1480,
+   "seq_end": "end",
+   "notes": 255,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 24.698,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1153230,
+   "duration": 26.1503,
+   "frames_rendered": 1567,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9103,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4382
+   }
+  },
+  "0x41": {
+   "files": [
+    "music/song_41.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x323AE",
+   "seq_ticks": 1327,
+   "seq_end": "end",
+   "notes": 198,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 22.145,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1038422,
+   "duration": 23.547,
+   "frames_rendered": 1411,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11975,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3470
+   }
+  },
+  "0x42": {
+   "files": [
+    "music/song_42.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x329EA",
+   "seq_ticks": 1085,
+   "seq_end": "end",
+   "notes": 206,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 18.107,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 855171,
+   "duration": 19.3916,
+   "frames_rendered": 1162,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8435,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3574
+   }
+  },
+  "0x43": {
+   "files": [
+    "music/song_43.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x33066",
+   "seq_ticks": 955,
+   "seq_end": "end",
+   "notes": 128,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 15.937,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 766857,
+   "duration": 17.389,
+   "frames_rendered": 1042,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11114,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2138
+   }
+  },
+  "0x44": {
+   "files": [
+    "music/song_44.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x33472",
+   "seq_ticks": 1113,
+   "seq_end": "end",
+   "notes": 201,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 18.574,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 883137,
+   "duration": 20.0258,
+   "frames_rendered": 1200,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10898,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3308
+   }
+  },
+  "0x45": {
+   "files": [
+    "music/song_45.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x33AC6",
+   "seq_ticks": 1398,
+   "seq_end": "end",
+   "notes": 201,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 8,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 23.33,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1092882,
+   "duration": 24.7819,
+   "frames_rendered": 1485,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11402,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3476
+   }
+  },
+  "0x46": {
+   "files": [
+    "music/song_46.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3411A",
+   "seq_ticks": 1108,
+   "seq_end": "end",
+   "notes": 161,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 18.49,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 831621,
+   "duration": 18.8576,
+   "frames_rendered": 1130,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10343,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2802
+   }
+  },
+  "0x47": {
+   "files": [
+    "music/song_47.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x34632",
+   "seq_ticks": 1298,
+   "seq_end": "end",
+   "notes": 202,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 21.661,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1018552,
+   "duration": 23.0964,
+   "frames_rendered": 1384,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11148,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3144
+   }
+  },
+  "0x48": {
+   "files": [
+    "music/song_48.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x34C92",
+   "seq_ticks": 1040,
+   "seq_end": "end",
+   "notes": 64,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 2,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 17.356,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 811014,
+   "duration": 18.3903,
+   "frames_rendered": 1102,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 5921,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1148
+   }
+  },
+  "0x49": {
+   "files": [
+    "music/song_49.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x34E9E",
+   "seq_ticks": 1209,
+   "seq_end": "end",
+   "notes": 212,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 20.176,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 935390,
+   "duration": 21.2107,
+   "frames_rendered": 1271,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10781,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3646
+   }
+  },
+  "0x4A": {
+   "files": [
+    "music/song_4a.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3554A",
+   "seq_ticks": 807,
+   "seq_end": "end",
+   "notes": 112,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 13.467,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 656465,
+   "duration": 14.8858,
+   "frames_rendered": 892,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10742,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1980
+   }
+  },
+  "0x4B": {
+   "files": [
+    "music/song_4b.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x358D6",
+   "seq_ticks": 930,
+   "seq_end": "end",
+   "notes": 75,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 15.52,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 741099,
+   "duration": 16.805,
+   "frames_rendered": 1007,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9264,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1504
+   }
+  },
+  "0x4C": {
+   "files": [
+    "music/song_4c.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x35B3A",
+   "seq_ticks": 857,
+   "seq_end": "end",
+   "notes": 239,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.302,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 694734,
+   "duration": 15.7536,
+   "frames_rendered": 944,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10807,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3836
+   }
+  },
+  "0x4D": {
+   "files": [
+    "music/song_4d.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x362BE",
+   "seq_ticks": 849,
+   "seq_end": "end",
+   "notes": 129,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.168,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 687375,
+   "duration": 15.5867,
+   "frames_rendered": 934,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 12031,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2352
+   }
+  },
+  "0x4E": {
+   "files": [
+    "music/song_4e.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x366D2",
+   "seq_ticks": 672,
+   "seq_end": "end",
+   "notes": 142,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 11.214,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 558584,
+   "duration": 12.6663,
+   "frames_rendered": 759,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9880,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2294
+   }
+  },
+  "0x4F": {
+   "files": [
+    "music/song_4f.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x36B4E",
+   "seq_ticks": 868,
+   "seq_end": "end",
+   "notes": 119,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.485,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 701358,
+   "duration": 15.9038,
+   "frames_rendered": 953,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11431,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2158
+   }
+  },
+  "0x50": {
+   "files": [
+    "music/song_50.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x36F12",
+   "seq_ticks": 1195,
+   "seq_end": "end",
+   "notes": 186,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 4,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 19.942,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 943485,
+   "duration": 21.3942,
+   "frames_rendered": 1282,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9931,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2860
+   }
+  },
+  "0x51": {
+   "files": [
+    "music/song_51.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x374F2",
+   "seq_ticks": 1056,
+   "seq_end": "end",
+   "notes": 176,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 17.623,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 841188,
+   "duration": 19.0746,
+   "frames_rendered": 1143,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 12110,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2962
+   }
+  },
+  "0x52": {
+   "files": [
+    "music/song_52.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x37A7E",
+   "seq_ticks": 1062,
+   "seq_end": "end",
+   "notes": 165,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 17.723,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 845603,
+   "duration": 19.1747,
+   "frames_rendered": 1149,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10202,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2942
+   }
+  },
+  "0x53": {
+   "files": [
+    "music/song_53.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x37FB2",
+   "seq_ticks": 977,
+   "seq_end": "end",
+   "notes": 147,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 4,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 16.304,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 724172,
+   "duration": 16.4211,
+   "frames_rendered": 984,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9576,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2296
+   }
+  },
+  "0x54": {
+   "files": [
+    "music/song_54.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3845A",
+   "seq_ticks": 1177,
+   "seq_end": "end",
+   "notes": 130,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 19.642,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 930238,
+   "duration": 21.0938,
+   "frames_rendered": 1264,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10853,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2382
+   }
+  },
+  "0x55": {
+   "files": [
+    "music/song_55.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x38876",
+   "seq_ticks": 945,
+   "seq_end": "end",
+   "notes": 87,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 3,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 15.77,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 758762,
+   "duration": 17.2055,
+   "frames_rendered": 1031,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8402,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1576
+   }
+  },
+  "0x56": {
+   "files": [
+    "music/song_56.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x38B3A",
+   "seq_ticks": 831,
+   "seq_end": "end",
+   "notes": 155,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 13.868,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 668241,
+   "duration": 15.1529,
+   "frames_rendered": 908,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11194,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2482
+   }
+  },
+  "0x57": {
+   "files": [
+    "music/song_57.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3901E",
+   "seq_ticks": 873,
+   "seq_end": "end",
+   "notes": 167,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.569,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 706510,
+   "duration": 16.0206,
+   "frames_rendered": 960,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 12310,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2952
+   }
+  },
+  "0x58": {
+   "files": [
+    "music/song_58.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x39562",
+   "seq_ticks": 1401,
+   "seq_end": "end",
+   "notes": 332,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 23.38,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1087731,
+   "duration": 24.6651,
+   "frames_rendered": 1478,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9313,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 5594
+   }
+  },
+  "0x59": {
+   "files": [
+    "music/song_59.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x39FCE",
+   "seq_ticks": 693,
+   "seq_end": "end",
+   "notes": 179,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 11.565,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 566679,
+   "duration": 12.8499,
+   "frames_rendered": 770,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9987,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2760
+   }
+  },
+  "0x5A": {
+   "files": [
+    "music/song_5a.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3A572",
+   "seq_ticks": 721,
+   "seq_end": "end",
+   "notes": 84,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 12.032,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 593174,
+   "duration": 13.4507,
+   "frames_rendered": 806,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9779,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1648
+   }
+  },
+  "0x5B": {
+   "files": [
+    "music/song_5b.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3A81E",
+   "seq_ticks": 1194,
+   "seq_end": "end",
+   "notes": 198,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 19.926,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 942749,
+   "duration": 21.3775,
+   "frames_rendered": 1281,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10765,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3460
+   }
+  },
+  "0x5C": {
+   "files": [
+    "music/song_5c.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3AE5A",
+   "seq_ticks": 873,
+   "seq_end": "end",
+   "notes": 237,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.569,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 706510,
+   "duration": 16.0206,
+   "frames_rendered": 960,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9544,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4066
+   }
+  },
+  "0x5D": {
+   "files": [
+    "music/song_5d.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3B5CE",
+   "seq_ticks": 915,
+   "seq_end": "end",
+   "notes": 263,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 15.27,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 730060,
+   "duration": 16.5546,
+   "frames_rendered": 992,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10702,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3948
+   }
+  },
+  "0x5E": {
+   "files": [
+    "music/song_5e.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3BE12",
+   "seq_ticks": 1370,
+   "seq_end": "end",
+   "notes": 254,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 22.863,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1072275,
+   "duration": 24.3146,
+   "frames_rendered": 1457,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11648,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4214
+   }
+  },
+  "0x5F": {
+   "files": [
+    "music/song_5f.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3C60E",
+   "seq_ticks": 1357,
+   "seq_end": "end",
+   "notes": 195,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 22.646,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1062708,
+   "duration": 24.0977,
+   "frames_rendered": 1444,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11404,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3402
+   }
+  },
+  "0x60": {
+   "files": [
+    "music/song_60.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3CC32",
+   "seq_ticks": 2056,
+   "seq_end": "end",
+   "notes": 235,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 34.311,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1577135,
+   "duration": 35.7627,
+   "frames_rendered": 2143,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9490,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4064
+   }
+  },
+  "0x61": {
+   "files": [
+    "music/song_61.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3D396",
+   "seq_ticks": 1244,
+   "seq_end": "end",
+   "notes": 209,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 20.76,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 978811,
+   "duration": 22.1953,
+   "frames_rendered": 1330,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10975,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3496
+   }
+  },
+  "0x62": {
+   "files": [
+    "music/song_62.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": false,
+   "seq_addr": "0x3DA2E",
+   "seq_ticks": 1640,
+   "seq_end": "end",
+   "notes": 237,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 27.369,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1223881,
+   "duration": 27.7524,
+   "frames_rendered": 1663,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11023,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3964
+   }
+  },
+  "0x63": {
+   "files": [
+    "music/song_63.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3E1A6",
+   "seq_ticks": 1658,
+   "seq_end": "end",
+   "notes": 211,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 27.669,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1284229,
+   "duration": 29.1208,
+   "frames_rendered": 1745,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9762,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3270
+   }
+  },
+  "0x64": {
+   "files": [
+    "music/song_64.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3E84E",
+   "seq_ticks": 1182,
+   "seq_end": "end",
+   "notes": 177,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 19.725,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 933918,
+   "duration": 21.1773,
+   "frames_rendered": 1269,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 12007,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3122
+   }
+  },
+  "0x65": {
+   "files": [
+    "music/song_65.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3EDE2",
+   "seq_ticks": 1780,
+   "seq_end": "end",
+   "notes": 261,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 29.705,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1374014,
+   "duration": 31.1568,
+   "frames_rendered": 1867,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11101,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4456
+   }
+  },
+  "0x66": {
+   "files": [
+    "music/song_66.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3F616",
+   "seq_ticks": 1438,
+   "seq_end": "end",
+   "notes": 289,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 23.998,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1122320,
+   "duration": 25.4494,
+   "frames_rendered": 1525,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9762,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4908
+   }
+  },
+  "0x67": {
+   "files": [
+    "music/song_67.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x3FF2A",
+   "seq_ticks": 1153,
+   "seq_end": "end",
+   "notes": 147,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 19.241,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 912575,
+   "duration": 20.6933,
+   "frames_rendered": 1240,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10769,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2650
+   }
+  },
+  "0x68": {
+   "files": [
+    "music/song_68.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x403CE",
+   "seq_ticks": 1376,
+   "seq_end": "end",
+   "notes": 160,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 22.963,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1076691,
+   "duration": 24.4148,
+   "frames_rendered": 1463,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10930,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2864
+   }
+  },
+  "0x69": {
+   "files": [
+    "music/song_69.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x408DA",
+   "seq_ticks": 912,
+   "seq_end": "end",
+   "notes": 184,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 15.22,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 735211,
+   "duration": 16.6715,
+   "frames_rendered": 999,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9621,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 3248
+   }
+  },
+  "0x6A": {
+   "files": [
+    "music/song_6a.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x40EA6",
+   "seq_ticks": 822,
+   "seq_end": "end",
+   "notes": 132,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 13.718,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 668977,
+   "duration": 15.1695,
+   "frames_rendered": 909,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10129,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2314
+   }
+  },
+  "0x6B": {
+   "files": [
+    "music/song_6b.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x412D6",
+   "seq_ticks": 691,
+   "seq_end": "end",
+   "notes": 58,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 2,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 11.532,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 565208,
+   "duration": 12.8165,
+   "frames_rendered": 768,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 4133,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1052
+   }
+  },
+  "0x6C": {
+   "files": [
+    "music/song_6c.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x414B2",
+   "seq_ticks": 1060,
+   "seq_end": "end",
+   "notes": 150,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 8,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 17.689,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 836772,
+   "duration": 18.9744,
+   "frames_rendered": 1137,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11381,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2322
+   }
+  },
+  "0x6D": {
+   "files": [
+    "music/song_6d.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x4196E",
+   "seq_ticks": 921,
+   "seq_end": "end",
+   "notes": 155,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 15.37,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 741835,
+   "duration": 16.8217,
+   "frames_rendered": 1008,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10969,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2714
+   }
+  },
+  "0x6E": {
+   "files": [
+    "music/song_6e.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x41E52",
+   "seq_ticks": 669,
+   "seq_end": "end",
+   "notes": 178,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 11.164,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 549017,
+   "duration": 12.4494,
+   "frames_rendered": 746,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 10845,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2958
+   }
+  },
+  "0x6F": {
+   "files": [
+    "music/song_6f.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x423EE",
+   "seq_ticks": 808,
+   "seq_end": "end",
+   "notes": 87,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 2,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 13.484,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 658673,
+   "duration": 14.9359,
+   "frames_rendered": 895,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 7794,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1168
+   }
+  },
+  "0x70": {
+   "files": [
+    "music/song_70.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x426B6",
+   "seq_ticks": 690,
+   "seq_end": "end",
+   "notes": 50,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 11.515,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 571831,
+   "duration": 12.9667,
+   "frames_rendered": 777,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9177,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1064
+   }
+  },
+  "0x71": {
+   "files": [
+    "music/song_71.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x42852",
+   "seq_ticks": 808,
+   "seq_end": "end",
+   "notes": 144,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 13.484,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 658673,
+   "duration": 14.9359,
+   "frames_rendered": 895,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11420,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2606
+   }
+  },
+  "0x72": {
+   "files": [
+    "music/song_72.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": false,
+   "seq_addr": "0x42CDE",
+   "seq_ticks": 1545,
+   "seq_end": "end",
+   "notes": 159,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 25.783,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1201066,
+   "duration": 27.2351,
+   "frames_rendered": 1632,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 8888,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2730
+   }
+  },
+  "0x73": {
+   "files": [
+    "music/song_73.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x431E6",
+   "seq_ticks": 1141,
+   "seq_end": "end",
+   "notes": 184,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 5,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 19.041,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 903744,
+   "duration": 20.4931,
+   "frames_rendered": 1228,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9490,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2886
+   }
+  },
+  "0x74": {
+   "files": [
+    "music/song_74.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x437B6",
+   "seq_ticks": 1552,
+   "seq_end": "end",
+   "notes": 238,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 25.9,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 1206218,
+   "duration": 27.3519,
+   "frames_rendered": 1639,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11439,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4096
+   }
+  },
+  "0x75": {
+   "files": [
+    "music/song_75.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x43F32",
+   "seq_ticks": 879,
+   "seq_end": "end",
+   "notes": 112,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 14.669,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 710925,
+   "duration": 16.1207,
+   "frames_rendered": 966,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11796,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 1956
+   }
+  },
+  "0x76": {
+   "files": [
+    "music/song_76.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x442BE",
+   "seq_ticks": 1248,
+   "seq_end": "end",
+   "notes": 265,
+   "channels": [
+    0
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [],
+   "voices": [
+    "fm"
+   ],
+   "fm_max_voices": 7,
+   "dac_notes": [],
+   "stops_music": true,
+   "slot_seconds": 20.827,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 982490,
+   "duration": 22.2787,
+   "frames_rendered": 1335,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 11823,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 4106
+   }
+  },
+  "0x77": {
+   "files": [
+    "music/song_77.wav"
+   ],
+   "kind": "music",
+   "use": "organ tune (ChooseSong)",
+   "game_uses_song": true,
+   "seq_addr": "0x44B12",
+   "seq_ticks": 1105,
+   "seq_end": "end",
+   "notes": 171,
+   "channels": [
+    0,
+    7
+   ],
+   "fm_instruments": [
+    "0x0B"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 6,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 60,
+     "step": 40,
+     "rate_hz": 4661,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.292
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 18.44,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 877249,
+   "duration": 19.8923,
+   "frames_rendered": 1192,
+   "loops": false,
+   "loop_start": null,
+   "loop_end": null,
+   "loop_seam_rel_error": null,
+   "peak": 9718,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 2738
+   }
+  },
+  "0x78": {
+   "files": [
+    "music/song_78.wav"
+   ],
+   "kind": "music",
+   "use": "title (newTitleScreen L975422) / game over (L53862)",
+   "game_uses_song": true,
+   "seq_addr": "0x4507A",
+   "seq_ticks": 4361,
+   "seq_end": "loop",
+   "notes": 926,
+   "channels": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7
+   ],
+   "fm_instruments": [
+    "0x04",
+    "0x09",
+    "0x0D",
+    "0x0E",
+    "0x14"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 9,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 76,
+     "step": 102,
+     "rate_hz": 11885,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.115
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 72.777,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3240936,
+   "duration": 73.4906,
+   "frames_rendered": 4601,
+   "loops": true,
+   "loop_start": 31468,
+   "loop_end": 3240936,
+   "loop_seam_rel_error": 0.1196,
+   "peak": 12173,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 22896
+   }
+  },
+  "0x79": {
+   "files": [
+    "music/song_79.wav"
+   ],
+   "kind": "music",
+   "use": "period over / intermission (PeriodOver L53840, L48340, PlayoffScreen L54022)",
+   "game_uses_song": true,
+   "seq_addr": "0x46D8C",
+   "seq_ticks": 4709,
+   "seq_end": "loop",
+   "notes": 1079,
+   "channels": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "fm_instruments": [
+    "0x01",
+    "0x03",
+    "0x04",
+    "0x0D",
+    "0x14"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 11,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 76,
+     "step": 102,
+     "rate_hz": 11885,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.115
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 78.585,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3477044,
+   "duration": 78.8445,
+   "frames_rendered": 4949,
+   "loops": true,
+   "loop_start": 26185,
+   "loop_end": 3477044,
+   "loop_seam_rel_error": 0.0321,
+   "peak": 11672,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 34180
+   }
+  },
+  "0x7A": {
+   "files": [
+    "music/song_7a.wav"
+   ],
+   "kind": "music",
+   "use": "after the game setup screens (sub_FCC76 L969620)",
+   "game_uses_song": true,
+   "seq_addr": "0x490E2",
+   "seq_ticks": 5273,
+   "seq_end": "loop",
+   "notes": 1032,
+   "channels": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7
+   ],
+   "fm_instruments": [
+    "0x03",
+    "0x05",
+    "0x0A",
+    "0x0D",
+    "0x14"
+   ],
+   "dac_instruments": [
+    "0x6A"
+   ],
+   "voices": [
+    "dac",
+    "fm"
+   ],
+   "fm_max_voices": 8,
+   "dac_notes": [
+    {
+     "instr": "0x6A",
+     "note": 76,
+     "step": 102,
+     "rate_hz": 11885,
+     "sample_bytes": 1362,
+     "sample_seconds": 0.115
+    }
+   ],
+   "stops_music": true,
+   "slot_seconds": 87.997,
+   "dac_priority": null,
+   "dac_busy_seconds": null,
+   "samples": 3918649,
+   "duration": 88.8583,
+   "frames_rendered": 5513,
+   "loops": true,
+   "loop_start": 82154,
+   "loop_end": 3918649,
+   "loop_seam_rel_error": 0.1168,
+   "peak": 11023,
+   "clipped": 0,
+   "stereo": false,
+   "verify": {
+    "psg_writes": 0,
+    "ym_writes_by_68k": 0,
+    "z80_fm_writes": 19816
+   }
+  }
+ }
+}
