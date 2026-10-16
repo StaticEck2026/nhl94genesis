@@ -117,6 +117,7 @@ func _initialize() -> void:
 		"test_frontend_mapping",
 		"test_reverse_angle",
 		"test_playoffs",
+		"test_records",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2843,5 +2844,45 @@ func test_reverse_angle() -> bool:
 	w.reverse_angle = false
 	w.replay.apply(r)
 	eq(c.pos(), Vector2i(-112, -205), "the normal angle again")
+	w.dispose()
+	return true
+
+## sub_F9CDE: a 3-0 Montreal win over LA (user 1 at home, nobody away), with a hat trick
+## by slot 6, as the emulator run in playoffs_records.md §8.3; then the saved line.
+func test_records() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	w.roster.setup_teams(_team("MTL"), _team("LA"))
+	var ram := Sram.new("")
+	w.stats[0].goals = 3
+	w.stats[0].player_goals[6] = 3
+	w.stats[1].shots = 20
+	w.stats[1].goals = 0
+	w.rules.crowd_peak = 75
+	Records.update(ram, w, [1, 0])
+	eq(ram.player_record(11, 6), PackedByteArray([3, 1, 10, 0]), "the player's best game")
+	var tr := ram.team_record(11)
+	eq(tr.slice(0, 4), PackedByteArray([3, 1, 10, 0]), "the team's goals")
+	eq(tr.slice(8, 12), PackedByteArray([75, 1, 10, 0]), "the home crowd")
+	var ur := ram.user_record(1)
+	eq(ur.slice(0, 4), PackedByteArray([3, 11, 10, 0]), "the user's goals in a win")
+	eq([Sram.word(ur, 8), Sram.word(ur, 10), Sram.word(ur, 12)], [1, 1, 0], "1 win in 1 game")
+	eq(ur[4], 20, "the user's saves in a win (LA's shots - goals)")
+	eq(Sram.word(ram.user_record(0), 10), 1, "user 0 counts the game too")
+	check(ram.valid(), "the checksum")
+	# A lower game does not replace a record.
+	w.stats[0].player_goals[6] = 1
+	Records.update(ram, w, [1, 0])
+	eq(ram.player_record(11, 6)[0], 3, "kept")
+	eq(ram.crowd_record(11), 75, "the arena record")
+	eq(ram.crowd_record(10), 0x50, "80 dB without one")
+	# Save Team Line round-trips through the block.
+	var st := w.stats[0]
+	var keep := st.ram_lines.duplicate()
+	ram.save_line(StatsPages.encode_line(st))
+	st.ram_lines.fill(0)
+	check(StatsPages.decode_line(st, ram.saved_line()), "the saved line loads for its team")
+	for off in StatsPages.SAVE_OFFSETS:
+		eq(st.ram_lines[off], keep[off], "line entry %d" % off)
+	check(not StatsPages.decode_line(w.stats[1], ram.saved_line()), "not for another team")
 	w.dispose()
 	return true

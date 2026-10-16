@@ -307,7 +307,7 @@ func _token(ch: String, better: int) -> String:
 		"\\":
 			return _full(1, _cold[1])
 		"@":
-			return "%d" % 80
+			return "%d" % (Sim.sram.crowd_record(_id[0]) if Sim.sram else 0x50)
 		"$":
 			return _team[better].city
 	return ch

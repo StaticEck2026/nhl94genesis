@@ -118,10 +118,71 @@ func playoff_stats() -> PackedInt32Array:
 		bit += w
 	return out
 
-## The Save Team Line slot: team + 1 (0 none) and its 31 nibbles (sub_8928).
+## The Save Team Line slot: team + 1 (0 none) and its 33 nibbles (sub_8928), up to the
+## playoff state at +$12.
 func saved_line() -> PackedByteArray:
-	return read(BLOCK, 0x11)
+	return read(BLOCK, STATE)
 
 func save_line(data: PackedByteArray) -> void:
 	write(BLOCK, data)
 	commit()
+
+# --- records -------------------------------------------------------------------------------
+
+## A player's best game (4 bytes): best, own user, opponent team, opponent user.
+func player_record(team: int, slot: int) -> PackedByteArray:
+	return read(PLAYERS + 4 * (26 * team + slot), 4)
+
+func set_player_record(team: int, slot: int, rec: PackedByteArray) -> void:
+	write(PLAYERS + 4 * (26 * team + slot), rec)
+
+## A team's records (16 bytes): goals, saves and home crowd dB, each with its users and
+## opponent.
+func team_record(team: int) -> PackedByteArray:
+	return read(TEAMS + 16 * team, 16)
+
+func set_team_record(team: int, rec: PackedByteArray) -> void:
+	write(TEAMS + 16 * team, rec)
+
+## A user's record (16 bytes): best goals and saves in a win, wins, games, ties (words).
+func user_record(user: int) -> PackedByteArray:
+	return read(USERS + 16 * user, 16)
+
+func set_user_record(user: int, rec: PackedByteArray) -> void:
+	write(USERS + 16 * user, rec)
+
+## User names, ids 1-7 (12 characters, blank = empty).
+func user_name(id: int) -> String:
+	if id <= 0 or id > 7:
+		return ""
+	return read(NAMES + 12 * id, 12).get_string_from_ascii().strip_edges(false, true)
+
+func set_user_name(id: int, name: String) -> void:
+	var b := PackedByteArray()
+	b.resize(12)
+	var a := name.to_ascii_buffer()
+	for i in mini(a.size(), 12):
+		b[i] = a[i]
+	write(NAMES + 12 * id, b)
+	commit()
+
+## A team's crowd record in dB: team +8, $50 when none (LoadCrowdRec).
+func crowd_record(team: int) -> int:
+	var v := team_record(team)[8]
+	return v if v != 0 else 0x50
+
+## sub_FEC5E: the league's crowd record and its team (the last scanning from 27 down).
+func league_crowd_record() -> Vector2i:
+	var best := Vector2i(0, -1)
+	for t in range(27, -1, -1):
+		var v := crowd_record(t)
+		if v > best.x:
+			best = Vector2i(v, t)
+	return best
+
+static func word(b: PackedByteArray, at: int) -> int:
+	return (b[at] << 8) | b[at + 1]
+
+static func set_word(b: PackedByteArray, at: int, v: int) -> void:
+	b[at] = (v >> 8) & 0xFF
+	b[at + 1] = v & 0xFF

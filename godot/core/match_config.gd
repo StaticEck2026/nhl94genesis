@@ -33,6 +33,10 @@ const TEAM_DIRS := {Edition.RETAIL: "res://data/teams", Edition.FIGHT: "res://da
 @export var play_mode: int = 0
 ## FigureJoy's pads for a playoff game (cont1team-cont4team); empty: from the drivers.
 @export var pads: PackedInt32Array = PackedInt32Array()
+## User Records On (OptUserRec 0): the game's records are saved at the end, for the
+## users Name Entry picked ([home, away], ids 1-7, 0 = none).
+@export var user_records: bool = false
+@export var users: Array = [0, 0]
 ## Retail's Players row (OptNOP, the 4 Way Play list): when set it decides the pads
 ## instead of home_control / away_control.
 @export var players: int = -1

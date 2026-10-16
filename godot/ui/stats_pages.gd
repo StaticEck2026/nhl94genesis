@@ -27,8 +27,55 @@ const RATING_FIELDS := {"Agility": "agility", "Speed": "speed", "Off. Awareness"
 const EDIT_PAGES := [[0, 1, 2], [3, 4], [5, 6]]
 const EDIT_COLS := [[4, 5], [16, 5], [28, 5], [4, 5], [16, 5], [4, 4], [16, 4]]
 
-## Save Team Line ($FFD076): one saved set for the session, [team index, ram lines].
-static var saved_lines: Array = []
+## Save Team Line (sub_8928 L31535 / $88C8 L31438): one saved set in the save RAM block
+## ($FFD076): the team + 1, then a nibble for each of the 33 line-table entries of $898A,
+## the player's slot within his group (forwards after the goalies, defencemen after the
+## forwards), low nibble first.
+const SAVE_OFFSETS := [1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 17, 18, 19, 20, 21, 25, 26, 27, 28, 29,
+	33, 34, 35, 36, 37, 41, 42, 43, 44, 49, 50, 51, 52]
+
+static func _group_base(data: TeamData, off: int) -> int:
+	var base := data.goalie_count
+	if off & 7 == 1 or off & 7 == 2:
+		base += data.forward_count
+	return base
+
+static func encode_line(st: TeamStats) -> PackedByteArray:
+	var b := PackedByteArray()
+	b.resize(0x12)
+	b[0] = st.team_index + 1
+	for k in SAVE_OFFSETS.size():
+		var off: int = SAVE_OFFSETS[k]
+		var v := 0
+		if off < st.ram_lines.size() and st.ram_lines[off] > 0:
+			v = (st.ram_lines[off] - 1 - _group_base(st.data, off)) & 0xF
+		b[1 + k / 2] |= v << (4 * (k & 1))
+	return b
+
+static func decode_line(st: TeamStats, b: PackedByteArray) -> bool:
+	if b.size() < 0x12 or b[0] != st.team_index + 1 or st.data == null:
+		return false
+	for k in SAVE_OFFSETS.size():
+		var off: int = SAVE_OFFSETS[k]
+		if off >= st.ram_lines.size():
+			continue
+		var v := (b[1 + k / 2] >> (4 * (k & 1))) & 0xF
+		st.ram_lines[off] = v + _group_base(st.data, off) + 1
+	return true
+
+static func has_saved_line() -> bool:
+	var ram := _ram()
+	return ram != null and ram.saved_line()[0] != 0
+
+## The Sim autoload's save RAM and edition (looked up: the headless tests compile this
+## script without autoloads).
+static func _sim() -> Node:
+	var tree := Engine.get_main_loop() as SceneTree
+	return tree.root.get_node_or_null("Sim") if tree else null
+
+static func _ram() -> Sram:
+	var sim := _sim()
+	return sim.get("sram") if sim else null
 
 var _pages := {}
 var _pal := {}
@@ -600,8 +647,11 @@ func _crowd_meter() -> void:
 	var w := _game.world
 	var avg := r.sum_excite / r.num_excite if r.num_excite > 0 else 0
 	var vals := [w.crowd_excite, avg, r.max_excite]
+	# sub_FEC5E: the arena's record, then the league's (the best of the 28 teams).
+	var ram := _ram()
+	var league := ram.league_crowd_record().x if ram else r.crowd_record_value
 	for i in 5:
-		var v := r.crowd_record_value
+		var v := r.crowd_record_value if i == 3 else league
 		if i < 3:
 			v = RinkBoards.sroot(maxi(vals[i], 0) * 4) + 0x41
 		_t(_b, 28, 12 + 2 * i, "%3d dB" % v)
@@ -657,7 +707,10 @@ func _other_scores() -> void:
 	if _scroll < _max:
 		_t(_w, 4, 25, "}", 0, 1)
 
-## $FBC14 (§15.2): the three record pages, empty as with a fresh battery save.
+## $FBC14 (§15.2; playoffs_records.md §8.5): the users' records from the save RAM, a row
+## each at y 10-22: page 0 win % and win-loss-tie (sorted by win %, then ties, then
+## games), page 1 the most goals in a win, page 2 the most saves in a win. A user with
+## no games (or no record) prints blank.
 func _record_holders() -> void:
 	_setup(0, 26, 0)
 	var pg := _page("record_holders")
@@ -666,9 +719,81 @@ func _record_holders() -> void:
 	_sel = clampi(_sel, 0, pages.size() - 1)
 	if not pages.is_empty():
 		_run([pages[_sel]])
+	var ram: Sram = _ram()
+	if ram == null:
+		return
+	var rows := []
+	for u in range(1, 8):
+		var r := ram.user_record(u)
+		var games := Sram.word(r, 10)
+		var wins := Sram.word(r, 8)
+		var ties := Sram.word(r, 12)
+		var pct := wins * 100 / games if games > 0 else 0
+		var key := [pct, ties, games] if _sel == 0 else [r[0 if _sel == 1 else 4]]
+		rows.append({"u": u, "r": r, "key": key, "games": games, "wins": wins, "ties": ties, "pct": pct})
+	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		for i in a["key"].size():
+			if a["key"][i] != b["key"][i]:
+				return a["key"][i] > b["key"][i]
+		return a["u"] < b["u"])
+	for i in rows.size():
+		var e: Dictionary = rows[i]
+		var y := 10 + 2 * i
+		var r: PackedByteArray = e["r"]
+		if _sel == 0:
+			if e["games"] == 0:
+				continue
+			_t(_b, 2, y, "%d. %s" % [i + 1, ram.user_name(e["u"])])
+			_t(_b, 19, y, "%3d" % e["pct"])
+			_t(_b, 26, y, "%4d" % e["wins"])
+			_t(_b, 31, y, "%4d" % (e["games"] - e["wins"] - e["ties"]))
+			_t(_b, 36, y, "%3d" % e["ties"])
+		else:
+			var at := 0 if _sel == 1 else 4
+			if r[at] == 0:
+				continue
+			_t(_b, 2, y, "%d. %s" % [i + 1, ram.user_name(e["u"])])
+			_t(_b, 18, y, "%3d" % r[at])
+			_t(_b, 25, y, "by %s vs. %s" % [_abbr_of(r[at + 1]), _abbr_of(r[at + 2])])
+
+## A ROM team id's abbreviation.
+func _abbr_of(id: int) -> String:
+	var sim := _sim()
+	var ed: int = sim.get("match").edition if sim else MatchConfig.Edition.RETAIL
+	for t in MatchConfig.available_teams(ed):
+		if t.team_index == id:
+			return t.abbreviation
+	return ""
+
+## sub_FE6D2: A+C on page 0 zeroes every user's wins and games (bytes 8-11); the ties
+## stay (a retail quirk).
+func _clear_win_records() -> void:
+	var ram: Sram = _ram()
+	for u in 8:
+		var r := ram.user_record(u)
+		for i in range(8, 12):
+			r[i] = 0
+		ram.set_user_record(u, r)
+	ram.commit()
+
+## sub_FA7B0: a record's three lines from (x, y): "<n> Goals by", "<user> vs.",
+## "<user> <team>"; nothing when it is 0.
+func _record_lines(x: int, y: int, rec: PackedByteArray, at: int, kind: String) -> void:
+	var n := rec[at]
+	if n == 0:
+		return
+	var ram: Sram = _ram()
+	var own := rec[at + 1]
+	var text := "%d dB Crowd Level" % n
+	if kind != "crowd":
+		var word := kind if n != 1 else kind.trim_suffix("s")
+		text = "%d %s%s" % [n, word, " by" if own != 0 else " "]
+	_c(x, y, text)
+	_c(x, y + 1, ram.user_name(own) + " vs.")
+	_c(x, y + 2, ram.user_name(rec[at + 3]) + " " + _abbr_of(rec[at + 2]))
 
 ## $FA07E (§15.1): the team card, then a card a player (photo, number and position,
-## Overall Rating, This Game); the battery-saved Records stay empty.
+## Overall Rating, This Game) with the battery-saved Records.
 func _player_cards() -> void:
 	_setup(0, 28, 0, "cards_bg")
 	_run(_page("player_cards").get("static", []))
@@ -682,7 +807,13 @@ func _player_cards() -> void:
 	_team_logo(_team, Vector2i(33, 8), "B")
 	_c(22, 11, "  Records")
 	_c(21, 12, "-----------")
+	var ram: Sram = _ram()
 	if _sel == 0:
+		if ram and st.team_index >= 0:
+			var tr := ram.team_record(st.team_index)
+			_record_lines(21, 14, tr, 0, "Goals")
+			_record_lines(21, 18, tr, 4, "Saves")
+			_record_lines(21, 22, tr, 8, "crowd")
 		_team_logo(_team, Vector2i(1, 8), "B")
 		var ti := st.team_index
 		var ratings: Array = _page("player_cards").get("team_rating", {}).get("values", [])
@@ -707,6 +838,8 @@ func _player_cards() -> void:
 	_c(3, 14, "%2d%s" % [p.jersey_number % 100, kind])
 	_c(3, 16, "Overall")
 	_c(3, 17, "Rating   %d" % p.overall())
+	if ram and st.team_index >= 0 and slot < 26:
+		_record_lines(21, 14, ram.player_record(st.team_index, slot), 0, "Saves" if slot < data.goalie_count else "Goals")
 	_c(21, 18, " This Game ")
 	_c(21, 19, "-----------")
 	if goalie:
@@ -881,6 +1014,9 @@ func _process(_delta: float) -> void:
 			if just.call("right") or just.call("left"):
 				_sel += 1 if just.call("right") else -1
 				_build()
+			elif _sel == 0 and held.call("a") and held.call("c") and (just.call("a") or just.call("c")):
+				_clear_win_records()
+				_build()
 		"player_cards":
 			if just.call("right") or just.call("c"):
 				_sel += 1
@@ -934,7 +1070,7 @@ func _editor_input(just: Callable) -> void:
 		return
 	if just.call("start"):
 		if editor:
-			var t: String = "line_editor_exit" if not saved_lines.is_empty() else "line_editor_exit_nosave"
+			var t: String = "line_editor_exit" if has_saved_line() else "line_editor_exit_nosave"
 			_menu_items = _menus.get("tables", {}).get(t, {}).get("items", [])
 			_menu_cursor = 0
 			_build()
@@ -999,9 +1135,10 @@ func _exit_menu_choose() -> void:
 		"lines_set_original":
 			_game.world.roster.copy_lines(_team)
 		"lines_save_team":
-			saved_lines = [st.team_index, st.ram_lines.duplicate()]
+			if _ram():
+				_ram().save_line(encode_line(st))
 		"lines_load_team":
-			if not saved_lines.is_empty() and saved_lines[0] == st.team_index:
-				st.ram_lines = (saved_lines[1] as PackedInt32Array).duplicate()
+			if _ram():
+				decode_line(st, _ram().saved_line())
 	_menu_items = []
 	_build()

@@ -484,7 +484,7 @@ loop: sub_175D8 (flash, wait a vblank); sub_FED2A (cup sprite)
 
 **Saved line** (U6 of `ui_menus.md`): `sub_8928` (L31535, Save Team Line) / `$88C8` (L31438, Load).
 - `$D076` = team + 1.
-- Then one 4-bit value per entry of the list `$898A`: line-table offsets 1-5, 9-13, `$11-$15`, `$19-$1D`, `$21-$25`, `$29-$2C`, `$31-$34` (31 entries).
+- Then one 4-bit value per entry of the list `$898A`: line-table offsets 1-5, 9-13, `$11-$15`, `$19-$1D`, `$21-$25`, `$29-$2C`, `$31-$34`. That is 33 entries, ending with `$FF` (checked in the ROM bytes), so 17 bytes up to `$D087`.
 - The values are packed low nibble first, then high nibble.
 - Value = roster slot - 1 - goalie count, minus the forward count as well for offsets ending in 1-2 (the defence positions); i.e. the index within the position group.
 
@@ -637,6 +637,17 @@ Items still open or simplified:
 - The four-way playoff pads (`_pojoylist2`) are not used; the playoff Players row uses the two-pad values.
 - The regular-season quirk of a saved playoff's `gamelevel` is not reproduced.
 - The Playoff Stats bit packing in the save file uses the retail widths but not its exact bit order.
+
+Items 11-12 (records and saved lines) are done too:
+- **Records:** `Records.update` runs at the final intermission when User Records is On.
+- **Name Entry** (`ui/name_entry.gd`): the select screen matches `u_sel0.png` pixel for pixel. The edit screen's field bar and grid box cursor are approximations.
+- **Where the records show:**
+  - Player Cards "Records" (`_record_lines`);
+  - Record Holders (sorted pages, A+C clear);
+  - the setup showcase's record lines;
+  - `LoadCrowdRec`, plus the Crowd Meter's arena and league records;
+  - the Matchups `@` token.
+- **Save Team Line** is kept in the block (33 nibbles; the spec's "31" was corrected from the ROM).
 
 Item 13 (the reverse angle) is also done:
 - `ReplayRecorder.apply` covers the frames, flips, shadow, glass and camera;

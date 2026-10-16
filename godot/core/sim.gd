@@ -21,6 +21,8 @@ var sram: Sram
 var menu_rng := RetailRng.new(randi())
 ## Where the bracket screen goes next: Matchups before a game, Game Setup after one.
 var bracket_next_matchups := true
+## Where Name Entry goes next (the bracket in the playoffs, else Matchups).
+var after_name_entry := "res://ui/matchups.tscn"
 ## The menus' music (the title's $78 plays on into Game Setup; Matchups' $7A).
 var menu_sfx: SfxBank
 

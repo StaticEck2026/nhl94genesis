@@ -66,6 +66,9 @@ func _ready() -> void:
 		world.rules.gamelevel = Sim.league.gamelevel
 	else:
 		world.rules.init_other_games(MatchConfig.available_teams(m.edition))
+	# LoadCrowdRec (L959665): the home arena's record from the save RAM, $50 without one.
+	if Sim.sram and world.stats[0].team_index >= 0:
+		world.rules.crowd_record_value = Sim.sram.crowd_record(world.stats[0].team_index)
 	if m.form.size() == 2:
 		world.roster.preset_form = m.form
 	world.rules.start_game()
@@ -88,6 +91,10 @@ func _on_intermission(gsp: int) -> void:
 ## The end of the game: the final intermission ("Exit Game" goes back to the setup).
 func _on_game_over() -> void:
 	_over = true
+	# Intermission at gsp 4: sub_F9CDE saves the records (User Records On).
+	var m: MatchConfig = Sim.match
+	if m.user_records and Sim.sram:
+		Records.update(Sim.sram, world, m.users)
 	hold = true
 	_hold_frames = CPU_INTERMISSION_FRAMES
 	if not world.intermission:

@@ -24,6 +24,7 @@ const MENUS := "res://assets/ui/menus/"
 const GAME_SCENE := "res://scenes/game.tscn"
 const MATCHUPS_SCENE := "res://ui/matchups.tscn"
 const PLAYOFF_SCENE := "res://ui/playoff_screen.tscn"
+const NAME_ENTRY_SCENE := "res://ui/name_entry.tscn"
 
 ## The rows (d7 / 2).
 enum { PLAY_MODE, PLAYERS, TEAM1, TEAM2, PER_LENGTH, GOALIES, USER_RECORDS, PENALTIES, LINES }
@@ -439,6 +440,15 @@ func _draw_card() -> void:
 	var p: PlayerData = t.player(entry[1]) if t else null
 	if p:
 		_a.print_at(nm[0], nm[1], "%s %s" % [Hud.jersey(p.jersey_number), p.full_name], 0, "setup_font")
+		# sub_F98C6 / sub_F9A64 / sub_F9AAC: the player's saved best game.
+		var rec := Sim.sram.player_record(team, entry[1]) if Sim.sram and entry[1] < 26 else PackedByteArray([0, 0, 0, 0])
+		if rec[0] != 0:
+			var goalie: bool = t != null and entry[1] < t.goalie_count
+			var word := ("save" if goalie else "goal") + ("" if rec[0] == 1 else "s")
+			_a.print_at(nm[0], nm[1] + 2, "Record %d %s" % [rec[0], word], 0, "setup_font")
+			_a.print_at(nm[0], nm[1] + 3, "by " + Sim.sram.user_name(rec[1]), 0, "setup_font")
+			var opp: TeamData = _teams[rec[2]] if rec[2] < 28 else null
+			_a.print_at(nm[0], nm[1] + 4, "vs. %s %s" % [Sim.sram.user_name(rec[3]), opp.abbreviation if opp else ""], 0, "setup_font")
 
 ## photos.json teams[team][k]: [photo, roster slot].
 func _photo_entry(team: int, k: int) -> Array:
@@ -564,6 +574,7 @@ func _start() -> void:
 	m.line_changes = _opt(LINES) != 1
 	m.auto_lines = _opt(LINES) == 2
 	m.shootout = _shootout()
+	m.user_records = _opt(USER_RECORDS) == 0
 	if _playoffs():
 		# sub_17AC8: pojoy = 7 - OptNOP for a new playoff; FigureJoy's teams and pads.
 		if _new_playoffs():
@@ -575,13 +586,17 @@ func _start() -> void:
 			m.pads = fj["pads"]
 		m.play_mode = _opt(PLAY_MODE)
 	Sim.match = m
+	var next := MATCHUPS_SCENE
 	if m.shootout:
-		get_tree().change_scene_to_file(GAME_SCENE)
+		next = GAME_SCENE
 	elif _playoffs():
 		Sim.bracket_next_matchups = true
-		get_tree().change_scene_to_file(PLAYOFF_SCENE)
-	else:
-		get_tree().change_scene_to_file(MATCHUPS_SCENE)
+		next = PLAYOFF_SCENE
+	# Opening2: Name Entry first with User Records On (sub_FBB88).
+	if m.user_records:
+		Sim.after_name_entry = next
+		next = NAME_ENTRY_SCENE
+	get_tree().change_scene_to_file(next)
 
 ## loc_F8418: the demo, CPU against CPU with the teams on screen, penalties and line
 ## changes on, a regular game.
