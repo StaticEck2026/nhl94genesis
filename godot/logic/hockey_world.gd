@@ -173,6 +173,8 @@ var zamx: int = -1
 var intermission: bool = false
 ## The pause screen is up (PauseMode's sub_7DCE: SetHor, the side view).
 var pause_screen: bool = false
+## word_FFC2F4 bit 4: the instant replay is shown from the other end (reverse angle).
+var reverse_angle: bool = false
 var marks: PackedInt32Array = PackedInt32Array([0xF, 0xF, 0xF, 0xF, 0xF, 0xF])
 ## OptFight (the fight patch's menu option, $FFDF00): 0 off (retail), 1 on, 2 on, Arcade.
 var opt_fight: int = 0

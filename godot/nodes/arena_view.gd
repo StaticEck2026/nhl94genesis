@@ -89,6 +89,9 @@ func _draw() -> void:
 	if game == null:
 		return
 	var w := game.world
+	# The reverse angle: showcrowd and sub_FD78A draw nothing.
+	if w.reverse_angle and not _side:
+		return
 	if not _crowd.is_empty():
 		# showcrowd, back to front: the crowd, the flash, the home box, the away box.
 		_crowd_frame(w.rules.crowd_frame)

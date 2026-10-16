@@ -81,10 +81,39 @@ func snapshot(d7: int) -> Dictionary:
 		"gloves": [w.fight.glove_x, w.fight.glove_y], "pbnum": w.lines.pbnum.duplicate(),
 		"camera": w.camera}
 
-## SetRCords: the record's state onto the objects (display state only).
+## revframetbl ($F600E, tools/extract/playoffs.py): each frame seen from the other end.
+const REVERSE_PATH := "res://assets/ui/playoffs/replay_reverse.json"
+const REV_FRAMES := 0x34E
+const REV_FLIP_FIRST := 0x162
+const REV_FLIP_LAST := 0x178
+const GLASS_FIRST := 0x28D
+const GLASS_LAST := 0x291
+const SHADOW_FRAME := 0x18A
+## sub_A88C: the reverse camera's limits.
+const REV_CAM_X := 60
+const REV_CAM_Y := Vector2i(-200, 256)
+
+static var _revframes: Array = []
+
+static func revframe(f: int) -> int:
+	if _revframes.is_empty() and FileAccess.file_exists(REVERSE_PATH):
+		var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(REVERSE_PATH))
+		if d is Dictionary:
+			_revframes = d["revframetbl"]
+	var i := f & 0x3FF
+	if i >= _revframes.size():
+		return f
+	var r: int = _revframes[i]
+	return r if r >= 1 and r < REV_FRAMES else f
+
+## SetRCords: the record's state onto the objects (display state only). In the reverse
+## angle every position is negated, the frames go through revframetbl (frames $162-$178
+## toggle the h-flip), the shadow hides unless it shows its own frame, the glass
+## shatter moves to y $190, and the camera is negated and clamped.
 func apply(r: Dictionary) -> void:
 	if r.is_empty():
 		return
+	var rev := w.reverse_angle
 	for i in OBJECTS:
 		var e: Array = r["objs"][i]
 		var o := w.objects[i]
@@ -94,6 +123,19 @@ func apply(r: Dictionary) -> void:
 		o.attribute = e[3]
 		o.pnum = e[4]
 		o.position = e[5]
+		if not rev:
+			continue
+		o.pos_fx = -o.pos_fx
+		if i == OBJECTS - 1:
+			o.pos_fx.y += 2 << 16
+		var f := revframe(o.frame)
+		o.frame = f
+		if f >= REV_FLIP_FIRST and f <= REV_FLIP_LAST:
+			o.attribute ^= 0x800
+		if i == HockeyWorld.SHADOW and f != SHADOW_FRAME:
+			o.pos_fx.y = -(0x400 << 16)
+		if f >= GLASS_FIRST and f <= GLASS_LAST:
+			o.pos_fx.y = 0x190 << 16
 	w.marks = r["marks"].duplicate()
 	w.rules.crowd_frame = r["crowd"][0]
 	w.rules.crowd_flash = r["crowd"][1]
@@ -101,3 +143,5 @@ func apply(r: Dictionary) -> void:
 	w.fight.glove_y = r["gloves"][1]
 	w.lines.pbnum = r["pbnum"].duplicate()
 	w.camera = r["camera"]
+	if rev:
+		w.camera = Vector2i(clampi(-w.camera.x, -REV_CAM_X, REV_CAM_X), clampi(-w.camera.y, REV_CAM_Y.x, REV_CAM_Y.y))

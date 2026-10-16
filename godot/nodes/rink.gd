@@ -12,6 +12,9 @@ const MAP_PATH := "res://assets/rink/map.json"
 const TILES_PATH := "res://assets/rink/tiles_idx.png"
 const LOGOS_PATH := "res://assets/rink/logos_idx.png"
 const SIDE_PATH := "res://assets/rink/side_idx.png"
+## The reverse-angle rink (RevRinkTiles), the same 48 x 85 cells.
+const REVERSE_BASE := "res://assets/rink/rink_reverse_base_idx.png"
+const REVERSE_FRONT := "res://assets/rink/rink_reverse_front_idx.png"
 ## ChkOffsides puck line ($54).
 const BLUE_LINE := 84
 ## Top goal line ($108).
@@ -36,6 +39,9 @@ var base_layer: TileMapLayer
 var front_layer: TileMapLayer
 var logo: Sprite2D
 var side: Sprite2D
+var rev_base: Sprite2D
+var rev_front: Sprite2D
+var rev_logo: Sprite2D
 var _tiled := false
 
 func _ready() -> void:
@@ -125,6 +131,19 @@ func _build_tiles() -> bool:
 		logo.z_as_relative = false
 		logo.material = mat
 		add_child(logo)
+	if ResourceLoader.exists(REVERSE_BASE):
+		var rmat := PaletteBank.material(_reverse_palette())
+		var at := Vector2(-float(origin[0]), -float(origin[1]))
+		rev_base = _rev_sprite(REVERSE_BASE, at, Z_BASE, rmat)
+		rev_front = _rev_sprite(REVERSE_FRONT, at, Z_FRONT, PaletteBank.material(_reverse_palette(), false, true))
+		# sub_FEA52 on the reverse tiles: the home logo, rotated 180 degrees.
+		if logo:
+			rev_logo = logo.duplicate() as Sprite2D
+			rev_logo.flip_h = true
+			rev_logo.flip_v = true
+			rev_logo.material = rmat
+			rev_logo.visible = false
+			add_child(rev_logo)
 	if ResourceLoader.exists(SIDE_PATH):
 		side = Sprite2D.new()
 		side.name = "SideView"
@@ -136,6 +155,22 @@ func _build_tiles() -> bool:
 		add_child(side)
 	queue_redraw()
 	return true
+
+func _reverse_palette() -> Texture2D:
+	var t := _teams()
+	return PaletteBank.texture(t.x, t.y, "rink_reverse")
+
+func _rev_sprite(path: String, at: Vector2, z: int, mat: Material) -> Sprite2D:
+	var s := Sprite2D.new()
+	s.texture = load(path)
+	s.centered = false
+	s.position = at
+	s.z_index = z
+	s.z_as_relative = false
+	s.material = mat
+	s.visible = false
+	add_child(s)
+	return s
 
 func _layer(n: String, ts: TileSet, z: int, mat: Material) -> TileMapLayer:
 	var l := TileMapLayer.new()
@@ -152,12 +187,18 @@ func _sync() -> void:
 	if not _tiled:
 		return
 	var hor := game.world.side_view()
+	var rev := game.world.reverse_angle and not hor and rev_base != null
 	if side:
 		side.visible = hor
-	base_layer.visible = not hor
-	front_layer.visible = not hor
+	base_layer.visible = not hor and not rev
+	front_layer.visible = not hor and not rev
 	if logo:
-		logo.visible = not hor
+		logo.visible = not hor and not rev
+	if rev_base:
+		rev_base.visible = rev
+		rev_front.visible = rev
+	if rev_logo:
+		rev_logo.visible = rev
 
 func _godot_outline() -> PackedVector2Array:
 	var out := PackedVector2Array()

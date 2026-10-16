@@ -622,6 +622,12 @@ Shots: `rv_1.png` (normal), `rv_rev_3.png` (just toggled, panel up), `rv_rev_7.p
 
 ## 11. Port checklist
 
+Port status: item 13 (the reverse angle) is done (2026-10-16):
+- `ReplayRecorder.apply` covers the frames, flips, shadow, glass and camera;
+- `HockeyWorld.reverse_angle` holds the state; C in the replay prompt toggles it;
+- `Rink2D` draws the reverse rink with the logo rotated;
+- `ArenaView` hides the crowd and the arena animations.
+
 Port names: `GameRules` (`logic/game_rules.gd`), `TeamStats`, `HockeyWorld`, `HockeyAI`, `MatchConfig`, `ui/setup_screen.gd`, `ui/pause_menu.gd`, `ui/stats_pages.gd`, `logic/replay.gd`, `ui/replay_view.gd`.
 
 1. **Mode and state.**

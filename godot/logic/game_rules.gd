@@ -860,6 +860,8 @@ func reset_clock() -> void:
 ## StartGame (L29748) without the menus: clear the game, then the first period.
 func start_game() -> void:
 	w.gmode = 0
+	# L970846: word_FFC2F4 cleared (the reverse angle off).
+	w.reverse_angle = false
 	if w.opt_pen and w.opt_offsides:
 		w.gmode |= HockeyWorld.GM_OFFS
 	for st in w.stats:

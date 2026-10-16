@@ -8,8 +8,9 @@ extends CanvasLayer
 ## - the d-pad: lock the camera on the nearest player that way (±1 octant), else pan the
 ##   free camera (clamped to x ±$88, y ±$126); A+B: drop the lock;
 ## - Start: the prompt (Start back to the game, B the pause menu, C reverse angle).
-## The reverse angle is not ported (UNRESOLVED U2): C closes the prompt and goes on. On
-## leaving, the live state saved on entry goes back (retail SetRCords the newest record).
+## C in the prompt switches the reverse angle (sub_A528: the view from the other end,
+## HockeyWorld.reverse_angle, ReplayRecorder.apply). On leaving, the normal angle and the
+## live state saved on entry come back (retail SetRCords the newest record).
 
 signal finished(to_game: bool)
 
@@ -78,6 +79,8 @@ func open(game: HockeyGame, pad: int) -> void:
 
 func _close(to_game: bool) -> void:
 	visible = false
+	# L34807: the replay's exit clears the reverse angle.
+	_game.world.reverse_angle = false
 	_game.world.replay.apply(_saved)
 	_game.world.marks[3] = HockeyWorld.MARK_HIDDEN
 	_game.stepped.emit()
@@ -95,7 +98,8 @@ func _show() -> void:
 		_cam = Vector2i(clampi(o.x(), -CAM_X, CAM_X), clampi(o.y(), -CAM_Y, CAM_Y))
 		w.marks[3] = _locked
 	elif not _free:
-		_cam = r.get("camera", w.camera)
+		# apply() leaves the record's camera (negated in the reverse angle).
+		_cam = w.camera
 	w.camera = _cam
 	_game.stepped.emit()
 
@@ -115,6 +119,10 @@ func _process(_delta: float) -> void:
 		elif Input.is_action_just_pressed(p + "c"):
 			_prompt = false
 			_prompt_img.visible = false
+			_game.world.reverse_angle = not _game.world.reverse_angle
+			_locked = -1
+			_free = false
+			_show()
 		return
 	if Input.is_action_just_pressed(p + "start"):
 		_prompt = true

@@ -115,6 +115,7 @@ func _initialize() -> void:
 		"test_choose_song",
 		"test_sound_rules",
 		"test_frontend_mapping",
+		"test_reverse_angle",
 		"test_crowd_frames",
 		"test_arena_sheets_assembled",
 		"test_arena_anim_scripts",
@@ -2747,4 +2748,26 @@ func test_frontend_mapping() -> bool:
 	var b := RosterLogic.make_form(RetailRng.new(5))
 	eq(a, b, "the Matchups form table is reproducible from its seed")
 	eq(a[0].size(), 416, "416 bytes a team")
+	return true
+
+## SetRCords in the reverse angle: positions negated, frames through revframetbl, the
+## shadow hidden, the camera negated and clamped.
+func test_reverse_angle() -> bool:
+	var w := HockeyWorld.new(SimSettings.new())
+	var c := w.place(3, Vector2i(-112, -205), SimObject.POS_C, false, true)
+	c.frame = 36
+	w.objects[HockeyWorld.SHADOW].frame = 1
+	w.camera = Vector2i(-100, -250)
+	var r := w.replay.snapshot(0)
+	w.reverse_angle = true
+	w.replay.apply(r)
+	eq(c.pos(), Vector2i(112, 205), "positions negated")
+	eq(c.frame, 16, "frame 36 seen from the other end is 16 ($10)")
+	eq(w.objects[HockeyWorld.SHADOW].y(), -0x400, "the shadow is hidden")
+	eq(w.camera, Vector2i(60, 250), "the camera negated and clamped")
+	eq(ReplayRecorder.revframe(1), 0x15, "glide dir 0 -> glide dir 4")
+	w.reverse_angle = false
+	w.replay.apply(r)
+	eq(c.pos(), Vector2i(-112, -205), "the normal angle again")
+	w.dispose()
 	return true
