@@ -584,12 +584,11 @@ The setup screen comes back with the same settings: OptLine and OptPlayMode are 
 - Matchups makes the game's form table (`RosterLogic.make_form`), which `MatchConfig.form` hands to `new_game_form`. Its ratings use `PlayerData.overall(form)`.
 - The A + C + Start cheat sets `MatchConfig.perlen = 3`.
 - The demo follows retail: Penalties On, Line Changes On, the teams on screen, re-rolled on the way back.
-- Not done:
-  - the playoff modes (Play Mode 1-3 are skipped for now);
-  - User Records / Name Entry;
-  - the showcase's SRAM record lines;
-  - the palette fades (`palcount`).
+- Since done: the playoff modes (Play Mode 1-3, `ui/playoff_screen.gd`), User Records with Name Entry (`ui/name_entry.gd`), and the showcase's SRAM record lines (`sub_F98C6` / `sub_F9A64` / `sub_F9AAC`).
+- Palette fades (`ui/cram_fade.gd`, `shaders/cram_fade.gdshader`): every screen change runs setvram's fade to black (`palcount = $18`, 25 VBlanks, the screen frozen), and the next screen fades in over 24 VBlanks while it already runs. The fade is `cramfade` as a post-process: each component of every CRAM colour steps one level at a time, red, green and blue in turn. Applies to title → Game Setup → Name Entry / bracket / Matchups → game, and Exit Game back.
 - Port-only: B opens a box with the edition (retail or the fight patch) and the patch's Fighting option.
+
+The original port plan follows, kept for reference. Its "skip the playoffs" and "drop Three/Four" steps were superseded once the playoffs and 4 Way Play were ported.
 
 1. **Flow.** Replace `ui/setup_screen.tscn` with a retail **GameSetup** scene, then a **Matchups** scene:
    - flow: title → GameSetup → (Shootout ? skip : Matchups) → game;

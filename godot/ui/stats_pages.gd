@@ -223,8 +223,11 @@ func open_page(id: String, game: HockeyGame, team: int, pad: int) -> void:
 		_sel = _game.world.stats[team].line + 1
 	_build()
 
+## $9CD8: forceblack, then back to H32 and the menu (which fades in).
 func _close() -> void:
-	# $9CD8: back to H32.
+	CramFade.out(get_tree(), _close_now)
+
+func _close_now() -> void:
 	ScreenMode.set_h32(get_tree(), true)
 	_id = ""
 	visible = false
@@ -965,7 +968,7 @@ func _shootout_setup() -> void:
 # --- input ------------------------------------------------------------------------------------
 
 func _process(_delta: float) -> void:
-	if _id == "":
+	if _id == "" or CramFade.busy(get_tree()):
 		return
 	if _scroll != _target:
 		_scroll += 2 if _target > _scroll else -2

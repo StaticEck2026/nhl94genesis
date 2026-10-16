@@ -36,7 +36,7 @@ There is also the sprite priority bit, which the port ignores. A few small logic
 | 14 | L38094 | asspenalty | `$F6E` | facing reached (6, or 2 if `$76`≠0): +lock, then assdopen | line_logic.gd:448 | ✓ |
 | 15 | L38157 | assepen | `$FAC` | new: pos ($86, ±60), facing 2, +lock, SprSort | line_logic.gd:474 | ✓ |
 | 16 | L38255 | assfaceoffpl | `$FEA` / `$1014` | CPU centre, test-and-set aip; `$1014` if puck temp1 > $10 and randomd0(8) ≠ 0 | faceoff_logic.gd:400 | ✓ |
-| 17 | L38299 | assstanley | `$109E` | new assignment | hockey_ai.gd:710 | **code ported, never reached** (G9) |
+| 17 | L38299 | assstanley | `$109E` | new assignment | hockey_ai.gd:710 | ported; reached through `GameRules.cup_assignment` (G9 done) |
 | 18 | L38358 | assscore | `$E8A` / `$EFC` | timer expired; `$EFC` for shotplayer; +lock | hockey_ai.gd:699 | ✓ |
 | 19 | L39113 | assgoaliecpu | `$1596` / `$1684` (pfgoal) | goal scored, !aip, same half, \|x\| ≤ 20; +aip | goalie_logic.gd:86 | ✓ |
 | 20 | L39170 | assgoaliecpu | `$2` | in the crease box, !aip | goalie_logic.gd:115 | ✓ |
@@ -91,7 +91,7 @@ There is also the sprite priority bit, which the port ignores. A few small logic
 
 - `spalist.json` holds all 66 retail ids (`$2`..`$1AF4`). Every SPA id that retail code uses is in it. That covers the immediates, `checkinglist`, `FallList`, `_saveanim` and `setonetimeranim`. Nothing is missing from the export.
 - Port setters reach 64 of the 66. The two that are never set, `$114` and `$1298`, have no setter in retail either: no immediate, no table entry, and no computed id. They are dead data.
-- `$109E` (cup skate) is set by ported code, but no path ever assigns `assstanley` (G9).
+- `$109E` (cup skate) is set by `assstanley`, which `GameRules.cup_assignment` assigns in the Cup-winning game (G9, done).
 - `$11E6` is reachable both through the stagger in FallDown and through doplayeracc. The doplayeracc route needs `$63` bit 6, which only the fight patch sets.
 - `$F6E` and `$FAC` dir 7: the exporter follows the out-of-entry offset `$3E` exactly as retail does. It reads 23 and 16 junk pairs, ending at a negative time. The junk list contains frames 0, -8 and -6. Retail hides these (`addframe2`: `f <= 0`). The port's `draw_frame` finds no atlas key, so it also draws nothing. Whether facing 7 ever happens during a hop is UNRESOLVED (spec §1).
 - Every frame used by SPAList (1..837) is in `assets/sprites/frames.json` (845 frames). The fight-patch frames are in `fight.json`.
@@ -230,7 +230,7 @@ Deviations:
 |---|---|---|---|
 | Skate / glide / back / puck / injured / turn / stop | doplayeracc L43331, noturn0 L43644, dostop L43876 | skater_steering.gd ✓ | Skater2D ✓ |
 | Goalie stance, skate, saves, dive, goal-against | goalieacc L43477, assgoaliecpu, goaliesave | goalie_logic.gd ✓ | ✓ |
-| Celebrations | assscore, assstanley | ✓, cup branch missing (G9) | ✓ |
+| Celebrations | assscore, assstanley | ✓ (G9 done) | ✓ |
 | Falls, board pins, injuries | FallDown, updateplayers L35375-35452, sub_FEB54 | checking.gd ✓ (`pin_to_boards` :449). Injured slide fixed (G4) | ✓ |
 | Checks, holds, sweep, hit by puck | CCStart, holdcheck, Acheck, Sweepcheck, puckbody | ✓ | ✓ |
 | Faceoff stance and close-up | assfaceoffpl, faceoffinput, checkfo, updatefaceoff | ✓ | FaceoffWindow ✓ (G15: exact) |
@@ -242,7 +242,7 @@ Deviations:
 | Arena / bench background animations | sub_FE510 / FE2C8 / FD78A | ArenaAnim ✓ | ArenaView ✓ (G7) |
 | Referee | no on-ice referee; window via showref; close-up ref in fofdata | ✓ | RefWindow, FaceoffWindow ✓ |
 | Zamboni | Intermission / showzam | `zamx`, `intermission_vblank` ✓ | ArenaView on the side view ✓ (G8) |
-| Clock | showclock (window tiles) | ✓ | approximation (G16) |
+| Clock | showclock (window tiles) | ✓ (`ui/hud.gd` `_score_box`, the ROM font on the window plane) | ✓ (G16 done) |
 | Pad stars + numbers, off-screen arrows | setffo/uppads, checksso | `HockeyWorld.marks` ✓ | IndicatorsView ✓ (G1, G2) |
 
 ## 7. Unresolved
@@ -264,10 +264,10 @@ Deviations:
 | G6 penalty-box figures | done | nodes/arena_view.gd (`_box`) |
 | G7 background animations | done | logic/arena_anim.gd (start/step/stop, faceoff ids, hat trick, id 7), nodes/arena_view.gd |
 | G8 zamboni + intermission | done | `HockeyWorld.begin_intermission` / `intermission_vblank` / `side_view`, nodes/arena_view.gd (`_zamboni`) |
-| G9 Stanley Cup | not applicable | the port has no playoff mode (gamelevel 3 never happens) |
+| G9 Stanley Cup | done | `GameRules.cup_assignment` (the playoff Cup winner) |
 | G10-G14 | done | see the P2 list |
 | G15 faceoff XOR | exact as is | resolved: only line-2 pieces carry the XOR |
-| G16 clock tiles | approximation kept | HUD Label |
+| G16 clock tiles | done | `ui/hud.gd` `_score_box` draws showclock's tiles on the window plane |
 | G17 away palette source | done | skater.gd reads attribute bit 0 every sync; `place()` keeps bit 0 in step with the team |
 
 Remaining design differences: the 64-link sprite budget is not emulated (the port shows a little more crowd in busy scenes), and the side view's crowd and zamboni are clipped to the 256-pixel art inside the port's 320-pixel view.

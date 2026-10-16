@@ -110,12 +110,12 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if _meta.is_empty():
 		return
+	if _phase == 4:
+		# setvram's VBlank handler (loc_15E4C) only fades: the title is frozen.
+		return
 	_frame += 1
 	_vblank()
-	if _phase == 4:
-		_fade_out()
-	else:
-		_main_step()
+	_main_step()
 	_screen.queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -242,21 +242,12 @@ func _print_block(lines: Array) -> void:
 			x += 1
 		printy = (printy + 1) & 0x1F
 
-## Leaving: the next screen's setvram fades the frozen title to black in 25 frames.
+## Leaving: the next screen's setvram fades the frozen title to black in 25 frames
+## (CramFade), and the setup screen then fades in.
 func _leave() -> void:
 	_phase = 4
-	_count = 0x18
-	_target = []
-	for k in 4:
-		_target.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-	_palcount = 0xFFFF
-
-func _fade_out() -> void:
-	if _count < 0:
-		get_tree().change_scene_to_file(NEXT_SCENE)
-		return
-	_step_toward(_target, _count)
-	_count -= 1
+	if is_inside_tree():
+		CramFade.change_scene(get_tree(), NEXT_SCENE)
 
 # --- drawing ----------------------------------------------------------------------------------
 

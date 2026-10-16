@@ -162,7 +162,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Crowd: `UpdateCwdExcite` L30009, `updatecrowdf` L30028 (the `_cd0` frames and the camera flash), the crowd meter and record (`Crowd_Noise?`, `PrintScores1`; the record makes the AI react a frame faster)
 - [x] Pause menu (PauseMode L30217, the pausing pad's team): Timeout ($9D7A, the contain flag and rest for both teams), Change Goalie ($9DE6), Edit Lines (port layout), the Manual/Auto Goalie toggle; setup options Line changes On/Off/Auto (`no_fatigue`) and Goalie Manual/Auto Control. Not ported: the stats pages and the instant replay
 - [x] The `updateplayers` preamble (the one-timer and breakaway bits, the crowd-record bit) and the AI audit's minor deviations M1-M9 (docs/specs/audit_ai.md section 6)
-- [x] Stats: `ChkShotStat` L47451 (Phase 3), team and player stats in `TeamStats`, PenSum. `InitScores` / `UpdateScores` (other games' ticker) not ported: cosmetic, and it needs the season/playoff mode
+- [x] Stats: `ChkShotStat` L47451 (Phase 3), team and player stats in `TeamStats`, PenSum. `InitScores` / `UpdateScores` (the other games of the night, the ticker and the playoff slate) in `League` / `GameRules`
 - [x] Penalty shot and shootout (`ShootoutLogic`, spec `docs/specs/shootout_penaltyshot.md`): `PenShotChk` L46100 and `getBAplayerInfo` (the shifted variants, Q1), `puckshootout` L41046, `sub_EE58` (the shooter), `puckpenshot` L41276, `sub_1592C`, the intro and its skip, the 25-second attempt clock in the VBlank, `sub_F2F4` / `sub_F37C` (end of the attempt), the PS/SO goal, and the Shootout play mode: `sub_FC47C`, `sub_FC4C0`, `sub_FC516` (home then away, five rounds, then sudden death), `sub_FD618` (the winners skate on), the decided ref text. The "Shootout SetUp" menu that reorders the lists (U2) is not ported: the lists come from each team's first line
 - [x] Fights: none in '94 (`fightinput`, `assfight`, `assfwatch` are `rts`; no caller raises the fighting penalties)
 
@@ -194,7 +194,7 @@ These come from the listing. Add a fact here before code depends on it.
 - [x] Setup screen: Team 1 / Team 2 `OptionButton`, line `ItemList` (the real Sc1-PK2 lines), reads `TeamData`; the play mode (Regular Game or Shootout)
 - [x] HUD: clock, score, period, power play, referee calls, penalties, intermission and final banners; the penalty shot / shootout intro box and the attempt clock
 - [x] In-game overlays as retail prints them (`ui/hud.gd` on `WindowPlane`, spec `docs/specs/ui_ingame.md`): score box with period, clock, EA logo or power-play banner and time left, team box, referee call box, goal box (GOAL! / PP GOAL! / HAT TRICK!), injury box, penalty-shot and shootout boxes, face-off line labels, line-change menu with energy bars, the fight banner, Stars of the Game; the penalty screen's plates, big goals, period, clock and box lists
-- [x] Instant Replay (`logic/replay.gd`, `ui/replay_view.gd`; updatereplay L35236, the viewer $9FD0): a 458-record ring of every loop's sprites, markers, crowd, gloves, box counts, camera and sound, frozen while SF2_NOREC is set (10 more records after a penalty-shot goal); playback with C play/stop, A rewind, B slow motion, the d-pad locking the camera on a player or panning, the button panel and the Start prompt. The reverse angle is not ported (U2)
+- [x] Instant Replay (`logic/replay.gd`, `ui/replay_view.gd`; updatereplay L35236, the viewer $9FD0): a 458-record ring of every loop's sprites, markers, crowd, gloves, box counts, camera and sound, frozen while SF2_NOREC is set (10 more records after a penalty-shot goal); playback with C play/stop, A rewind, B slow motion, the d-pad locking the camera on a player or panning, the button panel and the Start prompt. The reverse angle (C at the replay prompt) is ported
 - [x] Pause and intermission menus on retail's engine (`ui/pause_menu.gd`, `menus.json`, spec `docs/specs/ui_menus.md`): every table (pause, timeout used, shootout, pre-game, period, final, shootout intermission), the side view behind them, the intermission ticker, Change Goalie and Timeout boxes, Manual/Auto Goalie; the final intermission's Exit Game ends the game
 - [x] Stats pages (`ui/stats_pages.gd`): Game Stats, Player Stats, Scoring Summary, Penalty Summary, Team Roster, Crowd Meter, Period Stats, Other Scores (a simulated slate of the night's other games, `GameRules.other_games`), Record Holders (empty, as with a fresh battery save), Player Cards (photos, This Game; no saved records), the Line Editor (select list, Set Original / Save / Load Team Line) and Shootout SetUp. Not applicable: Playoff Stats
 - [x] Line-change box (`sub_B92E`): rows A / B / C with the line each sends and its energy, while a pad's menu is open
@@ -210,7 +210,15 @@ Spec: `docs/specs/fight_patch.md` (and `fight_patch_retail_hooks.md`). The setup
 - [x] The patch's rosters (enforcers' fight ratings raised, some moved onto the checking line): `data/teams_fight/`
 - [x] Menu option Fighting: Off / On / On - Arcade Mode (default On); the patch's Fgt column (0-100) in the setup screen's line tooltips
 - [x] The patch's title screen and credits; its ROM name on the window
-- [x] Not applicable to a native port: ROM expansion and the SRAM relocation, the checksum skip, the reverse-angle replay fixes (no replay yet), the Shootout SetUp and demo-mode menu fixes (those menus are not ported)
+- [x] Not applicable to a native port: ROM expansion and the SRAM relocation, the checksum skip, the reverse-angle replay fixes (the port's replay has its own reverse angle), the Shootout SetUp and demo-mode menu fixes (those menus are not ported)
+
+## Phase 13. Remaining parity polish
+
+- [x] Stale docs: the reverse angle and the other-games ticker are ported; the audits' Stanley Cup and clock rows; the front-end "Not done" list
+- [x] Front-end palette fades (`palcount` / `cramfade`) between Game Setup, Matchups, the playoff screens and the other menus: `CramFade` (ui/cram_fade.gd), on every scene change and on the pause / intermission menus and stats pages
+- [ ] Playoff pads with 4 Way Play (`_pojoylist2`, cont3/cont4, L55064-55089)
+- [ ] Playoff Stats in the save file in retail's exact bit order; the saved playoff's `gamelevel` quirk in a regular-season game
+- [ ] Name Entry's edit screen (`loc_FB018`, `sub_FB9D4`): the field bar, the grid and its cursor as retail draws them
 
 ## Log
 

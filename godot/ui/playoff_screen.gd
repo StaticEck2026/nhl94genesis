@@ -131,6 +131,9 @@ func _place() -> void:
 func _physics_process(_delta: float) -> void:
 	if _a == null:
 		return
+	# setvram: the screen is frozen while it fades to black.
+	if CramFade.busy(get_tree()):
+		return
 	# sub_175D8: the user's plates blink.
 	_flash -= 1
 	if _flash <= 0:
@@ -161,4 +164,4 @@ func _physics_process(_delta: float) -> void:
 		_place()
 
 func _leave() -> void:
-	get_tree().change_scene_to_file(MATCHUPS_SCENE if Sim.bracket_next_matchups else SETUP_SCENE)
+	CramFade.change_scene(get_tree(), MATCHUPS_SCENE if Sim.bracket_next_matchups else SETUP_SCENE)

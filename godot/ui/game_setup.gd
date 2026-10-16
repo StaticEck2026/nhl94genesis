@@ -498,6 +498,9 @@ func _port_input(step: Vector2i) -> void:
 func _physics_process(_delta: float) -> void:
 	if _fe.is_empty():
 		return
+	# setvram: the screen is frozen while it fades to black.
+	if CramFade.busy(get_tree()):
+		return
 	var pressed := _read_pads()
 	if pressed.is_empty():
 		_idle += 1
@@ -596,7 +599,7 @@ func _start() -> void:
 	if m.user_records:
 		Sim.after_name_entry = next
 		next = NAME_ENTRY_SCENE
-	get_tree().change_scene_to_file(next)
+	CramFade.change_scene(get_tree(), next)
 
 ## loc_F8418: the demo, CPU against CPU with the teams on screen, penalties and line
 ## changes on, a regular game.

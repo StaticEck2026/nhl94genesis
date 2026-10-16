@@ -18,7 +18,7 @@ The table holds 36 long pointers, ids `$00`-`$23`, and ends at `$18E0C`, where `
 | $05 | asscenterd | $D1E8 | L38800 | | HockeyAI | hockey_ai.gd:444 `asscenterd` | implemented |
 | $06 | asscentero | $D294 | L38856 | | HockeyAI | hockey_ai.gd:461 `asscentero` | implemented |
 | $07 | assscore | $CC4E | L38315 | | HockeyAI | hockey_ai.gd:675 `assscore` | implemented |
-| $08 | assstanley | $CBFA | L38287 | | HockeyAI | hockey_ai.gd:703 `assstanley` | implemented, **never assigned** (G5) |
+| $08 | assstanley | $CBFA | L38287 | | HockeyAI | hockey_ai.gd:703 `assstanley` | implemented; assigned by `GameRules.cup_assignment` (G5, done) |
 | $09 | assben | $C882 | L37993 | | LineLogic.register | line_logic.gd:384 `assben` | implemented |
 | $0A | assepen | $CA50 | L38135 | | LineLogic | line_logic.gd:461 `assepen` | implemented |
 | $0B | assbench | $C710 | L37886 | | LineLogic | line_logic.gd:319 `assbench` | implemented (M1) |
@@ -100,7 +100,7 @@ Where it belongs: pause_menu.gd and goalie_logic.gd (`return_goalies` must leave
 
 Where it belongs: GameRules (crowd: CurCrowdMeter, the loud state, `word_FFC304`) and the G1 preamble.
 
-### G5. assstanley is unreachable: no playoff and Cup path in `clockcont` (LOW-MEDIUM)
+### G5. assstanley is unreachable: no playoff and Cup path in `clockcont` (LOW-MEDIUM) — done since the playoffs were ported
 
 - `clockcont` L30092-30111 handles the final round (`gamelevel == 3`). When `bosgames == 7` or this win is the series' 4th (`gsstruct` `gspotwins == 3`), the first skater with `position > 0` on the winning team gets assignment `$08`, the rest get `$07`, and `pfjoycon` is cleared on all 12 objects, so the pads lose control.
 - The port's `GameRules.end_of_period` (game_rules.gd:639-659) always uses `$07`. `gamelevel` exists (game_rules.gd:84) but there is no playoff mode.
@@ -194,7 +194,7 @@ These port additions differ from retail only when changed from their defaults: `
 | G2 Timeout | done | pause menu (ui/pause_menu.gd), `HockeyWorld.timeout`, `TeamStats.F30_TIMEOUT`; the row is gone once used and in a shootout (unk_1988C / unk_19664) |
 | G3 Change Goalie | done | pause menu, `GoalieLogic.change_goalie` / `goalie_row` (row 0 pulls him for good, a CPU pull ignores it) |
 | G4 crowd meter and record | done | `GameRules.crowd_noise`, `print_scores1`, `HockeyWorld.crowd_record` |
-| G5 assstanley | not applicable | no playoff mode in the port; `gamelevel` never reaches 3 |
+| G5 assstanley | done | `GameRules.cup_assignment` (clockcont L30092-30121): the Cup-winning game of a playoff gives the first skater assstanley |
 | G6a Auto line changes | done | setup screen "Line changes: Auto" → `MatchConfig.auto_lines` → `HockeyWorld.no_fatigue` |
 | G6b Goalie control | done | setup screen "Goalie: Manual/Auto Control" → `auto_goalie`; pause toggle `HockeyWorld.toggle_goalie_control` (the pausing pad's word, both when the pads share a team) |
 | G6c Edit Lines | done (port layout) | pause menu → `LineLogic.edit_line`: line, slot, roster player; a player already on the line trades places. Retail's screen layout was not decoded. |

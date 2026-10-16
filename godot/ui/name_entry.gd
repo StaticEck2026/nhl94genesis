@@ -135,6 +135,9 @@ func _draw() -> void:
 func _physics_process(_delta: float) -> void:
 	if _a == null:
 		return
+	# setvram: the screen is frozen while it fades to black.
+	if CramFade.busy(get_tree()):
+		return
 	var p := "p%d_" % (_pad + 1)
 	if not _armed:
 		_armed = not Input.is_action_pressed(p + "start")
@@ -178,4 +181,4 @@ func _physics_process(_delta: float) -> void:
 	_draw()
 
 func _leave() -> void:
-	get_tree().change_scene_to_file(Sim.after_name_entry)
+	CramFade.change_scene(get_tree(), Sim.after_name_entry)

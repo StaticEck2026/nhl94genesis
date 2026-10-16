@@ -107,8 +107,11 @@ func open_pause(pad: int) -> void:
 	elif w.stats[team()].flags30 & TeamStats.F30_TIMEOUT:
 		table = "pause_timeout_used"
 	get_tree().paused = true
-	w.pause_screen = true
-	_open("pause", table)
+	# PauseMode: forceblack, the menu, palcount = $18.
+	_mode = "pause"
+	_through_black(func() -> void:
+		w.pause_screen = true
+		_open("pause", table))
 
 ## Intermission: the table by gsp (unk_131CC), the shootout's in shootout mode.
 func open_intermission(gsp: int, final: bool = false) -> void:
@@ -127,7 +130,13 @@ func open_intermission(gsp: int, final: bool = false) -> void:
 	elif gsp + po < tables.size():
 		table = tables[gsp + po]
 	_pad = 0 if w.cont_team[0] != 0 or w.cont_team[1] == 0 else 1
-	_open("intermission", table)
+	# PeriodOver: forceblack (L53824), then the menu fades in. The pregame menu comes in
+	# with the game screen (StartGame joins after the forceblack, loc_17278).
+	_mode = "intermission"
+	if not CramFade.idle(get_tree()):
+		_open("intermission", table)
+		return
+	_through_black(func() -> void: _open("intermission", table))
 
 func _open(mode: String, table: String) -> void:
 	_mode = mode
@@ -150,9 +159,25 @@ func _set_table(table: String) -> void:
 	if _mode == "pause":
 		_items.append({"id": "quit", "raw": "  Quit to setup   "})
 
-## Closing the pause menu resumes play (PrintScores1 on the way out); closing the
-## intermission menu lets the game go on.
+## forceblack, then `fn` draws the next screen, which fades in (palcount = $18); `done`
+## once the colours are in.
+func _through_black(fn: Callable, done: Callable = Callable()) -> void:
+	var tree := get_tree()
+	CramFade.out(tree, func() -> void:
+		fn.call()
+		CramFade.come_in(tree, CramFade.FULL, done))
+
+## Closing the pause menu resumes play (PrintScores1 on the way out) once the game screen
+## has faded back in; closing the intermission menu lets the game go on.
 func close() -> void:
+	if CramFade.busy(get_tree()):
+		return
+	var resume := Callable()
+	if _mode == "pause":
+		resume = func() -> void: get_tree().paused = false
+	_through_black(_close_now, resume)
+
+func _close_now() -> void:
 	var game := _game()
 	var mode := _mode
 	_mode = ""
@@ -162,7 +187,6 @@ func close() -> void:
 		return
 	if mode == "pause":
 		game.world.pause_screen = false
-		get_tree().paused = false
 		game.world.rules.print_scores1()
 		_redraw_game()
 	elif mode == "intermission":
@@ -187,7 +211,7 @@ func team() -> int:
 # --- input --------------------------------------------------------------------------------
 
 func _process(_delta: float) -> void:
-	if _mode == "" or _pages.is_open() or _replay.is_open():
+	if _mode == "" or _pages.is_open() or _replay.is_open() or CramFade.busy(get_tree()):
 		return
 	if _mode == "intermission" and _sub == "":
 		_step_ticker()
@@ -288,13 +312,19 @@ func _choose() -> void:
 			_replay.open(game, _pad)
 			return
 		_:
-			_plane.clear()
-			_pages.open_page(id, game, user_side(game) if id == "playoff_stats" else team(), _pad)
+			# sub_9BD8: forceblack, the page, palcount = $18.
+			var side := user_side(game) if id == "playoff_stats" else team()
+			_through_black(func() -> void:
+				_plane.clear()
+				_pages.open_page(id, game, side, _pad))
 			return
 	_draw()
 
 func _on_page_closed() -> void:
+	if _mode == "":
+		return
 	_draw()
+	CramFade.come_in(get_tree())
 
 ## The replay's prompt: Start goes straight back to the game (cursor 0, doshot bit 1),
 ## B back to the pause menu.

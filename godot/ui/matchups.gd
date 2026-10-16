@@ -366,6 +366,9 @@ func _pressed(b: String) -> bool:
 func _physics_process(_delta: float) -> void:
 	if _a == null:
 		return
+	# setvram: the screen is frozen while it fades to black.
+	if CramFade.busy(get_tree()):
+		return
 	_type_step()
 	_arrow_timer -= 1
 	if _arrow_timer <= 0:
@@ -400,4 +403,4 @@ func _turn(d: int) -> void:
 	_draw_page()
 
 func _begin() -> void:
-	get_tree().change_scene_to_file(GAME_SCENE)
+	CramFade.change_scene(get_tree(), GAME_SCENE)

@@ -111,11 +111,17 @@ func _on_game_over() -> void:
 	($PauseMenu as Node).call("open_intermission", 4, true)
 
 func _physics_process(delta: float) -> void:
+	# setvram / forceblack: the game is frozen while the screen fades to black.
+	if CramFade.busy(get_tree()):
+		return
 	if hold and not _human() and not _highlights.busy():
 		_hold_frames -= 1
 		if _hold_frames <= 0:
-			($PauseMenu as Node).call("close")
-			_release()
+			# The menu's close fades out, then intermission_closed releases the game.
+			if ($PauseMenu as Node).call("is_open"):
+				($PauseMenu as Node).call("close")
+			else:
+				_release()
 	if _quitting:
 		return
 	if not hold and not _human() and _demoread():
@@ -161,7 +167,10 @@ func _quit() -> void:
 			world.stats[0].goals, world.stats[1].goals, Sim.sram)
 		var pages: StatsPages = ($PauseMenu as Node).get("_pages")
 		Sim.bracket_next_matchups = false
-		pages.closed.connect(func() -> void: get_tree().change_scene_to_file(PLAYOFF_SCENE), CONNECT_ONE_SHOT)
-		pages.open_page("playoff_stats", self, PauseMenu.user_side(self), 0)
+		pages.closed.connect(func() -> void: CramFade.change_scene(get_tree(), PLAYOFF_SCENE), CONNECT_ONE_SHOT)
+		var tree := get_tree()
+		CramFade.out(tree, func() -> void:
+			pages.open_page("playoff_stats", self, PauseMenu.user_side(self), 0)
+			CramFade.come_in(tree))
 		return
-	get_tree().change_scene_to_file(SETUP_SCENE)
+	CramFade.change_scene(get_tree(), SETUP_SCENE)
