@@ -283,9 +283,10 @@ A SongIndex 2 tune and a power-play tune never stack: the faceoff plays whicheve
 
 ```
 python3 tools/extract/audio.py [lst/nhl94.bin] [godot/assets/audio] [--ids=0x03,0x78] [--verify]
+                               [--engine=gpgx|unicorn] [--filter=model1|none] [--crowd]
 ```
 
-**Requirements:** Python 3, numpy, `unicorn` 2.1.x (`pip install unicorn==2.1.4`) and a C compiler (`cc`). The script compiles `tools/extract/audio_core.c` together with the vendored third-party cores into a cached shared library in the temp dir:
+**Requirements:** Python 3, numpy, `unicorn` 2.1.x (`pip install unicorn==2.1.4`), a C compiler (`cc`), and for the default engine `git`, `make` and network access to GitHub (or `GPGX_SRC=<a checkout>`). The script compiles `tools/extract/audio_core.c` together with the vendored third-party cores into a cached shared library in the temp dir:
 - `third_party/nuked_opn2` (Nuked-OPN2 1.0.12, LGPL-2.1, YM2612 discrete mode; from github.com/nukeykt/Nuked-OPN2 master, unmodified);
 - `third_party/z80` (superzazu/z80, MIT; from github.com/superzazu/z80 master, unmodified).
 
@@ -299,6 +300,43 @@ Each directory keeps its `LICENSE`.
 Hand-offs: when the 68000 releases the bus inside a routine, the Z80 runs for 470 cycles (the `sub_1A574` retry spin). Each read through the bank window costs 3 extra Z80 cycles.
 
 Each render stops when every slot is free and the output has been flat for two frames. A looping song stops 4 s after its first jump.
+
+### 8.1 Engines
+
+**`--engine=gpgx` (default): the sound, rendered inside the running game.** The unicorn render above still runs for every id: it supplies the sequence events, the loop frames and the length. The samples then come from Genesis Plus GX:
+- **Why.** On the console the Z80 shares the 68000 bus. Every byte the DAC loop reads through the bank window waits for the bus. The 68000 holds the bus in `MusicVB`/`ReadJoyData`, and the VDP holds it during 68000-to-VDP DMA. That sets the DAC's real rate. The unicorn engine runs the 68000 side "instantly" at the frame start, with a fixed 3-cycle wait per read, so it cannot know any of this.
+- **The emulator.** GPGX is cycle-timed: 68000, Z80, VDP DMA and bus arbitration. Its Z80 bank reads cost 3 x 15 master clocks and wait for the end of a DMA (`memz80.c`). The YM2612 is the same Nuked-OPN2 (`nuked (ym2612)` option), so the FM is unchanged.
+- **Licence.** GPGX's licence forbids commercial use, so nothing of it is vendored or shipped. `audio.py` (`build_gpgx`) clones the pinned commit `aa74d79634cd230f65cce4180e92688e53883d2f` into the temp dir and makes three small edits:
+  - an `extern` in `core/debug/cpuhook.h`, which fixes a link error with `HOOK_CPU=1`;
+  - exports in `libretro/link.T`;
+  - in `core/sound/sound.c`, a tap of the raw YM output: one stereo sum of 24 YM clocks per sample (53,267 Hz), taken before GPGX's own `blip_buf` resampler.
+
+  It then builds the core and `tools/extract/gpgx_render.c`, a headless libretro front end (our code).
+- **Two machine states,** saved once per build (`gpgx_render mkstate`):
+  - `game`: boot, press Start until `DoGameFrame` runs (a One-Home regular-season game, LA at MTL, the defaults), then 900 frames of play.
+  - `menu`: boot, then press Start once on the title screen, which leaves the Game Setup screen.
+
+  For each state, every sound request is refused from then on, `AllSndOff` runs, and after 300 more frames the machine, plus its battery RAM, is saved. The battery RAM is not part of a GPGX state, and the front end crashes without it.
+- **Per id** (`gpgx_render render`): load the state, which is a different context per id:
+  - `menu` for `$78 $79 $7A`, the songs heard on the title, setup and intermission screens;
+  - `game` for everything else.
+
+  At the next VBlank (`VBjsr` `$76B2`), call `sfx(id)` (or `song(id)` for ≥ `$30`) as the game does, refuse every other `p_initfx`/`AllSndOff` call, and run the unicorn render's frame count (+30 frames for effects). The output is the tap from that VBlank on, plus each VBlank's sample index. These replace the unicorn samples and frame starts; everything after (filter, resampling, DC blocker, loop search, trimming) is shared.
+- **Effect.** In play, the DAC runs about 1.5% slower than on the menu screens (DMA). Against the unicorn engine, effects' DAC samples are about 1.6% lower in pitch and longer; FM is unchanged (§10).
+
+**`--engine=unicorn`:** the samples of the unicorn render itself (`BANK_WAIT = 3`, no bus holds or DMA). This is the offline-only fallback; its DAC runs about 0.15% fast against GPGX's menu context and 1.6% fast against play.
+
+### 8.2 Output filter and crowd noise
+
+**`--filter=model1` (default).** A first-order RC low-pass at **3390 Hz** at the native rate, before resampling. This is BlastEm's model of the Model 1 Mega Drive's output stage (`default.cfg` `lowpass_cutoff 3390`, applied as `rc = 1/(2π fc)`). It takes 3 dB off at 3.4 kHz and about 10 dB off at 10 kHz, so bright effects lose some peak (median peak x0.92). `--filter=none` writes the chip output unfiltered. `audio.json` `format` records `engine`, `engine_detail`, `filter` and `lowpass_hz`.
+
+**Crowd noise (`crowd_noise.wav`).** This is rendered with every full run, or with `--crowd`. It is the PSG noise channel as `KillCrowd`/`updatesound` set it:
+- `$E7`: white noise, clocked by tone channel 2. Tone 2's period is `$018`.
+- The Mega Drive PSG's 16-bit LFSR is tapped at bits 0 and 3 (period 57,337) and shifts on every other tone-2 edge: 3,579,545 / 16 / 24 / 2 = **4660.9 Hz**. The file is one LFSR period (12.30 s), looped.
+- It is box-integrated to the native rate, then passed through the same filter, resampler and gain as the YM. It is DC-free.
+- **Level:** attenuation 0 (full). A full-volume PSG channel swings 2800 x 1.5 against the YM's 24-clock sum x 11 (GPGX `psg.c`, "adjusted to match VA4 MD1 PSG/FM balance"). That is 382 YM units, peak 1632 in the file.
+
+`SfxBank` plays this file on the `Crowd` bus at `-2 dB x attenuation` (silent at 15), where attenuation = 15 - (`asv` >> 8). Before this change, the port's synthesized noise was a 15-bit LFSR at 22,050 Hz, about 23 dB louder than retail against the FM, and much brighter.
 
 **Post-processing:**
 - The chip output is checked to be L == R and kept as mono.
@@ -499,20 +537,34 @@ All of these checks were run on the files now in `godot/assets/audio/`.
    - `$01` ding, note 72: the FFT peak is 528 Hz; the predicted value is fnum `$146` x 2^5 x 53267 / 2^20 = 530 Hz.
    - `$04` horn, note 62: 296 Hz against 297.5 Hz predicted.
    - `$03` whistle: a 2.3 kHz tone with a fast trill (patch `$1E`, MUL 2/4 with pitch-bend events).
-4. **DAC rate.** `$10` (instrument `$61`, note 70, step 72) was cross-correlated with the raw sample resampled at 7.8-9.0 kHz. The best match, r = 0.93, is at 8390 Hz, which is exactly `3579545/120*72/256`. So the emulated Z80 loop runs at its 117 + 3 cycle period.
+4. **DAC rate.** `$10` (instrument `$61`, note 70, step 72) was cross-correlated with the raw sample resampled at 7.8-9.0 kHz. The best match, r = 0.93, is at 8390 Hz, which is exactly `3579545/120*72/256`. So the emulated Z80 loop runs at its 117 + 3 cycle period (unicorn engine; under GPGX in play it is about 1.6% slower, §8.1).
 5. **Durations.**
    - Every non-empty id has a peak ≥ 1225 (`$2F`; max 12,803 = -8.2 dBFS, `$04`), and nothing clips.
    - Files are ≥ the sequence length, except where the sequence waits silently after its last note-off. Example: `$03` keys off at tick 41 but ends at tick 110, and its file stops when the sound does.
    - Looping songs: `loop_end - loop_start` = the jump tick x 44100 / 59.9227, within one sample: `$78` 3,209,468 = 72.777 s = 4361 ticks.
 6. **Loop seam.** The spectral mismatch between pass 1 and pass 2 at the seam is 0.120 (`$78`), 0.032 (`$79`) and 0.117 (`$7A`). After the crossfade, the sample step across the jump is 0-1 LSB (typical step 27-85 LSB). Godot 4.4.1 (`--headless --import` in a scratch project) imports `song_78.wav` and `song_79.wav` as `LOOP_FORWARD` with `loop_begin`/`loop_end` equal to the JSON values. `sfx_03.wav` imports as not looping.
 7. **Determinism.** Two separate runs (different id order and process) produced byte-identical WAVs: sha256 compared for `$00 $08 $0B $1C $33`.
-8. **Not verified:** listening against real hardware or a reference emulator recording. The output filter, absolute levels and the bank-wait figure (UNRESOLVED 1-3) can only be checked that way.
+8. **Reference emulators (2026-10-16).** Scripts are in `/tmp/claude-0/-home-user/ef020377-92e3-57ff-8519-5d51b4a7df4d/scratchpad/ref/` and `.../xchk/`; they are not deliverables. Pitch and speed are measured as the time-scale factor (0.97-1.03 in 0.05% steps) that best cross-correlates two recordings.
+   - **GPGX on the title-screen context, unicorn engine** (all ids, via GPGX's normal resampled output):
+     - FM effects: factor **1.0000**, r = 0.97-0.999.
+     - DAC effects: factor **0.9985**; ours ran 0.15% fast.
+     - The level ratio is the same for FM and DAC, so the FM/DAC balance is right.
+   - **BlastEm, an independent emulator** (libretro core, own 68000/Z80 timing, own YM model), against GPGX:
+     - Both ran a verification-only ROM patch. A RAM word at `$FFFFFE` makes `VBjsr` call `sfx`/`song` and makes `p_initfx` refuse other requests. The code is past the 1 MB ROM end, with the checksum test skipped.
+     - Both played the same game, with the same pad input, to the same moment of play.
+     - For DAC effects `$11 $18 $1C $0E $0B`, the two emulators agree within **0.25-0.5%**; FM `$00` within 0.05%.
+   - **This render (`--engine=gpgx`) against both, at five moments of play** (frames 2700-4300), `$1C`:
+     - against GPGX: 0.9945-1.0055;
+     - against BlastEm: 0.991-1.005, mostly about 1.0045.
+
+     The DAC's in-play pitch moves about ±0.5% with what is on screen (DMA load), and the render sits inside that spread. Against the menu context, play is about 1.5% lower; both emulators show it.
+9. **Not verified:** listening against real hardware. The filter's cutoff (BlastEm's model) and the PSG/FM balance (GPGX's measurement) come from those emulators' authors, not from our own measurements.
 
 ---
 
 ## 11. Port changes
 
-**Status (2026-10-16): P1-P5, P7 and P8 are done.**
+**Status (2026-10-16): P1-P5, P7 and P8 are done.** The files are now rendered in context (§8.1) with the Model 1 filter. `SfxBank` plays the rendered PSG crowd noise, `crowd_noise.wav` (§8.2), at retail level.
 - `SfxBank` (core/sfx_bank.gd) handles P1, P2, P4, P5 and P7. Its effects pool has 5 voices; the P6 FM budget is not modelled.
 - `HockeyWorld.choose_song`, `home_goal_song` and `period_song` handle P3. The period's tune and its AllSndOff wait for the first loop after the intermission hold.
 - `GameRules._period_break` plays AllSndOff and `$79` at every intermission, the pregame one included (StartGame joins PeriodOver at loc_17278).
@@ -588,13 +640,17 @@ func _play_dac(prio: int, busy: float, stream: AudioStream) -> void:
 
 ## UNRESOLVED
 
-1. **Z80 wait per bank-window read** (`BANK_WAIT = 3`). This sets the DAC rate (117 + w cycles per byte). Real hardware is about 3-4 cycles and varies with 68000 bus activity, so DAC pitches may be ~1% off.
-2. **68000 bus holds** during `MusicVB`/`ReadJoyData` and other code stall the Z80 (and the DAC) for a few µs-ms per frame. They are not modelled: the 68000 side runs instantly at the frame start. Game-side VDP DMA does not affect the Z80.
-3. **Output filtering and level.** No Model 1/Model 2 analog low-pass is applied; the renders are Nuked-OPN2's discrete-YM2612 output, DC-blocked at 5 Hz. The absolute level (gain x6) is arbitrary but the same for every file.
-4. **Isolation.** Each id is rendered alone from a cold boot. In the game, voice stealing between concurrent effects and music, the DAC priority drops (§6) and the voice-age history change what is heard. §11 P5/P6 describe the rules; the files do not contain them.
-5. **Loop seams** are perceptual, not sample-exact. The LFO phase, the EG counter and the DAC timing differ between passes, so pass 2 never equals pass 1 bit for bit. The seam is placed where the spectra agree (error 0.03-0.12) and crossfaded over 10 ms.
+1. **DAC timing in play varies.** The bus holds and DMA that set the DAC rate depend on what the game is drawing. One moment of play is rendered (§8.1). Across moments, the pitch moves about ±0.5% (§10.8), and GPGX and BlastEm differ from each other by 0.25-0.5%. A fixed file cannot follow that.
+2. **Menu songs share one context.** `$78 $79 $7A` are rendered on the Game Setup screen. The title, Matchups and intermission screens may load the bus a little differently.
+3. **Output filtering and level.** The Model 1 low-pass is BlastEm's first-order 3390 Hz model. Model 1 revisions and the Model 2 differ, and the headphone and A/V outputs differ too: `--filter=none` gives the unfiltered chip. The absolute level (gain x6) is arbitrary but the same for every file; the PSG/FM balance is GPGX's VA4 figure.
+4. **Isolation.** Each id is rendered alone, from a silent machine, with every other sound request refused.
+   - In the game, voice stealing between concurrent effects and music, the DAC priority drops (§6) and the voice-age history change what is heard. §11 P5/P6 describe the rules; the files do not contain them.
+   - The port mixes the crowd noise, the effects and the music as separate streams. On the console they share one output stage, so the low-pass sees their sum. That is the same thing, because the filter is linear.
+5. **Loop seams** are perceptual, not sample-exact. On the console a looping song never repeats bit for bit: the LFO phase, the EG counter and the DAC timing (which now includes bus contention) differ between passes. A finite file has to pick one seam.
+   - The seam is placed where the spectra agree (error 0.02-0.12) and crossfaded over 10 ms.
+   - The crowd noise loops exactly: one full LFSR period.
 6. **Ids without a retail call site:** `$07`, `$09`, `$0A` (the fight patch uses `$09`/`$0A` as punches), `$21-$23`, and songs `$62`, `$72`, which no table entry selects. All are rendered anyway.
 7. **What the crowd samples are.** `$6C` (`$08`, `$0D`, `$0E`) is taken to be a crowd "oooh", because it follows the post hit in `$08`. The listing calls `$0D` at `puckgoalie` the "away song". Not confirmed by ear.
 8. **`sub_FF7E2`'s `HmShots+$24`** is read as players on ice (home - away), giving SongIndex 1 = home power play and 4 = away power play. This follows `faceoff_logic.gd` `_pp_song` and was not re-derived here.
-9. **PAL tempo** (7 ticks per 6 frames, §2.3) is not rendered. The files are NTSC.
+9. **PAL is out of scope.** The ROM is the North American release (CRC `9438F5DD`), and the port runs at NTSC's 59.92 Hz. On a PAL console the sequencer gets 7 ticks per 6 frames (§2.3), so the tempo barely changes (58.3 against 59.9 ticks/s); but the clocks differ (master 53.203424 MHz, 50 Hz frames), so the YM pitch is 0.9% lower, and the DAC loop and the DMA load change too. A PAL build would need its own renders: the GPGX engine would run with region `pal`.
 10. **`lastsfx` replay** (L34765, `sub_A528`) was not traced.

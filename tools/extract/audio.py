@@ -5,10 +5,12 @@ Offline only. The game never emulates or reads the ROM at runtime; it plays what
 writes. Usage:
 
     python3 tools/extract/audio.py [lst/nhl94.bin] [godot/assets/audio] [--ids=0,1,0x78]
-                                   [--verify]
+                                   [--verify] [--engine=gpgx|unicorn] [--filter=model1|none]
+                                   [--crowd]
 
---ids renders only those ids and merges them into an existing audio.json. --verify also
-logs the Z80's YM writes and records PSG / direct-YM write counts per id.
+--ids renders only those ids and merges them into an existing audio.json (add --crowd to
+redo the crowd noise too). --verify also logs the Z80's YM writes and records PSG /
+direct-YM write counts per id. GPGX_SRC=<checkout> builds GPGX from a local clone.
 
 How: the retail sound code itself runs here. The 68000 half (p_initfx L61549, MusicVB
 L61792 and everything they call) runs in unicorn (pip install unicorn==2.1.4); the Z80
@@ -16,21 +18,30 @@ half (the $295-byte driver at ROM $1AD90 that Z80_LoadROM copies to Z80 RAM) run
 vendored Z80 core, and the YM2612 is Nuked-OPN2, both in audio_core.c, which this script
 compiles with the system C compiler (cc) on first use. Each id is rendered from a cold
 boot (Z80_LoadROM, AllSndOff, MusicVB, as Begin does), then p_initfx(id) and one MusicVB
-per NTSC frame, with the Z80 and YM clocked from the 53.693175 MHz master clock. The PSG
-is not used by the driver (only by the crowd noise, which the port synthesises).
+per NTSC frame, with the Z80 and YM clocked from the 53.693175 MHz master clock. That
+render gives the sequence events, loop frames and length.
+
+--engine=gpgx (default) then takes the samples from Genesis Plus GX, built at run time
+from a pinned commit, running the whole game: the same id started at a VBlank of a game
+in progress (the menu songs: on the Game Setup screen), so 68000 bus holds and VDP DMA
+slow the Z80 as on the console (the DAC's pitch). --engine=unicorn keeps the unicorn
+render's samples (no network needed). --filter=model1 (default) applies the Model 1
+output low-pass (first-order, 3390 Hz); --filter=none leaves the chip output as is. The
+crowd noise (PSG, which the driver never uses) is rendered to crowd_noise.wav.
 
 Output (docs/specs/audio.md):
   sfx/sfx_XX.wav     ids $00..$2F (XX = lower-case hex, as SfxBank loads them)
   music/song_XX.wav  ids $30..$7A, plus $0B $0C $0D $0F (crowd cues the game starts with
                      song(); same render as the sfx file)
+  crowd_noise.wav    the PSG crowd noise at full volume, one LFSR period, looped
   audio.json         per id: duration, loop points, voices used, priority/channel info
 
 Format: 44100 Hz, 16-bit, mono (every retail patch pans centre; L == R is checked and
 recorded as "stereo" in audio.json).
-One fixed gain for every file, so relative levels are retail. A 5 Hz DC blocker models
-the console's output coupling (the DAC holds its last value between samples). Looping
-songs carry a RIFF 'smpl' loop (Godot's WAV importer reads it) and loop_start/loop_end
-in audio.json. Deterministic: same ROM, same bytes.
+One fixed gain for every file, so relative levels are retail. The Model 1 low-pass and a
+5 Hz DC blocker model the console's output stage (the DAC holds its last value between
+samples). Looping songs carry a RIFF 'smpl' loop (Godot's WAV importer reads it) and
+loop_start/loop_end in audio.json. Deterministic: same ROM, same bytes.
 """
 import ctypes
 import hashlib
@@ -50,6 +61,7 @@ ROM_CRC = 0x9438F5DD
 MASTER = 53693175.0
 Z80_PER_FRAME = 262 * 3420 // 15          # 59736 Z80 cycles
 YM_RATE = MASTER / 7.0 / 144.0             # 53267.03 Hz, one OPN2 output sample
+MCLK_PER_YM_SAMPLE = 7 * 144
 FRAME_HZ = MASTER / (262 * 3420)           # 59.9227 Hz
 OUT_RATE = 44100
 # Z80 cycles lost per read through the $8000 bank window (68000 bus arbitration). The
@@ -60,6 +72,10 @@ BANK_WAIT = 3
 RELEASE_RUN = 470
 # Output scale: OPN2 sum of 24 clocks of signed 9-bit pins (|x| <= 6144) -> int16.
 GAIN = 6.0
+# The console's analog output filter (--filter). "model1": a first-order RC low-pass at
+# 3390 Hz, BlastEm's model of a Model 1 Mega Drive (default.cfg lowpass_cutoff, applied
+# as rc = 1 / (2 pi fc)). "none": the chip's output as is.
+FILTERS = {"model1": 3390.0, "none": None}
 
 # 68000 entry points (checked against the ROM bytes at start-up).
 A_ALLSNDOFF = 0x1A264     # L61530
@@ -117,12 +133,150 @@ def build_core():
         "core_bank_reads": (U32, [P]),
         "resample": (None, [P, U32, P, U32, ctypes.c_double, I, ctypes.c_double]),
         "dc_block": (None, [P, U32, ctypes.c_double]),
+        "one_pole": (None, [P, U32, ctypes.c_double]),
     }
     for name, (res, args) in sig.items():
         f = getattr(lib, name)
         f.restype = res
         f.argtypes = args
     return lib
+
+
+# ---------------------------------------------------------------------------- GPGX engine
+#
+# --engine=gpgx (the default) renders the sound inside a real game in progress on Genesis
+# Plus GX, a cycle-timed Mega Drive emulator: the 68000's Z80-bus holds and the VDP's DMA
+# stalls slow the Z80 driver exactly as on the console, which sets the DAC's pitch and
+# timing. The FM is the same Nuked-OPN2 YM2612 either way. GPGX's own licence forbids
+# commercial use, so nothing of it is vendored or shipped: audio.py fetches the pinned
+# commit, makes the three small edits below (a tap of the raw YM output before GPGX's
+# resampler, two exports) and builds it, at extraction time only. gpgx_render.c is the
+# headless front end. The game then gets only the rendered files.
+
+GPGX_URL = "https://github.com/libretro/Genesis-Plus-GX"
+GPGX_COMMIT = "aa74d79634cd230f65cce4180e92688e53883d2f"
+GPGX_TAP = """
+/* NHL94 port (tools/extract/audio.py): a tap of the raw YM output, one stereo sum of
+ * 24 YM clocks per sample (53267 Hz), before any resampling. */
+short *gpgx_tap_buf = NULL;
+unsigned int gpgx_tap_n = 0, gpgx_tap_cap = 0;
+int gpgx_tap_on = 0;
+static void gpgx_tap(int l, int r)
+{
+  if (!gpgx_tap_on) return;
+  if (gpgx_tap_n + 2 > gpgx_tap_cap)
+  {
+    gpgx_tap_cap = gpgx_tap_cap ? gpgx_tap_cap * 2 : (1 << 20);
+    gpgx_tap_buf = (short *)realloc(gpgx_tap_buf, gpgx_tap_cap * sizeof(short));
+  }
+  gpgx_tap_buf[gpgx_tap_n++] = (short)l;
+  gpgx_tap_buf[gpgx_tap_n++] = (short)r;
+}
+"""
+
+
+def _gpgx_edit(path, old, new):
+    s = open(path, "rb").read().decode("latin-1")
+    crlf = "\r\n" in s
+    s = s.replace("\r\n", "\n")
+    if new in s:
+        return
+    assert s.count(old) == 1, (path, old)
+    s = s.replace(old, new)
+    if crlf:
+        s = s.replace("\n", "\r\n")
+    open(path, "wb").write(s.encode("latin-1"))
+
+
+def build_gpgx():
+    """Fetch, edit and build the pinned GPGX core and gpgx_render. Returns (core, exe).
+    GPGX_SRC=<checkout of GPGX_COMMIT> skips the download."""
+    h = hashlib.sha256()
+    h.update(open(os.path.join(HERE, "gpgx_render.c"), "rb").read())
+    h.update(GPGX_TAP.encode())
+    root = os.path.join(tempfile.gettempdir(), "nhl94_gpgx_%s_%s" % (GPGX_COMMIT[:10],
+                                                                      h.hexdigest()[:12]))
+    src = os.path.join(root, "gpgx")
+    core = os.path.join(src, "genesis_plus_gx_libretro.so")
+    exe = os.path.join(root, "gpgx_render")
+    if os.path.exists(core) and os.path.exists(exe):
+        return core, exe
+    os.makedirs(root, exist_ok=True)
+    if not os.path.exists(src):
+        if os.environ.get("GPGX_SRC"):
+            subprocess.check_call(["cp", "-r", os.environ["GPGX_SRC"], src])
+        else:
+            subprocess.check_call(["git", "clone", "-q", GPGX_URL, src])
+        subprocess.check_call(["git", "-C", src, "checkout", "-q", "-f", GPGX_COMMIT])
+        subprocess.check_call(["git", "-C", src, "clean", "-q", "-fdx"])
+    _gpgx_edit(os.path.join(src, "core", "debug", "cpuhook.h"),
+               "\nvoid (*cpu_hook)(", "\nextern void (*cpu_hook)(")
+    _gpgx_edit(os.path.join(src, "libretro", "link.T"),
+               "global: retro_*;",
+               "global: retro_*; set_cpu_hook; m68k; work_ram; gpgx_tap_buf; gpgx_tap_n; "
+               "gpgx_tap_on;")
+    snd = os.path.join(src, "core", "sound", "sound.c")
+    _gpgx_edit(snd, "#ifdef HAVE_YM3438_CORE\nstatic void YM3438_Update(",
+               "#ifdef HAVE_YM3438_CORE\n" + GPGX_TAP + "\nstatic void YM3438_Update(")
+    _gpgx_edit(snd, "        ym3438_sample[1] += ym3438_accm[j][1];\n      }\n",
+               "        ym3438_sample[1] += ym3438_accm[j][1];\n      }\n"
+               "      gpgx_tap(ym3438_sample[0], ym3438_sample[1]);\n")
+    jobs = str(os.cpu_count() or 2)
+    subprocess.check_call(["make", "-s", "-C", src, "-f", "Makefile.libretro", "-j" + jobs,
+                           "HOOK_CPU=1"], stdout=subprocess.DEVNULL)
+    cc = os.environ.get("CC", "cc")
+    subprocess.check_call([cc, "-O2", "-o", exe, os.path.join(HERE, "gpgx_render.c"),
+                           "-I" + os.path.join(src, "libretro", "libretro-common", "include"),
+                           "-I" + os.path.join(src, "core"),
+                           "-I" + os.path.join(src, "core", "m68k"),
+                           "-I" + os.path.join(src, "core", "debug"),
+                           "-DLSB_FIRST", "-DHOOK_CPU", "-DM68K_OVERCLOCK_SHIFT=20",
+                           "-DZ80_OVERCLOCK_SHIFT=20", "-DINLINE=static inline", "-ldl"])
+    return core, exe
+
+
+# Where the game plays each id: the three menu songs on the menu screens (title, Game
+# Setup / Matchups, intermission), everything else during play. The machine's load
+# differs (in play the VDP's DMA stalls the Z80 more: about 1.5% lower DAC pitch).
+MENU_IDS = (0x78, 0x79, 0x7A)
+
+
+class Gpgx:
+    """Saved machine states (a game in progress, the Game Setup screen), and renders
+    from them."""
+
+    def __init__(self, rom_path):
+        self.core, self.exe = build_gpgx()
+        self.rom = os.path.abspath(rom_path)
+        self.dir = os.path.dirname(self.exe)
+        self.states = {}
+        for kind in ("game", "menu"):
+            st = os.path.join(self.dir, kind + ".state")
+            if not os.path.exists(st):
+                out = subprocess.check_output([self.exe, self.core, self.rom, "mkstate", kind,
+                                               st + ".tmp",
+                                               os.path.join(self.dir, kind + ".ppm")],
+                                              text=True)
+                os.replace(st + ".tmp", st)
+                sys.stderr.write("gpgx %s state: %s" % (kind, out))
+            self.states[kind] = st
+
+    @staticmethod
+    def context(sid):
+        return "menu" if sid in MENU_IDS else "game"
+
+    def render(self, sid, frames):
+        """Raw YM output from the VBlank that starts sid, for `frames` frames: (int16
+        stereo array, n, sample index of each VBlank)."""
+        import numpy as np
+        out = os.path.join(self.dir, "render_%02x.raw" % sid)
+        subprocess.check_call([self.exe, self.core, self.rom, "render",
+                               self.states[self.context(sid)], str(sid), str(frames), out])
+        raw = np.fromfile(out, dtype="<i2")
+        fs = np.fromfile(out + ".frames", dtype="<u4").tolist()
+        os.remove(out)
+        os.remove(out + ".frames")
+        return raw, len(raw) // 2, fs
 
 
 # ---------------------------------------------------------------------------- 68000 side
@@ -448,13 +602,22 @@ DC_HZ = 5.0
 XFADE = 441                # 10 ms crossfade into the loop seam
 
 
-def to_output(lib, native, n):
-    """Native stereo int16 (53267 Hz) -> mono float32 at OUT_RATE, DC-blocked."""
+def to_output(lib, native, n, lowpass_hz=None):
+    """Native stereo int16 (53267 Hz) -> mono float32 at OUT_RATE: the console's output
+    low-pass (lowpass_hz, None for none), resampling, DC blocking."""
     import numpy as np
     st = np.frombuffer(bytes(native), dtype=np.int16, count=2 * n).reshape(-1, 2)
     stereo = bool(np.any(st[:, 0] != st[:, 1]))
     mono = (st.astype(np.float32).mean(axis=1) if stereo else st[:, 0].astype(np.float32))
-    mono = np.ascontiguousarray(mono)
+    return mono_to_output(lib, mono, lowpass_hz), stereo
+
+
+def mono_to_output(lib, mono, lowpass_hz):
+    import numpy as np
+    mono = np.ascontiguousarray(mono, dtype=np.float32)
+    n = len(mono)
+    if lowpass_hz:
+        lib.one_pole(mono.ctypes.data, n, 1.0 - math.exp(-2.0 * math.pi * lowpass_hz / YM_RATE))
     ratio = YM_RATE / OUT_RATE
     n_out = int(n / ratio)
     out = np.zeros(max(n_out, 1), dtype=np.float32)
@@ -462,7 +625,7 @@ def to_output(lib, native, n):
         lib.resample(mono.ctypes.data, n, out.ctypes.data, n_out, ratio, 64,
                      0.95 * 20000.0 / (OUT_RATE / 2.0))
         lib.dc_block(out.ctypes.data, n_out, math.exp(-2.0 * math.pi * DC_HZ / OUT_RATE))
-    return out[:n_out], stereo
+    return out[:n_out]
 
 
 def to_pcm16(x):
@@ -578,6 +741,44 @@ def dac_summary(rom, info, sid):
     return rows
 
 
+# ---------------------------------------------------------------------------- crowd noise
+
+# The crowd (updatesound L52982, KillCrowd L53013) is the PSG's noise channel: white noise
+# ($E7: feedback on, clocked by tone channel 2), tone 2's period $018, its attenuation
+# following the crowd meter. The Mega Drive's PSG shifts a 16-bit register tapped at bits
+# 0 and 3 (period 57337) on every other tone-2 edge: 3579545 / 16 / $18 / 2 = 4660.9 Hz.
+# The level is GPGX's measured PSG/FM balance (psg.c: a channel at full volume swings
+# 2800 x 1.5 against the YM's 24-clock sum x 11, "adjusted to match VA4 MD1").
+CROWD_SHIFT_MCLK = 15 * 16 * 0x18 * 2
+CROWD_LEVEL = 2800 * 1.5 / 11.0
+
+
+def render_crowd(lib, lowpass_hz):
+    """One period of the crowd noise at attenuation 0 (full), DC-free, at OUT_RATE.
+    Returns (float32 samples, LFSR period)."""
+    import numpy as np
+    v = start = 0x8000
+    bits = []
+    while True:
+        fb = bin(v & 9).count("1") & 1
+        v = (v >> 1) | (fb << 15)
+        bits.append(v & 1)
+        if v == start:
+            break
+    period = len(bits)
+    b = np.array(bits * 2, dtype=np.float64)
+    cum = np.concatenate([[0.0], np.cumsum(b)])
+    n = int(len(b) * CROWD_SHIFT_MCLK // MCLK_PER_YM_SAMPLE)
+    t = np.arange(n + 1, dtype=np.float64) * MCLK_PER_YM_SAMPLE
+    j = np.minimum((t // CROWD_SHIFT_MCLK).astype(np.int64), len(b) - 1)
+    area = cum[j] * CROWD_SHIFT_MCLK + (t - j * CROWD_SHIFT_MCLK) * b[j]
+    native = np.diff(area) / MCLK_PER_YM_SAMPLE * CROWD_LEVEL
+    out = mono_to_output(lib, native, lowpass_hz)
+    one = int(round(period * CROWD_SHIFT_MCLK / MASTER * OUT_RATE))
+    x = out[one:2 * one]
+    return (x - x.mean()).astype(np.float32), period
+
+
 # ---------------------------------------------------------------------------- id table
 
 def game_song_ids(rom):
@@ -639,6 +840,15 @@ def main():
     for f in flags:
         if f.startswith("--ids="):
             only = [int(x, 0) for x in f[6:].split(",") if x]
+    engine = "gpgx"
+    filt = "model1"
+    for f in flags:
+        if f.startswith("--engine="):
+            engine = f[9:]
+        if f.startswith("--filter="):
+            filt = f[9:]
+    assert engine in ("gpgx", "unicorn"), engine
+    lowpass = FILTERS[filt]
     verify = "--verify" in flags
     rom = open(rom_path, "rb").read()
     if zlib.crc32(rom) != ROM_CRC:
@@ -647,6 +857,7 @@ def main():
         assert rom[a:a + len(hexs) // 2].hex() == hexs, hex(a)
     uc_mod, mk = import_unicorn()
     lib = build_core()
+    gx = Gpgx(rom_path) if engine == "gpgx" else None
     os.makedirs(os.path.join(out, "sfx"), exist_ok=True)
     os.makedirs(os.path.join(out, "music"), exist_ok=True)
 
@@ -664,11 +875,17 @@ def main():
         # Frame cap: the static tick length plus slack (loops render a second pass).
         cap = info["ticks"] + 60 + (info["ticks"] if info["end"] == "loop" else 0) + 300
         r = render(lib, rom, uc_mod, mk, sid, cap, log_writes=verify)
+        if gx:
+            # The same id from the same frame of a game in progress; the unicorn render
+            # still supplies the sequence events, loop frames and length. Effects get
+            # half a second more for the (slightly slower) DAC.
+            more = 0 if r["loop_frames"] else 30
+            r["native"], r["n"], r["frame_samples"] = gx.render(sid, r["frames"] + more)
         fs = r["frame_samples"]
         ratio = YM_RATE / OUT_RATE
         loop = None
         loop_err = None
-        x, stereo = to_output(lib, r["native"], r["n"])
+        x, stereo = to_output(lib, r["native"], r["n"], lowpass)
         if r["loop_frames"]:
             jf = r["loop_frames"][0]
             tgt = r["jumps"][0][2]
@@ -721,6 +938,7 @@ def main():
             "samples": len(x),
             "duration": round(len(x) / OUT_RATE, 4),
             "frames_rendered": r["frames"],
+            "context": Gpgx.context(sid) if gx else None,
             "loops": bool(loop),
             "loop_start": la if loop else None,
             "loop_end": lb if loop else None,
@@ -737,10 +955,27 @@ def main():
               "loop %d-%d err %.3f " % (la, lb, loop_err) if loop else "",
               ",".join(voice_kinds) or "empty", peak, " CLIP %d" % clipped if clipped else ""))
         sys.stdout.flush()
+    crowd = meta.get("crowd_noise")
+    if only is None or "--crowd" in flags:
+        x, period = render_crowd(lib, lowpass)
+        pcm, clipped, peak = to_pcm16(x)
+        write_wav(os.path.join(out, "crowd_noise.wav"), pcm, OUT_RATE, (0, len(x)))
+        crowd = {"file": "crowd_noise.wav", "samples": len(x), "loops": True,
+                 "attenuation": 0, "attenuation_step_db": 2.0, "lfsr_period": period,
+                 "shift_hz": round(MASTER / CROWD_SHIFT_MCLK, 2), "peak": peak,
+                 "notes": "PSG noise at full volume (attenuation 0). updatesound sets "
+                          "attenuation 15 - (asv >> 8); play at -2 dB a step, silent at 15."}
+        print("crowd noise %.2fs peak=%d" % (len(x) / OUT_RATE, peak))
     meta = {
+        "crowd_noise": crowd,
         "format": {"rate": OUT_RATE, "bits": 16, "channels": 1, "gain": GAIN,
                    "dc_block_hz": DC_HZ, "native_rate": round(YM_RATE, 3),
-                   "frame_hz": round(FRAME_HZ, 4), "bank_wait_cycles": BANK_WAIT},
+                   "frame_hz": round(FRAME_HZ, 4), "engine": engine,
+                   "engine_detail": ("Genesis Plus GX %s, Nuked YM2612, inside a game in "
+                                     "progress" % GPGX_COMMIT[:10] if gx else
+                                     "unicorn 68000 + Z80 core, bank_wait_cycles %d"
+                                     % BANK_WAIT),
+                   "filter": filt, "lowpass_hz": lowpass},
         "notes": "Rendered by tools/extract/audio.py from the retail driver (docs/specs/audio.md). "
                  "loop_start/loop_end are sample frames (end exclusive) at 'rate'.",
         "mixing": {

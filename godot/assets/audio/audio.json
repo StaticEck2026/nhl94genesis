@@ -1,4 +1,15 @@
 {
+ "crowd_noise": {
+  "file": "crowd_noise.wav",
+  "samples": 542509,
+  "loops": true,
+  "attenuation": 0,
+  "attenuation_step_db": 2.0,
+  "lfsr_period": 57337,
+  "shift_hz": 4660.87,
+  "peak": 1632,
+  "notes": "PSG noise at full volume (attenuation 0). updatesound sets attenuation 15 - (asv >> 8); play at -2 dB a step, silent at 15."
+ },
  "format": {
   "rate": 44100,
   "bits": 16,
@@ -7,7 +18,10 @@
   "dc_block_hz": 5.0,
   "native_rate": 53267.039,
   "frame_hz": 59.9227,
-  "bank_wait_cycles": 3
+  "engine": "gpgx",
+  "engine_detail": "Genesis Plus GX aa74d79634, Nuked YM2612, inside a game in progress",
+  "filter": "model1",
+  "lowpass_hz": 3390.0
  },
  "notes": "Rendered by tools/extract/audio.py from the retail driver (docs/specs/audio.md). loop_start/loop_end are sample frames (end exclusive) at 'rate'.",
  "mixing": {
@@ -362,21 +376,17 @@
    "slot_seconds": 5.941,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 282604,
-   "duration": 6.4083,
+   "samples": 285300,
+   "duration": 6.4694,
    "frames_rendered": 384,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8757,
+   "peak": 6221,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 588
-   }
+   "stereo": false
   },
   "0x01": {
    "files": [
@@ -405,21 +415,17 @@
    "slot_seconds": 0.334,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 16927,
-   "duration": 0.3838,
+   "samples": 20409,
+   "duration": 0.4628,
    "frames_rendered": 23,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 4710,
+   "peak": 4323,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x02": {
    "files": [
@@ -448,21 +454,17 @@
    "slot_seconds": 0.334,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 16927,
-   "duration": 0.3838,
+   "samples": 20411,
+   "duration": 0.4628,
    "frames_rendered": 23,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 4728,
+   "peak": 4278,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x03": {
    "files": [
@@ -491,21 +493,17 @@
    "slot_seconds": 1.836,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 48060,
-   "duration": 1.0898,
+   "samples": 48114,
+   "duration": 1.091,
    "frames_rendered": 112,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 4681,
+   "peak": 3901,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 212
-   }
+   "stereo": false
   },
   "0x04": {
    "files": [
@@ -535,21 +533,17 @@
    "slot_seconds": 1.836,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 148661,
-   "duration": 3.371,
+   "samples": 152027,
+   "duration": 3.4473,
    "frames_rendered": 202,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 12803,
+   "peak": 12768,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 204
-   }
+   "stereo": false
   },
   "0x05": {
    "files": [
@@ -578,21 +572,17 @@
    "slot_seconds": 0.334,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 12514,
-   "duration": 0.2838,
+   "samples": 14092,
+   "duration": 0.3195,
    "frames_rendered": 22,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8990,
+   "peak": 3929,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x06": {
    "files": [
@@ -623,21 +613,17 @@
    "slot_seconds": 0.334,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 16927,
-   "duration": 0.3838,
+   "samples": 26440,
+   "duration": 0.5995,
    "frames_rendered": 23,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3600,
+   "peak": 2270,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 148
-   }
+   "stereo": false
   },
   "0x07": {
    "files": [
@@ -682,21 +668,17 @@
    "slot_seconds": 0.167,
    "dac_priority": "0x60",
    "dac_busy_seconds": 0.167,
-   "samples": 8832,
-   "duration": 0.2003,
+   "samples": 8469,
+   "duration": 0.192,
    "frames_rendered": 12,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3815,
+   "peak": 2523,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 82
-   }
+   "stereo": false
   },
   "0x08": {
    "files": [
@@ -740,21 +722,17 @@
    "slot_seconds": 2.537,
    "dac_priority": "0x6C",
    "dac_busy_seconds": 2.537,
-   "samples": 77531,
-   "duration": 1.7581,
+   "samples": 78636,
+   "duration": 1.7831,
    "frames_rendered": 154,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8649,
+   "peak": 4462,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 80
-   }
+   "stereo": false
   },
   "0x09": {
    "files": [
@@ -795,21 +773,17 @@
    "slot_seconds": 0.501,
    "dac_priority": "0x67",
    "dac_busy_seconds": 0.501,
-   "samples": 18386,
-   "duration": 0.4169,
+   "samples": 18569,
+   "duration": 0.4211,
    "frames_rendered": 32,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5684,
+   "peak": 4937,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x0A": {
    "files": [
@@ -850,21 +824,17 @@
    "slot_seconds": 0.501,
    "dac_priority": "0x67",
    "dac_busy_seconds": 0.501,
-   "samples": 15049,
-   "duration": 0.3412,
+   "samples": 14915,
+   "duration": 0.3382,
    "frames_rendered": 32,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5656,
+   "peak": 4899,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x0B": {
    "files": [
@@ -906,21 +876,17 @@
    "slot_seconds": 4.005,
    "dac_priority": "0x6D",
    "dac_busy_seconds": 4.005,
-   "samples": 172170,
-   "duration": 3.9041,
+   "samples": 174839,
+   "duration": 3.9646,
    "frames_rendered": 242,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 6061,
+   "peak": 5027,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x0C": {
    "files": [
@@ -962,21 +928,17 @@
    "slot_seconds": 1.502,
    "dac_priority": "0x6B",
    "dac_busy_seconds": 1.502,
-   "samples": 68443,
-   "duration": 1.552,
+   "samples": 66266,
+   "duration": 1.5026,
    "frames_rendered": 93,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5287,
+   "peak": 4917,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x0D": {
    "files": [
@@ -1018,21 +980,17 @@
    "slot_seconds": 1.669,
    "dac_priority": "0x6C",
    "dac_busy_seconds": 1.669,
-   "samples": 73109,
-   "duration": 1.6578,
+   "samples": 74215,
+   "duration": 1.6829,
    "frames_rendered": 102,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 4945,
+   "peak": 4494,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x0E": {
    "files": [
@@ -1085,21 +1043,17 @@
    "slot_seconds": 1.836,
    "dac_priority": "0x6E",
    "dac_busy_seconds": 1.836,
-   "samples": 83162,
-   "duration": 1.8858,
+   "samples": 87544,
+   "duration": 1.9851,
    "frames_rendered": 113,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5836,
+   "peak": 4483,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 12
-   }
+   "stereo": false
   },
   "0x0F": {
    "files": [
@@ -1196,21 +1150,17 @@
    "slot_seconds": 18.023,
    "dac_priority": "0x6D",
    "dac_busy_seconds": 18.023,
-   "samples": 797031,
-   "duration": 18.0733,
+   "samples": 804385,
+   "duration": 18.24,
    "frames_rendered": 1083,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 6211,
+   "peak": 5030,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 28
-   }
+   "stereo": false
   },
   "0x10": {
    "files": [
@@ -1251,21 +1201,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x61",
    "dac_busy_seconds": 0.417,
-   "samples": 19871,
-   "duration": 0.4506,
+   "samples": 24077,
+   "duration": 0.546,
    "frames_rendered": 27,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 6027,
+   "peak": 4674,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x11": {
    "files": [
@@ -1306,21 +1252,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x61",
    "dac_busy_seconds": 0.417,
-   "samples": 20607,
-   "duration": 0.4673,
+   "samples": 24055,
+   "duration": 0.5455,
    "frames_rendered": 28,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3287,
+   "peak": 2498,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x12": {
    "files": [
@@ -1361,21 +1303,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x61",
    "dac_busy_seconds": 0.417,
-   "samples": 20607,
-   "duration": 0.4673,
+   "samples": 24309,
+   "duration": 0.5512,
    "frames_rendered": 28,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1942,
+   "peak": 1538,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x13": {
    "files": [
@@ -1416,21 +1354,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x61",
    "dac_busy_seconds": 0.417,
-   "samples": 20607,
-   "duration": 0.4673,
+   "samples": 24523,
+   "duration": 0.5561,
    "frames_rendered": 28,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1418,
+   "peak": 1124,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x14": {
    "files": [
@@ -1471,21 +1405,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x62",
    "dac_busy_seconds": 0.417,
-   "samples": 19871,
-   "duration": 0.4506,
+   "samples": 22380,
+   "duration": 0.5075,
    "frames_rendered": 27,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 6746,
+   "peak": 4884,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x15": {
    "files": [
@@ -1526,21 +1456,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x62",
    "dac_busy_seconds": 0.417,
-   "samples": 19871,
-   "duration": 0.4506,
+   "samples": 23055,
+   "duration": 0.5228,
    "frames_rendered": 27,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3166,
+   "peak": 2432,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x16": {
    "files": [
@@ -1581,21 +1507,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x62",
    "dac_busy_seconds": 0.417,
-   "samples": 19870,
-   "duration": 0.4506,
+   "samples": 23177,
+   "duration": 0.5256,
    "frames_rendered": 27,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 2204,
+   "peak": 1510,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x17": {
    "files": [
@@ -1636,21 +1558,17 @@
    "slot_seconds": 0.417,
    "dac_priority": "0x62",
    "dac_busy_seconds": 0.417,
-   "samples": 19870,
-   "duration": 0.4506,
+   "samples": 22400,
+   "duration": 0.5079,
    "frames_rendered": 27,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1661,
+   "peak": 1105,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x18": {
    "files": [
@@ -1691,21 +1609,17 @@
    "slot_seconds": 0.501,
    "dac_priority": "0x63",
    "dac_busy_seconds": 0.501,
-   "samples": 21404,
-   "duration": 0.4854,
+   "samples": 21701,
+   "duration": 0.4921,
    "frames_rendered": 32,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 6071,
+   "peak": 4987,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x19": {
    "files": [
@@ -1746,21 +1660,17 @@
    "slot_seconds": 0.501,
    "dac_priority": "0x63",
    "dac_busy_seconds": 0.501,
-   "samples": 21677,
-   "duration": 0.4915,
+   "samples": 21977,
+   "duration": 0.4983,
    "frames_rendered": 32,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3413,
+   "peak": 2494,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x1A": {
    "files": [
@@ -1801,21 +1711,17 @@
    "slot_seconds": 0.501,
    "dac_priority": "0x63",
    "dac_busy_seconds": 0.501,
-   "samples": 21740,
-   "duration": 0.493,
+   "samples": 22086,
+   "duration": 0.5008,
    "frames_rendered": 32,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1931,
+   "peak": 1666,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x1B": {
    "files": [
@@ -1856,21 +1762,17 @@
    "slot_seconds": 0.501,
    "dac_priority": "0x63",
    "dac_busy_seconds": 0.501,
-   "samples": 21499,
-   "duration": 0.4875,
+   "samples": 21860,
+   "duration": 0.4957,
    "frames_rendered": 32,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1426,
+   "peak": 1250,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 8
-   }
+   "stereo": false
   },
   "0x1C": {
    "files": [
@@ -1923,21 +1825,17 @@
    "slot_seconds": 0.734,
    "dac_priority": "0x67",
    "dac_busy_seconds": 0.734,
-   "samples": 34589,
-   "duration": 0.7843,
+   "samples": 39850,
+   "duration": 0.9036,
    "frames_rendered": 47,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5870,
+   "peak": 4949,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 12
-   }
+   "stereo": false
   },
   "0x1D": {
    "files": [
@@ -1990,21 +1888,17 @@
    "slot_seconds": 0.834,
    "dac_priority": "0x67",
    "dac_busy_seconds": 0.834,
-   "samples": 29914,
-   "duration": 0.6783,
+   "samples": 30448,
+   "duration": 0.6904,
    "frames_rendered": 52,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5932,
+   "peak": 5379,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 12
-   }
+   "stereo": false
   },
   "0x1E": {
    "files": [
@@ -2057,21 +1951,17 @@
    "slot_seconds": 0.901,
    "dac_priority": "0x67",
    "dac_busy_seconds": 0.901,
-   "samples": 41949,
-   "duration": 0.9512,
+   "samples": 47196,
+   "duration": 1.0702,
    "frames_rendered": 57,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 2956,
+   "peak": 2562,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 12
-   }
+   "stereo": false
   },
   "0x1F": {
    "files": [
@@ -2135,21 +2025,17 @@
    "slot_seconds": 0.651,
    "dac_priority": "0x67",
    "dac_busy_seconds": 0.651,
-   "samples": 30138,
-   "duration": 0.6834,
+   "samples": 30424,
+   "duration": 0.6899,
    "frames_rendered": 41,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3464,
+   "peak": 2637,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 16
-   }
+   "stereo": false
   },
   "0x20": {
    "files": [
@@ -2194,21 +2080,17 @@
    "slot_seconds": 0.534,
    "dac_priority": "0x66",
    "dac_busy_seconds": 0.534,
-   "samples": 43421,
-   "duration": 0.9846,
+   "samples": 46133,
+   "duration": 1.0461,
    "frames_rendered": 59,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 7516,
+   "peak": 6719,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 80
-   }
+   "stereo": false
   },
   "0x21": {
    "files": [
@@ -2253,21 +2135,17 @@
    "slot_seconds": 0.534,
    "dac_priority": "0x66",
    "dac_busy_seconds": 0.534,
-   "samples": 42685,
-   "duration": 0.9679,
+   "samples": 45276,
+   "duration": 1.0267,
    "frames_rendered": 58,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5244,
+   "peak": 4632,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 80
-   }
+   "stereo": false
   },
   "0x22": {
    "files": [
@@ -2312,21 +2190,17 @@
    "slot_seconds": 0.534,
    "dac_priority": "0x66",
    "dac_busy_seconds": 0.534,
-   "samples": 41949,
-   "duration": 0.9512,
+   "samples": 44424,
+   "duration": 1.0073,
    "frames_rendered": 57,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3776,
+   "peak": 3518,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 80
-   }
+   "stereo": false
   },
   "0x23": {
    "files": [
@@ -2371,21 +2245,17 @@
    "slot_seconds": 0.534,
    "dac_priority": "0x66",
    "dac_busy_seconds": 0.534,
-   "samples": 41213,
-   "duration": 0.9345,
+   "samples": 43590,
+   "duration": 0.9884,
    "frames_rendered": 56,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3110,
+   "peak": 2910,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 80
-   }
+   "stereo": false
   },
   "0x24": {
    "files": [
@@ -2416,21 +2286,17 @@
    "slot_seconds": 0.334,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 16927,
-   "duration": 0.3838,
+   "samples": 26245,
+   "duration": 0.5951,
    "frames_rendered": 23,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 2622,
+   "peak": 1675,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 148
-   }
+   "stereo": false
   },
   "0x25": {
    "files": [
@@ -2459,21 +2325,17 @@
    "slot_seconds": 0.1,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 8096,
-   "duration": 0.1836,
+   "samples": 11399,
+   "duration": 0.2585,
    "frames_rendered": 11,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8649,
+   "peak": 3744,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x26": {
    "files": [],
@@ -2497,18 +2359,14 @@
    "samples": 0,
    "duration": 0.0,
    "frames_rendered": 2,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
    "peak": 0,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4
-   }
+   "stereo": false
   },
   "0x27": {
    "files": [],
@@ -2532,18 +2390,14 @@
    "samples": 0,
    "duration": 0.0,
    "frames_rendered": 2,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
    "peak": 0,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4
-   }
+   "stereo": false
   },
   "0x28": {
    "files": [
@@ -2572,21 +2426,17 @@
    "slot_seconds": 0.067,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 41949,
-   "duration": 0.9512,
+   "samples": 44540,
+   "duration": 1.01,
    "frames_rendered": 57,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8724,
+   "peak": 4765,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x29": {
    "files": [
@@ -2615,21 +2465,17 @@
    "slot_seconds": 0.05,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 39741,
-   "duration": 0.9012,
+   "samples": 42419,
+   "duration": 0.9619,
    "frames_rendered": 54,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 6195,
+   "peak": 3402,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x2A": {
    "files": [
@@ -2658,21 +2504,17 @@
    "slot_seconds": 0.033,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 36061,
-   "duration": 0.8177,
+   "samples": 38922,
+   "duration": 0.8826,
    "frames_rendered": 49,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 3147,
+   "peak": 1763,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x2B": {
    "files": [
@@ -2701,21 +2543,17 @@
    "slot_seconds": 0.017,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 33117,
-   "duration": 0.751,
+   "samples": 35421,
+   "duration": 0.8032,
    "frames_rendered": 45,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1620,
+   "peak": 941,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 76
-   }
+   "stereo": false
   },
   "0x2C": {
    "files": [
@@ -2744,21 +2582,17 @@
    "slot_seconds": 0.033,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3680,
-   "duration": 0.0834,
+   "samples": 7448,
+   "duration": 0.1689,
    "frames_rendered": 5,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 2968,
+   "peak": 2497,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 78
-   }
+   "stereo": false
   },
   "0x2D": {
    "files": [
@@ -2787,21 +2621,17 @@
    "slot_seconds": 0.033,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3680,
-   "duration": 0.0834,
+   "samples": 8011,
+   "duration": 0.1817,
    "frames_rendered": 5,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1994,
+   "peak": 1819,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 78
-   }
+   "stereo": false
   },
   "0x2E": {
    "files": [
@@ -2830,21 +2660,17 @@
    "slot_seconds": 0.033,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3680,
-   "duration": 0.0834,
+   "samples": 7241,
+   "duration": 0.1642,
    "frames_rendered": 5,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1475,
+   "peak": 1396,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 78
-   }
+   "stereo": false
   },
   "0x2F": {
    "files": [
@@ -2873,21 +2699,17 @@
    "slot_seconds": 0.033,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3680,
-   "duration": 0.0834,
+   "samples": 5838,
+   "duration": 0.1324,
    "frames_rendered": 5,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 1225,
+   "peak": 1143,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 78
-   }
+   "stereo": false
   },
   "0x30": {
    "files": [
@@ -2916,21 +2738,17 @@
    "slot_seconds": 20.309,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 959675,
-   "duration": 21.7613,
+   "samples": 962437,
+   "duration": 21.824,
    "frames_rendered": 1304,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10563,
+   "peak": 9702,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2106
-   }
+   "stereo": false
   },
   "0x31": {
    "files": [
@@ -2959,21 +2777,17 @@
    "slot_seconds": 18.707,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 886816,
-   "duration": 20.1092,
+   "samples": 889171,
+   "duration": 20.1626,
    "frames_rendered": 1205,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9388,
+   "peak": 9552,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2384
-   }
+   "stereo": false
   },
   "0x32": {
    "files": [
@@ -3002,21 +2816,17 @@
    "slot_seconds": 22.846,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1071539,
-   "duration": 24.2979,
+   "samples": 1074813,
+   "duration": 24.3722,
    "frames_rendered": 1456,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8260,
+   "peak": 9039,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1612
-   }
+   "stereo": false
   },
   "0x33": {
    "files": [
@@ -3058,21 +2868,17 @@
    "slot_seconds": 13.784,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 610100,
-   "duration": 13.8345,
+   "samples": 611432,
+   "duration": 13.8647,
    "frames_rendered": 829,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10399,
+   "peak": 10328,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1984
-   }
+   "stereo": false
   },
   "0x34": {
    "files": [
@@ -3101,21 +2907,17 @@
    "slot_seconds": 24.265,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1134095,
-   "duration": 25.7164,
+   "samples": 1136420,
+   "duration": 25.7692,
    "frames_rendered": 1541,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9989,
+   "peak": 8437,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 5238
-   }
+   "stereo": false
   },
   "0x35": {
    "files": [
@@ -3144,21 +2946,17 @@
    "slot_seconds": 17.172,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 820582,
-   "duration": 18.6073,
+   "samples": 822866,
+   "duration": 18.6591,
    "frames_rendered": 1115,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11849,
+   "peak": 12676,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2350
-   }
+   "stereo": false
   },
   "0x36": {
    "files": [
@@ -3187,21 +2985,17 @@
    "slot_seconds": 19.592,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 928029,
-   "duration": 21.0437,
+   "samples": 930316,
+   "duration": 21.0956,
    "frames_rendered": 1261,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10505,
+   "peak": 10195,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3442
-   }
+   "stereo": false
   },
   "0x37": {
    "files": [
@@ -3243,21 +3037,17 @@
    "slot_seconds": 19.542,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 925822,
-   "duration": 20.9937,
+   "samples": 928804,
+   "duration": 21.0613,
    "frames_rendered": 1258,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10550,
+   "peak": 10886,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2626
-   }
+   "stereo": false
   },
   "0x38": {
    "files": [
@@ -3286,21 +3076,17 @@
    "slot_seconds": 19.609,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 928766,
-   "duration": 21.0605,
+   "samples": 931101,
+   "duration": 21.1134,
    "frames_rendered": 1262,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10747,
+   "peak": 10424,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3436
-   }
+   "stereo": false
   },
   "0x39": {
    "files": [
@@ -3329,21 +3115,17 @@
    "slot_seconds": 14.268,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 685903,
-   "duration": 15.5534,
+   "samples": 688838,
+   "duration": 15.6199,
    "frames_rendered": 932,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11551,
+   "peak": 11182,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2684
-   }
+   "stereo": false
   },
   "0x3A": {
    "files": [
@@ -3372,21 +3154,17 @@
    "slot_seconds": 12.066,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 588758,
-   "duration": 13.3505,
+   "samples": 591749,
+   "duration": 13.4183,
    "frames_rendered": 800,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10314,
+   "peak": 8972,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2220
-   }
+   "stereo": false
   },
   "0x3B": {
    "files": [
@@ -3415,21 +3193,17 @@
    "slot_seconds": 20.627,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 973659,
-   "duration": 22.0784,
+   "samples": 658021,
+   "duration": 14.9211,
    "frames_rendered": 1323,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9782,
+   "peak": 11374,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3024
-   }
+   "stereo": false
   },
   "0x3C": {
    "files": [
@@ -3458,21 +3232,17 @@
    "slot_seconds": 23.247,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1081842,
-   "duration": 24.5316,
+   "samples": 1085161,
+   "duration": 24.6068,
    "frames_rendered": 1470,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11971,
+   "peak": 11022,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2522
-   }
+   "stereo": false
   },
   "0x3D": {
    "files": [
@@ -3501,21 +3271,17 @@
    "slot_seconds": 11.014,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 548281,
-   "duration": 12.4327,
+   "samples": 550632,
+   "duration": 12.486,
    "frames_rendered": 745,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9572,
+   "peak": 9691,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1982
-   }
+   "stereo": false
   },
   "0x3E": {
    "files": [
@@ -3544,21 +3310,17 @@
    "slot_seconds": 17.072,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 816166,
-   "duration": 18.5072,
+   "samples": 818540,
+   "duration": 18.561,
    "frames_rendered": 1109,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10641,
+   "peak": 11035,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2576
-   }
+   "stereo": false
   },
   "0x3F": {
    "files": [
@@ -3587,21 +3349,17 @@
    "slot_seconds": 18.29,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 870626,
-   "duration": 19.7421,
+   "samples": 872918,
+   "duration": 19.7941,
    "frames_rendered": 1183,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 7319,
+   "peak": 6791,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1936
-   }
+   "stereo": false
   },
   "0x40": {
    "files": [
@@ -3630,21 +3388,17 @@
    "slot_seconds": 24.698,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1153230,
-   "duration": 26.1503,
+   "samples": 1155528,
+   "duration": 26.2024,
    "frames_rendered": 1567,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9103,
+   "peak": 8662,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4382
-   }
+   "stereo": false
   },
   "0x41": {
    "files": [
@@ -3673,21 +3427,17 @@
    "slot_seconds": 22.145,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1038422,
-   "duration": 23.547,
+   "samples": 1040771,
+   "duration": 23.6002,
    "frames_rendered": 1411,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11975,
+   "peak": 11672,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3470
-   }
+   "stereo": false
   },
   "0x42": {
    "files": [
@@ -3716,21 +3466,17 @@
    "slot_seconds": 18.107,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 855171,
-   "duration": 19.3916,
+   "samples": 857878,
+   "duration": 19.453,
    "frames_rendered": 1162,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8435,
+   "peak": 9260,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3574
-   }
+   "stereo": false
   },
   "0x43": {
    "files": [
@@ -3759,21 +3505,17 @@
    "slot_seconds": 15.937,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 766857,
-   "duration": 17.389,
+   "samples": 769201,
+   "duration": 17.4422,
    "frames_rendered": 1042,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11114,
+   "peak": 10148,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2138
-   }
+   "stereo": false
   },
   "0x44": {
    "files": [
@@ -3802,21 +3544,17 @@
    "slot_seconds": 18.574,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 883137,
-   "duration": 20.0258,
+   "samples": 885409,
+   "duration": 20.0773,
    "frames_rendered": 1200,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10898,
+   "peak": 10750,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3308
-   }
+   "stereo": false
   },
   "0x45": {
    "files": [
@@ -3845,21 +3583,17 @@
    "slot_seconds": 23.33,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1092882,
-   "duration": 24.7819,
+   "samples": 1095209,
+   "duration": 24.8347,
    "frames_rendered": 1485,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11402,
+   "peak": 10714,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3476
-   }
+   "stereo": false
   },
   "0x46": {
    "files": [
@@ -3901,21 +3635,17 @@
    "slot_seconds": 18.49,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 831621,
-   "duration": 18.8576,
+   "samples": 833987,
+   "duration": 18.9113,
    "frames_rendered": 1130,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10343,
+   "peak": 9579,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2802
-   }
+   "stereo": false
   },
   "0x47": {
    "files": [
@@ -3957,21 +3687,17 @@
    "slot_seconds": 21.661,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1018552,
-   "duration": 23.0964,
+   "samples": 1020895,
+   "duration": 23.1495,
    "frames_rendered": 1384,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11148,
+   "peak": 10531,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3144
-   }
+   "stereo": false
   },
   "0x48": {
    "files": [
@@ -4000,21 +3726,17 @@
    "slot_seconds": 17.356,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 811014,
-   "duration": 18.3903,
+   "samples": 813239,
+   "duration": 18.4408,
    "frames_rendered": 1102,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 5921,
+   "peak": 5648,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1148
-   }
+   "stereo": false
   },
   "0x49": {
    "files": [
@@ -4043,21 +3765,17 @@
    "slot_seconds": 20.176,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 935390,
-   "duration": 21.2107,
+   "samples": 937578,
+   "duration": 21.2603,
    "frames_rendered": 1271,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10781,
+   "peak": 10324,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3646
-   }
+   "stereo": false
   },
   "0x4A": {
    "files": [
@@ -4086,21 +3804,17 @@
    "slot_seconds": 13.467,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 656465,
-   "duration": 14.8858,
+   "samples": 658812,
+   "duration": 14.939,
    "frames_rendered": 892,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10742,
+   "peak": 9694,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1980
-   }
+   "stereo": false
   },
   "0x4B": {
    "files": [
@@ -4129,21 +3843,17 @@
    "slot_seconds": 15.52,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 741099,
-   "duration": 16.805,
+   "samples": 744221,
+   "duration": 16.8758,
    "frames_rendered": 1007,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9264,
+   "peak": 9998,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1504
-   }
+   "stereo": false
   },
   "0x4C": {
    "files": [
@@ -4172,21 +3882,17 @@
    "slot_seconds": 14.302,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 694734,
-   "duration": 15.7536,
+   "samples": 697032,
+   "duration": 15.8057,
    "frames_rendered": 944,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10807,
+   "peak": 10319,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3836
-   }
+   "stereo": false
   },
   "0x4D": {
    "files": [
@@ -4215,21 +3921,17 @@
    "slot_seconds": 14.168,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 687375,
-   "duration": 15.5867,
+   "samples": 689798,
+   "duration": 15.6417,
    "frames_rendered": 934,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 12031,
+   "peak": 9802,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2352
-   }
+   "stereo": false
   },
   "0x4E": {
    "files": [
@@ -4258,21 +3960,17 @@
    "slot_seconds": 11.214,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 558584,
-   "duration": 12.6663,
+   "samples": 560888,
+   "duration": 12.7185,
    "frames_rendered": 759,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9880,
+   "peak": 9419,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2294
-   }
+   "stereo": false
   },
   "0x4F": {
    "files": [
@@ -4301,21 +3999,17 @@
    "slot_seconds": 14.485,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 701358,
-   "duration": 15.9038,
+   "samples": 703770,
+   "duration": 15.9585,
    "frames_rendered": 953,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11431,
+   "peak": 11228,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2158
-   }
+   "stereo": false
   },
   "0x50": {
    "files": [
@@ -4357,21 +4051,17 @@
    "slot_seconds": 19.942,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 943485,
-   "duration": 21.3942,
+   "samples": 946791,
+   "duration": 21.4692,
    "frames_rendered": 1282,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9931,
+   "peak": 9520,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2860
-   }
+   "stereo": false
   },
   "0x51": {
    "files": [
@@ -4400,21 +4090,17 @@
    "slot_seconds": 17.623,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 841188,
-   "duration": 19.0746,
+   "samples": 843521,
+   "duration": 19.1275,
    "frames_rendered": 1143,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 12110,
+   "peak": 10988,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2962
-   }
+   "stereo": false
   },
   "0x52": {
    "files": [
@@ -4443,21 +4129,17 @@
    "slot_seconds": 17.723,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 845603,
-   "duration": 19.1747,
+   "samples": 847941,
+   "duration": 19.2277,
    "frames_rendered": 1149,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10202,
+   "peak": 9744,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2942
-   }
+   "stereo": false
   },
   "0x53": {
    "files": [
@@ -4499,21 +4181,17 @@
    "slot_seconds": 16.304,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 724172,
-   "duration": 16.4211,
+   "samples": 728841,
+   "duration": 16.527,
    "frames_rendered": 984,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9576,
+   "peak": 9623,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2296
-   }
+   "stereo": false
   },
   "0x54": {
    "files": [
@@ -4542,21 +4220,17 @@
    "slot_seconds": 19.642,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 930238,
-   "duration": 21.0938,
+   "samples": 932592,
+   "duration": 21.1472,
    "frames_rendered": 1264,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10853,
+   "peak": 10275,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2382
-   }
+   "stereo": false
   },
   "0x55": {
    "files": [
@@ -4585,21 +4259,17 @@
    "slot_seconds": 15.77,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 758762,
-   "duration": 17.2055,
+   "samples": 761007,
+   "duration": 17.2564,
    "frames_rendered": 1031,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8402,
+   "peak": 7905,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1576
-   }
+   "stereo": false
   },
   "0x56": {
    "files": [
@@ -4628,21 +4298,17 @@
    "slot_seconds": 13.868,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 668241,
-   "duration": 15.1529,
+   "samples": 671625,
+   "duration": 15.2296,
    "frames_rendered": 908,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11194,
+   "peak": 11355,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2482
-   }
+   "stereo": false
   },
   "0x57": {
    "files": [
@@ -4671,21 +4337,17 @@
    "slot_seconds": 14.569,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 706510,
-   "duration": 16.0206,
+   "samples": 709471,
+   "duration": 16.0878,
    "frames_rendered": 960,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 12310,
+   "peak": 10021,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2952
-   }
+   "stereo": false
   },
   "0x58": {
    "files": [
@@ -4714,21 +4376,17 @@
    "slot_seconds": 23.38,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1087731,
-   "duration": 24.6651,
+   "samples": 1090969,
+   "duration": 24.7385,
    "frames_rendered": 1478,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9313,
+   "peak": 9423,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 5594
-   }
+   "stereo": false
   },
   "0x59": {
    "files": [
@@ -4757,21 +4415,17 @@
    "slot_seconds": 11.565,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 566679,
-   "duration": 12.8499,
+   "samples": 569935,
+   "duration": 12.9237,
    "frames_rendered": 770,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9987,
+   "peak": 10851,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2760
-   }
+   "stereo": false
   },
   "0x5A": {
    "files": [
@@ -4800,21 +4454,17 @@
    "slot_seconds": 12.032,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 593174,
-   "duration": 13.4507,
+   "samples": 595499,
+   "duration": 13.5034,
    "frames_rendered": 806,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9779,
+   "peak": 9415,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1648
-   }
+   "stereo": false
   },
   "0x5B": {
    "files": [
@@ -4843,21 +4493,17 @@
    "slot_seconds": 19.926,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 942749,
-   "duration": 21.3775,
+   "samples": 945082,
+   "duration": 21.4304,
    "frames_rendered": 1281,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10765,
+   "peak": 9927,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3460
-   }
+   "stereo": false
   },
   "0x5C": {
    "files": [
@@ -4886,21 +4532,17 @@
    "slot_seconds": 14.569,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 706510,
-   "duration": 16.0206,
+   "samples": 708843,
+   "duration": 16.0735,
    "frames_rendered": 960,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9544,
+   "peak": 8747,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4066
-   }
+   "stereo": false
   },
   "0x5D": {
    "files": [
@@ -4929,21 +4571,17 @@
    "slot_seconds": 15.27,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 730060,
-   "duration": 16.5546,
+   "samples": 733181,
+   "duration": 16.6254,
    "frames_rendered": 992,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10702,
+   "peak": 9916,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3948
-   }
+   "stereo": false
   },
   "0x5E": {
    "files": [
@@ -4972,21 +4610,17 @@
    "slot_seconds": 22.863,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1072275,
-   "duration": 24.3146,
+   "samples": 1074596,
+   "duration": 24.3673,
    "frames_rendered": 1457,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11648,
+   "peak": 9915,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4214
-   }
+   "stereo": false
   },
   "0x5F": {
    "files": [
@@ -5015,21 +4649,17 @@
    "slot_seconds": 22.646,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1062708,
-   "duration": 24.0977,
+   "samples": 1064893,
+   "duration": 24.1472,
    "frames_rendered": 1444,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11404,
+   "peak": 10417,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3402
-   }
+   "stereo": false
   },
   "0x60": {
    "files": [
@@ -5058,21 +4688,17 @@
    "slot_seconds": 34.311,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1577135,
-   "duration": 35.7627,
+   "samples": 1579422,
+   "duration": 35.8146,
    "frames_rendered": 2143,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9490,
+   "peak": 9357,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4064
-   }
+   "stereo": false
   },
   "0x61": {
    "files": [
@@ -5114,21 +4740,17 @@
    "slot_seconds": 20.76,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 978811,
-   "duration": 22.1953,
+   "samples": 981139,
+   "duration": 22.248,
    "frames_rendered": 1330,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10975,
+   "peak": 9644,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3496
-   }
+   "stereo": false
   },
   "0x62": {
    "files": [
@@ -5170,21 +4792,17 @@
    "slot_seconds": 27.369,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1223881,
-   "duration": 27.7524,
+   "samples": 1226236,
+   "duration": 27.8058,
    "frames_rendered": 1663,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11023,
+   "peak": 9818,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3964
-   }
+   "stereo": false
   },
   "0x63": {
    "files": [
@@ -5226,21 +4844,17 @@
    "slot_seconds": 27.669,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1284229,
-   "duration": 29.1208,
+   "samples": 1286616,
+   "duration": 29.175,
    "frames_rendered": 1745,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9762,
+   "peak": 9478,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3270
-   }
+   "stereo": false
   },
   "0x64": {
    "files": [
@@ -5269,21 +4883,17 @@
    "slot_seconds": 19.725,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 933918,
-   "duration": 21.1773,
+   "samples": 926113,
+   "duration": 21.0003,
    "frames_rendered": 1269,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 12007,
+   "peak": 9734,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3122
-   }
+   "stereo": false
   },
   "0x65": {
    "files": [
@@ -5312,21 +4922,17 @@
    "slot_seconds": 29.705,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1374014,
-   "duration": 31.1568,
+   "samples": 1376982,
+   "duration": 31.2241,
    "frames_rendered": 1867,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11101,
+   "peak": 10461,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4456
-   }
+   "stereo": false
   },
   "0x66": {
    "files": [
@@ -5355,21 +4961,17 @@
    "slot_seconds": 23.998,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1122320,
-   "duration": 25.4494,
+   "samples": 796080,
+   "duration": 18.0517,
    "frames_rendered": 1525,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9762,
+   "peak": 11690,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4908
-   }
+   "stereo": false
   },
   "0x67": {
    "files": [
@@ -5398,21 +5000,17 @@
    "slot_seconds": 19.241,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 912575,
-   "duration": 20.6933,
+   "samples": 914884,
+   "duration": 20.7457,
    "frames_rendered": 1240,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10769,
+   "peak": 10936,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2650
-   }
+   "stereo": false
   },
   "0x68": {
    "files": [
@@ -5441,21 +5039,17 @@
    "slot_seconds": 22.963,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1076691,
-   "duration": 24.4148,
+   "samples": 1079620,
+   "duration": 24.4812,
    "frames_rendered": 1463,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10930,
+   "peak": 10631,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2864
-   }
+   "stereo": false
   },
   "0x69": {
    "files": [
@@ -5484,21 +5078,17 @@
    "slot_seconds": 15.22,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 735211,
-   "duration": 16.6715,
+   "samples": 737513,
+   "duration": 16.7237,
    "frames_rendered": 999,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9621,
+   "peak": 9564,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 3248
-   }
+   "stereo": false
   },
   "0x6A": {
    "files": [
@@ -5540,21 +5130,17 @@
    "slot_seconds": 13.718,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 668977,
-   "duration": 15.1695,
+   "samples": 671952,
+   "duration": 15.237,
    "frames_rendered": 909,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10129,
+   "peak": 8414,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2314
-   }
+   "stereo": false
   },
   "0x6B": {
    "files": [
@@ -5583,21 +5169,17 @@
    "slot_seconds": 11.532,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 565208,
-   "duration": 12.8165,
+   "samples": 567104,
+   "duration": 12.8595,
    "frames_rendered": 768,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 4133,
+   "peak": 3494,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1052
-   }
+   "stereo": false
   },
   "0x6C": {
    "files": [
@@ -5626,21 +5208,17 @@
    "slot_seconds": 17.689,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 836772,
-   "duration": 18.9744,
+   "samples": 724014,
+   "duration": 16.4176,
    "frames_rendered": 1137,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11381,
+   "peak": 10452,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2322
-   }
+   "stereo": false
   },
   "0x6D": {
    "files": [
@@ -5669,21 +5247,17 @@
    "slot_seconds": 15.37,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 741835,
-   "duration": 16.8217,
+   "samples": 744143,
+   "duration": 16.874,
    "frames_rendered": 1008,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10969,
+   "peak": 10256,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2714
-   }
+   "stereo": false
   },
   "0x6E": {
    "files": [
@@ -5712,21 +5286,17 @@
    "slot_seconds": 11.164,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 549017,
-   "duration": 12.4494,
+   "samples": 551980,
+   "duration": 12.5166,
    "frames_rendered": 746,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 10845,
+   "peak": 9586,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2958
-   }
+   "stereo": false
   },
   "0x6F": {
    "files": [
@@ -5768,21 +5338,17 @@
    "slot_seconds": 13.484,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 658673,
-   "duration": 14.9359,
+   "samples": 661045,
+   "duration": 14.9897,
    "frames_rendered": 895,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 7794,
+   "peak": 8317,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1168
-   }
+   "stereo": false
   },
   "0x70": {
    "files": [
@@ -5811,21 +5377,17 @@
    "slot_seconds": 11.515,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 571831,
-   "duration": 12.9667,
+   "samples": 574079,
+   "duration": 13.0177,
    "frames_rendered": 777,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9177,
+   "peak": 9982,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1064
-   }
+   "stereo": false
   },
   "0x71": {
    "files": [
@@ -5854,21 +5416,17 @@
    "slot_seconds": 13.484,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 658673,
-   "duration": 14.9359,
+   "samples": 661367,
+   "duration": 14.997,
    "frames_rendered": 895,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11420,
+   "peak": 11260,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2606
-   }
+   "stereo": false
   },
   "0x72": {
    "files": [
@@ -5910,21 +5468,17 @@
    "slot_seconds": 25.783,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1201066,
-   "duration": 27.2351,
+   "samples": 1203392,
+   "duration": 27.2878,
    "frames_rendered": 1632,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 8888,
+   "peak": 8263,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2730
-   }
+   "stereo": false
   },
   "0x73": {
    "files": [
@@ -5966,21 +5520,17 @@
    "slot_seconds": 19.041,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 903744,
-   "duration": 20.4931,
+   "samples": 802011,
+   "duration": 18.1862,
    "frames_rendered": 1228,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9490,
+   "peak": 9131,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2886
-   }
+   "stereo": false
   },
   "0x74": {
    "files": [
@@ -6009,21 +5559,17 @@
    "slot_seconds": 25.9,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 1206218,
-   "duration": 27.3519,
+   "samples": 1209143,
+   "duration": 27.4182,
    "frames_rendered": 1639,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11439,
+   "peak": 11487,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4096
-   }
+   "stereo": false
   },
   "0x75": {
    "files": [
@@ -6052,21 +5598,17 @@
    "slot_seconds": 14.669,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 710925,
-   "duration": 16.1207,
+   "samples": 713931,
+   "duration": 16.1889,
    "frames_rendered": 966,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11796,
+   "peak": 12982,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 1956
-   }
+   "stereo": false
   },
   "0x76": {
    "files": [
@@ -6095,21 +5637,17 @@
    "slot_seconds": 20.827,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 982490,
-   "duration": 22.2787,
+   "samples": 984783,
+   "duration": 22.3307,
    "frames_rendered": 1335,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 11823,
+   "peak": 11279,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 4106
-   }
+   "stereo": false
   },
   "0x77": {
    "files": [
@@ -6151,21 +5689,17 @@
    "slot_seconds": 18.44,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 877249,
-   "duration": 19.8923,
+   "samples": 879998,
+   "duration": 19.9546,
    "frames_rendered": 1192,
+   "context": "game",
    "loops": false,
    "loop_start": null,
    "loop_end": null,
    "loop_seam_rel_error": null,
-   "peak": 9718,
+   "peak": 8609,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 2738
-   }
+   "stereo": false
   },
   "0x78": {
    "files": [
@@ -6215,21 +5749,17 @@
    "slot_seconds": 72.777,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3240936,
-   "duration": 73.4906,
+   "samples": 3233053,
+   "duration": 73.3119,
    "frames_rendered": 4601,
+   "context": "menu",
    "loops": true,
-   "loop_start": 31468,
-   "loop_end": 3240936,
-   "loop_seam_rel_error": 0.1196,
-   "peak": 12173,
+   "loop_start": 23506,
+   "loop_end": 3233053,
+   "loop_seam_rel_error": 0.1121,
+   "peak": 11462,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 22896
-   }
+   "stereo": false
   },
   "0x79": {
    "files": [
@@ -6280,21 +5810,17 @@
    "slot_seconds": 78.585,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3477044,
-   "duration": 78.8445,
+   "samples": 3476662,
+   "duration": 78.8359,
    "frames_rendered": 4949,
+   "context": "menu",
    "loops": true,
-   "loop_start": 26185,
-   "loop_end": 3477044,
-   "loop_seam_rel_error": 0.0321,
-   "peak": 11672,
+   "loop_start": 25695,
+   "loop_end": 3476662,
+   "loop_seam_rel_error": 0.0195,
+   "peak": 10189,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 34180
-   }
+   "stereo": false
   },
   "0x7A": {
    "files": [
@@ -6344,21 +5870,17 @@
    "slot_seconds": 87.997,
    "dac_priority": null,
    "dac_busy_seconds": null,
-   "samples": 3918649,
-   "duration": 88.8583,
+   "samples": 3918434,
+   "duration": 88.8534,
    "frames_rendered": 5513,
+   "context": "menu",
    "loops": true,
-   "loop_start": 82154,
-   "loop_end": 3918649,
-   "loop_seam_rel_error": 0.1168,
-   "peak": 11023,
+   "loop_start": 81807,
+   "loop_end": 3918434,
+   "loop_seam_rel_error": 0.1139,
+   "peak": 10158,
    "clipped": 0,
-   "stereo": false,
-   "verify": {
-    "psg_writes": 0,
-    "ym_writes_by_68k": 0,
-    "z80_fm_writes": 19816
-   }
+   "stereo": false
   }
  }
 }

@@ -15,6 +15,8 @@ extends Node
 const SFX_DIR := "res://assets/audio/sfx/"
 const MUSIC_DIR := "res://assets/audio/music/"
 const META := "res://assets/audio/audio.json"
+## The PSG crowd noise at full volume, rendered by tools/extract/audio.py.
+const CROWD_NOISE := "res://assets/audio/crowd_noise.wav"
 ## The retail ids (docs/specs/audio.md section 9).
 const NAMES := {
 	0x00: "siren after a goal (checkgoal)",
@@ -75,7 +77,7 @@ var _crowd: AudioStreamPlayer
 func _init() -> void:
 	_crowd = AudioStreamPlayer.new()
 	_crowd.bus = &"Crowd"
-	_crowd.stream = _noise_loop()
+	_crowd.stream = load(CROWD_NOISE) if ResourceLoader.exists(CROWD_NOISE) else _noise_loop()
 	_crowd.volume_db = -80.0
 	add_child(_crowd)
 	for i in VOICES:
@@ -173,7 +175,8 @@ func set_crowd_attenuation(att: int) -> void:
 		_crowd.play()
 	_crowd.volume_db = -80.0 if att >= 15 else -2.0 * att
 
-## One second of white noise, looped (the PSG noise channel clocked by tone 2).
+## Without the rendered file: one second of white noise, looped (the PSG noise channel
+## clocked by tone 2), at about the rendered file's level.
 static func _noise_loop() -> AudioStreamWAV:
 	var rate := 22050
 	var data := PackedByteArray()
@@ -182,7 +185,7 @@ static func _noise_loop() -> AudioStreamWAV:
 	for i in rate:
 		var bit := (lfsr ^ (lfsr >> 1)) & 1
 		lfsr = (lfsr >> 1) | (bit << 14)
-		data[i] = 0xC0 if lfsr & 1 else 0x40
+		data[i] = 0x84 if lfsr & 1 else 0x7C
 	var w := AudioStreamWAV.new()
 	w.format = AudioStreamWAV.FORMAT_8_BITS
 	w.mix_rate = rate

@@ -286,3 +286,14 @@ void dc_block(float *x, uint32_t n, double r)
         x[i] = (float)py;
     }
 }
+
+/* One-pole RC low-pass in place: y += a * (x - y), a = 1 - exp(-2 pi fc / fs). */
+void one_pole(float *x, uint32_t n, double a)
+{
+    double y = n ? x[0] : 0.0;
+    uint32_t i;
+    for (i = 0; i < n; i++) {
+        y += a * (x[i] - y);
+        x[i] = (float)y;
+    }
+}
